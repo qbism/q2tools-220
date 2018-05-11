@@ -124,6 +124,14 @@ void TextureAxisFromPlane(plane_t *pln, vec3_t xv, vec3_t yv)
 	VectorCopy (baseaxis[bestaxis*3+2], yv);
 }
 
+inline void CheckTexinfoCount() //mxd
+{
+	if (numtexinfo == DEFAULT_MAP_TEXINFO)
+		printf("WARNING: texinfo count exceeds vanilla limit (%i).\n", DEFAULT_MAP_TEXINFO);
+	else if (numtexinfo >= MAX_MAP_TEXINFO)
+		Error("ERROR: texinfo count exceeds program limit (%i).\n", MAX_MAP_TEXINFO);
+}
+
 // DarkEssence: function for new #mapversion with UVaxis
 int TexinfoForBrushTexture_UV (brush_texture_t *bt, vec_t *UVaxis)
 {
@@ -175,6 +183,7 @@ int TexinfoForBrushTexture_UV (brush_texture_t *bt, vec_t *UVaxis)
 	}
 	*tc = tx;
 	numtexinfo++;
+	CheckTexinfoCount(); //mxd
 
 	// load the next animation
 	mt = FindMiptex (bt->name);
@@ -319,6 +328,7 @@ skip:;
 	}
 	*tc = tx;
 	numtexinfo++;
+	CheckTexinfoCount(); //mxd
 
 	// load the next animation
 	mt = FindMiptex (bt->name);

@@ -229,7 +229,8 @@ typedef struct miptex_s
 #define	MAX_MAP_BRUSHES		8192
 #define	MAX_MAP_ENTITIES	2048
 #define	MAX_MAP_ENTSTRING	0x40000
-#define	MAX_MAP_TEXINFO		8192
+#define	DEFAULT_MAP_TEXINFO	8192  //mxd: vanilla
+#define	MAX_MAP_TEXINFO		16384 //mxd: KMQ2
 
 #define	MAX_MAP_AREAS		256
 #define	MAX_MAP_AREAPORTALS	1024
