@@ -122,10 +122,6 @@
 		<Unit filename="images.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="modelgen.h">
-			<Option target="Win32 Release" />
-			<Option target="Win32 Debug" />
-		</Unit>
 		<Unit filename="models.c">
 			<Option compilerVar="CC" />
 		</Unit>

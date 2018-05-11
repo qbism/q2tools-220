@@ -693,7 +693,7 @@ int    TryLoadFile(char *filename, void **bufferptr, int print_error)
 
 /*
 ==============
-TryLoadFileFromPak  //qb: from Dewan
+TryLoadFileFromPak  //qb: GDD tools
 
 Allows failure
 ==============

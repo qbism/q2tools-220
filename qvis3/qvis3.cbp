@@ -39,31 +39,35 @@
 				</Linker>
 			</Target>
 		</Build>
-		<Unit filename="../../common/bspfile.h" />
-		<Unit filename="../../common/cmdlib.h" />
-		<Unit filename="../../common/mathlib.h" />
-		<Unit filename="../../common/parsecfg.h" />
-		<Unit filename="../../common/qfiles.h" />
-		<Unit filename="../../common/scriplib.h" />
-		<Unit filename="../../common/threads.h" />
 		<Unit filename="../common/bspfile.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../common/bspfile.h" />
 		<Unit filename="../common/cmdlib.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../common/cmdlib.h" />
+		<Unit filename="../common/l3dslib.h" />
+		<Unit filename="../common/lbmlib.h" />
 		<Unit filename="../common/mathlib.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../common/mathlib.h" />
+		<Unit filename="../common/mdfour.h" />
 		<Unit filename="../common/parsecfg.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../common/polylib.h" />
+		<Unit filename="../common/qfiles.h" />
 		<Unit filename="../common/scriplib.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../common/scriplib.h" />
 		<Unit filename="../common/threads.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../common/threads.h" />
+		<Unit filename="../common/trilib.h" />
 		<Unit filename="flow.c">
 			<Option compilerVar="CC" />
 		</Unit>

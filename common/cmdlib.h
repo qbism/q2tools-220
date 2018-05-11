@@ -145,5 +145,4 @@ typedef struct
 void Q_LogTimeElapsed( double elapsed_time );
 
 
-extern int context;
 #endif

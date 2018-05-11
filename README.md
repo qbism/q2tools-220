@@ -1,23 +1,19 @@
 # q2tools-220
-Quake 2 compiler tools with v220 map support, automatic phong and soft spotlights, other enhancements, and fixes. 
+Q2 compiler tools featuring ability to bsp v220 map format, automatic phong and soft spotlights, and other enhancements.
+Includes qbsp3, qvis3, qrad3, and qdata.
 
-Based on modifications by XaeroX and DarkEssence distributed with J.A.C.K. map editor by Chain Studios.
+Based on modifications supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
 
-The code is 'alpha' - not much testing or feedback at this point.  There's an sln for Windows but has not been tried recently.
+The code is 'alpha' - not much testing or feedback at this point.
 
-Features and credit:
-Better radiosity, from AA.
-Use any existing TGA replacement textures for radiosity, from AA.
+Fixes and enhancements:
+*   AA tools (Alien Arena)- File path determination asumptions:
+    *   moddir is parent of whatever directory contains the .map/.bsp
+    *   gamedir is parent of moddir
+    *   qdir is parent of gamedir
 
-Path determination from AAtools. Assumes:
-*   moddir is parent of whatever directory contains the .map/.bsp
-*   gamedir is parent of moddir
-*   qdir is parent of gamedir
+*   AA tools- Use any existing TGA replacement textures for radiosity.
+*   DWH- Fix for scaled textures using an origin brush.
+*   GDD tools (Geoffrey DeWan)- Load file from PAK.
+*   Jit (Jitspoe)- Microbrush and others.
 
-Change default max_map_lighting of 0x200000 with -maxdata #.  Some engines use higher values like 0x800000.
-* example:  -maxdata 8388608
-
-Fixes:
-*   Varous fixes and enhancements from Geoffrey DeWan.
-*   Microbrush and others from Jitspoe.
-*   DWH- Fix for scaled textures using an origin brush
