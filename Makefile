@@ -1,0 +1,252 @@
+#
+# Linux Makefile for q2tools
+#
+
+
+# BUILD = RELEASE or DEBUG
+BUILD ?= RELEASE
+
+# Where programs will be installed on 'make install'
+INSTALL_DIR ?= ../install
+
+# Compiler
+CC ?= gcc
+
+# Compile Options
+WITH_PTHREAD ?= -pthread -DUSE_PTHREADS
+WITHOUT_PTHREAD ?= -DUSE_SETRLIMIT
+# THREADING_OPTION = WITH_PTHREAD or WITHOUT_PTHREAD
+THREADING_OPTION ?= $(WITH_PTHREAD)
+BASE_CFLAGS ?= -Wall $(THREADING_OPTION) -DUSE_ZLIB
+RELEASE_CFLAGS ?= $(BASE_CFLAGS) -O3 
+DEBUG_CFLAGS ?= $(BASE_CFLAGS) -O0 -g -ggdb
+
+# Link Options
+LDFLAGS ?= -lm -lz
+
+#
+srcdir = .
+srcbsp = bsp/
+includedirs = -Icommon
+# depdir = .deps
+
+# source locations
+vpath %.h qbsp3
+vpath %.c qbsp3
+vpath %.h qvis3
+vpath %.c qvis3
+vpath %.h qrad3
+vpath %.c qrad3
+vpath %.h qdata
+vpath %.c qdata
+vpath %.h common
+vpath %.c common
+
+ifeq ($(BUILD),DEBUG)
+CFLAGS ?= $(DEBUG_CFLAGS)
+builddir = debug
+vpath %.o debug
+else
+CFLAGS ?= $(RELEASE_CFLAGS)
+builddir = release
+vpath %.o release
+endif
+
+# common files 
+cmn_srcs = \
+	bspfile.c	\
+	cmdlib.c	\
+	l3dslib.c	\
+	llwolib.o	\
+	lbmlib.c	\
+	mathlib.c	\
+	mdfour.c	\
+	polylib.c	\
+	scriplib.c	\
+	trilib.c	\
+	threads.c
+
+cmn_objs = $(cmn_srcs:.c=.o)
+
+# cmn_dep = $(addprefix $(depdir)/, $(cmn_srcs:.c=.d) )
+
+
+#
+# files for qbsp3
+#
+qbsp3_srcs =	\
+    qbsp3.c     \
+	brushbsp.c	\
+	faces.c		\
+	glfile.c	\
+	leakfile.c	\
+	map.c		\
+	portals.c	\
+	prtfile.c	\
+	textures.c	\
+	tree.c		\
+	writebsp.c	\
+	csg.c
+
+qbsp3_cmnobjs = \
+	bspfile.o	\
+	cmdlib.o	\
+	lbmlib.o	\
+	mathlib.o	\
+	polylib.o	\
+	scriplib.o	\
+	threads.o
+
+qbsp3_objs = $(qbsp3_srcs:.c=.o)
+qbsp3_objs_all = $(qbsp3_objs) $(qbsp3_cmnobjs)
+# qbsp3_dep = $(addprefix $(depdir)/, $(qbsp3_srcs:.c=.d) )
+
+#
+# files for qvis3
+#
+qvis3_srcs =	\
+	qvis3.c		\
+	flow.c
+
+qvis3_cmnobjs =	\
+	bspfile.o	\
+	cmdlib.o	\
+	mathlib.o	\
+	scriplib.o	\
+	threads.o
+
+qvis3_objs = $(qvis3_srcs:.c=.o)
+qvis3_objs_all = $(qvis3_objs) $(qvis3_cmnobjs)
+# qvis3_dep = $(addprefix $(depdir)/, $(qvis3_srcs:.c=.d) )
+
+
+#
+# files for qdata
+#
+qdata_srcs =	\
+	images.c	\
+	models.c	\
+	qdata.c	\
+	sprites.c	\
+	tables.c	\
+	video.c
+
+qdata_cmnobjs =	\
+	bspfile.o	\
+	cmdlib.o	\
+	lbmlib.o	\
+	l3dslib.o	\
+	llwolib.o	\
+	mathlib.o	\
+	mdfour.o	\
+	polylib.o	\
+	scriplib.o	\
+	trilib.o	\
+	threads.o
+
+qdata_objs = $(qdata_srcs:.c=.o)
+qdata_objs_all = $(qdata_objs) $(qdata_cmnobjs)
+# qdata_dep = $(addprefix $(depdir)/, $(qdata_srcs:.c=.d) )
+
+
+#
+# files for qrad3
+#
+qrad3_srcs =	\
+	qrad3.c		\
+	lightmap.c	\
+	patches.c 	\
+	trace.c
+
+qrad3_cmnobjs = \
+	bspfile.o	\
+	cmdlib.o	\
+	lbmlib.o	\
+	mathlib.o	\
+	polylib.o	\
+	scriplib.o	\
+	threads.o
+
+qrad3_objs = $(qrad3_srcs:.c=.o)
+qrad3_objs_all = $(qrad3_objs) $(qrad3_cmnobjs)
+# qrad3_dep = $(addprefix $(depdir)/, $(qrad3_srcs:.c=.d) )
+
+#
+# --- targets ---
+#
+
+all: subdirectories $(builddir)/qbsp3 $(builddir)/qvis3 $(builddir)/qrad3 $(builddir)/qdata
+
+# dependency (.d) files
+include $(cmn_dep)
+## include $(bspinfo3_dep)
+include $(qbsp3_dep)
+include $(qvis3_dep)
+include $(qrad3_dep)
+include $(qdata_dep)
+
+# compile common sources
+$(cmn_objs): %o : %c
+	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
+
+
+# link qbsp3
+$(builddir)/qbsp3: $(qbsp3_objs_all)
+	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(qbsp3_objs_all)) -o $(builddir)/qbsp3 $(LDFLAGS)
+
+# compile qbsp3 sources
+$(qbsp3_objs): %o : %c
+	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
+
+# link qvis3
+$(builddir)/qvis3: $(qvis3_objs_all)
+	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(qvis3_objs_all)) -o $(builddir)/qvis3 $(LDFLAGS)
+
+# compile qvis3 sources
+$(qvis3_objs): %o : %c
+	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
+
+# link qrad3
+$(builddir)/qrad3: $(qrad3_objs_all)
+	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(qrad3_objs_all)) -o $(builddir)/qrad3 $(LDFLAGS)
+
+# compile qrad3 sources
+$(qrad3_objs): %o : %c
+	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
+
+# link qdata
+$(builddir)/qdata: $(qdata_objs_all)
+	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(qdata_objs_all)) -o $(builddir)/qdata $(LDFLAGS)
+
+# compile qdata sources
+$(qdata_objs): %o : %c
+	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
+
+
+subdirectories:
+#	mkdir -p $(depdir)
+	mkdir -p $(builddir)
+
+clean:
+	rm -f $(builddir)/*.o
+	rm -f $(builddir)/qbsp3
+	rm -f $(builddir)/qvis3
+	rm -f $(builddir)/qrad3
+	rm -f $(builddir)/qdata
+
+# Add these to remove executables from install directory
+
+	rm -f $(INSTALL_DIR)/qbsp3
+	rm -f $(INSTALL_DIR)/qvis3
+	rm -f $(INSTALL_DIR)/qrad3
+	rm -f $(INSTALL_DIR)/qdata
+
+install:
+	mkdir -p $(INSTALL_DIR)
+	cp $(builddir)/qbsp3   $(INSTALL_DIR)
+	cp $(builddir)/qvis3   $(INSTALL_DIR)
+	cp $(builddir)/qrad3   $(INSTALL_DIR)
+	cp $(builddir)/qdata   $(INSTALL_DIR)/qdata 
+
+
+
