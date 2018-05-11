@@ -370,8 +370,8 @@ void MakeNodePortal (node_t *node)
 	portal_t	*new_portal, *p;
 	winding_t	*w;
 	vec3_t		normal;
-	vec_t		dist;
-	int			side;
+	vec_t		dist = 0;
+	int			side = 0;
 
 	w = BaseWindingForNode (node);
 
@@ -429,7 +429,7 @@ void SplitNodePortals (node_t *node)
 {
 	portal_t	*p, *next_portal, *new_portal;
 	node_t		*f, *b, *other_node;
-	int			side;
+	int			side = 0;
 	plane_t		*plane;
 	winding_t	*frontwinding, *backwinding;
 

@@ -174,11 +174,11 @@ bspbrush_t	*BrushFromBounds (vec3_t mins, vec3_t maxs)
 		VectorClear (normal);
 		normal[i] = 1;
 		dist = maxs[i];
-		b->sides[i].planenum = FindFloatPlane (normal, dist);
+		b->sides[i].planenum = FindFloatPlane (normal, dist, 0);
 
 		normal[i] = -1;
 		dist = -mins[i];
-		b->sides[3+i].planenum = FindFloatPlane (normal, dist);
+		b->sides[3+i].planenum = FindFloatPlane (normal, dist, 0);
 	}
 
 	CreateBrushWindings (b);
@@ -291,7 +291,7 @@ bspbrush_t *AllocBrush (int numsides)
 	bspbrush_t	*bb;
 	int			c;
 
-	c = (int)&(((bspbrush_t *)0)->sides[numsides]);
+	c = (intptr_t)&(((bspbrush_t *)0)->sides[numsides]);
 	bb = malloc(c);
 	memset (bb, 0, c);
 	if (numthreads == 1)
@@ -347,7 +347,7 @@ bspbrush_t *CopyBrush (bspbrush_t *brush)
 	int			size;
 	int			i;
 
-	size = (int)&(((bspbrush_t *)0)->sides[brush->numsides]);
+	size = (intptr_t)&(((bspbrush_t *)0)->sides[brush->numsides]);
 
 	newbrush = AllocBrush (brush->numsides);
 	memcpy (newbrush, brush, size);
@@ -486,8 +486,9 @@ TestBrushToPlanenum
 
 ============
 */
+//qb: GDD tools detailsplit
 int	TestBrushToPlanenum (bspbrush_t *brush, int planenum,
-						 int *numsplits, qboolean *hintsplit, int *epsilonbrush)
+	int *numsplits, qboolean *hintsplit, qboolean *detailsplit, int *epsilonbrush)
 {
 	int			i, j, num;
 	plane_t		*plane;
@@ -552,6 +553,8 @@ int	TestBrushToPlanenum (bspbrush_t *brush, int planenum,
 				(*numsplits)++;
 				if (brush->sides[i].surf & SURF_HINT)
 					*hintsplit = true;
+				if (brush->sides[i].contents & CONTENTS_DETAIL)
+					*detailsplit = true;
 			}
 		}
 	}
@@ -674,14 +677,18 @@ void LeafNode (node_t *node, bspbrush_t *brushes)
 
 //============================================================
 
-void CheckPlaneAgainstParents (int pnum, node_t *node)
+//qb: GDD tools: brush info on error
+void CheckPlaneAgainstParents (int pnum, node_t *node, bspbrush_t *brush)
 {
 	node_t	*p;
 
 	for (p=node->parent ; p ; p=p->parent)
 	{
 		if (p->planenum == pnum)
-			Error ("Tried parent");
+		{
+			Error("Tried parent\n  Brush Bounds: %g %g %g -> %g %g %g\n",
+				brush->mins[0], brush->mins[1], brush->mins[2], brush->maxs[0], brush->maxs[1], brush->maxs[2]);
+		}
 	}
 }
 
@@ -721,13 +728,11 @@ side_t *SelectSplitSide (bspbrush_t *brushes, node_t *node)
 	int			s;
 	int			front, back, both, facing, splits;
 	int			bsplits;
-	int			bestsplits;
 	int			epsilonbrush;
-	qboolean	hintsplit;
+	qboolean	hintsplit, detailsplit;
 
 	bestside = NULL;
-	bestvalue = -99999;
-	bestsplits = 0;
+	bestvalue = -BOGUS_RANGE;
 
 	// the search order goes: visible-structural, visible-detail,
 	// nonvisible-structural, nonvisible-detail.
@@ -761,7 +766,7 @@ side_t *SelectSplitSide (bspbrush_t *brushes, node_t *node)
 				pnum = side->planenum;
 				pnum &= ~1;	// allways use positive facing plane
 
-				CheckPlaneAgainstParents (pnum, node);
+				CheckPlaneAgainstParents (pnum, node, brush);
 
 				if (!CheckPlaneAgainstVolume (pnum, node))
 					continue;	// would produce a tiny volume
@@ -775,7 +780,7 @@ side_t *SelectSplitSide (bspbrush_t *brushes, node_t *node)
 
 				for (test = brushes ; test ; test=test->next)
 				{
-					s = TestBrushToPlanenum (test, pnum, &bsplits, &hintsplit, &epsilonbrush);
+					s = TestBrushToPlanenum (test, pnum, &bsplits, &hintsplit, &detailsplit, &epsilonbrush);
 
 					splits += bsplits;
 					if (bsplits && (s&PSIDE_FACING) )
@@ -811,8 +816,8 @@ side_t *SelectSplitSide (bspbrush_t *brushes, node_t *node)
 				value -= epsilonbrush*1000;	// avoid!
 
 				// never split a hint side except with another hint
-				if (hintsplit && !(side->surf & SURF_HINT) )
-					value = -9999999;
+				if ((hintsplit && !(side->surf & SURF_HINT)) &&	(!detailsplit || (side->contents & CONTENTS_DETAIL)))
+					value = -BOGUS_RANGE;
 
 				// save off the side test so we don't need
 				// to recalculate it when we actually seperate
@@ -821,7 +826,6 @@ side_t *SelectSplitSide (bspbrush_t *brushes, node_t *node)
 				{
 					bestvalue = value;
 					bestside = side;
-					bestsplits = splits;
 					for (test = brushes ; test ; test=test->next)
 						test->side = test->testside;
 				}
@@ -931,12 +935,13 @@ void SplitBrush (bspbrush_t *brush, int planenum,
 				d_back = d;
 		}
 	}
-	if (d_front < 0.1) // PLANESIDE_EPSILON)
+	// If the brush only overaps the plane by .1 units, don't bother splitting it.
+	if (d_front < 0.1)
 	{	// only on back
 		*back = CopyBrush (brush);
 		return;
 	}
-	if (d_back > -0.1) // PLANESIDE_EPSILON)
+	if (d_back > -0.1)
 	{	// only on front
 		*front = CopyBrush (brush);
 		return;
@@ -1242,8 +1247,9 @@ tree_t *BrushBSP (bspbrush_t *brushlist, vec3_t mins, vec3_t maxs)
 		volume = BrushVolume (b);
 		if (volume < microvolume)
 		{
-			printf ("WARNING: entity %i, brush %i: microbrush\n",
-				b->original->entitynum, b->original->brushnum);
+			printf ("WARNING: entity %i, brush %i: microbrush\n  Bounds: %g %g %g -> %g %g %g\n",
+				b->original->entitynum, b->original->brushnum,
+				b->mins[0], b->mins[1], b->mins[2], b->maxs[0], b->maxs[1], b->maxs[2]);
 		}
 
 		for (i=0 ; i<b->numsides ; i++)

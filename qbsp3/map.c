@@ -70,11 +70,11 @@ int	PlaneTypeForNormal (vec3_t normal)
 	vec_t	ax, ay, az;
 	
 // NOTE: should these have an epsilon around 1.0?		
-	if (normal[0] == 1.0 || normal[0] == -1.0)
+	if (normal[0] >= 1.0 || normal[0] <= -1.0)
 		return PLANE_X;
-	if (normal[1] == 1.0 || normal[1] == -1.0)
+	if (normal[1] >= 1.0 || normal[1] <= -1.0)
 		return PLANE_Y;
-	if (normal[2] == 1.0 || normal[2] == -1.0)
+	if (normal[2] >= 1.0 || normal[2] <= -1.0)
 		return PLANE_Z;
 		
 	ax = fabs(normal[0]);
@@ -135,12 +135,12 @@ void	AddPlaneToHash (plane_t *p)
 CreateNewFloatPlane
 ================
 */
-int CreateNewFloatPlane (vec3_t normal, vec_t dist)
+int CreateNewFloatPlane (vec3_t normal, vec_t dist, int bnum)
 {
 	plane_t	*p, temp;
 
 	if (VectorLength(normal) < 0.5)
-		Error ("FloatPlane: bad normal");
+        Error ("FloatPlane: bad normal. Brush %i", bnum); //qb: add brushnum
 	// create a new plane
 	if (nummapplanes+2 > MAX_MAP_PLANES)
 		Error ("MAX_MAP_PLANES");
@@ -222,7 +222,7 @@ FindFloatPlane
 =============
 */
 #ifndef USE_HASHING
-int		FindFloatPlane (vec3_t normal, vec_t dist)
+int		FindFloatPlane (vec3_t normal, vec_t dist, int bnum)
 {
 	int		i;
 	plane_t	*p;
@@ -234,10 +234,10 @@ int		FindFloatPlane (vec3_t normal, vec_t dist)
 			return i;
 	}
 
-	return CreateNewFloatPlane (normal, dist);
+    return CreateNewFloatPlane (normal, dist, bnum);
 }
 #else
-int		FindFloatPlane (vec3_t normal, vec_t dist)
+int		FindFloatPlane (vec3_t normal, vec_t dist, int bnum)
 {
 	int		i;
 	plane_t	*p;
@@ -258,7 +258,7 @@ int		FindFloatPlane (vec3_t normal, vec_t dist)
 		}
 	}
 
-	return CreateNewFloatPlane (normal, dist);
+    return CreateNewFloatPlane (normal, dist, bnum);
 }
 #endif
 
@@ -267,7 +267,7 @@ int		FindFloatPlane (vec3_t normal, vec_t dist)
 PlaneFromPoints
 ================
 */
-int PlaneFromPoints (vec3_t p0, vec3_t p1, vec3_t p2)
+int PlaneFromPoints (vec3_t p0, vec3_t p1, vec3_t p2, mapbrush_t *b)
 {
 	vec3_t	t1, t2, normal;
 	vec_t	dist;
@@ -279,7 +279,7 @@ int PlaneFromPoints (vec3_t p0, vec3_t p1, vec3_t p2)
 
 	dist = DotProduct (p0, normal);
 
-	return FindFloatPlane (normal, dist);
+    return FindFloatPlane (normal, dist, b->brushnum);
 }
 
 
@@ -379,7 +379,7 @@ void AddBrushBevels (mapbrush_t *b)
 					dist = b->maxs[axis];
 				else
 					dist = -b->mins[axis];
-				s->planenum = FindFloatPlane (normal, dist);
+                s->planenum = FindFloatPlane (normal, dist, b->brushnum);
 				s->texinfo = b->original_sides[0].texinfo;
 				s->contents = b->original_sides[0].contents;
 				s->bevel = true;
@@ -469,7 +469,7 @@ void AddBrushBevels (mapbrush_t *b)
 						Error ("MAX_MAP_BRUSHSIDES");
 					nummapbrushsides++;
 					s2 = &b->original_sides[b->numsides];
-					s2->planenum = FindFloatPlane (normal, dist);
+                    s2->planenum = FindFloatPlane (normal, dist, b->brushnum);
 					s2->texinfo = b->original_sides[0].texinfo;
 					s2->contents = b->original_sides[0].contents;
 					s2->bevel = true;
@@ -524,10 +524,20 @@ qboolean MakeBrushWindings (mapbrush_t *ob)
 
 	for (i=0 ; i<3 ; i++)
 	{
-		if (ob->mins[0] < -4096 || ob->maxs[0] > 4096)
+		if (ob->mins[i] < -4096 || ob->maxs[i] > 4096)
+		{
 			printf ("entity %i, brush %i: bounds out of range\n", ob->entitynum, ob->brushnum);
-		if (ob->mins[0] > 4096 || ob->maxs[0] < -4096)
+			printf ("bounds: %g %g %g -> %g %g %g\n", 
+				ob->mins[0], ob->mins[1], ob->mins[2], ob->maxs[0], ob->maxs[1], ob->maxs[2]);
+			return true;
+		}
+		if (ob->mins[i] > 4096 || ob->maxs[i] < -4096)
+		{
 			printf ("entity %i, brush %i: no visible sides on brush\n", ob->entitynum, ob->brushnum);
+			printf ("bounds: %g %g %g -> %g %g %g\n", 
+				ob->mins[0], ob->mins[1], ob->mins[2], ob->maxs[0], ob->maxs[1], ob->maxs[2]);
+			return true;
+		}
 	}
 
 	return true;
@@ -575,7 +585,7 @@ void ParseBrush (entity_t *mapent)
 			if (i != 0)
 				GetToken (true);
 			if (strcmp (token, "(") )
-				Error ("parsing brush");
+				Error ("parsing brush %i, i+1");
 			
 			for (j=0 ; j<3 ; j++)
 			{
@@ -585,7 +595,7 @@ void ParseBrush (entity_t *mapent)
 			
 			GetToken (false);
 			if (strcmp (token, ")") )
-				Error ("parsing brush");
+				Error ("parsing brush %i, i+1");
 				
 		}
 
@@ -695,7 +705,7 @@ void ParseBrush (entity_t *mapent)
 		//
 		// find the plane number
 		//
-		planenum = PlaneFromPoints (planepts[0], planepts[1], planepts[2]);
+        planenum = PlaneFromPoints (planepts[0], planepts[1], planepts[2], b);
 		if (planenum == -1)
 		{
 			printf ("Entity %i, Brush %i: plane with no normal\n"
@@ -874,7 +884,6 @@ qboolean	ParseMapEntity (void)
 	epair_t		*e;
 	side_t		*s;
 	int			i, j;
-	int			startbrush, startsides;
 	vec_t		newdist;
 	mapbrush_t	*b;
 
@@ -887,8 +896,6 @@ qboolean	ParseMapEntity (void)
 	if (num_entities == MAX_MAP_ENTITIES)
 		Error ("num_entities == MAX_MAP_ENTITIES");
 
-	startbrush = nummapbrushes;
-	startsides = nummapbrushsides;
 
 	mapent = &entities[num_entities];
 	num_entities++;
@@ -934,7 +941,7 @@ qboolean	ParseMapEntity (void)
 				s = &b->original_sides[j];
 				newdist = mapplanes[s->planenum].dist -
 					DotProduct (mapplanes[s->planenum].normal, mapent->origin);
-				s->planenum = FindFloatPlane (mapplanes[s->planenum].normal, newdist);
+                s->planenum = FindFloatPlane (mapplanes[s->planenum].normal, newdist, b->brushnum);
 				s->texinfo = TexinfoForBrushTexture (&mapplanes[s->planenum],
 					&side_brushtextures[s-brushsides], mapent->origin);
 			}
@@ -1040,7 +1047,6 @@ void TestExpandBrushes (void)
 	mapbrush_t	*brush;
 	vec_t	dist;
 
-	printf ("writing %s\n", name);
 	f = fopen (name, "wb");
 	if (!f)
 		Error ("Can't write %s\b", name);
@@ -1060,9 +1066,9 @@ void TestExpandBrushes (void)
 
 			w = BaseWindingForPlane (mapplanes[s->planenum].normal, dist);
 
-			fprintf (f,"( %i %i %i ) ", (int)w->p[0][0], (int)w->p[0][1], (int)w->p[0][2]);
-			fprintf (f,"( %i %i %i ) ", (int)w->p[1][0], (int)w->p[1][1], (int)w->p[1][2]);
-			fprintf (f,"( %i %i %i ) ", (int)w->p[2][0], (int)w->p[2][1], (int)w->p[2][2]);
+			fprintf (f,"( %g %g %g ) ", w->p[0][0], w->p[0][1], w->p[0][2]);
+			fprintf (f,"( %g %g %g ) ", w->p[1][0], w->p[1][1], w->p[1][2]);
+			fprintf (f,"( %g %g %g ) ", w->p[2][0], w->p[2][1], w->p[2][2]);
 
 			fprintf (f, "%s 0 0 0 1 1\n", texinfo[s->texinfo].texture);
 			FreeWinding (w);

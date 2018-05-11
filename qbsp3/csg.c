@@ -261,16 +261,16 @@ bspbrush_t *MakeBspBrushList (int startbrush, int endbrush,
 	int			numsides;
 	int			vis;
 	vec3_t		normal;
-	float		dist;
+	vec_t		dist;  // jit (use higher precision, if enabled)
 
 	for (i=0 ; i<2 ; i++)
 	{
 		VectorClear (normal);
 		normal[i] = 1;
 		dist = clipmaxs[i];
-		maxplanenums[i] = FindFloatPlane (normal, dist);
+		maxplanenums[i] = FindFloatPlane (normal, dist, 0);
 		dist = clipmins[i];
-		minplanenums[i] = FindFloatPlane (normal, dist);
+		minplanenums[i] = FindFloatPlane (normal, dist, 0);
 	}
 
 	brushlist = NULL;
@@ -485,8 +485,8 @@ newlist:
 
 			sub = NULL;
 			sub2 = NULL;
-			c1 = 999999;
-			c2 = 999999;
+			c1 = BOGUS_RANGE;
+			c2 = BOGUS_RANGE;
 
 			if ( BrushGE (b2, b1) )
 			{

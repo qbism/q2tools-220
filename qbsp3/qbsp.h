@@ -183,6 +183,8 @@ extern	qboolean	nowater;
 extern	qboolean	noweld;
 extern	qboolean	noshare;
 extern	qboolean	notjunc;
+extern	qboolean	badnormal_check;
+extern float badnormal;
 
 extern	vec_t		microvolume;
 
@@ -191,7 +193,7 @@ extern	char		outbase[32];
 extern	char	source[1024];
 
 void 	LoadMapFile (char *filename);
-int		FindFloatPlane (vec3_t normal, vec_t dist);
+int		FindFloatPlane (vec3_t normal, vec_t dist, int bnum);
 
 //=============================================================================
 

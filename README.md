@@ -14,6 +14,13 @@ Fixes and enhancements:
 
 *   AA tools- Use any existing TGA replacement textures for radiosity.
 *   DWH- Fix for scaled textures using an origin brush.
-*   GDD tools (Geoffrey DeWan)- Load file from PAK.
-*   Jit (Jitspoe)- Microbrush and others.
+*   GDD tools (Geoffrey DeWan)
+    *   Load file from PAK.
+    *   Split microbrushes.
 
+*   jit (Jitspoe)
+    *   Fix microbrush deformation.
+    *   Re-enable PLANESIDE_EPSILON
+
+*   kmbsp3 (Knightmare bsp tool)
+    *   Caulk

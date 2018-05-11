@@ -436,7 +436,7 @@ void EmitBrushes (void)
 					dist = -b->mins[x];
 				else
 					dist = b->maxs[x];
-				planenum = FindFloatPlane (normal, dist);
+				planenum = FindFloatPlane (normal, dist, b->brushnum);
 				for (i=0 ; i<b->numsides ; i++)
 					if (b->original_sides[i].planenum == planenum)
 						break;

@@ -32,10 +32,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // undefine for dumb linear searches
 #define	USE_HASHING
 
-#define	INTEGRAL_EPSILON	0.01
+#define	INTEGRAL_EPSILON	0.01 // jit, was 0.01
 #define	POINT_EPSILON		0.5
-#define	OFF_EPSILON			0.5
+#define	OFF_EPSILON		0.5
 
+extern brush_texture_t    side_brushtextures[MAX_MAP_SIDES];  //qb: kmbsp3: caulk
 int	c_merge;
 int	c_subdivide;
 
@@ -102,6 +103,8 @@ unsigned HashVec (vec3_t vec)
 
 	return y*HASH_SIZE + x;
 }
+vec_t g_min_vertex_diff_sq = 99999.9f; // jitdebug
+vec3_t g_min_vertex_pos; // jitdebug
 
 #ifdef USE_HASHING
 /*
@@ -133,11 +136,19 @@ int	GetVertexnum (vec3_t in)
 
 	for (vnum=hashverts[h] ; vnum ; vnum=vertexchain[vnum])
 	{
+		vec3_t diff;
+		vec_t length_sq; // jit
 		p = dvertexes[vnum].point;
-		if ( fabs(p[0]-vert[0])<POINT_EPSILON
-		&& fabs(p[1]-vert[1])<POINT_EPSILON
-		&& fabs(p[2]-vert[2])<POINT_EPSILON )
+		VectorSubtract(p, vert, diff); // jit
+		length_sq = VectorLengthSq(diff); // jit
+
+		if (length_sq < POINT_EPSILON * POINT_EPSILON)
 			return vnum;
+		if (length_sq < g_min_vertex_diff_sq) // jitdebug
+		{
+			g_min_vertex_diff_sq = length_sq; // jitdebug
+			VectorCopy(p, g_min_vertex_pos);
+		}
 	}
 
 // emit a vertex
@@ -908,16 +919,7 @@ void SubdivideFace (node_t *node, face_t *f)
 				if (v > maxs)
 					maxs = v;
 			}
-#if 0
-			if (maxs - mins <= 0)
-				Error ("zero extents");
-#endif
-			if (axis == 2)
-			{	// allow double high walls
-				if (maxs - mins <= subdivide_size/* *2 */)
-					break;
-			}
-			else if (maxs - mins <= subdivide_size)
+			 if (maxs - mins <= subdivide_size)
 				break;
 
 		// split it
@@ -929,7 +931,8 @@ void SubdivideFace (node_t *node, face_t *f)
 
 			ClipWindingEpsilon (w, temp, dist, ON_EPSILON, &frontw, &backw);
 			if (!frontw || !backw)
-				Error ("SubdivideFace: didn't split the polygon");
+				Error ("SubdivideFace: didn't split the polygon\n  Node Bounds: %g %g %g -> %g %g %g\n",
+					node->mins[0], node->mins[1], node->mins[2], node->maxs[0], node->maxs[1], node->maxs[2]);
 
 			f->split[0] = NewFaceFromFace (f);
 			f->split[0]->w = frontw;
@@ -977,6 +980,9 @@ face_t *FaceFromPortal (portal_t *p, int pside)
 	side = p->side;
 	if (!side)
 		return NULL;	// portal does not bridge different visible contents
+	//qb: fixme? use flags for caulk/nodraw faces
+	if (   !strcmp(side_brushtextures[side-brushsides].name, "common/caulk"))
+		return NULL;
 
 	f = AllocFace ();
 
