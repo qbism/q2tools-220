@@ -613,7 +613,9 @@ void ParseBrush (entity_t *mapent)
 			GetToken (false);
 			td.shift[1] = atoi(token);
 
-		}else{		// new #mapversion
+        }
+        else 		// new #mapversion
+        {
 			GetToken (false);
 			if (strcmp (token, "["))
 			{
@@ -745,7 +747,9 @@ void ParseBrush (entity_t *mapent)
 		{
 			side->texinfo = TexinfoForBrushTexture (&mapplanes[planenum],
 				&td, vec3_origin);
-		}else{					// texinfo for #mapversion 220
+        }
+        else 					// texinfo for #mapversion 220
+        {
 			side->texinfo = TexinfoForBrushTexture_UV (&td, UVaxis);
 		}
 
@@ -755,7 +759,8 @@ void ParseBrush (entity_t *mapent)
 
 		nummapbrushsides++;
 		b->numsides++;
-	} while (1);
+    }
+    while (1);
 
 	// get the content for the entire brush
 	b->contents = BrushContents (b);
@@ -919,12 +924,14 @@ qboolean	ParseMapEntity (void)
 			e->next = mapent->epairs;
 			mapent->epairs = e;
 
-			if(!strcmp(e->key, "mapversion")) {		  // DarkEssence: set #mapversion
+            if(!strcmp(e->key, "mapversion"))  		  // DarkEssence: set #mapversion
+            {
 				g_nMapFileVersion = atoi(e->value);  //  or keep default value - 0
 				RemoveLastEpair ( mapent );
 			}
 		}
-	} while (1);
+    }
+    while (1);
 
 	GetVectorForKey (mapent, "origin", mapent->origin);
 

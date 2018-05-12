@@ -462,10 +462,6 @@ bspbrush_t *ChopBrushes (bspbrush_t *head)
 	qprintf ("---- ChopBrushes ----\n");
 	qprintf ("original brushes: %i\n", CountBrushList (head));
 
-#if 0
-	if (startbrush == 0)
-		WriteBrushList ("before.gl", head, false);
-#endif
 	keep = NULL;
 
 newlist:
@@ -555,12 +551,6 @@ newlist:
 	}
 
 	qprintf ("output brushes: %i\n", CountBrushList (keep));
-#if 0
-	{
-		WriteBrushList ("after.gl", keep, false);
-		WriteBrushMap ("after.map", keep);
-	}
-#endif
 	return keep;
 }
 
@@ -628,8 +618,5 @@ bspbrush_t *OptimizedBrushList (bspbrush_t *list)
 		newb->next = out;
 		out = newb;
 	}
-
-//	WriteBrushList ("vis.gl", out, true);
-
 	return out;
 }

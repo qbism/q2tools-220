@@ -54,36 +54,6 @@ void FindBrushInTree (node_t *node, int brushnum)
 //==================================================
 
 
-/*
-================
-WriteBrushList
-================
-*/
-void WriteBrushList (char *name, bspbrush_t *brush, qboolean onlyvis)
-{
-	int		i;
-	side_t	*s;
-	FILE	*f;
-
-	qprintf ("writing %s\n", name);
-	f = SafeOpenWrite (name);
-
-	for ( ; brush ; brush=brush->next)
-	{
-		for (i=0 ; i<brush->numsides ; i++)
-		{
-			s = &brush->sides[i];
-			if (!s->winding)
-				continue;
-			if (onlyvis && !s->visible)
-				continue;
-			OutputWinding (brush->sides[i].winding, f);
-		}
-	}
-
-	fclose (f);
-}
-
 void PrintBrush (bspbrush_t *brush)
 {
 	int		i;

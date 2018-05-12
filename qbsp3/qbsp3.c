@@ -90,7 +90,7 @@ node_t	*BlockTree (int xl, int yl, int xh, int yh)
 		normal[1] = 0;
 		normal[2] = 0;
 		dist = mid*1024;
-		node->planenum = FindFloatPlane (normal, dist);
+		node->planenum = FindFloatPlane (normal, dist, 0);
 		node->children[0] = BlockTree ( mid, yl, xh, yh);
 		node->children[1] = BlockTree ( xl, yl, mid-1, yh);
 	}
@@ -101,7 +101,7 @@ node_t	*BlockTree (int xl, int yl, int xh, int yh)
 		normal[1] = 1;
 		normal[2] = 0;
 		dist = mid*1024;
-		node->planenum = FindFloatPlane (normal, dist);
+		node->planenum = FindFloatPlane (normal, dist, 0);
 		node->children[0] = BlockTree ( xl, mid, xh, yh);
 		node->children[1] = BlockTree ( xl, yl, xh, mid-1);
 	}
@@ -250,8 +250,6 @@ void ProcessWorldModel (void)
 	}
 
 	FloodAreas (tree);
-	if (glview)
-		WriteGLView (tree, source);
 	MakeFaces (tree->headnode);
 	FixTjuncs (tree->headnode);
 
@@ -354,10 +352,6 @@ int main (int argc, char **argv)
 		{
 			printf ("origfix = true\n");
 			origfix = true;
-		}
-		else if (!strcmp(argv[i],"-glview"))
-		{
-			glview = true;
 		}
 		else if (!strcmp(argv[i], "-v"))
 		{

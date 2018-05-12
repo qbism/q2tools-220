@@ -32,7 +32,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // undefine for dumb linear searches
 #define	USE_HASHING
 
-#define	INTEGRAL_EPSILON	0.01 // jit, was 0.01
+#define	INTEGRAL_EPSILON	0.01
 #define	POINT_EPSILON		0.5
 #define	OFF_EPSILON		0.5
 

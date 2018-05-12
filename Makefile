@@ -78,7 +78,6 @@ qbsp3_srcs =	\
     qbsp3.c     \
 	brushbsp.c	\
 	faces.c		\
-	glfile.c	\
 	leakfile.c	\
 	map.c		\
 	portals.c	\
