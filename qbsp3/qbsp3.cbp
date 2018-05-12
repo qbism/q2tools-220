@@ -82,9 +82,6 @@
 		<Unit filename="faces.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="glfile.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="leakfile.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -32,6 +32,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <libc.h>
 #endif
 
+#ifdef __unix__
+#include <unistd.h>
+#endif
 #define PATHSEPERATOR   '/'
 
 // set these before calling CheckParm
@@ -868,7 +871,7 @@ void    StripExtension (char *path)
 	while (length > 0 && path[length] != '.')
 	{
 		length--;
-		if (path[length] == '/')
+		if (path[length] == '/' || path[length] == '\\')
 			return;		// no extension
 	}
 	if (length)

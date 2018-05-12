@@ -39,13 +39,11 @@ qboolean	noweld = false;
 qboolean	noshare = false;
 qboolean	nosubdiv = false;
 qboolean	notjunc = false;
-qboolean	noopt = false;
 qboolean	leaktest = false;
-qboolean	verboseentities = false;
 qboolean	badnormal_check = false;
 qboolean	origfix = false;
 
-char		outbase[32];
+char		outbase[32] = "";
 
 int			block_xl = -8, block_xh = 7, block_yl = -8, block_yh = 7;
 
@@ -241,7 +239,7 @@ void ProcessWorldModel (void)
 		}
 
 		MarkVisibleSides (tree, brush_start, brush_end);
-		if (noopt || leaked)
+		if (leaked)
 			break;
 		if (!optimize)
 		{
@@ -318,9 +316,6 @@ void ProcessModels (void)
 		else
 			ProcessSubModel ();
 		EndModel ();
-
-		if (!verboseentities)
-			verbose = false;	// don't bother printing submodels
 	}
 
 	EndBSPFile ();
@@ -336,19 +331,15 @@ int main (int argc, char **argv)
 {
 	int		i;
 	double		start, end;
-	char		path[1024];
+	char		path[1024] = "";
+
 
 	printf( "BSP Compiler (build " __DATE__ ")\n" );
 	printf( "----------- qbsp3 -----------\n" );
 
 	for (i=1 ; i<argc ; i++)
 	{
-		if (!strcmp(argv[i],"-threads"))
-		{
-			numthreads = atoi (argv[i+1]);
-			i++;
-		}
-		else if (!strcmp(argv[i], "-origfix"))
+		if (!strcmp(argv[i], "-origfix"))
 		{
 			printf ("origfix = true\n");
 			origfix = true;
@@ -357,6 +348,20 @@ int main (int argc, char **argv)
 		{
 			printf ("verbose = true\n");
 			verbose = true;
+		}
+		else if (!strcmp(argv[i], "-help"))
+		{
+            printf ("qbsp3 supporting v38 and v220 map formats.\n"
+		"usage: qbsp3 [options] mapfile\n\n"
+                "    -help                 -nomerge           -noprune\n"
+                "    -block # #            -nosubdiv          -notjunc\n"
+                "    -blocks # # # #       -nocsg             -nowater\n"
+                "    -chop #               -nodetail          -noweld\n"
+                "    -leaktest             -nofill            -onlyents\n"
+                "    -fulldetail           -noshare           -tmpout\n"
+                "    -micro #              -v (verbose output)\n\n");
+
+			exit(1);
 		}
 		else if (!strcmp(argv[i], "-noweld"))
 		{
@@ -382,11 +387,6 @@ int main (int argc, char **argv)
 		{
 			printf ("nowater = true\n");
 			nowater = true;
-		}
-		else if (!strcmp(argv[i], "-noopt"))
-		{
-			printf ("noopt = true\n");
-			noopt = true;
 		}
 		else if (!strcmp(argv[i], "-noprune"))
 		{
@@ -434,11 +434,6 @@ int main (int argc, char **argv)
 			printf ("leaktest = true\n");
 			leaktest = true;
 		}
-		else if (!strcmp(argv[i], "-verboseentities"))
-		{
-			printf ("verboseentities = true\n");
-			verboseentities = true;
-		}
 		else if (!strcmp(argv[i], "-chop"))
 		{
 			subdivide_size = atof(argv[i+1]);
@@ -473,13 +468,17 @@ int main (int argc, char **argv)
 	}
 
 	if (i != argc - 1)
-		Error ("usage: qbsp3 [options] mapfile");
+	{
+		    Error ("usage: qbsp3 [options] mapfile\n\n"
+                "    qbsp3 -help for option list\n");
+	}
 
 	start = I_FloatTime ();
 
 	ThreadSetDefault ();
 numthreads = 1;		// multiple threads aren't helping...
-	SetQdirFromPath (argv[i]);
+
+		SetQdirFromPath(argv[i]);
 
 	strcpy (source, ExpandArg (argv[i]));
 	StripExtension (source);
