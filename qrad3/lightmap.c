@@ -1165,7 +1165,7 @@ void FinalLightFace (int facenum)
 	int			i, j, k, st;
 	vec3_t		lb;
 	patch_t		*patch;
-	triangulation_t	*trian;
+	triangulation_t	*trian = NULL; //mxd. "Potentially uninitialized local pointer variable" error in VS2017 if uninitialized
 	facelight_t	*fl;
 	float		minlight;
 	float		max, newmax;

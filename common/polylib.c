@@ -32,7 +32,7 @@ int	c_peak_windings;
 int	c_winding_allocs;
 int	c_winding_points;
 
-#define	BOGUS_RANGE	8192
+//#define	BOGUS_RANGE	8192 //mxd. Already defined in mathlib.h
 
 void pw(winding_t *w)
 {
