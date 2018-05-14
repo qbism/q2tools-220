@@ -17,10 +17,12 @@ Fixes and enhancements:
     *   Spotlight center to surface point attenuation
 
 *   DWH- Fix for scaled textures using an origin brush.
+
 *   GDD tools (Geoffrey DeWan)
     *   Load file from PAK
     *   Split microbrushes
     *   Radiosity texture checking
+    *   Update thread handling
 
 *   jit (Jitspoe)
     *   Fix microbrush deformation.

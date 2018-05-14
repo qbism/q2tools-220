@@ -407,11 +407,9 @@ byte AveragePixels (int count)
 	int		pix;
 	int		bestcolor;
 	byte	*pal;
-	int		fullbright;
 
 	vis = 0;
 	r = g = b = 0;
-	fullbright = 0;
 	for (i=0 ; i<count ; i++)
 	{
 		pix = pixdata[i];
@@ -647,7 +645,7 @@ void Cmd_Mip (void)
 //
 // dword align the size
 //
-	while ((int)lump_p&3)
+	while ((intptr_t)lump_p&3)
 		*lump_p++ = 0;
 
 //
@@ -688,7 +686,7 @@ void Cmd_Mipdir (void)
 	GetToken (false);
 	strcpy (mip_prefix, token);
 	// create the directory if needed
-	sprintf (filename, "%stextures", gamedir, mip_prefix);
+	sprintf (filename, "%stextures", gamedir);
 	Q_mkdir (filename);
 	sprintf (filename, "%stextures/%s", gamedir, mip_prefix);
 	Q_mkdir (filename);

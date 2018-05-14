@@ -1184,7 +1184,7 @@ void Cmd_Video (void)
 	// build the dictionary
 	for ( frame=startframe ;  ; frame++)
 	{
-		printf ("counting ", frame);
+		printf ("counting %i\n", frame);
 		in = LoadFrame (base, frame, digits, &palette);
 		if (!in.data)
 			break;
@@ -1202,7 +1202,7 @@ void Cmd_Video (void)
 	// compress it with the dictionary
 	for (frame=startframe ;  ; frame++)
 	{
-		printf ("packing ", frame);
+		printf ("packing %i\n", frame);
 		in = LoadFrame (base, frame, digits, &palette);
 		if (!in.data)
 			break;

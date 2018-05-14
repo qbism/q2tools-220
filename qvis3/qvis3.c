@@ -81,7 +81,7 @@ winding_t *NewWinding (int points)
 	if (points > MAX_POINTS_ON_WINDING)
 		Error ("NewWinding: %i points", points);
 
-	size = (int)((winding_t *)0)->points[points];
+	size = (intptr_t)((winding_t *)0)->points[points];
 	w = malloc (size);
 	memset (w, 0, size);
 
@@ -526,7 +526,6 @@ int main (int argc, char **argv)
 	char		source[1024];
 	char		name[1024];
 	int		i;
-	double		start, end;
 
 	printf( "VIS Compiler (build " __DATE__ ")\n" );
 	printf( "----------- qvis3 -----------\n" );
@@ -573,8 +572,6 @@ int main (int argc, char **argv)
 	if (i != argc - 1)
 		Error ("usage: vis [-threads #] [-level 0-4] [-fast] [-v] bspfile");
 
-	start = I_FloatTime ();
-
 	ThreadSetDefault ();
 
 	SetQdirFromPath (argv[i]);
@@ -604,8 +601,6 @@ int main (int argc, char **argv)
 
 	sprintf (name, "%s%s", outbase, source);
 	WriteBSPFile (name);
-
-	end = I_FloatTime ();
 
 	printf( "\n--------- end qvis3 ---------\n" );
 

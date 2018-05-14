@@ -138,11 +138,10 @@ void WriteModelFile (FILE *modelouthandle)
     daliasframe_t	*out;
     byte			buffer[MAX_VERTS*4+128];
     float			v;
-    int				c_on, c_off;
 
     model.ident = IDALIASHEADER;
     model.version = ALIAS_VERSION;
-    model.framesize = (int)&((daliasframe_t *)0)->verts[model.num_xyz];
+    model.framesize = (intptr_t)&((daliasframe_t *)0)->verts[model.num_xyz];
     model.num_glcmds = numcommands;
     model.ofs_skins = sizeof(dmdl_t);
     model.ofs_st = model.ofs_skins + model.num_skins * MAX_SKINNAME;
@@ -167,7 +166,7 @@ void WriteModelFile (FILE *modelouthandle)
     //
     // write out the texture coordinates
     //
-    c_on = c_off = 0;
+
     for (i=0 ; i<model.num_st ; i++)
     {
         base_st[i].s = LittleShort (base_st[i].s);
@@ -504,7 +503,7 @@ void BuildGlCmds (void)
     int		i, j, k;
     int		startv;
     float	s, t;
-    int		len, bestlen, besttype;
+    int		len, bestlen, besttype = 0;
     int		best_xyz[1024];
     int		best_st[1024];
     int		best_tris[1024];
