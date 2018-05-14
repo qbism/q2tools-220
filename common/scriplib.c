@@ -47,6 +47,24 @@ char    token[MAXTOKEN];
 qboolean endofscript;
 qboolean tokenready;                     // only true if UnGetToken was just called
 
+//qb: brush info from AA tools
+char brush_info[2000] = "No brushes processed yet. Look near beginning of map";
+static int brush_begin = 1;
+
+void MarkBrushBegin()
+{
+	brush_begin = 1;
+}
+
+void TestBrushBegin()
+{
+	if(!brush_begin)
+		return;
+
+	brush_begin = 0;
+
+	sprintf(brush_info, "Line %d, file %s", script->line, script->filename);
+}
 /*
 ==============
 AddScriptToStack
@@ -171,6 +189,7 @@ qboolean GetToken (qboolean crossline)
 	if (script->script_p >= script->end_p)
 		return EndOfScript (crossline);
 
+	TestBrushBegin();
 //
 // skip space
 //
@@ -199,6 +218,7 @@ skipspace:
 		while (*script->script_p++ != '\n')
 			if (script->script_p >= script->end_p)
 				return EndOfScript (crossline);
+			scriptline = script->line++;
 		goto skipspace;
 	}
 
@@ -210,6 +230,8 @@ skipspace:
 		script->script_p+=2;
 		while (script->script_p[0] != '*' && script->script_p[1] != '/')
 		{
+			if(script->script_p[0] == '\n')
+				scriptline = script->line++;
 			script->script_p++;
 			if (script->script_p >= script->end_p)
 				return EndOfScript (crossline);

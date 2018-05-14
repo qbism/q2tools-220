@@ -22,9 +22,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define __MATHLIB__
 
 #define MATH_INLINE
+
 // mathlib.h
 
 #include <math.h>
+
 // big enough without being so big we get major floating point errors.
 #define	BOGUS_RANGE	((1<<14)<<1)
 
@@ -45,9 +47,10 @@ typedef vec_t vec3_t[3];
 #define	SIDE_CROSS		-2
 
 #define	Q_PI	3.14159265358979323846
+
 // angle indexes
 #define	PITCH				0		// up / down
-#define	YAW					1		// left / right
+#define	YAW				1		// left / right
 #define	ROLL				2		// fall over
 
 extern vec3_t vec3_origin;
@@ -78,6 +81,7 @@ extern vec3_t vec3_origin;
 
 #ifndef MATH_INLINE
 qboolean VectorCompare (vec3_t v1, vec3_t v2);
+
 vec_t _DotProduct (vec3_t v1, vec3_t v2);
 void _VectorSubtract (vec3_t va, vec3_t vb, vec3_t out);
 void _VectorAdd (vec3_t va, vec3_t vb, vec3_t out);
@@ -91,6 +95,7 @@ vec_t ColorNormalize (vec3_t in, vec3_t out);
 
 void ClearBounds (vec3_t mins, vec3_t maxs);
 void AddPointToBounds (vec3_t v, vec3_t mins, vec3_t maxs);
+
 qboolean RayPlaneIntersect(vec3_t p_n, vec_t p_d, vec3_t l_o, vec3_t l_n,
     vec3_t res);
 

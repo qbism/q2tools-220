@@ -108,8 +108,6 @@ int		BigLong (int l);
 int		LittleLong (int l);
 float	BigFloat (float l);
 float	LittleFloat (float l);
-
-
 char *COM_Parse (char *data);
 
 extern	char		com_token[1024];
@@ -141,8 +139,6 @@ typedef struct
 	byte	*data;
 	int		count;
 } cblock_t;
-
-void Q_LogTimeElapsed( double elapsed_time );
 
 
 #endif

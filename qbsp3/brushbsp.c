@@ -25,16 +25,12 @@ int		c_nodes;
 int		c_nonvis;
 int		c_active_brushes;
 
-// if a brush just barely pokes onto the other side,
-// let it slide by without chopping
-#define	PLANESIDE_EPSILON	0.001
-//0.1
-
 #define	PSIDE_FRONT			1
 #define	PSIDE_BACK			2
 #define	PSIDE_BOTH			(PSIDE_FRONT|PSIDE_BACK)
 #define	PSIDE_FACING		4
 
+int BrushMostlyOnSide (bspbrush_t *brush, plane_t *plane); //qb: GDD tools
 
 void FindBrushInTree (node_t *node, int brushnum)
 {
@@ -52,6 +48,7 @@ void FindBrushInTree (node_t *node, int brushnum)
 }
 
 //==================================================
+
 
 
 void PrintBrush (bspbrush_t *brush)
@@ -114,7 +111,7 @@ void CreateBrushWindings (bspbrush_t *brush)
 			if (brush->sides[j].bevel)
 				continue;
 			plane = &mapplanes[brush->sides[j].planenum^1];
-			ChopWindingInPlace (&w, plane->normal, plane->dist, 0); //CLIP_EPSILON);
+			ChopWindingInPlace (&w, plane->normal, plane->dist, 0);
 		}
 
 		side->winding = w;
@@ -511,9 +508,9 @@ int	TestBrushToPlanenum (bspbrush_t *brush, int planenum,
 			if (d < d_back)
 				d_back = d;
 
-			if (d > 0.1) // PLANESIDE_EPSILON)
+			if (d > ON_EPSILON) //qb: was 0.1
 				front = 1;
-			if (d < -0.1) // PLANESIDE_EPSILON)
+			if (d < -ON_EPSILON) //qb: was -0.1
 				back = 1;
 		}
 		if (front && back)
@@ -648,7 +645,7 @@ void LeafNode (node_t *node, bspbrush_t *brushes)
 //============================================================
 
 //qb: GDD tools: brush info on error
-void CheckPlaneAgainstParents (int pnum, node_t *node, bspbrush_t *brush)
+void CheckPlaneAgainstParents (int pnum, node_t *node, bspbrush_t	*brush)
 {
 	node_t	*p;
 
@@ -906,12 +903,12 @@ void SplitBrush (bspbrush_t *brush, int planenum,
 		}
 	}
 	// If the brush only overaps the plane by .1 units, don't bother splitting it.
-	if (d_front < 0.1)
+	if (d_front < ON_EPSILON) //qb: was 0.1
 	{	// only on back
 		*back = CopyBrush (brush);
 		return;
 	}
-	if (d_back > -0.1)
+	if (d_back > -ON_EPSILON) //qb: was -0.1
 	{	// only on front
 		*front = CopyBrush (brush);
 		return;
@@ -962,7 +959,7 @@ void SplitBrush (bspbrush_t *brush, int planenum,
 		if (!w)
 			continue;
 		ClipWindingEpsilon (w, plane->normal, plane->dist,
-			0 /*PLANESIDE_EPSILON*/, &cw[0], &cw[1]);
+			0 /*PLANESIDE_EPSILON*/, &cw[0], &cw[1]);  //qb:reenabling leaves gaps between some planes
 		for (j=0 ; j<2 ; j++)
 		{
 			if (!cw[j])
@@ -1050,7 +1047,7 @@ void SplitBrush (bspbrush_t *brush, int planenum,
 	for (i=0 ; i<2 ; i++)
 	{
 		v1 = BrushVolume (b[i]);
-		if (v1 < 1.0)
+			if (v1 < microvolume) // jit - allow for smaller brush volumes
 		{
 			FreeBrush (b[i]);
 			b[i] = NULL;

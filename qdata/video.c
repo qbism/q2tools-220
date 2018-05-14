@@ -497,7 +497,7 @@ cblock_t Huffman (cblock_t in)
 	unsigned	bits;
 	byte		*out_p;
 	cblock_t	out;
-	int			max, maxchar;
+	int			max;
 
 	// count
 	memset (hnodes, 0, sizeof(hnodes));
@@ -506,13 +506,11 @@ cblock_t Huffman (cblock_t in)
 
 	// normalize counts
 	max = 0;
-	maxchar = 0;
 	for (i=0 ; i<256 ; i++)
 	{
 		if (hnodes[i].count > max)
 		{
 			max = hnodes[i].count;
-			maxchar = i;
 		}
 	}
 	if (max == 0)

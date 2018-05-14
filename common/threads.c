@@ -206,7 +206,7 @@ OSF1
 ===================================================================
 */
 
-#ifdef __osf__
+#ifdef USE_PTHREADS  //qb: thread changes from AAtools
 #define	USED
 
 int		numthreads = 4;
@@ -246,7 +246,7 @@ void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int))
 {
 	int		i;
 	pthread_t	work_threads[MAX_THREADS];
-	pthread_addr_t	status;
+	void		*status;
 	pthread_attr_t	attrib;
 	pthread_mutexattr_t	mattrib;
 	int		start, end;
@@ -264,23 +264,21 @@ void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int))
 	if (!my_mutex)
 	{
 		my_mutex = malloc (sizeof(*my_mutex));
-		if (pthread_mutexattr_create (&mattrib) == -1)
+		if (pthread_mutexattr_init (&mattrib) == -1)
 			Error ("pthread_mutex_attr_create failed");
-		if (pthread_mutexattr_setkind_np (&mattrib, MUTEX_FAST_NP) == -1)
-			Error ("pthread_mutexattr_setkind_np failed");
-		if (pthread_mutex_init (my_mutex, mattrib) == -1)
+		if (pthread_mutex_init (my_mutex, &mattrib) == -1)
 			Error ("pthread_mutex_init failed");
 	}
 
-	if (pthread_attr_create (&attrib) == -1)
+	if (pthread_attr_init (&attrib) == -1)
 		Error ("pthread_attr_create failed");
-	if (pthread_attr_setstacksize (&attrib, 0x100000) == -1)
+	if (pthread_attr_setstacksize (&attrib, 0x1000000) == -1)
 		Error ("pthread_attr_setstacksize failed");
 
 	for (i=0 ; i<numthreads ; i++)
 	{
-  		if (pthread_create(&work_threads[i], attrib
-		, (pthread_startroutine_t)func, (pthread_addr_t)i) == -1)
+  		if (pthread_create(&work_threads[i], &attrib
+		, (void *)func, &i) == -1)
 			Error ("pthread_create failed");
 	}
 

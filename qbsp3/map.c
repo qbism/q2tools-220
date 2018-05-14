@@ -49,7 +49,7 @@ int		c_areaportals;
 
 int		c_clipbrushes;
 
-int g_nMapFileVersion = 0;		// DarkEssence: variable for check #mapversion 
+int g_nMapFileVersion = 0;		// DarkEssence: variable for check #mapversion
 								// #mapversion in search to find in code
 /*
 =============================================================================
@@ -68,19 +68,19 @@ PlaneTypeForNormal
 int	PlaneTypeForNormal (vec3_t normal)
 {
 	vec_t	ax, ay, az;
-	
-// NOTE: should these have an epsilon around 1.0?		
+
+// NOTE: should these have an epsilon around 1.0?
 	if (normal[0] >= 1.0 || normal[0] <= -1.0)
 		return PLANE_X;
 	if (normal[1] >= 1.0 || normal[1] <= -1.0)
 		return PLANE_Y;
 	if (normal[2] >= 1.0 || normal[2] <= -1.0)
 		return PLANE_Z;
-		
+
 	ax = fabs(normal[0]);
 	ay = fabs(normal[1]);
 	az = fabs(normal[2]);
-	
+
 	if (ax >= ay && ax >= az)
 		return PLANE_ANYX;
 	if (ay >= ax && ay >= az)
@@ -509,7 +509,7 @@ qboolean MakeBrushWindings (mapbrush_t *ob)
 			if (ob->original_sides[j].bevel)
 				continue;
 			plane = &mapplanes[ob->original_sides[j].planenum^1];
-			ChopWindingInPlace (&w, plane->normal, plane->dist, 0); //CLIP_EPSILON);
+			ChopWindingInPlace (&w, plane->normal, plane->dist, 0);
 		}
 
 		side = &ob->original_sides[i];
@@ -527,14 +527,14 @@ qboolean MakeBrushWindings (mapbrush_t *ob)
 		if (ob->mins[i] < -4096 || ob->maxs[i] > 4096)
 		{
 			printf ("entity %i, brush %i: bounds out of range\n", ob->entitynum, ob->brushnum);
-			printf ("bounds: %g %g %g -> %g %g %g\n", 
+			printf ("bounds: %g %g %g -> %g %g %g\n",
 				ob->mins[0], ob->mins[1], ob->mins[2], ob->maxs[0], ob->maxs[1], ob->maxs[2]);
 			return true;
 		}
 		if (ob->mins[i] > 4096 || ob->maxs[i] < -4096)
 		{
 			printf ("entity %i, brush %i: no visible sides on brush\n", ob->entitynum, ob->brushnum);
-			printf ("bounds: %g %g %g -> %g %g %g\n", 
+			printf ("bounds: %g %g %g -> %g %g %g\n",
 				ob->mins[0], ob->mins[1], ob->mins[2], ob->maxs[0], ob->maxs[1], ob->maxs[2]);
 			return true;
 		}
@@ -586,17 +586,17 @@ void ParseBrush (entity_t *mapent)
 				GetToken (true);
 			if (strcmp (token, "(") )
 				Error ("parsing brush %i, i+1");
-			
+
 			for (j=0 ; j<3 ; j++)
 			{
 				GetToken (false);
 				planepts[i][j] = atof(token);
 			}
-			
+
 			GetToken (false);
 			if (strcmp (token, ")") )
 				Error ("parsing brush %i, i+1");
-				
+
 		}
 
 		//
@@ -662,7 +662,7 @@ void ParseBrush (entity_t *mapent)
 		}
 
 		GetToken(false);
-		td.rotate = atoi(token);	
+		td.rotate = atoi(token);
 		GetToken (false);
 		td.scale[0] = atof(token);
 		GetToken (false);
@@ -692,7 +692,7 @@ void ParseBrush (entity_t *mapent)
 			side->contents |= CONTENTS_DETAIL;
 		if (fulldetail)
 			side->contents &= ~CONTENTS_DETAIL;
-		if (!(side->contents & ((LAST_VISIBLE_CONTENTS-1) 
+		if (!(side->contents & ((LAST_VISIBLE_CONTENTS-1)
 			| CONTENTS_PLAYERCLIP|CONTENTS_MONSTERCLIP|CONTENTS_MIST)  ) )
 			side->contents |= CONTENTS_SOLID;
 
@@ -765,7 +765,7 @@ void ParseBrush (entity_t *mapent)
 	// get the content for the entire brush
 	b->contents = BrushContents (b);
 
-	// allow detail brushes to be removed 
+	// allow detail brushes to be removed
 	if (nodetail && (b->contents & CONTENTS_DETAIL) )
 	{
 		b->numsides = 0;
@@ -827,7 +827,7 @@ void ParseBrush (entity_t *mapent)
 	AddBrushBevels (b);
 
 	nummapbrushes++;
-	mapent->numbrushes++;		
+	mapent->numbrushes++;
 }
 
 /*
@@ -897,10 +897,9 @@ qboolean	ParseMapEntity (void)
 
 	if (strcmp (token, "{") )
 		Error ("ParseEntity: { not found");
-	
+
 	if (num_entities == MAX_MAP_ENTITIES)
 		Error ("num_entities == MAX_MAP_ENTITIES");
-
 
 	mapent = &entities[num_entities];
 	num_entities++;
@@ -996,7 +995,7 @@ LoadMapFile
 ================
 */
 void LoadMapFile (char *filename)
-{		
+{
 	int		i;
 
 	qprintf ("--- LoadMapFile ---\n");
@@ -1005,7 +1004,7 @@ void LoadMapFile (char *filename)
 
 	nummapbrushsides = 0;
 	num_entities = 0;
-	
+
 	while (ParseMapEntity ())
 	{
 	}

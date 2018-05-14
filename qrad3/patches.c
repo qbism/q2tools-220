@@ -22,6 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 vec3_t	texture_reflectivity[MAX_MAP_TEXINFO];
 
+int cluster_neg_one = 0;
 /*
 ===================================================================
 
@@ -37,16 +38,24 @@ CalcTextureReflectivity
 */
 void CalcTextureReflectivity (void)
 {
-	int				i;
-	int				j, k, texels;
-	int				color[3];
-	int				texel;
+	int i, j, k, count;
+	int texels, texel;
+	qboolean wal_tex;
+	float color[3], cur_color[3], tex_a, a;
+	char path[1024];
+	float r, c;
+	byte* pbuffer;
+	byte* ptexel;
 	byte			*palette;
-	char			path[1024];
-	float			r, scale;
 	miptex_t		*mt;
+	float *fbuffer, *ftexel;
+	int width, height;
 
-	sprintf(path, "%spics/colormap.pcx", moddir);  //qb: was gamedir.  AAtools 
+	// for TGA RGBA texture images
+
+	wal_tex = false;
+
+	sprintf(path, "%spics/colormap.pcx", moddir);  //qb: was gamedir
 
 	// get the game palette
 	Load256Image (path, NULL, &palette, NULL, NULL);
@@ -58,28 +67,61 @@ void CalcTextureReflectivity (void)
 
 	for (i=0 ; i<numtexinfo ; i++)
 	{
-		// see if an earlier texinfo allready got the value
+		// default
+		texture_reflectivity[i][0] = 0.5f;
+		texture_reflectivity[i][1] = 0.5f;
+		texture_reflectivity[i][2] = 0.5f;
+
+		// see if an earlier texinfo already got the value
 		for (j=0 ; j<i ; j++)
 		{
 			if (!strcmp (texinfo[i].texture, texinfo[j].texture))
 			{
 				VectorCopy (texture_reflectivity[j], texture_reflectivity[i]);
+				texture_data[i] = texture_data[j];
+				texture_sizes[i][0] = texture_sizes[j][0];
+				texture_sizes[i][1] = texture_sizes[j][1];
 				break;
 			}
 		}
 		if (j != i)
 			continue;
 
-		// load the wal file
-		sprintf (path, "%stextures/%s.wal", moddir, texinfo[i].texture);
-		if (TryLoadFile (path, (void **)&mt, false) == -1)
+		// buffer is RGBA  (A  set to 255 for 24 bit format)
+		// looks in arena/textures and then data1/textures
+		sprintf( path, "%stextures/%s.tga", moddir, texinfo[i].texture );
+		if ( FileExists( path ) ) // LoadTGA expects file to exist
 		{
-			printf ("Couldn't load %s\n", path);
-			texture_reflectivity[i][0] = 0.5;
-			texture_reflectivity[i][1] = 0.5;
-			texture_reflectivity[i][2] = 0.5;
-			continue;
+			LoadTGA( path, &pbuffer, &width, &height ); // load rgba data
+			qprintf("load %s\n", path );
 		}
+		else
+		{
+			sprintf( path, "%stextures/%s.tga", moddir, texinfo[i].texture );
+			if ( FileExists( path ) )
+			{
+				LoadTGA( path, &pbuffer, &width, &height ); // load rgba data
+				qprintf("load %s\n", path );
+			}
+			else
+			{
+				// look for wal file
+		sprintf (path, "%stextures/%s.wal", moddir, texinfo[i].texture);
+				qprintf("attempting %s\n", path);
+
+				// load the miptex to get the flags and values
+				if ( FileExists( path ) )  //qb: linux segfault if not exist
+					if (TryLoadFile(path, (void **)&mt, false) != -1)
+						wal_tex = true;
+			}
+		}
+
+		//
+		// Calculate the "average color" for the texture
+		//
+
+		if (wal_tex)
+		{
 		texels = LittleLong(mt->width)*LittleLong(mt->height);
 		color[0] = color[1] = color[2] = 0;
 
@@ -88,27 +130,78 @@ void CalcTextureReflectivity (void)
 			texel = ((byte *)mt)[LittleLong(mt->offsets[0]) + j];
 			for (k=0 ; k<3 ; k++)
 				color[k] += palette[texel*3+k];
+			}
+		}
+		else
+		{
+			texels =  width * height;
+			if (texels <= 0)
+			{
+				qprintf("tex %i (%s) no rgba data (file broken?)\n", i, path );
+				continue; // empty texture, possible bad file
 		}
 
-		for (j=0 ; j<3 ; j++)
+			color[0] = color[1] = color[2] = 0.0f;
+			ptexel = pbuffer;
+			fbuffer = malloc (texels*4*sizeof(float));
+			ftexel = fbuffer;
+			for ( count = texels;  count--; )
 		{
-			r = color[j]/texels/255.0;
+				cur_color[0] = (float)(*ptexel++); // r
+				cur_color[1] = (float)(*ptexel++); // g
+				cur_color[2] = (float)(*ptexel++); // b
+				tex_a = (float)(*ptexel++);
+				if (texinfo[i].flags & (SURF_WARP|SURF_NODRAW))
+				{
+					a = 0.0;
+		}
+				else if ((texinfo[i].flags & SURF_TRANS33) && (texinfo[i].flags & SURF_TRANS66))
+		{
+					a = tex_a/511.0;
+		}
+				else if (texinfo[i].flags & SURF_TRANS33)
+				{
+					a = tex_a/765.0;
+				}
+				else if (texinfo[i].flags & SURF_TRANS66)
+				{
+					a = tex_a/382.5;
+				}
+				else
+				{
+					a = 1.0;
+				}
+
+				for (j = 0; j < 3; j++)
+				{
+					*ftexel++ = cur_color[j]/255.0;
+					color[j] += cur_color[j]*a;
+				}
+				*ftexel++ = a;
+			}
+
+			//never freed but we'll need it up until the end
+			texture_data[i] = fbuffer;
+			free (pbuffer);
+		}
+		for( j = 0; j < 3; j++ )
+		{ // average RGB for the texture to 0.0..1.0 range
+			r = color[j] / (float)texels / 255.0f;
 			texture_reflectivity[i][j] = r;
 		}
-		// scale the reflectivity up, because the textures are
-		// so dim
-		scale = ColorNormalize (texture_reflectivity[i],
-			texture_reflectivity[i]);
-		if (scale < 0.5)
-		{
-			scale *= 2;
-			VectorScale (texture_reflectivity[i], scale, texture_reflectivity[i]);
-		}
-#if 0
-texture_reflectivity[i][0] = 0.5;
-texture_reflectivity[i][1] = 0.5;
-texture_reflectivity[i][2] = 0.5;
-#endif
+
+		// desaturate reflectivity here (TODO: check that avg. rgb makes sense)
+		r = 1.0f - desaturate;
+		c = ((texture_reflectivity[i][0]
+		                              + texture_reflectivity[i][1]
+		                                                        + texture_reflectivity[i][2]) / 3.0f) * desaturate;
+		texture_reflectivity[i][0] = (texture_reflectivity[i][0] * r) + c;
+		texture_reflectivity[i][1] = (texture_reflectivity[i][1] * r) + c;
+		texture_reflectivity[i][2] = (texture_reflectivity[i][2] * r) + c;
+
+		qprintf("tex %i (%s) avg rgb [ %f, %f, %f ]\n",
+				i, path, texture_reflectivity[i][0],
+				texture_reflectivity[i][1],texture_reflectivity[i][2]);
 	}
 }
 
@@ -168,6 +261,10 @@ void BaseLightForFace (dface_t *f, vec3_t color)
 	tx = &texinfo[f->texinfo];
 	if (!(tx->flags & SURF_LIGHT) || tx->value == 0)
 	{
+		if(tx->flags & SURF_LIGHT)
+		{
+			printf("Surface light has 0 intensity.\n");
+		}
 		VectorClear (color);
 		return;
 	}
@@ -198,7 +295,7 @@ void MakePatchForFace (int fn, winding_t *w)
 	patch_t		*patch;
 	dplane_t	*pl;
 	int			i;
-	vec3_t		color;
+	vec3_t		color = {1.0f,1.0f,1.0f};
 	dleaf_t		*leaf;
 
 	f = &dfaces[fn];
@@ -208,7 +305,7 @@ void MakePatchForFace (int fn, winding_t *w)
 
 	patch = &patches[num_patches];
 	if (num_patches == MAX_PATCHES)
-		Error ("num_patches == MAX_PATCHES");
+		Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
 	patch->next = face_patches[fn];
 	face_patches[fn] = patch;
 
@@ -235,8 +332,12 @@ void MakePatchForFace (int fn, winding_t *w)
 	leaf = PointInLeaf(patch->origin);
 	patch->cluster = leaf->cluster;
 	if (patch->cluster == -1)
-		qprintf ("patch->cluster == -1\n");
+	{
+		// qprintf ("patch->cluster == -1\n");
+		++cluster_neg_one;
+	}
 
+    patch->faceNumber = fn;  //qb: for patch sorting
 	patch->area = area;
 	if (patch->area <= 1)
 		patch->area = 1;
@@ -416,7 +517,7 @@ void	SubdividePatch (patch_t *patch)
 	// create a new patch
 	//
 	if (num_patches == MAX_PATCHES)
-		Error ("MAX_PATCHES");
+		Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
 	newp = &patches[num_patches];
 	num_patches++;
 
@@ -450,7 +551,7 @@ void	DicePatch (patch_t *patch)
 	patch_t	*newp;
 
 	w = patch->winding;
-	WindingBounds (w, mins, maxs);
+	WindingBounds (w, mins, maxs); // 3D AABB for polygon
 	for (i=0 ; i<3 ; i++)
 		if (floor((mins[i]+1)/subdiv) < floor((maxs[i]-1)/subdiv))
 			break;
@@ -472,7 +573,7 @@ void	DicePatch (patch_t *patch)
 	// create a new patch
 	//
 	if (num_patches == MAX_PATCHES)
-		Error ("MAX_PATCHES");
+		Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
 	newp = &patches[num_patches];
 	num_patches++;
 
@@ -507,7 +608,12 @@ void SubdividePatches (void)
 //		SubdividePatch (&patches[i]);
 		DicePatch (&patches[i]);
 	}
-	qprintf ("%i patches after subdivision\n", num_patches);
+	for (i=0; i<num_patches; i++)
+		patches[i].nodenum = PointInNodenum (patches[i].origin);
+	printf ("%i subdiv patches of %i maximum\n", num_patches, MAX_PATCHES);
+    printf("-------------------------\n");
+
+	qprintf( "[? patch->cluster=-1 count is %i  ?in solid leaf?]\n", cluster_neg_one );
 }
 
 //=====================================================================

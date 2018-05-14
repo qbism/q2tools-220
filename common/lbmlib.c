@@ -741,7 +741,8 @@ void LoadTGA (char *name, byte **pixels, int *width, int *height)
 		}
 	}
 	else if (targa_header.image_type==10) {   // Runlength encoded RGB images
-		unsigned char red,green,blue,alphabyte,packetHeader,packetSize,j;
+	//qb: set defaults. from AAtools	
+		unsigned char red=255,green=255,blue=255,alphabyte=255,packetHeader,packetSize,j;
 		for(row=rows-1; row>=0; row--) {
 			pixbuf = targa_rgba + row*columns*4;
 			for(column=0; column<columns; ) {

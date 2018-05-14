@@ -339,7 +339,7 @@ typedef struct
 #define	CONTENTS_SLIME			16
 #define	CONTENTS_WATER			32
 #define	CONTENTS_MIST			64
-#define	LAST_VISIBLE_CONTENTS		64
+#define	LAST_VISIBLE_CONTENTS	64	// was 64
 
 // remaining contents are non-visible, and don't eat brushes
 
@@ -372,14 +372,13 @@ typedef struct
 
 #define	SURF_SKY		0x4		// don't draw, but add to skybox
 #define	SURF_WARP		0x8		// turbulent water warp
-#define	SURF_TRANS33	0x10
-#define	SURF_TRANS66	0x20
+#define SURF_TRANS33    0x10    // 33% alpha blend
+#define SURF_TRANS66    0x20    // 66% alpha blend
 #define	SURF_FLOWING	0x40	// scroll towards angle
 #define	SURF_NODRAW		0x80	// don't bother referencing the texture
 
-#define	SURF_HINT		0x100	// make a primary bsp splitter
-#define	SURF_SKIP		0x200	// completely ignore, allowing non-closed brushes
-
+#define SURF_HINT   	0x0100  // make a bsp splitter
+#define SURF_SKIP   	0x0200  // ignore surface to make non-closed brushes
 
 
 typedef struct
@@ -409,6 +408,8 @@ typedef struct
 {
 	unsigned short	v[2];		// vertex numbers
 } dedge_t;
+
+
 
 #define	MAXLIGHTMAPS	4
 typedef struct

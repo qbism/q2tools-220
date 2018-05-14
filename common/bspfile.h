@@ -20,6 +20,19 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "qfiles.h"
 
+//qb: consolidate some defines here from duplicate places
+
+// if a brush just barely pokes onto the other side,
+// let it slide by without chopping
+#define	PLANESIDE_EPSILON	0.1 //qb: maybe can be smaller, but this small leaves gaps //0.001
+
+#define MAX_POINTS_ON_WINDING	64
+#define	MAX_POINTS_ON_FIXED_WINDING	12
+
+// you can define on_epsilon in the makefile as tighter
+#ifndef	ON_EPSILON
+#define	ON_EPSILON	0.1 //qb: was 0.1
+#endif
 
 extern	int			nummodels;
 extern	dmodel_t	dmodels[MAX_MAP_MODELS];

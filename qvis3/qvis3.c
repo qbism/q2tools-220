@@ -608,7 +608,6 @@ int main (int argc, char **argv)
 	end = I_FloatTime ();
 
 	printf( "\n--------- end qvis3 ---------\n" );
-	Q_LogTimeElapsed( end-start );
 
 	return 0;
 }

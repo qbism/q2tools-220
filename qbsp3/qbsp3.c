@@ -330,7 +330,6 @@ main
 int main (int argc, char **argv)
 {
 	int		i;
-	double		start, end;
 	char		path[1024] = "";
 
 
@@ -473,10 +472,8 @@ int main (int argc, char **argv)
                 "    qbsp3 -help for option list\n");
 	}
 
-	start = I_FloatTime ();
-
 	ThreadSetDefault ();
-numthreads = 1;		// multiple threads aren't helping...
+    numthreads = 1;		// multiple threads aren't helping...
 
 		SetQdirFromPath(argv[i]);
 
@@ -523,10 +520,7 @@ numthreads = 1;		// multiple threads aren't helping...
 		ProcessModels ();
 	}
 
-	end = I_FloatTime ();
-
 	printf( "\n--------- end qbsp3 ---------\n" );
-	Q_LogTimeElapsed( end-start );
 
 	return 0;
 }

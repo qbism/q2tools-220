@@ -46,28 +46,98 @@ char		inbase[32], outbase[32];
 
 int			fakeplanes;					// created planes for origin offset
 
-int		numbounce = 8;
+int		numbounce = 4; //default was 8
+qboolean noblock = false; // when true, disables occlusion testing on light rays
 qboolean	extrasamples;
+int memory = false;
+float patch_cutoff = 0.0f; // set with -radmin 0.0..1.0, see MakeTransfers()
 
 float	subdiv = 64;
 qboolean	dumppatches;
 
-void BuildLightmaps (void);
+void BuildFaceExtents(void); //qb: from quemap
 int TestLine (vec3_t start, vec3_t stop);
+float           smoothing_threshold; //qb: phong from VHLT
+float           smoothing_value = DEFAULT_SMOOTHING_VALUE;
 
 int		junk;
 
-float	ambient = 0;
-float	maxlight = 196;
+/*
+ * 2010-09 Notes
+ * These variables are somewhat confusing. The floating point color values are
+ *  in the range 0..255 (floating point color should be 0.0 .. 1.0 IMO.)
+ *  The following may or may not be precisely correct.
+ *  (There are other variables, surface flags, etc., affecting lighting. What
+ *   they do, or whether they work at all is "to be determined")
+ *
+ * see lightmap.c:FinalLightFace()
+ *  sequence: ambient is added, lightscale is applied, RGB is "normalized" to
+ *  0..255 range, grayscale is applied, RGB is clamped to maxlight.
+ *
+ * ambient:
+ *  set with -ambient option, 0..255 (but only small numbers are useful)
+ *  adds the same value to R, G & B
+ *  default is 0
+ *
+ * lightscale:
+ *  set with -scale option, 0.0..1.0
+ *  scales lightmap globally.
+ *
+ * desaturate:
+ *  set with -desaturate, 0.0..1.0
+ *  proportionally desaturate texture reflectivity
+ *
+ * direct_scale:
+ *  set with -direct option, 0.0..1.0
+ *  controls reflection from emissive surfaces, i.e. brushes with a light value
+ *  research indicates it is not the usual practice to include this in
+ *    radiosity, so the default should be 0.0. (Would be nice to have this
+ *    a per-surface option where surfaces are used like point lights.)
+ *
+ * entity_scale:
+ *  set with -entity option, 0.0..1.0
+ *  controls point light radiosity, i.e. light entities.
+ *  default is 1.0, no attenuation of point lights
+ *
+ *
+ */
+ #include <assert.h>
+float ambient = 0.0f;
+float lightscale = 1.0f;
+float maxlight = 255.0f;
+// qboolean nocolor = false;
+float grayscale = 0.0f;
+float desaturate = 0.0f;
+float direct_scale = 1.0f;
+float entity_scale = 1.0f;
 
-float	lightscale = 1.0;
+/*
+ * 2010-09 Notes:
+ * These are controlled by setting keys in the worldspawn entity. A light
+ * entity targeting an info_null entity is used to determine the vector for
+ * the sun directional lighting; variable name "sun_pos" is a misnomer, i think.
+ * Example:
+ * "_sun" "sun_target"  # activates sun
+ * "_sun_color" "1.0 1.0 0.0"  # for yellow, sets sun_alt_color true
+ * "_sun_light" "50" # light value, variable is sun_main
+ * "_sun_ambient" "2" # an ambient light value in the sun color. variable is sun_ambient
+ *
+ * It might or might not be the case:
+ *  if there is no info_null for the light entity with the "sun_target" to
+ *  target, then {0,0,0} is used for the target. If _sun_color is not specified
+ *  in the .map, the color of the light entity is used.
+ */
+qboolean sun = false;
+qboolean sun_alt_color = false;
+vec3_t sun_pos = {0.0f, 0.0f, 1.0f};
+float sun_main = 250.0f;
+float sun_ambient = 0.0f;
+vec3_t sun_color = {1, 1, 1};
 
 qboolean	nopvs;
+qboolean	save_trace = false;
 
 char		source[1024];
-
-float	direct_scale =	0.4;
-float	entity_scale =	1.0;
 
 /*
 ===================================================================
@@ -180,31 +250,178 @@ qboolean PvsForOrigin (vec3_t org, byte *pvs)
 }
 
 
-/*
-=============
-MakeTransfers
 
-=============
-*/
+typedef struct tnode_s
+{
+	int		type;
+	vec3_t	normal;
+	float	dist;
+	int		children[2];
+	int		pad;
+} tnode_t;
+
+extern tnode_t		*tnodes;
+
 int	total_transfer;
 
+static long total_mem;
+
+static int first_transfer = 1;
+
+#define MAX_TRACE_BUF ((MAX_PATCHES + 7) / 8)
+
+#define TRACE_BYTE(x) (((x)+7) >> 3)
+#define TRACE_BIT(x) ((x) & 0x1F)
+
+static byte trace_buf[MAX_TRACE_BUF + 1];
+static byte trace_tmp[MAX_TRACE_BUF + 1];
+static int trace_buf_size;
+
+int CompressBytes (int size, byte *source, byte *dest)
+{
+	int		j;
+	int		rep;
+	byte	*dest_p;
+
+	dest_p = dest + 1;
+
+	for (j=0 ; j<size ; j++)
+	{
+		*dest_p++ = source[j];
+
+        if ((dest_p - dest - 1) >= size)
+		{
+            memcpy(dest+1, source, size);
+            dest[0] = 0;
+            return size + 1;
+		}
+
+		if (source[j])
+			continue;
+
+		rep = 1;
+		for ( j++; j<size ; j++)
+			if (source[j] || rep == 255)
+				break;
+			else
+				rep++;
+		*dest_p++ = rep;
+
+        if ((dest_p - dest - 1) >= size)
+		{
+            memcpy(dest+1, source, size);
+            dest[0] = 0;
+            return size + 1;
+		}
+
+		j--;
+
+	}
+
+    dest[0] = 1;
+	return dest_p - dest;
+}
+
+
+void DecompressBytes (int size, byte *in, byte *decompressed)
+{
+	int		c;
+	byte	*out;
+
+    if (in[0] == 0) // not compressed
+	{
+        memcpy(decompressed, in + 1, size);
+        return;
+	}
+
+	out = decompressed;
+    in++;
+
+	do
+	{
+		if (*in)
+		{
+			*out++ = *in++;
+			continue;
+		}
+
+		c = in[1];
+		if (!c)
+			Error ("DecompressBytes: 0 repeat");
+		in += 2;
+		while (c)
+		{
+			*out++ = 0;
+			c--;
+		}
+	} while (out - decompressed < size);
+}
+
+static int trace_bytes = 0;
+
+#ifdef WIN32
+static __inline int lowestCommonNode (int nodeNum1, int nodeNum2)
+#else
+static inline int lowestCommonNode (int nodeNum1, int nodeNum2)
+#endif
+{
+	dnode_t *node;
+	int child1, tmp, headNode = 0;
+
+	if (nodeNum1 > nodeNum2)
+	{
+		tmp = nodeNum1;
+		nodeNum1 = nodeNum2;
+		nodeNum2 = tmp;
+	}
+
+re_test:
+	//headNode is guaranteed to be <= nodeNum1 and nodeNum1 is < nodeNum2
+	if (headNode == nodeNum1)
+		return headNode;
+
+	child1 = (node = dnodes+headNode)->children[1];
+
+	if (nodeNum2 < child1)
+		//Both nodeNum1 and nodeNum2 are less than child1.
+		//In this case, child0 is always a node, not a leaf, so we don't need
+		//to check to make sure.
+		headNode = node->children[0];
+	else if (nodeNum1 < child1)
+		//Child1 sits between nodeNum1 and nodeNum2.
+		//This means that headNode is the lowest node which contains both
+		//nodeNum1 and nodeNum2.
+		return headNode;
+	else if (child1 > 0)
+		//Both nodeNum1 and nodeNum2 are greater than child1.
+		//If child1 is a node, that means it contains both nodeNum1 and
+		//nodeNum2.
+		headNode = child1;
+	else
+		//Child1 is a leaf, therefore by process of elimination child0 must be
+		//a node and must contain boste nodeNum1 and nodeNum2.
+		headNode = node->children[0];
+	//goto instead of while(1) because it makes the CPU branch predict easier
+	goto re_test;
+}
 void MakeTransfers (int i)
 {
 	int			j;
 	vec3_t		delta;
-	vec_t		dist, scale;
+	vec_t		dist, inv_dist, scale;
 	float		trans;
 	int			itrans;
 	patch_t		*patch, *patch2;
-	float		total;
+	float		total, inv_total;
 	dplane_t	plane;
 	vec3_t		origin;
-	float		transfers[MAX_PATCHES], *all_transfers;
+	float		transfers[MAX_PATCHES];
 	int			s;
 	int			itotal;
 	byte		pvs[(MAX_MAP_LEAFS+7)/8];
 	int			cluster;
-
+    int			calc_trace, test_trace;
+ 
 	patch = patches + i;
 	total = 0;
 
@@ -217,8 +434,18 @@ void MakeTransfers (int i)
 	// find out which patch2s will collect light
 	// from patch
 
-	all_transfers = transfers;
 	patch->numtransfers = 0;
+    calc_trace = (save_trace && memory && first_transfer);
+    test_trace = (save_trace && memory && !first_transfer);
+
+    if (calc_trace)
+	{
+        memset(trace_buf, 0, trace_buf_size);
+	}
+    else if(test_trace)
+	{
+        DecompressBytes(trace_buf_size, patch->trace_hit, trace_buf);
+	}
 	for (j=0, patch2 = patches ; j<num_patches ; j++, patch2++)
 	{
 		transfers[j] = 0;
@@ -235,31 +462,51 @@ void MakeTransfers (int i)
 			if ( ! ( pvs[cluster>>3] & (1<<(cluster&7)) ) )
 				continue;		// not in pvs
 		}
+        if(test_trace && !(trace_buf[TRACE_BYTE(j)] & TRACE_BIT(j)))
+            continue;
 
 		// calculate vector
 		VectorSubtract (patch2->origin, origin, delta);
-		dist = VectorNormalize (delta, delta);
-		if (!dist)
-			continue;	// should never happen
+		//dist = VectorNormalize (delta, delta);
 
-		// reletive angles
+        // Not calling normalize function to save function call overhead
+        dist = delta[0]*delta[0] + delta[1]*delta[1] + delta[2]*delta[2];
+
+        if (dist == 0)
+		{
+            continue;
+		}
+        else
+		{
+			dist = sqrt ( dist );
+            inv_dist = 1.0f / dist;
+            delta[0] *= inv_dist;
+            delta[1] *= inv_dist;
+            delta[2] *= inv_dist;
+		}
+
+		// relative angles
 		scale = DotProduct (delta, plane.normal);
 		scale *= -DotProduct (delta, patch2->plane->normal);
 		if (scale <= 0)
 			continue;
 
-		// check exact tramsfer
-		if (TestLine_r (0, patch->origin, patch2->origin) )
-			continue;
+		// check exact transfer
+		trans = scale * patch2->area * inv_dist * inv_dist;
 
-		trans = scale * patch2->area / (dist*dist);
-
-		if (trans < 0)
-			trans = 0;		// rounding errors...
-
-		transfers[j] = trans;
-		if (trans > 0)
+		if (trans > patch_cutoff)
 		{
+            if (!test_trace && !noblock &&
+            	patch2->nodenum != patch->nodenum &&
+            	TestLine_r (lowestCommonNode (patch->nodenum, patch2->nodenum),
+            				patch->origin, patch2->origin))
+			{
+                transfers[j] = 0;
+			continue;
+			}
+
+    		transfers[j] = trans;
+
 			total += trans;
 			patch->numtransfers++;
 		}
@@ -278,6 +525,7 @@ void MakeTransfers (int i)
 			Error ("Weird numtransfers");
 		s = patch->numtransfers * sizeof(transfer_t);
 		patch->transfers = malloc (s);
+        total_mem += s;
 		if (!patch->transfers)
 			Error ("Memory allocation failure");
 
@@ -287,19 +535,33 @@ void MakeTransfers (int i)
 		//
 		t = patch->transfers;
 		itotal = 0;
+        inv_total = 65536.0f / total;
 		for (j=0 ; j<num_patches ; j++)
 		{
 			if (transfers[j] <= 0)
 				continue;
-			itrans = transfers[j]*0x10000 / total;
+			itrans = transfers[j]*inv_total;
 			itotal += itrans;
 			t->transfer = itrans;
 			t->patch = j;
 			t++;
+            if (calc_trace)
+			{
+                trace_buf[TRACE_BYTE(j)] |= TRACE_BIT(j);
+ 		}
 		}
 	}
 
-	// don't bother locking around this.  not that important.
+    if (calc_trace)
+	{
+        j = CompressBytes(trace_buf_size, trace_buf, trace_tmp);
+        patch->trace_hit = malloc(j);
+        memcpy(patch->trace_hit, trace_tmp, j);
+
+        trace_bytes += j;
+	}
+
+   	// don't bother locking around this.  not that important.
 	total_transfer += patch->numtransfers;
 }
 
@@ -315,8 +577,17 @@ void FreeTransfers (void)
 
 	for (i=0 ; i<num_patches ; i++)
 	{
-		free (patches[i].transfers);
-		patches[i].transfers = NULL;
+        if(!memory)
+		{
+			free (patches[i].transfers);
+			patches[i].transfers = NULL;
+		}
+        else if(patches[i].trace_hit != NULL)
+		{
+			free (patches[i].trace_hit);
+			patches[i].trace_hit = NULL;
+		}
+
 	}
 }
 
@@ -408,6 +679,8 @@ Send light out to other patches
   Run multi-threaded
 =============
 */
+int c_progress;
+int p_progress;
 void ShootLight (int patchnum)
 {
 	int			k, l;
@@ -422,6 +695,18 @@ void ShootLight (int patchnum)
 	for (k=0 ; k<3 ; k++)
 		send[k] = radiosity[patchnum][k] / 0x10000;
 	patch = &patches[patchnum];
+    if(memory)
+	{
+        c_progress = 10 * patchnum / num_patches;
+
+        if(c_progress != p_progress)
+		{
+			printf ("%i...", c_progress);
+            p_progress = c_progress;
+		}
+
+        MakeTransfers(patchnum);
+	}
 
 	trans = patch->transfers;
 	num = patch->numtransfers;
@@ -431,6 +716,11 @@ void ShootLight (int patchnum)
 		for (l=0 ; l<3 ; l++)
 			illumination[trans->patch][l] += send[l]*trans->transfer;
 	}
+    if(memory)
+	{
+		free (patches[patchnum].transfers);
+		patches[patchnum].transfers = NULL;
+}
 }
 
 /*
@@ -440,7 +730,7 @@ BounceLight
 */
 void BounceLight (void)
 {
-	int		i, j;
+	int		i, j, start=0, stop;
 	float	added;
 	char	name[64];
 	patch_t	*p;
@@ -454,10 +744,25 @@ void BounceLight (void)
 			radiosity[i][j] = p->samplelight[j] * p->reflectivity[j] * p->area;
 		}
 	}
+    if (memory)
+        trace_buf_size = (num_patches + 7) / 8;
 
 	for (i=0 ; i<numbounce ; i++)
 	{
+        if(memory)
+		{
+            p_progress = -1;
+            start = I_FloatTime();
+            printf("[%d remaining]  ", numbounce - i);
+            total_mem = 0;
+		}
 		RunThreadsOnIndividual (num_patches, false, ShootLight);
+		first_transfer = 0;
+        if(memory)
+		{
+            stop = I_FloatTime();
+			printf (" (%i)\n", stop-start);
+		}
 		added = CollectLight ();
 
 		qprintf ("bounce:%i added:%f\n", i, added);
@@ -505,18 +810,25 @@ void RadWorld (void)
 	// subdivide patches to a maximum dimension
 	SubdividePatches ();
 
+	BuildFaceExtents(); //qb: from quetoo
 	// create directlights out of patches and lights
 	CreateDirectLights ();
+	PairEdges ();  //qb: moved here for phong
 
 	// build initial facelights
 	RunThreadsOnIndividual (numfaces, true, BuildFacelights);
+	doing_texcheck = false;
 
 	if (numbounce > 0)
 	{
 		// build transfer lists
-		RunThreadsOnIndividual (num_patches, true, MakeTransfers);
-		qprintf ("transfer lists: %5.1f megs\n"
-		, (float)total_transfer * sizeof(transfer_t) / (1024*1024));
+		if(!memory)
+		{
+			RunThreadsOnIndividual (num_patches, true, MakeTransfers);
+			qprintf ("transfer lists: %5.1f megs\n"
+				, (float)total_transfer * sizeof(transfer_t) / (1024*1024));
+		}
+		numthreads = 1;
 
 		// spread light around
 		BounceLight ();
@@ -525,9 +837,17 @@ void RadWorld (void)
 
 		CheckPatches ();
 	}
+	else
+		numthreads = 1;
+
+    if(memory)
+	{
+        printf ("Non-memory conservation would require %4.1f\n",
+            (float)(total_mem - trace_bytes) / 1048576.0f);
+        printf ("    megabytes more memory then currently used\n");
+	}
 
 	// blend bounced light into direct light and save
-	PairEdges ();
 	LinkPlaneFaces ();
 
 	lightdatasize = 0;
@@ -549,9 +869,12 @@ int main (int argc, char **argv)
 	char		name[1024];
 
 	printf( "LIGHT Compiler (build " __DATE__ ")\n" );
-	printf( "----------- Radiosity -----------\n" );
+	printf( "----------- qrad3 -----------\n" );
 
 	verbose = false;
+    numthreads = 4;
+    maxdata = DEFAULT_MAP_LIGHTING; //qb: adjustable
+    dlightdata_ptr = dlightdata;
 
 	for (i=1 ; i<argc ; i++)
 	{
@@ -566,6 +889,21 @@ int main (int argc, char **argv)
 		{
 			verbose = true;
 		}
+		else if (!strcmp(argv[i], "-help"))
+		{
+            printf ("qrad3 with automatic phong.\n"
+		"usage: qbsp3 [options] mapfile\n\n"
+                "    -help                 -extra             -maxdata\n"
+                "    -chop #               -scale             -direct\n"
+                "    -entity               -nopvs             -noblock\n"
+                "    -texcheck             -ambient           -savetrace\n"
+                "    -maxlight             -tmpin             -tmpout\n"
+                "    -dump		   -bounce            -threads\n"
+                "    --v (verbose output)\n\n");
+
+			exit(1);
+		}
+
 		else if (!strcmp(argv[i],"-extra"))
 		{
 			extrasamples = true;
@@ -575,6 +913,16 @@ int main (int argc, char **argv)
 		{
 			numthreads = atoi (argv[i+1]);
 			i++;
+		}
+		else if (!strcmp(argv[i],"-maxdata")) //qb: allows increase for modern engines
+		{
+			maxdata = atoi (argv[i+1]);
+			i++;
+ 			if (maxdata > MAX_MAP_LIGHTING)
+			{
+				qprintf ("maxdata (%i) reset to MAX_MAP_LIGHTING (%i).\n", maxdata, MAX_MAP_LIGHTING);
+            			maxdata = MAX_MAP_LIGHTING;
+			}
 		}
 		else if (!strcmp(argv[i],"-chop"))
 		{
@@ -586,16 +934,21 @@ int main (int argc, char **argv)
 			lightscale = atof (argv[i+1]);
 			i++;
 		}
+		else if (!strcmp(argv[i],"-radmin"))
+		{
+			patch_cutoff = atof (argv[i+1]);
+			i++;
+		}
 		else if (!strcmp(argv[i],"-direct"))
 		{
 			direct_scale *= atof(argv[i+1]);
-			printf ("direct light scaling at %f\n", direct_scale);
+			//printf ("direct light scaling at %f\n", direct_scale);
 			i++;
 		}
 		else if (!strcmp(argv[i],"-entity"))
 		{
 			entity_scale *= atof(argv[i+1]);
-			printf ("entity light scaling at %f\n", entity_scale);
+			//printf ("entity light scaling at %f\n", entity_scale);
 			i++;
 		}
 		else if (!strcmp(argv[i],"-nopvs"))
@@ -603,10 +956,30 @@ int main (int argc, char **argv)
 			nopvs = true;
 			printf ("nopvs = true\n");
 		}
+		else if (!strcmp(argv[i],"-nopvs"))
+		{
+			nopvs = true;
+			printf ("nopvs = true\n");
+		}
+		else if (!strcmp(argv[i],"-noblock"))
+		{
+			noblock = true;
+			printf ("noblock = true\n");
+		}
+		else if (!strcmp(argv[i],"-texcheck"))
+		{
+			doing_texcheck = true;
+			printf ("texcheck = true\n");
+		}
 		else if (!strcmp(argv[i],"-ambient"))
 		{
 			ambient = atof (argv[i+1]) * 128;
 			i++;
+		}
+		else if (!strcmp(argv[i],"-savetrace"))
+		{
+			save_trace = true;
+			printf ("savetrace = true\n");
 		}
 		else if (!strcmp(argv[i],"-maxlight"))
 		{
@@ -620,19 +993,39 @@ int main (int argc, char **argv)
 		else
 			break;
 	}
+	printf("ambient   : %f\n", ambient );
+	printf("scale     : %f\n", lightscale );
+	printf("maxlight  : %f\n", maxlight );
+	printf("maxdata   : %i\n", maxdata );
+	printf("entity    : %f\n", entity_scale );
+	printf("direct    : %f\n", direct_scale );
+	printf("desaturate: %f\n", desaturate );
+	printf("bounce    : %d\n", numbounce );
+	printf("radmin    : %f\n", patch_cutoff );
+	printf("subdiv    : %f\n", subdiv );
+	printf("smooth    : %f\n", smoothing_value );
+	if ( extrasamples )
+		printf("with extra samples\n");
 
-	ThreadSetDefault ();
+	// ThreadSetDefault ();
 
-	if (maxlight > 255)
-		maxlight = 255;
+	if (maxlight > 255.0)
+		maxlight = 255.0;
 
 	if (i != argc - 1)
-		Error ("usage: qrad [-v] [-chop num] [-scale num] [-ambient num] [-maxlight num] [-threads num] bspfile");
-
+	{
+		    Error ("usage: qrad3 [options] mapfile\n\n"
+                "    qrad3 -help for option list\n");
+	}
 	start = I_FloatTime ();
 
+    smoothing_threshold = (float)cos(smoothing_value * (Q_PI / 180.0));
+
 	SetQdirFromPath (argv[i]);
+	printf("qdir = %s\n", qdir );
+    	printf("gamedir = %s\n", gamedir );
 	strcpy (source, ExpandArg(argv[i]));
+
 	StripExtension (source);
 	DefaultExtension (source, ".bsp");
 
@@ -654,12 +1047,14 @@ int main (int argc, char **argv)
 	RadWorld ();
 
 	sprintf (name, "%s%s", outbase, source);
+	printf ("writing %s\n", name);
 	WriteBSPFile (name);
 
 	end = I_FloatTime ();
+	printf ("%5.0f seconds elapsed\n", end-start);
+	printf ("%i bytes light data used of %i max.\n", lightdatasize, maxdata);
 
 	printf( "\n--------- end qrad3 ---------\n" );
-	Q_LogTimeElapsed( end-start );
 
 	return 0;
 }

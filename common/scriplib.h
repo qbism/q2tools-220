@@ -32,6 +32,8 @@ extern	int		grabbed;
 extern	int		scriptline;
 extern	qboolean	endofscript;
 
+extern char brush_info[2000];
+void MarkBrushBegin();
 
 void LoadScriptFile (char *filename);
 void ParseFromMemory (char *buffer, int size);

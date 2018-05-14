@@ -110,11 +110,11 @@ void FreeStackWinding (winding_t *w, pstack_t *stack)
 
 /*
 ==============
-ChopWinding
+ChopWinding_flow
 
 ==============
 */
-winding_t	*ChopWinding (winding_t *in, pstack_t *stack, plane_t *split)
+winding_t	*ChopWinding_flow (winding_t *in, pstack_t *stack, plane_t *split)  //qb: renamed, dupe in polylib.c
 {
 	vec_t	dists[128];
 	int		sides[128];
@@ -359,7 +359,7 @@ winding_t	*ClipToSeperators (winding_t *source, winding_t *pass, winding_t *targ
 		//
 		// clip target by the seperating plane
 		//
-			target = ChopWinding (target, stack, &plane);
+			target = ChopWinding_flow (target, stack, &plane);
 			if (!target)
 				return NULL;		// target is not visible
 		}
@@ -465,13 +465,13 @@ float d;
 	}
 	else
 	{
-		stack.pass = ChopWinding (p->winding, &stack, &thread->pstack_head.portalplane);
+		stack.pass = ChopWinding_flow (p->winding, &stack, &thread->pstack_head.portalplane);
 		if (!stack.pass)
 			continue;
 	}
 }
 #else
-		stack.pass = ChopWinding (p->winding, &stack, &thread->pstack_head.portalplane);
+		stack.pass = ChopWinding_flow (p->winding, &stack, &thread->pstack_head.portalplane);
 		if (!stack.pass)
 			continue;
 #endif
@@ -483,23 +483,25 @@ float d;
 
 	d = DotProduct (thread->base->origin, p->plane.normal);
 	d -= p->plane.dist;
-	if (d > p->radius)
+//	if (d > p->radius) qb: GDD tools fix
+	if (d > thread->base->radius)
 	{
 		continue;
 	}
-	else if (d < -p->radius)
+//	else if (d < -p->radius)
+	else if (d < -thread->base->radius)
 	{
 		stack.source = prevstack->source;
 	}
 	else
 	{
-		stack.source = ChopWinding (prevstack->source, &stack, &backplane);
+		stack.source = ChopWinding_flow (prevstack->source, &stack, &backplane);
 		if (!stack.source)
 			continue;
 	}
 }
 #else
-		stack.source = ChopWinding (prevstack->source, &stack, &backplane);
+		stack.source = ChopWinding_flow (prevstack->source, &stack, &backplane);
 		if (!stack.source)
 			continue;
 #endif
@@ -613,6 +615,7 @@ all seperating planes, and both portals must be behind the mew portal
 
 int		c_flood, c_vis;
 
+char test_leaf[MAX_MAP_LEAFS];
 
 /*
 ==================

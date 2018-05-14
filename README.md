@@ -12,15 +12,34 @@ Fixes and enhancements:
     *   gamedir is parent of moddir
     *   qdir is parent of gamedir
 
-*   AA tools- Use any existing TGA replacement textures for radiosity.
+*   AA tools
+    *   Use any existing TGA replacement textures for radiosity
+    *   Spotlight center to surface point attenuation
+
 *   DWH- Fix for scaled textures using an origin brush.
 *   GDD tools (Geoffrey DeWan)
-    *   Load file from PAK.
-    *   Split microbrushes.
+    *   Load file from PAK
+    *   Split microbrushes
+    *   Radiosity texture checking
 
 *   jit (Jitspoe)
     *   Fix microbrush deformation.
     *   Re-enable PLANESIDE_EPSILON
 
+*   KDT- qdata LWO support
 *   kmbsp3 (Knightmare bsp tool)
     *   Caulk
+
+*   MaxEd
+    *   Texinfo overflow check
+    *   VS compiler fixes
+
+*   qbism
+    * edge lighting fix 
+
+*   quemap
+    *   Face extents
+
+*   VHLT (vluzacn)
+    *   Automatic phong smoothing
+    *   Add face for vertext normal

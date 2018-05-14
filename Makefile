@@ -245,7 +245,7 @@ install:
 	cp $(builddir)/qbsp3   $(INSTALL_DIR)
 	cp $(builddir)/qvis3   $(INSTALL_DIR)
 	cp $(builddir)/qrad3   $(INSTALL_DIR)
-	cp $(builddir)/qdata   $(INSTALL_DIR)/qdata 
+	cp $(builddir)/qdata   $(INSTALL_DIR)
 
 
 

@@ -213,8 +213,6 @@ void SwapBSPFile (qboolean todisk)
 //
 	for (i=0 ; i<numtexinfo ; i++)
 	{
-		for (j=0 ; j<8 ; j++)
-			texinfo[i].vecs[0][j] = LittleFloat (texinfo[i].vecs[0][j]);
 		texinfo[i].flags = LittleLong (texinfo[i].flags);
 		texinfo[i].value = LittleLong (texinfo[i].value);
 		texinfo[i].nexttexinfo = LittleLong (texinfo[i].nexttexinfo);
@@ -437,7 +435,8 @@ void	LoadBSPFileTexinfo (char *filename)
 	header = malloc(sizeof(dheader_t));
 
 	f = fopen (filename, "rb");
-	fread (header, sizeof(dheader_t), 1, f);
+	if (!fread (header, sizeof(dheader_t), 1, f))
+		Error ("Texinfo header read error");
 
 // swap the header
 	for (i=0 ; i< sizeof(dheader_t)/4 ; i++)
@@ -453,7 +452,8 @@ void	LoadBSPFileTexinfo (char *filename)
 	ofs = header->lumps[LUMP_TEXINFO].fileofs;
 
 	fseek (f, ofs, SEEK_SET);
-	fread (texinfo, length, 1, f);
+	if(!fread (texinfo, length, 1, f))
+		Error ("Texinfo lump read error");
 	fclose (f);
 
 	numtexinfo = length / sizeof(texinfo_t);
@@ -489,7 +489,6 @@ Swaps the bsp file in place, so it should not be referenced again
 */
 void	WriteBSPFile (char *filename)
 {
-	printf ("writing %s\n", filename);
 
 	header = &outheader;
 	memset (header, 0, sizeof(dheader_t));

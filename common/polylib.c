@@ -2,19 +2,21 @@
 ===========================================================================
 Copyright (C) 1997-2006 Id Software, Inc.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+This file is part of Quake 2 Tools source code.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
+Quake 2 Tools source code is free software; you can redistribute it
+and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License,
+or (at your option) any later version.
+
+Quake 2 Tools source code is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along
-with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+You should have received a copy of the GNU General Public License
+along with Quake 2 Tools source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
@@ -32,7 +34,6 @@ int	c_peak_windings;
 int	c_winding_allocs;
 int	c_winding_points;
 
-//#define	BOGUS_RANGE	8192 //mxd. Already defined in mathlib.h
 
 void pw(winding_t *w)
 {
@@ -60,7 +61,7 @@ winding_t	*AllocWinding (int points)
 		if (c_active_windings > c_peak_windings)
 			c_peak_windings = c_active_windings;
 	}
-	s = sizeof(vec_t)*3*points + sizeof(int) + 4;
+	s = sizeof(vec_t)*3*points + sizeof(int);
 	w = malloc (s);
 	memset (w, 0, s);
 	return w;
@@ -160,8 +161,8 @@ void	WindingBounds (winding_t *w, vec3_t mins, vec3_t maxs)
 	vec_t	v;
 	int		i,j;
 
-	mins[0] = mins[1] = mins[2] = 99999;
-	maxs[0] = maxs[1] = maxs[2] = -99999;
+	mins[0] = mins[1] = mins[2] = BOGUS_RANGE;
+	maxs[0] = maxs[1] = maxs[2] = -BOGUS_RANGE;
 
 	for (i=0 ; i<w->numpoints ; i++)
 	{
@@ -184,7 +185,7 @@ WindingCenter
 void	WindingCenter (winding_t *w, vec3_t center)
 {
 	int		i;
-	vec_t	scale;
+	float	scale;
 
 	VectorCopy (vec3_origin, center);
 	for (i=0 ; i<w->numpoints ; i++)
@@ -242,8 +243,8 @@ winding_t *BaseWindingForPlane (vec3_t normal, vec_t dist)
 
 	CrossProduct (vup, normal, vright);
 
-	VectorScale (vup, 8192, vup);
-	VectorScale (vright, 8192, vright);
+	VectorScale (vup, BOGUS_RANGE, vup);
+	VectorScale (vright, BOGUS_RANGE, vright);
 
 // project a really big	axis aligned box onto the plane
 	w = AllocWinding (4);
@@ -270,13 +271,13 @@ winding_t *BaseWindingForPlane (vec3_t normal, vec_t dist)
 CopyWinding
 ==================
 */
-winding_t	*CopyWinding (winding_t *w)
+winding_t	*CopyWinding (const winding_t *w)
 {
 	int			size;
 	winding_t	*c;
 
 	c = AllocWinding (w->numpoints);
-	size = (int)((winding_t *)0)->p[w->numpoints];
+	size = (intptr_t)((winding_t *)0)->p[w->numpoints];
 	memcpy (c, w, size);
 	return c;
 }
@@ -306,8 +307,12 @@ winding_t	*ReverseWinding (winding_t *w)
 ClipWindingEpsilon
 =============
 */
-void	ClipWindingEpsilon (winding_t *in, vec3_t normal, vec_t dist,
-				vec_t epsilon, winding_t **front, winding_t **back)
+void	ClipWindingEpsilon (
+		const winding_t *in,
+		const vec3_t normal,
+		const vec_t dist,
+		const vec_t epsilon,
+		winding_t **front, winding_t **back)
 {
 	vec_t	dists[MAX_POINTS_ON_WINDING+4];
 	int		sides[MAX_POINTS_ON_WINDING+4];
@@ -332,9 +337,7 @@ void	ClipWindingEpsilon (winding_t *in, vec3_t normal, vec_t dist,
 		else if (dot < -epsilon)
 			sides[i] = SIDE_BACK;
 		else
-		{
 			sides[i] = SIDE_ON;
-		}
 		counts[sides[i]]++;
 	}
 	sides[i] = sides[0];
@@ -353,15 +356,14 @@ void	ClipWindingEpsilon (winding_t *in, vec3_t normal, vec_t dist,
 		return;
 	}
 
-	maxpts = in->numpoints+4;	// cant use counts[0]+2 because
-								// of fp grouping errors
+	maxpts = in->numpoints + 4;	// cant use counts[0]+2 because of fp grouping errors
 
 	*front = f = AllocWinding (maxpts);
 	*back = b = AllocWinding (maxpts);
 
 	for (i=0 ; i<in->numpoints ; i++)
 	{
-		p1 = in->p[i];
+		p1 = ((winding_t*)in)->p[i];
 
 		if (sides[i] == SIDE_ON)
 		{
@@ -387,11 +389,12 @@ void	ClipWindingEpsilon (winding_t *in, vec3_t normal, vec_t dist,
 			continue;
 
 	// generate a split point
-		p2 = in->p[(i+1)%in->numpoints];
+		p2 = ((winding_t*)in)->p[(i+1)%in->numpoints];
 
 		dot = dists[i] / (dists[i]-dists[i+1]);
 		for (j=0 ; j<3 ; j++)
-		{	// avoid round off error when possible
+		{
+			// avoid round off error when possible
 			if (normal[j] == 1)
 				mid[j] = dist;
 			else if (normal[j] == -1)
@@ -462,8 +465,7 @@ void ChopWindingInPlace (winding_t **inout, vec3_t normal, vec_t dist, vec_t eps
 	if (!counts[1])
 		return;		// inout stays the same
 
-	maxpts = in->numpoints+4;	// cant use counts[0]+2 because
-								// of fp grouping errors
+	maxpts = in->numpoints+4;	// can't use counts[0]+2 because of fp grouping errors
 
 	f = AllocWinding (maxpts);
 
@@ -492,10 +494,11 @@ void ChopWindingInPlace (winding_t **inout, vec3_t normal, vec_t dist, vec_t eps
 
 		dot = dists[i] / (dists[i]-dists[i+1]);
 		for (j=0 ; j<3 ; j++)
-		{	// avoid round off error when possible
-			if (normal[j] == 1)
+		{
+			// avoid round off error when possible
+			if (normal[j] >= 1)
 				mid[j] = dist;
-			else if (normal[j] == -1)
+			else if (normal[j] <= -1)
 				mid[j] = -dist;
 			else
 				mid[j] = p1[j] + dot*(p2[j]-p1[j]);

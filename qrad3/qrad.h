@@ -33,7 +33,8 @@ typedef enum
 {
 	emit_surface,
 	emit_point,
-	emit_spotlight
+	emit_spotlight,
+    emit_sky
 } emittype_t;
 
 
@@ -45,10 +46,15 @@ typedef struct directlight_s
 
 	float		intensity;
 	int			style;
+    float       wait;
+    float       adjangle;
 	vec3_t		origin;
 	vec3_t		color;
 	vec3_t		normal;		// for surfaces and spotlights
 	float		stopdot;		// for spotlights
+    dplane_t    *plane;
+    dleaf_t     *leaf;
+    int			nodenum;
 } directlight_t;
 
 
@@ -62,7 +68,9 @@ typedef struct
 } transfer_t;
 
 
-#define	MAX_PATCHES	65000			// larger will cause 32 bit overflows
+#define	MAX_PATCHES	65535			// larger will cause 32 bit overflows
+
+#define DEFAULT_SMOOTHING_VALUE     44.0
 
 typedef struct patch_s
 {
@@ -70,6 +78,9 @@ typedef struct patch_s
 	struct patch_s		*next;		// next in face
 	int			numtransfers;
 	transfer_t	*transfers;
+    byte *trace_hit;
+    
+    int			nodenum;
 
 	int			cluster;			// for pvs checking
 	vec3_t		origin;
@@ -81,6 +92,7 @@ typedef struct patch_s
 									// does NOT include light
 									// accounted for by direct lighting
 	float		area;
+    	int         faceNumber;
 
 	// illuminance * reflectivity = radiosity
 	vec3_t		reflectivity;
@@ -106,6 +118,11 @@ extern	float	lightscale;
 
 void MakeShadowSplits (void);
 
+float			*texture_data[MAX_MAP_TEXINFO];
+int				texture_sizes[MAX_MAP_TEXINFO][2];
+
+qboolean		doing_texcheck;
+
 //==============================================
 
 
@@ -118,8 +135,11 @@ extern	float ambient, maxlight;
 
 void LinkPlaneFaces (void);
 
+extern float grayscale;
+extern float desaturate;
 extern	qboolean	extrasamples;
 extern int numbounce;
+extern qboolean noblock;
 
 extern	directlight_t	*directlights[MAX_MAP_LEAFS];
 
@@ -133,6 +153,9 @@ void FinalLightFace (int facenum);
 
 qboolean PvsForOrigin (vec3_t org, byte *pvs);
 
+int	PointInNodenum (vec3_t point);
+int TestLine (vec3_t start, vec3_t stop);
+int TestLine_color (int node, vec3_t start, vec3_t stop, vec3_t occluded);
 int TestLine_r (int node, vec3_t start, vec3_t stop);
 
 void CreateDirectLights (void);
@@ -142,15 +165,29 @@ dleaf_t		*PointInLeaf (vec3_t point);
 
 extern	dplane_t	backplanes[MAX_MAP_PLANES];
 extern	int			fakeplanes;					// created planes for origin offset
+extern  int		maxdata;
 
 extern	float	subdiv;
 
 extern	float	direct_scale;
 extern	float	entity_scale;
 
+extern qboolean sun;
+extern qboolean sun_alt_color;
+extern vec3_t sun_pos;
+extern float sun_main;
+extern float sun_ambient;
+extern vec3_t sun_color;
+
+extern float    smoothing_threshold;
+extern float    smoothing_value;
+
+int	refine_amt, refine_setting;
 int	PointInLeafnum (vec3_t point);
 void MakeTnodes (dmodel_t *bm);
 void MakePatches (void);
 void SubdividePatches (void);
 void PairEdges (void);
 void CalcTextureReflectivity (void);
+byte	*dlightdata_ptr; 
+byte	dlightdata_raw[MAX_MAP_LIGHTING];
