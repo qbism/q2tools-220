@@ -90,13 +90,8 @@ void RunThreadsOnIndividual (int workcnt, qboolean showpacifier, void(*func)(int
 }
 
 
-/*
-===================================================================
+#ifdef USE_PTHREADS
 
-WIN32
-
-===================================================================
-*/
 #ifdef WIN32
 
 #define	USED
@@ -196,17 +191,7 @@ void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int))
 }
 
 
-#endif
-
-/*
-===================================================================
-
-OSF1
-
-===================================================================
-*/
-
-#ifdef USE_PTHREADS  //qb: thread changes from AAtools
+#else
 #define	USED
 
 int		numthreads = 4;
@@ -297,98 +282,8 @@ void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int))
 
 
 #endif
-
-/*
-===================================================================
-
-IRIX
-
-===================================================================
-*/
-
-#ifdef _MIPS_ISA
-#define	USED
-
-#include <task.h>
-#include <abi_mutex.h>
-#include <sys/types.h>
-#include <sys/prctl.h>
-
-
-int		numthreads = -1;
-abilock_t		lck;
-
-void ThreadSetDefault (void)
-{
-	if (numthreads == -1)
-		numthreads = prctl(PR_MAXPPROCS);
-	printf ("%i threads\n", numthreads);
-//@@
-	usconfig (CONF_INITUSERS, numthreads);
-}
-
-
-void ThreadLock (void)
-{
-	spin_lock (&lck);
-}
-
-void ThreadUnlock (void)
-{
-	release_lock (&lck);
-}
-
-
-/*
-=============
-RunThreadsOn
-=============
-*/
-void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int))
-{
-	int		i;
-	int		pid[MAX_THREADS];
-	int		start, end;
-
-	start = I_FloatTime ();
-	dispatch = 0;
-	workcount = workcnt;
-	oldf = -1;
-	pacifier = showpacifier;
-	threaded = true;
-
-	if (pacifier)
-		setbuf (stdout, NULL);
-
-	init_lock (&lck);
-
-	for (i=0 ; i<numthreads-1 ; i++)
-	{
-		pid[i] = sprocsp ( (void (*)(void *, size_t))func, PR_SALL, (void *)i
-			, NULL, 0x100000);
-//		pid[i] = sprocsp ( (void (*)(void *, size_t))func, PR_SALL, (void *)i
-//			, NULL, 0x80000);
-		if (pid[i] == -1)
-		{
-			perror ("sproc");
-			Error ("sproc failed");
-		}
-	}
-
-	func(i);
-
-	for (i=0 ; i<numthreads-1 ; i++)
-		wait (NULL);
-
-	threaded = false;
-
-	end = I_FloatTime ();
-	if (pacifier)
-		printf (" (%i)\n", end-start);
-}
-
-
 #endif
+
 
 /*
 =======================================================================
