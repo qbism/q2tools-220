@@ -421,7 +421,7 @@ void MakeTransfers (int i)
 	byte		pvs[(MAX_MAP_LEAFS+7)/8];
 	int			cluster;
     int			calc_trace, test_trace;
- 
+
 	patch = patches + i;
 	total = 0;
 
@@ -898,8 +898,8 @@ int main (int argc, char **argv)
                 "    -entity               -nopvs             -noblock\n"
                 "    -texcheck             -ambient           -savetrace\n"
                 "    -maxlight             -tmpin             -tmpout\n"
-                "    -dump		   -bounce            -threads\n"
-                "    --v (verbose output)\n\n");
+                "    -dump		           -bounce            -threads\n"
+                "    -smooth               -v (verbose output)\n\n");
 
 			exit(1);
 		}
@@ -970,6 +970,11 @@ int main (int argc, char **argv)
 		{
 			doing_texcheck = true;
 			printf ("texcheck = true\n");
+		}
+		else if (!strcmp(argv[i],"-smooth"))
+		{
+			smoothing_value = atof (argv[i+1]);
+			i++;
 		}
 		else if (!strcmp(argv[i],"-ambient"))
 		{

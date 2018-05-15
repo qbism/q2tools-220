@@ -585,7 +585,7 @@ void ParseBrush (entity_t *mapent)
 			if (i != 0)
 				GetToken (true);
 			if (strcmp (token, "(") )
-				Error ("parsing brush %i, i+1");
+				Error ("parsing brush %i", i+1);
 
 			for (j=0 ; j<3 ; j++)
 			{
@@ -595,7 +595,7 @@ void ParseBrush (entity_t *mapent)
 
 			GetToken (false);
 			if (strcmp (token, ")") )
-				Error ("parsing brush %i, i+1");
+				Error ("parsing brush %i", i+1);
 
 		}
 
