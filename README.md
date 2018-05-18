@@ -6,7 +6,7 @@ Based on modifications supporting the v220 map format by XaeroX and DarkEssence 
 
 The code is 'alpha' - not much testing or feedback at this point.
 
-Fixes and enhancements:
+# Fixes and enhancements:
 *   AA tools (Alien Arena)- File path determination asumptions:
     *   moddir is parent of whatever directory contains the .map/.bsp
     *   gamedir is parent of moddir
@@ -25,10 +25,10 @@ Fixes and enhancements:
     *   Update thread handling
 
 *   jit (Jitspoe)
-    *   Fix microbrush deformation.
-    *   Re-enable PLANESIDE_EPSILON
+    *   Fix microbrush deformation
 
 *   KDT- qdata LWO support
+
 *   kmbsp3 (Knightmare bsp tool)
     *   Caulk
 
@@ -45,3 +45,20 @@ Fixes and enhancements:
 *   VHLT (vluzacn)
     *   Automatic phong smoothing
     *   Add face for vertext normal
+
+
+# Instructions:
+
+qbsp3
+*   v220 support- for Trenchbroom, duplicate or modify the Q2 gametype and change the format to the V-word and add "mapversion" "220" to worldspawn.  JACK does this automatically when saving to v220.
+
+qvis3
+*   works the same as always
+
+qrad3
+*   -smooth sets the angle (in degrees) for autophong.  Default is 44, so it will phong a 9-sided or more prism, but not 8-sided.  Set to zero to disable.
+*   -maxmapdata sets lightng memory limit.  Original is 0x200000 and it can be set up to 0x800000 (8388608).  Requires an engine that supports the higher limit.
+*   Any tga replacement textures found will be used for radiosity.
+
+
+

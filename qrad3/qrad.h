@@ -79,7 +79,7 @@ typedef struct patch_s
 	int			numtransfers;
 	transfer_t	*transfers;
     byte *trace_hit;
-    
+
     int			nodenum;
 
 	int			cluster;			// for pvs checking
@@ -150,7 +150,6 @@ void BuildLightmaps (void);
 void BuildFacelights (int facenum);
 
 void FinalLightFace (int facenum);
-
 qboolean PvsForOrigin (vec3_t org, byte *pvs);
 
 int	PointInNodenum (vec3_t point);
@@ -189,5 +188,5 @@ void MakePatches (void);
 void SubdividePatches (void);
 void PairEdges (void);
 void CalcTextureReflectivity (void);
-byte	*dlightdata_ptr; 
+byte	*dlightdata_ptr;
 byte	dlightdata_raw[MAX_MAP_LIGHTING];

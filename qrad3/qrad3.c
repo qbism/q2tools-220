@@ -920,7 +920,7 @@ int main (int argc, char **argv)
 			i++;
  			if (maxdata > MAX_MAP_LIGHTING)
 			{
-				qprintf ("maxdata (%i) reset to MAX_MAP_LIGHTING (%i).\n", maxdata, MAX_MAP_LIGHTING);
+				printf ("maxdata (%i) reset to MAX_MAP_LIGHTING (%i).\n", maxdata, MAX_MAP_LIGHTING);
             			maxdata = MAX_MAP_LIGHTING;
 			}
 		}
@@ -1009,8 +1009,6 @@ int main (int argc, char **argv)
 	printf("radmin    : %f\n", patch_cutoff );
 	printf("subdiv    : %f\n", subdiv );
 	printf("smooth    : %f\n", smoothing_value );
-	if ( extrasamples )
-		printf("with extra samples\n");
 
 	// ThreadSetDefault ();
 

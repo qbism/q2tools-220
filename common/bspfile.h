@@ -101,7 +101,6 @@ void	PrintBSPFileSizes (void);
 
 //===============
 
-
 typedef struct epair_s
 {
 	struct epair_s	*next;

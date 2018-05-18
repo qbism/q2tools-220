@@ -2005,6 +2005,7 @@ void BuildFacelights (int facenum)
     fl = &facelight[facenum];
     fl->numsamples = liteinfo[0].numsurfpt;
     fl->origins = malloc (tablesize);
+
     memcpy (fl->origins, liteinfo[0].surfpt, tablesize);
     center = face_extents[facenum].center; // center of the face
 
