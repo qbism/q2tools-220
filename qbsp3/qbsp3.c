@@ -333,8 +333,8 @@ int main (int argc, char **argv)
 	char		path[1024] = "";
 
 
-	printf( "BSP Compiler (build " __DATE__ ")\n" );
-	printf( "----------- qbsp3 -----------\n" );
+	printf( "\n<<<<<<<<<<<<<<<<<<<< QBSP3 >>>>>>>>>>>>>>>>>>>>\n" );
+	printf( "BSP compiler build " __DATE__ "\n" );
 
 	for (i=1 ; i<argc ; i++)
 	{
@@ -439,6 +439,12 @@ int main (int argc, char **argv)
 			printf ("subdivide_size = %f\n", subdivide_size);
 			i++;
 		}
+		else if (!strcmp(argv[i], "-subdiv"))
+		{
+			subdivide_size = atof(argv[i+1]);
+			printf ("subdivide_size = %f\n", subdivide_size);
+			i++;
+		}
 		else if (!strcmp(argv[i], "-block"))
 		{
 			block_xl = block_xh = atoi(argv[i+1]);
@@ -520,7 +526,7 @@ int main (int argc, char **argv)
 		ProcessModels ();
 	}
 
-	printf( "\n--------- end qbsp3 ---------\n" );
+	printf( "<<<<<<<<<<<<<<<<<< END QBSP3 >>>>>>>>>>>>>>>>>>\n\n" );
 
 	return 0;
 }

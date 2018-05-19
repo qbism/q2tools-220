@@ -527,8 +527,8 @@ int main (int argc, char **argv)
 	char		name[1024];
 	int		i;
 
-	printf( "VIS Compiler (build " __DATE__ ")\n" );
-	printf( "----------- qvis3 -----------\n" );
+	printf( "\n<<<<<<<<<<<<<<<<<<<< QVIS3 >>>>>>>>>>>>>>>>>>>>\n" );
+	printf( "visibility compiler build " __DATE__ "\n" );
 
 	verbose = false;
 	for (i=1 ; i<argc ; i++)
@@ -602,8 +602,6 @@ int main (int argc, char **argv)
 	sprintf (name, "%s%s", outbase, source);
 	WriteBSPFile (name);
 
-	printf( "\n--------- end qvis3 ---------\n" );
-
-	return 0;
+	printf( "<<<<<<<<<<<<<<<<<< END QVIS3 >>>>>>>>>>>>>>>>>>\n\n" );	return 0;
 }
 

@@ -868,8 +868,8 @@ int main (int argc, char **argv)
 	double		start, end;
 	char		name[1024];
 
-	printf( "LIGHT Compiler (build " __DATE__ ")\n" );
-	printf( "----------- qrad3 -----------\n" );
+	printf( "\n<<<<<<<<<<<<<<<<<<<< QRAD3 >>>>>>>>>>>>>>>>>>>>\n" );
+	printf( "radiosity compiler build " __DATE__ "\n" );
 
 	verbose = false;
     numthreads = 4;
@@ -894,7 +894,7 @@ int main (int argc, char **argv)
             printf ("qrad3 with automatic phong.\n"
 		"usage: qbsp3 [options] mapfile\n\n"
                 "    -help                 -extra             -maxdata\n"
-                "    -chop #               -scale             -direct\n"
+                "    -subdiv #             -scale             -direct\n"
                 "    -entity               -nopvs             -noblock\n"
                 "    -texcheck             -ambient           -savetrace\n"
                 "    -maxlight             -tmpin             -tmpout\n"
@@ -925,6 +925,11 @@ int main (int argc, char **argv)
 			}
 		}
 		else if (!strcmp(argv[i],"-chop"))
+		{
+			subdiv = atoi (argv[i+1]);
+			i++;
+		}
+		else if (!strcmp(argv[i],"-subdiv"))
 		{
 			subdiv = atoi (argv[i+1]);
 			i++;
@@ -1057,8 +1062,7 @@ int main (int argc, char **argv)
 	printf ("%5.0f seconds elapsed\n", end-start);
 	printf ("%i bytes light data used of %i max.\n", lightdatasize, maxdata);
 
-	printf( "\n--------- end qrad3 ---------\n" );
-
+	printf( "<<<<<<<<<<<<<<<<<< END QRAD3 >>>>>>>>>>>>>>>>>>\n\n" );
 	return 0;
 }
 

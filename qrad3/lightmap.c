@@ -1903,6 +1903,7 @@ void    GetPhongNormal(int facenum, vec3_t spot, vec3_t phongnormal)
                 {
                     VectorCopy(facenormal, n2);
                 }
+
                 // Interpolate between the center and edge normals based on sample position
                 VectorScale(facenormal, abs(1.0 - a1 - a2), phongnormal);  //qb: eureka... need that abs()!
                 VectorScale(n1, a1, temp);
