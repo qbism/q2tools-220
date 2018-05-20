@@ -61,4 +61,7 @@ qrad3
 *   Any tga replacement textures found will be used for radiosity.
 
 
+# Build from source:
+A Linux makefile and Windows cross-compile from Linux makefiles are included.   Download and build the Windows dependency libraries or find pre-compiled libs.  The pre-compiled libs from the Q2PRO SDK for MinGW-w64 do the trick.
+
 
