@@ -30,14 +30,14 @@ The code is 'alpha' - not much testing or feedback at this point.
 *   KDT- qdata LWO support
 
 *   kmbsp3 (Knightmare bsp tool)
-    *   Caulk
+    *   Caulk brushes similar to Q3 mapping
 
 *   MaxEd
     *   Texinfo overflow check
     *   VS compiler fixes
 
 *   qbism
-    * edge lighting fix 
+    *   Edge lighting fix 
 
 *   quemap
     *   Face extents
@@ -50,7 +50,7 @@ The code is 'alpha' - not much testing or feedback at this point.
 # Instructions:
 
 qbsp3
-*   v220 support- for Trenchbroom, duplicate or modify the Q2 gametype and change the format to the V-word and add "mapversion" "220" to worldspawn.  JACK does this automatically when saving to v220.
+*   v220 support- for Trenchbroom, duplicate or modify the Q2 gametype and change the format to valve and add "mapversion" "220" to worldspawn.  JACK does this automatically when saving to v220.
 
 qvis3
 *   works the same as always
@@ -60,6 +60,11 @@ qrad3
 *   -maxmapdata sets lightng memory limit.  Original is 0x200000 and it can be set up to 0x800000 (8388608).  Requires an engine that supports the higher limit.
 *   Any tga replacement textures found will be used for radiosity.
 
+qdata
+*   help for this tool is scarce, but it runs a script file to convert assets to Q2 data types.  This example creates the colormap:
+    
+    $load base/pics/pal.pcx
+    $colormap colormap 
 
 # Build from source:
 A Linux makefile and Windows cross-compile from Linux makefiles are included.   Download and build the Windows dependency libraries or find pre-compiled libs.  The pre-compiled libs from the Q2PRO SDK for MinGW-w64 do the trick.
