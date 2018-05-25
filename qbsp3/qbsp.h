@@ -168,7 +168,7 @@ extern	mapbrush_t	mapbrushes[MAX_MAP_BRUSHES];
 
 extern	vec3_t		map_mins, map_maxs;
 
-#define	MAX_MAP_SIDES		(MAX_MAP_BRUSHES*6)
+#define	MAX_MAP_SIDES		(MAX_MAP_BRUSHSIDES)
 
 extern	int			nummapbrushsides;
 extern	side_t		brushsides[MAX_MAP_SIDES];
