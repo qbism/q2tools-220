@@ -194,15 +194,22 @@ void CalcTextureReflectivity(void)
 			texture_reflectivity[i][j] = r;
 		}
 
-		// desaturate reflectivity here (TODO: check that avg. rgb makes sense)
-		r = 1.0f - desaturate;
+		// reflectivity saturation here (TODO: check that avg. rgb makes sense)
 		c = ((texture_reflectivity[i][0]
+<<<<<<< HEAD
+		                              + texture_reflectivity[i][1]
+		                                                        + texture_reflectivity[i][2]) / 3.0f) * (1.0 - saturation);
+		texture_reflectivity[i][0] = (texture_reflectivity[i][0] * saturation) + c;
+		texture_reflectivity[i][1] = (texture_reflectivity[i][1] * saturation) + c;
+		texture_reflectivity[i][2] = (texture_reflectivity[i][2] * saturation) + c;
+=======
 			+ texture_reflectivity[i][1]
 			+ texture_reflectivity[i][2]) / 3.0f) * desaturate;
 
 		texture_reflectivity[i][0] = (texture_reflectivity[i][0] * r) + c;
 		texture_reflectivity[i][1] = (texture_reflectivity[i][1] * r) + c;
 		texture_reflectivity[i][2] = (texture_reflectivity[i][2] * r) + c;
+>>>>>>> c1c37f2fb7a839b10a3a2043032325d0805bd350
 
 		qprintf("tex %i (%s) avg rgb [ %f, %f, %f ]\n",
 			i, path, texture_reflectivity[i][0],

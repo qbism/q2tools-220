@@ -1595,7 +1595,7 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
         {
         case emit_point:
             // linear falloff
-            scale = (l->intensity - dist) * dot;
+            scale = (l->intensity - l->wait * dist) * dot;  //qb: wait
             break;
 
         case emit_surface:
@@ -1620,7 +1620,7 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
             dot2 = -DotProduct (delta, l->normal);
             if (dot2 <= l->stopdot)
                 return;	// outside light cone
-            scale = (l->intensity - dist) * dot * powf( dot2, 25.0f ) * 15;
+            scale = (l->intensity - l->wait * dist) * dot * powf( dot2, 25.0f ) * 15;
             // spot center to surface point attenuation
             // dot2 range is limited, so exponent is big.
             // this term is not really necessary, could have spots with sharp cutoff

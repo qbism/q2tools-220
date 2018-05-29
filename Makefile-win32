@@ -58,7 +58,7 @@ vpath %.o debug
 else
 CFLAGS ?= $(RELEASE_CFLAGS) $(INCLUDES)
 builddir = release
-vpath %.o release
+vpath %.o releaseWin32
 endif
 
 # common files 
