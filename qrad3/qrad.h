@@ -136,7 +136,7 @@ extern	float ambient, maxlight;
 void LinkPlaneFaces (void);
 
 extern float grayscale;
-extern float desaturate;
+extern float saturation;
 extern	qboolean	extrasamples;
 extern int numbounce;
 extern qboolean noblock;

@@ -83,9 +83,9 @@ int		junk;
  *  set with -scale option, 0.0..1.0
  *  scales lightmap globally.
  *
- * desaturate:
- *  set with -desaturate, 0.0..1.0
- *  proportionally desaturate texture reflectivity
+ * saturation:
+ *  set with -saturation, 0.0..1.0  //qb: does higher than 1 work?
+ *  proportionally saturation texture reflectivity
  *
  * direct_scale:
  *  set with -direct option, 0.0..1.0
@@ -107,7 +107,7 @@ float lightscale = 1.0f;
 float maxlight = 255.0f;
 // qboolean nocolor = false;
 float grayscale = 0.0f;
-float desaturate = 0.0f;
+float saturation = 1.0f;  //qb: change desaturate to saturation
 float direct_scale = 1.0f;
 float entity_scale = 1.0f;
 
@@ -939,6 +939,11 @@ int main (int argc, char **argv)
 			lightscale = atof (argv[i+1]);
 			i++;
 		}
+		else if (!strcmp(argv[i],"-saturation"))
+		{
+			saturation = atof (argv[i+1]);
+			i++;
+		}
 		else if (!strcmp(argv[i],"-radmin"))
 		{
 			patch_cutoff = atof (argv[i+1]);
@@ -1009,7 +1014,7 @@ int main (int argc, char **argv)
 	printf("maxdata   : %i\n", maxdata );
 	printf("entity    : %f\n", entity_scale );
 	printf("direct    : %f\n", direct_scale );
-	printf("desaturate: %f\n", desaturate );
+	printf("saturation: %f\n", saturation );
 	printf("bounce    : %d\n", numbounce );
 	printf("radmin    : %f\n", patch_cutoff );
 	printf("subdiv    : %f\n", subdiv );
