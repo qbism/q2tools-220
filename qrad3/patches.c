@@ -36,7 +36,7 @@ int cluster_neg_one = 0;
 CalcTextureReflectivity
 ======================
 */
-void CalcTextureReflectivity (void)
+void CalcTextureReflectivity(void)
 {
 	int i, j, k, count;
 	int texels, texel;
@@ -44,10 +44,11 @@ void CalcTextureReflectivity (void)
 	float color[3], cur_color[3], tex_a, a;
 	char path[1024];
 	float r, c;
-	byte* pbuffer;
+	byte* pbuffer = NULL; //mxd. "potentially uninitialized local pointer variable" in VS2017 if uninitialized
+
 	byte* ptexel;
 	byte			*palette;
-	miptex_t		*mt;
+	miptex_t		*mt = NULL; //mxd. "potentially uninitialized local pointer variable" in VS2017 if uninitialized
 	float *fbuffer, *ftexel;
 	int width, height;
 
@@ -58,14 +59,14 @@ void CalcTextureReflectivity (void)
 	sprintf(path, "%spics/colormap.pcx", moddir);  //qb: was gamedir
 
 	// get the game palette
-	Load256Image (path, NULL, &palette, NULL, NULL);
+	Load256Image(path, NULL, &palette, NULL, NULL);
 
-	// allways set index 0 even if no textures
+	// always set index 0 even if no textures
 	texture_reflectivity[0][0] = 0.5;
 	texture_reflectivity[0][1] = 0.5;
 	texture_reflectivity[0][2] = 0.5;
 
-	for (i=0 ; i<numtexinfo ; i++)
+	for (i = 0; i<numtexinfo; i++)
 	{
 		// default
 		texture_reflectivity[i][0] = 0.5f;
@@ -73,11 +74,11 @@ void CalcTextureReflectivity (void)
 		texture_reflectivity[i][2] = 0.5f;
 
 		// see if an earlier texinfo already got the value
-		for (j=0 ; j<i ; j++)
+		for (j = 0; j<i; j++)
 		{
-			if (!strcmp (texinfo[i].texture, texinfo[j].texture))
+			if (!strcmp(texinfo[i].texture, texinfo[j].texture))
 			{
-				VectorCopy (texture_reflectivity[j], texture_reflectivity[i]);
+				VectorCopy(texture_reflectivity[j], texture_reflectivity[i]);
 				texture_data[i] = texture_data[j];
 				texture_sizes[i][0] = texture_sizes[j][0];
 				texture_sizes[i][1] = texture_sizes[j][1];
@@ -89,28 +90,28 @@ void CalcTextureReflectivity (void)
 
 		// buffer is RGBA  (A  set to 255 for 24 bit format)
 		// looks in arena/textures and then data1/textures
-		sprintf( path, "%stextures/%s.tga", moddir, texinfo[i].texture );
-		if ( FileExists( path ) ) // LoadTGA expects file to exist
+		sprintf(path, "%stextures/%s.tga", moddir, texinfo[i].texture);
+		if (FileExists(path)) // LoadTGA expects file to exist
 		{
-			LoadTGA( path, &pbuffer, &width, &height ); // load rgba data
-			qprintf("load %s\n", path );
+			LoadTGA(path, &pbuffer, &width, &height); // load rgba data
+			qprintf("load %s\n", path);
 		}
 		else
 		{
-			sprintf( path, "%stextures/%s.tga", moddir, texinfo[i].texture );
-			if ( FileExists( path ) )
+			sprintf(path, "%stextures/%s.tga", moddir, texinfo[i].texture);
+			if (FileExists(path))
 			{
-				LoadTGA( path, &pbuffer, &width, &height ); // load rgba data
-				qprintf("load %s\n", path );
+				LoadTGA(path, &pbuffer, &width, &height); // load rgba data
+				qprintf("load %s\n", path);
 			}
 			else
 			{
 				// look for wal file
-		sprintf (path, "%stextures/%s.wal", moddir, texinfo[i].texture);
+				sprintf(path, "%stextures/%s.wal", moddir, texinfo[i].texture);
 				qprintf("attempting %s\n", path);
 
 				// load the miptex to get the flags and values
-				if ( FileExists( path ) )  //qb: linux segfault if not exist
+				if (FileExists(path))  //qb: linux segfault if not exist
 					if (TryLoadFile(path, (void **)&mt, false) != -1)
 						wal_tex = true;
 			}
@@ -122,50 +123,52 @@ void CalcTextureReflectivity (void)
 
 		if (wal_tex)
 		{
-		texels = LittleLong(mt->width)*LittleLong(mt->height);
-		color[0] = color[1] = color[2] = 0;
+			texels = LittleLong(mt->width)*LittleLong(mt->height);
+			color[0] = color[1] = color[2] = 0;
 
-		for (j=0 ; j<texels ; j++)
-		{
-			texel = ((byte *)mt)[LittleLong(mt->offsets[0]) + j];
-			for (k=0 ; k<3 ; k++)
-				color[k] += palette[texel*3+k];
+			for (j = 0; j<texels; j++)
+			{
+				texel = ((byte *)mt)[LittleLong(mt->offsets[0]) + j];
+				for (k = 0; k<3; k++)
+					color[k] += palette[texel * 3 + k];
 			}
 		}
 		else
 		{
-			texels =  width * height;
+			texels = width * height;
 			if (texels <= 0)
 			{
-				qprintf("tex %i (%s) no rgba data (file broken?)\n", i, path );
+				qprintf("tex %i (%s) no rgba data (file broken?)\n", i, path);
 				continue; // empty texture, possible bad file
-		}
+			}
 
 			color[0] = color[1] = color[2] = 0.0f;
 			ptexel = pbuffer;
-			fbuffer = malloc (texels*4*sizeof(float));
+			fbuffer = malloc(texels * 4 * sizeof(float));
 			ftexel = fbuffer;
-			for ( count = texels;  count--; )
-		{
+
+			for (count = texels; count--; )
+			{
 				cur_color[0] = (float)(*ptexel++); // r
 				cur_color[1] = (float)(*ptexel++); // g
 				cur_color[2] = (float)(*ptexel++); // b
 				tex_a = (float)(*ptexel++);
-				if (texinfo[i].flags & (SURF_WARP|SURF_NODRAW))
+
+				if (texinfo[i].flags & (SURF_WARP | SURF_NODRAW))
 				{
 					a = 0.0;
-		}
+				}
 				else if ((texinfo[i].flags & SURF_TRANS33) && (texinfo[i].flags & SURF_TRANS66))
-		{
-					a = tex_a/511.0;
-		}
+				{
+					a = tex_a / 511.0;
+				}
 				else if (texinfo[i].flags & SURF_TRANS33)
 				{
-					a = tex_a/765.0;
+					a = tex_a / 765.0;
 				}
 				else if (texinfo[i].flags & SURF_TRANS66)
 				{
-					a = tex_a/382.5;
+					a = tex_a / 382.5;
 				}
 				else
 				{
@@ -174,17 +177,18 @@ void CalcTextureReflectivity (void)
 
 				for (j = 0; j < 3; j++)
 				{
-					*ftexel++ = cur_color[j]/255.0;
-					color[j] += cur_color[j]*a;
+					*ftexel++ = cur_color[j] / 255.0;
+					color[j] += cur_color[j] * a;
 				}
 				*ftexel++ = a;
 			}
 
 			//never freed but we'll need it up until the end
 			texture_data[i] = fbuffer;
-			free (pbuffer);
+			free(pbuffer);
 		}
-		for( j = 0; j < 3; j++ )
+
+		for (j = 0; j < 3; j++)
 		{ // average RGB for the texture to 0.0..1.0 range
 			r = color[j] / (float)texels / 255.0f;
 			texture_reflectivity[i][j] = r;
@@ -193,15 +197,16 @@ void CalcTextureReflectivity (void)
 		// desaturate reflectivity here (TODO: check that avg. rgb makes sense)
 		r = 1.0f - desaturate;
 		c = ((texture_reflectivity[i][0]
-		                              + texture_reflectivity[i][1]
-		                                                        + texture_reflectivity[i][2]) / 3.0f) * desaturate;
+			+ texture_reflectivity[i][1]
+			+ texture_reflectivity[i][2]) / 3.0f) * desaturate;
+
 		texture_reflectivity[i][0] = (texture_reflectivity[i][0] * r) + c;
 		texture_reflectivity[i][1] = (texture_reflectivity[i][1] * r) + c;
 		texture_reflectivity[i][2] = (texture_reflectivity[i][2] * r) + c;
 
 		qprintf("tex %i (%s) avg rgb [ %f, %f, %f ]\n",
-				i, path, texture_reflectivity[i][0],
-				texture_reflectivity[i][1],texture_reflectivity[i][2]);
+			i, path, texture_reflectivity[i][0],
+			texture_reflectivity[i][1], texture_reflectivity[i][2]);
 	}
 }
 
