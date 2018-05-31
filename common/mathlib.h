@@ -78,6 +78,8 @@ extern vec3_t vec3_origin;
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
+#define BOUND(a,b,c) ((a) >= (c) ? (a) : (b) < (a) ? (a) : (b) > (c) ? (c) : (b))
+
 
 #ifndef MATH_INLINE
 qboolean VectorCompare (vec3_t v1, vec3_t v2);
