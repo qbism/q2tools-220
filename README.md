@@ -12,7 +12,8 @@ Based on modifications supporting the v220 map format by XaeroX and DarkEssence 
     *   gamedir is parent of moddir
     *   qdir is parent of gamedir
 *   Load files from PAK (GDD tools)
-*	VS compiler fixes
+*	VS compiler fixes (MaxEd)
+
 
 BSP
 *   Split microbrushes (GDD tools)
@@ -20,6 +21,7 @@ BSP
 *   Fix microbrush deformation (Jitspoe)
 *   Caulk brushes similar to Q3 mapping (kmbsp3)	
 *   Texinfo overflow check (MaxEd)
+		
 		
 radiosity
 *   Use any existing TGA replacement textures for radiosity (AA tools)
@@ -30,6 +32,7 @@ radiosity
 *   Automatic phong smoothing (vluzacn VHLT)
 *   Add face for vertext normal (vluzacn VHLT)
 	
+	
 qdata
 *	LWO support (KDT)
 
@@ -39,8 +42,10 @@ qdata
 qbsp3
 *   v220 support- for Trenchbroom, duplicate or modify the Q2 gametype and change the format to valve and add "mapversion" "220" to worldspawn.  JACK does this automatically when saving to v220.
 
+
 qvis3
 *   works the same as always
+
 
 qrad3
 *   -smooth sets the angle (in degrees) for autophong.  Default is 44, so it will phong a 9-sided or more prism, but not 8-sided.  Set to zero to disable.
@@ -48,11 +53,13 @@ qrad3
 *	-saturation applies to light reflected from surfaces.  Values < 1.0 desaturate.  Values >1.0 oversaturate.  
 *   Any tga replacement textures found will be used for radiosity.
 
+
 qdata
 *   help for this tool is scarce, but it runs a script file to convert assets to Q2 data types.  This example creates the colormap:
     
     $load base/pics/pal.pcx
-    $colormap colormap 
+	
+	$colormap colormap 
 
 # Build from source:
 A Linux makefile and Windows cross-compile from Linux makefiles are included. Download and build the Windows dependency libraries or find pre-compiled libs.  The pre-compiled libs from the Q2PRO SDK for MinGW-w64 do the trick.
