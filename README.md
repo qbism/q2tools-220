@@ -5,7 +5,7 @@ Includes qbsp3, qvis3, qrad3, and qdata.
 Based on modifications supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
 
 
-#Enhancements:
+# Enhancements:
 
 *	File path determination asumptions (Alien Arena tools):
     *   moddir is parent of whatever directory contains the .map/.bsp
@@ -15,24 +15,23 @@ Based on modifications supporting the v220 map format by XaeroX and DarkEssence 
 *	VS compiler fixes
 
 BSP
-    *   Split microbrushes (GDD tools)
-	*	Fix for scaled textures using an origin brush. (DWH)
-    *   Fix microbrush deformation (Jitspoe)
-    *   Caulk brushes similar to Q3 mapping (kmbsp3)	
-	*   Texinfo overflow check (MaxEd)
+*   Split microbrushes (GDD tools)
+*	Fix for scaled textures using an origin brush. (DWH)
+*   Fix microbrush deformation (Jitspoe)
+*   Caulk brushes similar to Q3 mapping (kmbsp3)	
+*   Texinfo overflow check (MaxEd)
 		
 radiosity
-    *   Use any existing TGA replacement textures for radiosity (AA tools)
-    *   Spotlight center to surface point attenuation (AA tools)
-    *   Radiosity texture checking (GDD tools)
-    *   Face extents (quemap)
-    *   Edge lighting fix (qbism)	
-	 
-    *   Automatic phong smoothing (vluzacn VHLT)
-    *   Add face for vertext normal (vluzacn VHLT)
+*   Use any existing TGA replacement textures for radiosity (AA tools)
+*   Spotlight center to surface point attenuation (AA tools)
+*   Radiosity texture checking (GDD tools)
+*   Face extents (quemap)
+*   Edge lighting fix (qbism)	
+*   Automatic phong smoothing (vluzacn VHLT)
+*   Add face for vertext normal (vluzacn VHLT)
 	
 qdata
-	*	LWO support (KDT)
+*	LWO support (KDT)
 
 
 # Instructions:
