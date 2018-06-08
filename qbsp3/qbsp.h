@@ -189,7 +189,7 @@ extern	vec_t		microvolume;
 
 extern	char		outbase[32];
 
-extern	char	source[1024];
+extern	char		source[1024];
 
 void 	LoadMapFile (char *filename);
 int		FindFloatPlane (vec3_t normal, vec_t dist, int bnum);
@@ -215,7 +215,9 @@ int	FindMiptex (char *name);
 
 int TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin);
 //DarkEssence: function TexinfoForBrushTexture_UV for #mapversion 220
-int TexinfoForBrushTexture_UV ( brush_texture_t *bt, vec_t *UVaxis);
+int TexinfoForBrushTexture_UV (brush_texture_t *bt, vec_t *UVaxis);
+//mxd: Applies origin brush offset to existing #mapversion 220 texinfo
+int ApplyTexinfoOffset_UV(int texinfoindex, const brush_texture_t *bt, const vec3_t origin);
 
 //=============================================================================
 

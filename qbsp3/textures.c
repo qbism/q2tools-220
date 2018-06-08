@@ -132,17 +132,69 @@ inline void CheckTexinfoCount() //mxd
 		Error("ERROR: texinfo count exceeds program limit (%i).\n", MAX_MAP_TEXINFO);
 }
 
+qboolean TexinfosMatch (texinfo_t t1, texinfo_t t2) //mxd
+{
+	if (t1.flags != t2.flags || t1.value != t2.value || strcmp (t1.texture, t2.texture))
+		return false;
+	
+	for (int j = 0; j < 2; j++)
+		for (int k = 0; k < 4; k++)
+			if (t1.vecs[j][k] != t2.vecs[j][k])
+				return false;
+
+	return true;
+}
+
+//mxd. Applies origin brush offset to existing v220 texinfo...
+int ApplyTexinfoOffset_UV(int texinfoindex, const brush_texture_t *bt, const vec3_t origin)
+{
+	if (!VectorLengthSq (origin) || texinfoindex < 0)
+		return texinfoindex;
+
+	const texinfo_t otx = texinfo[texinfoindex];
+
+	// Copy texinfo
+	texinfo_t tx;
+	memcpy (&tx, &otx, sizeof(tx));
+
+	// Transform origin to UV space and add it to ST offsets
+	tx.vecs[0][3] += origin[0] * tx.vecs[0][0] + origin[1] * tx.vecs[0][1] + origin[2] * tx.vecs[0][2];
+	tx.vecs[1][3] += origin[0] * tx.vecs[1][0] + origin[1] * tx.vecs[1][1] + origin[2] * tx.vecs[1][2];
+
+	// Find or replace texinfo
+	texinfo_t *tc = texinfo;
+	for (texinfoindex = 0; texinfoindex < numtexinfo; texinfoindex++, tc++)
+		if (TexinfosMatch (*tc, tx))
+			return texinfoindex;
+
+	*tc = tx;
+	numtexinfo++;
+	CheckTexinfoCount();
+
+	// Repeat for the next animation frame
+	const int mt = FindMiptex (tx.texture);
+	if (textureref[mt].animname[0])
+	{
+		brush_texture_t anim = *bt;
+		strcpy(anim.name, textureref[mt].animname);
+		tc->nexttexinfo = ApplyTexinfoOffset_UV (tc->nexttexinfo, &anim, origin);
+	}
+	else
+	{
+		tc->nexttexinfo = -1;
+	}
+		
+	// Return new texinfo index.
+	return texinfoindex;
+}
+
 // DarkEssence: function for new #mapversion with UVaxis
 int TexinfoForBrushTexture_UV (brush_texture_t *bt, vec_t *UVaxis)
 {
-	texinfo_t	tx, *tc;
-	brush_texture_t	anim;
-	int		i, j, k;
-	int		mt;
-
 	if (!bt->name[0])
 		return 0;
 
+	texinfo_t tx;
 	memset (&tx, 0, sizeof(tx));
 	strcpy (tx.texture, bt->name);
 
@@ -151,8 +203,8 @@ int TexinfoForBrushTexture_UV (brush_texture_t *bt, vec_t *UVaxis)
 	if (!bt->scale[1])
 		bt->scale[1] = 1;
 
-	for (i=0 ; i<2 ; i++)
-		for (j=0 ; j<3 ; j++)
+	for (int i = 0; i < 2 ; i++)
+		for (int j = 0; j < 3; j++)
 			tx.vecs[i][j] = UVaxis[i*3+j] / bt->scale[i];
 
 	tx.vecs[0][3] = bt->shift[0];
@@ -160,68 +212,44 @@ int TexinfoForBrushTexture_UV (brush_texture_t *bt, vec_t *UVaxis)
 	tx.flags = bt->flags;
 	tx.value = bt->value;
 
+	// Find or replace texinfo
+	int texinfoindex;
+	texinfo_t *tc = texinfo;
+	for (texinfoindex = 0; texinfoindex < numtexinfo; texinfoindex++, tc++)
+		if (TexinfosMatch (*tc, tx))
+			return texinfoindex;
 
-	tc = texinfo;
-	for (i=0 ; i<numtexinfo ; i++, tc++)
-	{
-		if (tc->flags != tx.flags)
-			continue;
-		if (tc->value != tx.value)
-			continue;
-		for (j=0 ; j<2 ; j++)
-		{
-			if (strcmp (tc->texture, tx.texture))
-				goto skip_mv;
-			for (k=0 ; k<4 ; k++)
-			{
-				if (tc->vecs[j][k] != tx.vecs[j][k])
-					goto skip_mv;
-			}
-		}
-		return i;
-	skip_mv:;
-	}
 	*tc = tx;
 	numtexinfo++;
 	CheckTexinfoCount(); //mxd
 
-	// load the next animation
-	mt = FindMiptex (bt->name);
+	// Load the next animation
+	const int mt = FindMiptex (bt->name);
 	if (textureref[mt].animname[0])
 	{
-		anim = *bt;
+		brush_texture_t anim = *bt;
 		strcpy (anim.name, textureref[mt].animname);
-		tc->nexttexinfo = TexinfoForBrushTexture_UV(&anim, UVaxis);
+		tc->nexttexinfo = TexinfoForBrushTexture_UV (&anim, UVaxis);
 	}
 	else
 		tc->nexttexinfo = -1;
 
-
-	return i;
+	return texinfoindex;
 }
 
 extern qboolean origfix;
 
 int TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin)
 {
-	vec3_t	vecs[2];
-	int		sv, tv;
-	vec_t	ang, sinv, cosv;
-	vec_t	ns, nt;
-	texinfo_t	tx, *tc;
-	int		i, j, k;
-	float	shift[2];
-	brush_texture_t		anim;
-	int				mt;
-	vec3_t scaled_origin;
-
 	if (!bt->name[0])
 		return 0;
 
+	texinfo_t tx;
 	memset (&tx, 0, sizeof(tx));
 	strcpy (tx.texture, bt->name);
 
-	TextureAxisFromPlane(plane, vecs[0], vecs[1]);
+	vec3_t vecs[2];
+	TextureAxisFromPlane (plane, vecs[0], vecs[1]);
 
 	/* Originally:
 	shift[0] = DotProduct (origin, vecs[0]);
@@ -233,13 +261,14 @@ int TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin)
 	if (!bt->scale[1])
 		bt->scale[1] = 1;
 
-
 	// DWH: Fix for scaled textures using an origin brush
+	float shift[2];
+	vec3_t scaled_origin;
 	if(origfix)
 	{
-		VectorScale(origin,1.0/bt->scale[0],scaled_origin);
+		VectorScale(origin, 1.0 / bt->scale[0], scaled_origin);
 		shift[0] = DotProduct (scaled_origin, vecs[0]);
-		VectorScale(origin,1.0/bt->scale[1],scaled_origin);
+		VectorScale(origin, 1.0 / bt->scale[1], scaled_origin);
 		shift[1] = DotProduct (scaled_origin, vecs[1]);
 	}
 	else
@@ -247,7 +276,9 @@ int TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin)
 		shift[0] = DotProduct (origin, vecs[0]);
 		shift[1] = DotProduct (origin, vecs[1]);
 	}
-// rotate axis
+
+	// Rotate axis
+	vec_t sinv, cosv;
 	if (bt->rotate == 0)
 		{ sinv = 0 ; cosv = 1; }
 	else if (bt->rotate == 90)
@@ -258,20 +289,21 @@ int TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin)
 		{ sinv = -1 ; cosv = 0; }
 	else
 	{
-		ang = bt->rotate / 180 * Q_PI;
+		const vec_t ang = bt->rotate / 180 * Q_PI;
 		sinv = sin(ang);
 		cosv = cos(ang);
 	}
 
 	 // DWH: and again...
-	 if(origfix)
-	 {
-	  ns = cosv * shift[0] - sinv * shift[1];
-	  nt = sinv * shift[0] + cosv * shift[1];
-	  shift[0] = ns;
-	  shift[1] = nt;
+	if (origfix)
+	{
+		const vec_t ns = cosv * shift[0] - sinv * shift[1];
+		const vec_t nt = sinv * shift[0] + cosv * shift[1];
+		shift[0] = ns;
+		shift[1] = nt;
 	}
 
+	int sv, tv;
 	if (vecs[0][0])
 		sv = 0;
 	else if (vecs[0][1])
@@ -286,16 +318,16 @@ int TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin)
 	else
 		tv = 2;
 
-	for (i=0 ; i<2 ; i++)
+	for (int i = 0; i < 2; i++)
 	{
-		ns = cosv * vecs[i][sv] - sinv * vecs[i][tv];
-		nt = sinv * vecs[i][sv] +  cosv * vecs[i][tv];
+		const vec_t ns = cosv * vecs[i][sv] - sinv * vecs[i][tv];
+		const vec_t nt = sinv * vecs[i][sv] + cosv * vecs[i][tv];
 		vecs[i][sv] = ns;
 		vecs[i][tv] = nt;
 	}
 
-	for (i=0 ; i<2 ; i++)
-		for (j=0 ; j<3 ; j++)
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 3; j++)
 			tx.vecs[i][j] = vecs[i][j] / bt->scale[i];
 
 	tx.vecs[0][3] = bt->shift[0] + shift[0];
@@ -303,44 +335,27 @@ int TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin)
 	tx.flags = bt->flags;
 	tx.value = bt->value;
 
-	//
-	// find the texinfo
-	//
-	tc = texinfo;
-	for (i=0 ; i<numtexinfo ; i++, tc++)
-	{
-		if (tc->flags != tx.flags)
-			continue;
-		if (tc->value != tx.value)
-			continue;
-		for (j=0 ; j<2 ; j++)
-		{
-			if (strcmp (tc->texture, tx.texture))
-				goto skip;
-			for (k=0 ; k<4 ; k++)
-			{
-				if (tc->vecs[j][k] != tx.vecs[j][k])
-					goto skip;
-			}
-		}
-		return i;
-skip:;
-	}
+	// Find or replace texinfo
+	int texinfoindex;
+	texinfo_t *tc = texinfo;
+	for (texinfoindex = 0; texinfoindex < numtexinfo; texinfoindex++, tc++)
+		if (TexinfosMatch (*tc, tx))
+			return texinfoindex;
+
 	*tc = tx;
 	numtexinfo++;
 	CheckTexinfoCount(); //mxd
 
 	// load the next animation
-	mt = FindMiptex (bt->name);
+	const int mt = FindMiptex (bt->name);
 	if (textureref[mt].animname[0])
 	{
-		anim = *bt;
+		brush_texture_t anim = *bt;
 		strcpy (anim.name, textureref[mt].animname);
 		tc->nexttexinfo = TexinfoForBrushTexture (plane, &anim, origin);
 	}
 	else
 		tc->nexttexinfo = -1;
 
-
-	return i;
+	return texinfoindex;
 }
