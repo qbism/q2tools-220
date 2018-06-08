@@ -317,7 +317,6 @@ RunThreadsOn
 */
 void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int))
 {
-	int		i;
 	int		start, end;
 
 	dispatch = 0;

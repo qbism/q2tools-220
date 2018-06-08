@@ -612,10 +612,9 @@ void ParseBrush (entity_t *mapent)
 			td.shift[0] = atoi(token);
 			GetToken (false);
 			td.shift[1] = atoi(token);
-
-        }
-        else 		// new #mapversion
-        {
+		}
+		else 		// new #mapversion
+		{
 			GetToken (false);
 			if (strcmp (token, "["))
 			{
@@ -707,7 +706,7 @@ void ParseBrush (entity_t *mapent)
 		//
 		// find the plane number
 		//
-        planenum = PlaneFromPoints (planepts[0], planepts[1], planepts[2], b);
+		planenum = PlaneFromPoints (planepts[0], planepts[1], planepts[2], b);
 		if (planenum == -1)
 		{
 			printf ("Entity %i, Brush %i: plane with no normal\n"
@@ -734,6 +733,7 @@ void ParseBrush (entity_t *mapent)
 				break;
 			}
 		}
+
 		if (k != b->numsides)
 			continue;		// duplicated
 
@@ -743,24 +743,18 @@ void ParseBrush (entity_t *mapent)
 
 		side = b->original_sides + b->numsides;
 		side->planenum = planenum;
-		if( g_nMapFileVersion < 220 )	// DarkEssence: texinfo #mapversion
-		{
-			side->texinfo = TexinfoForBrushTexture (&mapplanes[planenum],
-				&td, vec3_origin);
-        }
-        else 					// texinfo for #mapversion 220
-        {
+		if (g_nMapFileVersion < 220) // DarkEssence: texinfo #mapversion
+			side->texinfo = TexinfoForBrushTexture (&mapplanes[planenum], &td, vec3_origin);
+		else						 // texinfo for #mapversion 220
 			side->texinfo = TexinfoForBrushTexture_UV (&td, UVaxis);
-		}
 
-		// save the td off in case there is an origin brush and we
-		// have to recalculate the texinfo
+		// save the td off in case there is an origin brush and we have to recalculate the texinfo
 		side_brushtextures[nummapbrushsides] = td;
 
 		nummapbrushsides++;
 		b->numsides++;
-    }
-    while (1);
+	}
+	while (true);
 
 	// get the content for the entire brush
 	b->contents = BrushContents (b);
@@ -792,11 +786,8 @@ void ParseBrush (entity_t *mapent)
 	}
 
 	//
-	// origin brushes are removed, but they set
-	// the rotation origin for the rest of the brushes
-	// in the entity.  After the entire entity is parsed,
-	// the planenums and texinfos will be adjusted for
-	// the origin brush
+	// origin brushes are removed, but they set the rotation origin for the rest of the brushes in the entity.
+	// After the entire entity is parsed, the planenums and texinfos will be adjusted for the origin brush
 	//
 	if (b->contents & CONTENTS_ORIGIN)
 	{
@@ -805,8 +796,7 @@ void ParseBrush (entity_t *mapent)
 
 		if (num_entities == 1)
 		{
-			Error ("Entity %i, Brush %i: origin brushes not allowed in world"
-				, b->entitynum, b->brushnum);
+			Error ("Entity %i, Brush %i: origin brushes not allowed in world", b->entitynum, b->brushnum);
 			return;
 		}
 
@@ -885,11 +875,6 @@ ParseMapEntity
 */
 qboolean	ParseMapEntity (void)
 {
-	entity_t	*mapent;
-	epair_t		*e;
-	side_t		*s;
-	int			i, j;
-	vec_t		newdist;
 	mapbrush_t	*b;
 
 	if (!GetToken (true))
@@ -901,7 +886,7 @@ qboolean	ParseMapEntity (void)
 	if (num_entities == MAX_MAP_ENTITIES)
 		Error ("num_entities == MAX_MAP_ENTITIES");
 
-	mapent = &entities[num_entities];
+	entity_t *mapent = &entities[num_entities];
 	num_entities++;
 	memset (mapent, 0, sizeof(*mapent));
 	mapent->firstbrush = nummapbrushes;
@@ -915,22 +900,25 @@ qboolean	ParseMapEntity (void)
 			Error ("ParseEntity: EOF without closing brace");
 		if (!strcmp (token, "}") )
 			break;
+
 		if (!strcmp (token, "{") )
-			ParseBrush (mapent);
+		{
+			ParseBrush(mapent);
+		}
 		else
 		{
-			e = ParseEpair ();
+			epair_t *e = ParseEpair ();
 			e->next = mapent->epairs;
 			mapent->epairs = e;
 
-            if(!strcmp(e->key, "mapversion"))  		  // DarkEssence: set #mapversion
-            {
+			if(!strcmp(e->key, "mapversion"))  		 // DarkEssence: set #mapversion
+			{
 				g_nMapFileVersion = atoi(e->value);  //  or keep default value - 0
 				RemoveLastEpair ( mapent );
 			}
 		}
-    }
-    while (1);
+	}
+	while (true);
 
 	GetVectorForKey (mapent, "origin", mapent->origin);
 
@@ -939,18 +927,21 @@ qboolean	ParseMapEntity (void)
 	//
 	if (mapent->origin[0] || mapent->origin[1] || mapent->origin[2])
 	{
-		for (i=0 ; i<mapent->numbrushes ; i++)
+		for (int i = 0; i < mapent->numbrushes; i++)
 		{
 			b = &mapbrushes[mapent->firstbrush + i];
-			for (j=0 ; j<b->numsides ; j++)
+			for (int j = 0; j < b->numsides; j++)
 			{
-				s = &b->original_sides[j];
-				newdist = mapplanes[s->planenum].dist -
-					DotProduct (mapplanes[s->planenum].normal, mapent->origin);
-                s->planenum = FindFloatPlane (mapplanes[s->planenum].normal, newdist, b->brushnum);
-				s->texinfo = TexinfoForBrushTexture (&mapplanes[s->planenum],
-					&side_brushtextures[s-brushsides], mapent->origin);
+				side_t *s = &b->original_sides[j];
+				const vec_t newdist = mapplanes[s->planenum].dist - DotProduct (mapplanes[s->planenum].normal, mapent->origin);
+				s->planenum = FindFloatPlane (mapplanes[s->planenum].normal, newdist, b->brushnum);
+
+				if(g_nMapFileVersion < 220) //mxd
+					s->texinfo = TexinfoForBrushTexture (&mapplanes[s->planenum], &side_brushtextures[s - brushsides], mapent->origin);
+				else
+					s->texinfo = ApplyTexinfoOffset_UV (s->texinfo, &side_brushtextures[s - brushsides], mapent->origin);
 			}
+
 			MakeBrushWindings (b);
 		}
 	}
