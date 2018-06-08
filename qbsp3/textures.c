@@ -134,7 +134,7 @@ inline void CheckTexinfoCount() //mxd
 
 qboolean TexinfosMatch (texinfo_t t1, texinfo_t t2) //mxd
 {
-	if (t1.flags != t2.flags || t1.value != t2.value || t1.nexttexinfo != t2.nexttexinfo || strcmp (t1.texture, t2.texture))
+	if (t1.flags != t2.flags || t1.value != t2.value || strcmp (t1.texture, t2.texture))
 		return false;
 	
 	for (int j = 0; j < 2; j++)
