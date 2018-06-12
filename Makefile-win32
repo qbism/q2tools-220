@@ -53,11 +53,11 @@ vpath %.c common
 
 ifeq ($(BUILD),DEBUG)
 CFLAGS ?= $(DEBUG_CFLAGS) $(INCLUDES)
-builddir = debug
-vpath %.o debug
+builddir = debugWin32
+vpath %.o debugWin32
 else
 CFLAGS ?= $(RELEASE_CFLAGS) $(INCLUDES)
-builddir = release
+builddir = releaseWin32
 vpath %.o releaseWin32
 endif
 

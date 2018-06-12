@@ -41,7 +41,7 @@ qboolean	nosubdiv = false;
 qboolean	notjunc = false;
 qboolean	leaktest = false;
 qboolean	badnormal_check = false;
-qboolean	origfix = false;
+qboolean	origfix = true; //default to true
 
 char		outbase[32] = "";
 
@@ -338,10 +338,10 @@ int main (int argc, char **argv)
 
 	for (i=1 ; i<argc ; i++)
 	{
-		if (!strcmp(argv[i], "-origfix"))
+		if (!strcmp(argv[i], "-noorigfix"))
 		{
-			printf ("origfix = true\n");
-			origfix = true;
+			printf ("origfix = false\n");
+			origfix = false;
 		}
 		else if (!strcmp(argv[i], "-v"))
 		{
@@ -358,7 +358,7 @@ int main (int argc, char **argv)
                 "    -chop #               -nodetail          -noweld\n"
                 "    -leaktest             -nofill            -onlyents\n"
                 "    -fulldetail           -noshare           -tmpout\n"
-                "    -micro #              -v (verbose output)\n\n");
+                "    -micro #              -noorigfix         -v (verbose)\n\n");
 
 			exit(1);
 		}

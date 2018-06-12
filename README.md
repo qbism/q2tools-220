@@ -2,7 +2,7 @@
 Q2 compiler tools featuring ability to bsp v220 map format, automatic phong and soft spotlights, and other enhancements.
 Includes qbsp3, qvis3, qrad3, and qdata.
 
-Based on modifications supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
+Originally based on modifications supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
 
 
 # Enhancements:
@@ -18,6 +18,7 @@ Based on modifications supporting the v220 map format by XaeroX and DarkEssence 
 BSP
 *   Split microbrushes (GDD tools)
 *	Fix for scaled textures using an origin brush. (DWH)
+*   Fix for rotation using origin brush (MaxEd)
 *   Fix microbrush deformation (Jitspoe)
 *   Caulk brushes similar to Q3 mapping (kmbsp3)	
 *   Texinfo overflow check (MaxEd)
@@ -41,6 +42,7 @@ qdata
 
 qbsp3
 *   v220 support- for Trenchbroom, duplicate or modify the Q2 gametype and change the format to valve and add "mapversion" "220" to worldspawn.  JACK does this automatically when saving to v220.
+*   -noorigfix disables 'origin fix'.  
 
 
 qvis3
@@ -63,5 +65,8 @@ qdata
 
 # Build from source:
 A Linux makefile and Windows cross-compile from Linux makefiles are included. Download and build the Windows dependency libraries or find pre-compiled libs.  The pre-compiled libs from the Q2PRO SDK for MinGW-w64 do the trick.
+
 Visual Studio sln is included.
+
+CodeBlocks project is inlcuded as an editing aid, but isn't set up for compiling.  Use the makefiles instead.
 
