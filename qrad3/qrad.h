@@ -122,8 +122,6 @@ void MakeShadowSplits (void);
 float			*texture_data[MAX_MAP_TEXINFO];
 int				texture_sizes[MAX_MAP_TEXINFO][2];
 
-qboolean		doing_texcheck;
-
 //==============================================
 
 

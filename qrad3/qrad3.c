@@ -819,7 +819,6 @@ void RadWorld (void)
 
     // build initial facelights
     RunThreadsOnIndividual (numfaces, true, BuildFacelights);
-    doing_texcheck = false;
 
     if (numbounce > 0)
     {
@@ -895,13 +894,25 @@ int main (int argc, char **argv)
         {
             printf ("qrad3 with automatic phong.\n"
                     "usage: qbsp3 [options] mapfile\n\n"
-                    "    -help                 -extra             -maxdata\n"
-                    "    -subdiv #             -scale             -direct\n"
-                    "    -entity               -nopvs             -noblock\n"
-                    "    -texcheck             -ambient           -savetrace\n"
-                    "    -maxlight             -tmpin             -tmpout\n"
-                    "    -dump		           -bounce            -threads\n"
-                    "    -smooth               -v (verbose output)\n\n");
+                    "-extra: Use extra samples to smooth lighting\n"
+                    "-maxdata #: Maximum lighting data  Default: 2097152 Limit: 8388608\n"
+                    "-subdiv #: Maximum patch size  Default: 64\n"
+                    "-scale #: Intensity multiplier\n"
+                    "-direct #: Direct light scaling\n"
+                    "-entity #: Entity light scaling\n"
+                    "-nopvs:  Don't do potential visibility set check\n"
+                    "-noblock: Brushes don't block lighting path\n"
+                    "-ambient: Minimum light level\n"
+                    "-savetrace: Test traces and report errors\n"
+                    "-maxlight: Maximium light level\n"
+                    "-tmpin: Read sfrom tmp directory\n"
+                    "-tmpout: Wite to tmp directory\n"
+                    "-dump: dump patches to a text file\n"
+                    "-bounce #: Max number of light bounces for radiosity\n"
+                    "-threads #:  Number of CPU cores to use\n"
+                    "-smooth #: Threshold angle for phong smoothing\n"
+                    "-v: verbose output for debugging\n"
+                    "-basedir <dir> :et the base directory for textures\n\n");
 
             exit(1);
         }
@@ -983,11 +994,6 @@ int main (int argc, char **argv)
             noblock = true;
             printf ("noblock = true\n");
         }
-        else if (!strcmp(argv[i],"-texcheck"))
-        {
-            doing_texcheck = true;
-            printf ("texcheck = true\n");
-        }
         else if (!strcmp(argv[i],"-smooth"))
         {
             smoothing_value = atof (argv[i+1]);
@@ -1034,8 +1040,14 @@ int main (int argc, char **argv)
 
     if (i != argc - 1)
     {
-        Error ("usage: qrad3 [options] mapfile\n\n"
-               "    qrad3 -help for option list\n");
+        Error ("usage: qbsp3 [options] mapfile\n\n"
+               "    -help                 -extra               -maxdata\n"
+               "    -subdiv #             -scale               -direct\n"
+               "    -entity               -nopvs               -noblock\n"
+               "    -basedir             -ambient             -savetrace\n"
+               "    -maxlight             -tmpin               -tmpout\n"
+               "    -dump	              -bounce              -threads\n"
+               "    -smooth               -v (verbose output)\n\n");
     }
     start = I_FloatTime ();
 
