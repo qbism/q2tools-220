@@ -558,7 +558,7 @@ void ParseBrush (entity_t *mapent)
 	int			planenum;
 	brush_texture_t	td;
 	vec3_t		planepts[3];
-	vec_t		UVaxis[6];  // DarkEssence: UV axis in 220 #mapversion
+ 	vec_t		UVaxis[6];  // DarkEssence: UV axis in 220 #mapversion
 
 	if (nummapbrushes == MAX_MAP_BRUSHES)
 		Error ("nummapbrushes == MAX_MAP_BRUSHES");

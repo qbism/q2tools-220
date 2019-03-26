@@ -90,7 +90,7 @@ void CalcTextureReflectivity(void)
             continue;
 
         // buffer is RGBA  (A  set to 255 for 24 bit format)
-        // looks in arena/textures and then data1/textures
+        // looks in moddir then base dir
         sprintf(path, "%stextures/%s.tga", moddir, texinfo[i].texture);
         if (FileExists(path)) // LoadTGA expects file to exist
         {
@@ -99,22 +99,42 @@ void CalcTextureReflectivity(void)
         }
         else
         {
-            sprintf(path, "%stextures/%s.tga", moddir, texinfo[i].texture);
+            sprintf(path, "%s%s/textures/%s.tga", gamedir, basedir, texinfo[i].texture);
             if (FileExists(path))
             {
                 LoadTGA(path, &pbuffer, &width, &height); // load rgba data
-                qprintf("load %s\n", path);
+                qprintf("load %s from %s\n", path, basedir);
             }
             else
             {
-                // look for wal file
+                // look for wal file in moddir
                 sprintf(path, "%stextures/%s.wal", moddir, texinfo[i].texture);
                 qprintf("attempting %s\n", path);
 
                 // load the miptex to get the flags and values
                 if (FileExists(path))  //qb: linux segfault if not exist
+                {
                     if (TryLoadFile(path, (void **)&mt, false) != -1)
                         wal_tex = true;
+                }
+                else
+                {
+                    // look for wal file in base dir
+                    sprintf(path, "%s%s/textures/%s.wal", gamedir, basedir, texinfo[i].texture);
+                    qprintf("attempting %s from %s\n", path, basedir);
+
+                    // load the miptex to get the flags and values
+                    if (FileExists(path))  //qb: linux segfault if not exist
+                    {
+                        if (TryLoadFile(path, (void **)&mt, false) != -1)
+                            wal_tex = true;
+                    }
+                    else
+                    {
+                        qprintf("NOT FOUND %s\n", path);
+                        continue;
+                    }
+                }
             }
         }
 
@@ -207,7 +227,7 @@ void CalcTextureReflectivity(void)
 //  The passed-in RGB values can be on any desired scale, such as 0 to
 //  to 1, or 0 to 255.  (But use the same scale for all three!)
 //
-//  The "change" parameter works like this:
+//  The "saturation" parameter works like this:
 //    0.0 creates a black-and-white image.
 //    0.5 reduces the color saturation by half.
 //    1.0 causes no change.
@@ -216,18 +236,18 @@ void CalcTextureReflectivity(void)
 //  beyond their normal range, in which case you probably should truncate
 //  them to the desired range before trying to use them in an image.
 
-            r = &texture_reflectivity[i][0];
-            g = &texture_reflectivity[i][1];
-            b = &texture_reflectivity[i][2];
+        r = &texture_reflectivity[i][0];
+        g = &texture_reflectivity[i][1];
+        b = &texture_reflectivity[i][2];
 
-            float  P=sqrt(
-                          (*r)*(*r)*Pr+
-                          (*g)*(*g)*Pg+
-                          (*b)*(*b)*Pb ) ;
+        float  P=sqrt(
+                     (*r)*(*r)*Pr+
+                     (*g)*(*g)*Pg+
+                     (*b)*(*b)*Pb ) ;
 
-            *r = BOUND(0, P+ (*r-P) * saturation, 255);
-            *g = BOUND(0, P+ (*g-P) * saturation, 255);
-            *b = BOUND(0, P+ (*b-P) * saturation, 255);
+        *r = BOUND(0, P+ (*r-P) * saturation, 255);
+        *g = BOUND(0, P+ (*g-P) * saturation, 255);
+        *b = BOUND(0, P+ (*b-P) * saturation, 255);
 
 
         qprintf("tex %i (%s) avg rgb [ %f, %f, %f ]\n",

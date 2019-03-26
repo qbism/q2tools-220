@@ -115,6 +115,7 @@ extern	int		nodeparents[MAX_MAP_NODES];
 
 extern	float	lightscale;
 
+extern char		basedir[64];
 
 void MakeShadowSplits (void);
 
