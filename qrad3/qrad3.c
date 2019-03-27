@@ -894,26 +894,26 @@ int main (int argc, char **argv)
         {
             printf ("qrad3 with automatic phong.\n"
                     "usage: qbsp3 [options] mapfile\n\n"
+                    "-smooth #: Threshold angle for phong smoothing\n"
                     "-extra: Use extra samples to smooth lighting\n"
-                    "-maxdata #: Maximum lighting data  Default: 2097152 Limit: 8388608\n"
                     "-subdiv #: Maximum patch size  Default: 64\n"
+                    "-bounce #: Max number of light bounces for radiosity\n"
+                    "-maxdata #: Requires modded engine. Default: 2097152 Limit: 8388608\n"
                     "-scale #: Intensity multiplier\n"
                     "-direct #: Direct light scaling\n"
                     "-entity #: Entity light scaling\n"
-                    "-nopvs:  Don't do potential visibility set check\n"
-                    "-noblock: Brushes don't block lighting path\n"
                     "-ambient: Minimum light level\n"
-                    "-savetrace: Test traces and report errors\n"
                     "-maxlight: Maximium light level\n"
+                    "-basedir <dir> :et the base directory for textures\n"
+                    "-v: verbose output for debugging\n"
                     "-tmpin: Read sfrom tmp directory\n"
                     "-tmpout: Wite to tmp directory\n"
+                    "-savetrace: Test traces and report errors\n"
                     "-dump: dump patches to a text file\n"
-                    "-bounce #: Max number of light bounces for radiosity\n"
-                    "-threads #:  Number of CPU cores to use\n"
-                    "-smooth #: Threshold angle for phong smoothing\n"
-                    "-v: verbose output for debugging\n"
-                    "-basedir <dir> :et the base directory for textures\n\n");
-
+                    "-nopvs:  Don't do potential visibility set check\n"
+                    "-noblock: Brushes don't block lighting path\n"
+                    "-threads #:  Number of CPU cores to use\n\n"
+                   );
             exit(1);
         }
 
@@ -1032,6 +1032,7 @@ int main (int argc, char **argv)
     printf("radmin    : %f\n", patch_cutoff );
     printf("subdiv    : %f\n", subdiv );
     printf("smooth    : %f\n", smoothing_value );
+    printf("threads   : %d\n", numthreads );
 
     // ThreadSetDefault ();
 
@@ -1044,7 +1045,7 @@ int main (int argc, char **argv)
                "    -help                 -extra               -maxdata\n"
                "    -subdiv #             -scale               -direct\n"
                "    -entity               -nopvs               -noblock\n"
-               "    -basedir             -ambient             -savetrace\n"
+               "    -basedir              -ambient             -savetrace\n"
                "    -maxlight             -tmpin               -tmpout\n"
                "    -dump	              -bounce              -threads\n"
                "    -smooth               -v (verbose output)\n\n");

@@ -1505,11 +1505,10 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
         vec3_t normal, vec3_t color,
         float lightscale2,
         qboolean *sun_main_once,
-        qboolean *sun_ambient_once,
-        float *lightweight
+        qboolean *sun_ambient_once
                                      )
 {
-    vec3_t			delta, target, occluded, color_nodist;
+    vec3_t			delta, target, occluded;
     float			dot, dot2;
     float			dist;
     float			scale = 0.0f;
@@ -1519,7 +1518,6 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
     qboolean		set_main;
 
     VectorClear (color);
-    *lightweight = 0;
 
     VectorSubtract (l->origin, pos, delta);
     dist = VectorNormalize (delta, delta);
@@ -1634,21 +1632,18 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
         if ( scale > 0.0f )
         {
             scale *= lightscale2; // adjust for multisamples, -extra cmd line arg
-            VectorScale ( l->color, scale, color );
+            VectorScale ( l->color, scale * 0.25, color ); //qb: scale hack for intensity similar to original qrad3
         }
     }
 
-    // 441.67 = roughly (sqrt(3*255^2))
-    VectorScale (l->color, l->intensity/441.67, color_nodist);
-
     for (i = 0; i < 3; i++)
     {
-        color_nodist[i] *= occluded[i];
+
         color[i] *= occluded[i];
     }
 
-    *lightweight = VectorLength (color_nodist)/sqrt(3.0);
-}
+ }
+
 
 /*
 =============
@@ -1667,7 +1662,6 @@ void GatherSampleLight (vec3_t pos, vec3_t normal,
     float			*dest;
     vec3_t			color;
     int				nodenum;
-    float			lightweight;
 
     // get the PVS for the pos to limit the number of checks
     if (!PvsForOrigin (pos, pvs))
@@ -1684,10 +1678,10 @@ void GatherSampleLight (vec3_t pos, vec3_t normal,
         for (l=directlights[i] ; l ; l=l->next)
         {
             LightContributionToPoint ( l, pos, nodenum, normal, color, lightscale2,
-                                       sun_main_once, sun_ambient_once, &lightweight);
+                                       sun_main_once, sun_ambient_once);
 
             // no contribution
-            if ( VectorCompare ( color, vec3_origin ) )
+           if ( VectorCompare ( color, vec3_origin ) )
                 continue;
 
             // if this style doesn't have a table yet, allocate one
@@ -2200,7 +2194,6 @@ void FinalLightFace (int facenum)
                 SampleTriangulation (fl->origins + j*3, trian, &last_valid, add);
                 VectorAdd (lb, add, lb);
             }
-
 
             /*
              * to allow experimenting, ambient and lightscale are not limited
