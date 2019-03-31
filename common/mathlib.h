@@ -103,7 +103,7 @@ qboolean RayPlaneIntersect(vec3_t p_n, vec_t p_d, vec3_t l_o, vec3_t l_n,
 
 #else
 
-static __inline double VectorLengthSq (vec3_t v) // jit
+ __inline double VectorLengthSq (vec3_t v) // jit
 {
     return v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
 }

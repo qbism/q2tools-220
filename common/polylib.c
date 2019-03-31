@@ -325,6 +325,7 @@ void	ClipWindingEpsilon (
 	int		maxpts;
 
 	counts[0] = counts[1] = counts[2] = 0;
+    sides[0] = dists[0] = 0;
 
 // determine sides for each point
 	for (i=0 ; i<in->numpoints ; i++)

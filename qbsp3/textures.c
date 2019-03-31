@@ -136,7 +136,7 @@ qboolean TexinfosMatch (texinfo_t t1, texinfo_t t2) //mxd
 {
 	if (t1.flags != t2.flags || t1.value != t2.value || strcmp (t1.texture, t2.texture))
 		return false;
-	
+
 	for (int j = 0; j < 2; j++)
 		for (int k = 0; k < 4; k++)
 			if (t1.vecs[j][k] != t2.vecs[j][k])
@@ -148,7 +148,7 @@ qboolean TexinfosMatch (texinfo_t t1, texinfo_t t2) //mxd
 //mxd. Applies origin brush offset to existing v220 texinfo...
 int ApplyTexinfoOffset_UV(int texinfoindex, const brush_texture_t *bt, const vec3_t origin)
 {
-	if (!VectorLengthSq (origin) || texinfoindex < 0)
+	if ((!origin[0] && !origin[1] && !origin[2]) || texinfoindex < 0)
 		return texinfoindex;
 
 	const texinfo_t otx = texinfo[texinfoindex];
@@ -183,7 +183,7 @@ int ApplyTexinfoOffset_UV(int texinfoindex, const brush_texture_t *bt, const vec
 	{
 		tc->nexttexinfo = -1;
 	}
-		
+
 	// Return new texinfo index.
 	return texinfoindex;
 }

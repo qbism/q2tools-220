@@ -96,7 +96,7 @@ void FindNextChunk(char *name)
 //			Sys_Error ("FindNextChunk: %i length is past the 1 meg sanity limit", iff_chunk_len);
 		data_p -= 8;
 		last_chunk = data_p + 8 + ( (iff_chunk_len + 1) & ~1 );
-		if (!strncmp(data_p, name, 4))
+		if (!strncmp((char *)data_p, name, 4))
 			return;
 	}
 }
@@ -119,7 +119,8 @@ void DumpChunks(void)
 		memcpy (str, data_p, 4);
 		data_p += 4;
 		iff_chunk_len = GetLittleLong();
-		printf ("0x%x : %s (%d)\n", (int)(data_p - 4), str, iff_chunk_len);
+		//qb: silly but true double-cast(unsigned)(uintptr_t), maybe a future compiler could detect this unnecessary warning
+		printf ("0x%x : %s (%d)\n", (unsigned)(uintptr_t)(data_p - 4), str, iff_chunk_len);
 		data_p += (iff_chunk_len + 1) & ~1;
 	} while (data_p < iff_end);
 }
@@ -146,7 +147,7 @@ wavinfo_t GetWavinfo (char *name, byte *wav, int wavlength)
 
 // find "RIFF" chunk
 	FindChunk("RIFF");
-	if (!(data_p && !strncmp(data_p+8, "WAVE", 4)))
+	if (!(data_p && !strncmp((char *)data_p+8, "WAVE", 4)))
 	{
 		printf("Missing RIFF/WAVE chunks\n");
 		return info;
@@ -187,7 +188,7 @@ wavinfo_t GetWavinfo (char *name, byte *wav, int wavlength)
 		FindNextChunk ("LIST");
 		if (data_p)
 		{
-			if (!strncmp (data_p + 28, "mark", 4))
+			if (!strncmp ((char *)data_p + 28, "mark", 4))
 			{	// this is not a proper parse, but it works with cooledit...
 				data_p += 24;
 				i = GetLittleLong ();	// samples in loop
@@ -1246,7 +1247,7 @@ void Cmd_Video (void)
 	command = 2;
 	fwrite (&command, 1, 4, output);
 
-	printf ("Total size: %i\n", ftell (output));
+	printf ("Total size: %ld\n", ftell (output));
 
 	fclose (output);
 

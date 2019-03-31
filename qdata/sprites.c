@@ -44,7 +44,7 @@ FinishSprite
 void FinishSprite (void)
 {
 	FILE	*spriteouthandle;
-	int			i, curframe;
+	int			i;
 	dsprite_t	spritetemp;
 	char		savename[1024];
 
@@ -85,7 +85,6 @@ void FinishSprite (void)
 //
 // write out the frames
 //
-	curframe = 0;
 
 	for (i=0 ; i<sprite.numframes ; i++)
 	{
@@ -135,7 +134,7 @@ Cmd_SpriteFrame
 */
 void Cmd_SpriteFrame (void)
 {
-	int             y,xl,yl,xh,yh,w,h;
+	int             y,xl,yl,w,h;
 	dsprframe_t		*pframe;
 	int				ox, oy;
 	byte			*cropped;
@@ -169,9 +168,6 @@ void Cmd_SpriteFrame (void)
 
 	if ((w > 256) || (h > 256))
 		Error ("Sprite has a dimension longer than 256");
-
-	xh = xl+w;
-	yh = yl+h;
 
 	if (sprite.numframes >= MAX_SPRFRAMES)
 		Error ("Too many frames; increase MAX_SPRFRAMES\n");

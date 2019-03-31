@@ -322,7 +322,7 @@ void SetModelNumbers (void)
 {
 	int		i;
 	int		models;
-	char	value[10];
+	char	value[12];
 
 	models = 1;
 	for (i=1 ; i<num_entities ; i++)
@@ -349,7 +349,7 @@ void SetLightStyles (void)
 	char	*t;
 	entity_t	*e;
 	int		i, j;
-	char	value[10];
+	char	value[11];
 	char	lighttargets[MAX_SWITCHED_LIGHTS][64];
 
 

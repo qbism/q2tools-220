@@ -2,18 +2,10 @@
 Q2 compiler tools featuring ability to bsp v220 map format, automatic phong and soft spotlights, and other enhancements.
 Includes qbsp3, qvis3, qrad3, and qdata.
 
-Originally based on modifications supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
+Forked from compiler tools supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
 
 
 # Enhancements:
-
-*	File path determination asumptions (Alien Arena tools):
-    *   moddir is parent of whatever directory contains the .map/.bsp
-    *   gamedir is parent of moddir
-    *   qdir is parent of gamedir
-*   Load files from PAK (GDD tools)
-*	VS compiler fixes (MaxEd)
-
 
 BSP
 *   Split microbrushes (GDD tools)
@@ -32,7 +24,10 @@ radiosity
 *   Edge lighting fix (qbism)	
 *   Automatic phong smoothing (vluzacn VHLT)
 *   Add face for vertext normal (vluzacn VHLT)
-	
+*	File path determination asumptions (Alien Arena tools):
+    *   moddir is parent of whatever directory contains the .map/.bsp
+    *   gamedir is parent of moddir
+    *   qdir is parent of gamedir	
 	
 qdata
 *	LWO support (KDT)
@@ -41,7 +36,7 @@ qdata
 # Instructions:
 
 qbsp3
-*   v220 support- for Trenchbroom, duplicate or modify the Q2 gametype and change the format to valve and add "mapversion" "220" to worldspawn.  JACK does this automatically when saving to v220.
+*   v220 support- for Trenchbroom, duplicate or modify the Q2 gametype and change the format to valve and add "mapversion" "220" to worldspawn.  JACK does this automatically when saving to v220.  Note that J.A.C.K. saves a hybrid map format that includes texture flags whereas standard v220 format does not. 
 *   -noorigfix disables 'origin fix'.  
 
 
@@ -54,6 +49,7 @@ qrad3
 *   -maxmapdata sets lightng memory limit.  Original is 0x200000 and it can be set up to 0x800000 (8388608).  Requires an engine that supports the higher limit.
 *	-saturation applies to light reflected from surfaces.  Values < 1.0 desaturate.  Values >1.0 oversaturate.  
 *   Any tga replacement textures found will be used for radiosity.
+*   -basedir sets the base directory, useful if working on a mod.  Defaults to baseq2.  
 
 
 qdata
@@ -63,10 +59,13 @@ qdata
 	
 	$colormap colormap 
 
+
 # Build from source:
-A Linux makefile and Windows cross-compile from Linux makefiles are included. Download and build the Windows dependency libraries or find pre-compiled libs.  The pre-compiled libs from the Q2PRO SDK for MinGW-w64 do the trick.
+Linux-  Makefiles for 32-bit and 64-bit builds of Linux and Windows are included. Assuming a 64-bit build environment, packages lib32z1 and lib32z1-dev are needed to build 32-bit.
 
-Visual Studio sln is included.
+Cross-compile- Required packages: mingw-w64, mingw-w64-i686-dev, gcc-multilib.  Pre-compiled Windows dependency libraries are included in /mgw-sdk, or download and build them from scratch.
 
-CodeBlocks project is inlcuded as an editing aid, but isn't set up for compiling.  Use the makefiles instead.
+Windows- Visual Studio sln is included. VS compiler fixes (MaxEd)
+
+
 
