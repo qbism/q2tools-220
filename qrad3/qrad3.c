@@ -61,7 +61,6 @@ int TestLine (vec3_t start, vec3_t stop);
 float           smoothing_threshold; //qb: phong from VHLT
 float           smoothing_value = DEFAULT_SMOOTHING_VALUE;
 
-int		junk;
 
 /*
  * 2010-09 Notes

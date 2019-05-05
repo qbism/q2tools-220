@@ -1601,13 +1601,10 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
             if (dot2 <= 0.001)
                 return;	// behind light surface
 
-            if (dist > 32) //qb: edge lighting fix- don't drop off right away
-            {
-                dist -= 24;
-                scale = (l->intensity / (dist*dist)) * dot * dot2;
-            }
+            if (dist > 36) //qb: edge lighting fix- don't drop off right away
+                scale = (l->intensity / ((dist-30)*(dist-30))) * dot * dot2;
             else if (dist > 16)
-                scale = (l->intensity / dist-15) * dot * dot2;
+                scale = (l->intensity / (dist-15)) * dot * dot2;
             else
                 scale = l->intensity * dot * dot2;
 
