@@ -21,6 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "qbsp.h"
 
 extern	float subdivide_size;
+extern	float sublight_size;
 
 char		source[1024];
 char		name[1024];
@@ -60,51 +61,53 @@ BlockTree
 */
 node_t	*BlockTree (int xl, int yl, int xh, int yh)
 {
-	node_t	*node;
-	vec3_t	normal;
-	vec_t	dist;
-	int		mid;
+    node_t	*node;
+    vec3_t	normal;
+    vec_t	dist;
+    int		mid;
 
-	if (xl == xh && yl == yh)
-	{
-		node = block_nodes[xl+5][yl+5];
-		if (!node)
-		{	// return an empty leaf
-			node = AllocNode ();
-			node->planenum = PLANENUM_LEAF;
-			node->contents = 0; //CONTENTS_SOLID;
-			return node;
-		}
-		return node;
-	}
+    if (xl == xh && yl == yh)
+    {
+        node = block_nodes[xl+5][yl+5];
+        if (!node)
+        {
+            // return an empty leaf
+            node = AllocNode ();
+            node->planenum = PLANENUM_LEAF;
+            node->contents = 0; //CONTENTS_SOLID;
+            return node;
+        }
+        return node;
+    }
 
-	// create a seperator along the largest axis
-	node = AllocNode ();
+    // create a seperator along the largest axis
+    node = AllocNode ();
 
-	if (xh - xl > yh - yl)
-	{	// split x axis
-		mid = xl + (xh-xl)/2 + 1;
-		normal[0] = 1;
-		normal[1] = 0;
-		normal[2] = 0;
-		dist = mid*1024;
-		node->planenum = FindFloatPlane (normal, dist, 0);
-		node->children[0] = BlockTree ( mid, yl, xh, yh);
-		node->children[1] = BlockTree ( xl, yl, mid-1, yh);
-	}
-	else
-	{
-		mid = yl + (yh-yl)/2 + 1;
-		normal[0] = 0;
-		normal[1] = 1;
-		normal[2] = 0;
-		dist = mid*1024;
-		node->planenum = FindFloatPlane (normal, dist, 0);
-		node->children[0] = BlockTree ( xl, mid, xh, yh);
-		node->children[1] = BlockTree ( xl, yl, xh, mid-1);
-	}
+    if (xh - xl > yh - yl)
+    {
+        // split x axis
+        mid = xl + (xh-xl)/2 + 1;
+        normal[0] = 1;
+        normal[1] = 0;
+        normal[2] = 0;
+        dist = mid*1024;
+        node->planenum = FindFloatPlane (normal, dist, 0);
+        node->children[0] = BlockTree ( mid, yl, xh, yh);
+        node->children[1] = BlockTree ( xl, yl, mid-1, yh);
+    }
+    else
+    {
+        mid = yl + (yh-yl)/2 + 1;
+        normal[0] = 0;
+        normal[1] = 1;
+        normal[2] = 0;
+        dist = mid*1024;
+        node->planenum = FindFloatPlane (normal, dist, 0);
+        node->children[0] = BlockTree ( xl, mid, xh, yh);
+        node->children[1] = BlockTree ( xl, yl, xh, mid-1);
+    }
 
-	return node;
+    return node;
 }
 
 /*
@@ -116,41 +119,41 @@ ProcessBlock_Thread
 int			brush_start, brush_end;
 void ProcessBlock_Thread (int blocknum)
 {
-	int		xblock, yblock;
-	vec3_t		mins, maxs;
-	bspbrush_t	*brushes;
-	tree_t		*tree;
-	node_t		*node;
+    int		xblock, yblock;
+    vec3_t		mins, maxs;
+    bspbrush_t	*brushes;
+    tree_t		*tree;
+    node_t		*node;
 
-	yblock = block_yl + blocknum / (block_xh-block_xl+1);
-	xblock = block_xl + blocknum % (block_xh-block_xl+1);
+    yblock = block_yl + blocknum / (block_xh-block_xl+1);
+    xblock = block_xl + blocknum % (block_xh-block_xl+1);
 
-	qprintf ("############### block %2i,%2i ###############\n", xblock, yblock);
+    qprintf ("############### block %2i,%2i ###############\n", xblock, yblock);
 
-	mins[0] = xblock*1024;
-	mins[1] = yblock*1024;
-	mins[2] = -4096;
-	maxs[0] = (xblock+1)*1024;
-	maxs[1] = (yblock+1)*1024;
-	maxs[2] = 4096;
+    mins[0] = xblock*1024;
+    mins[1] = yblock*1024;
+    mins[2] = -4096;
+    maxs[0] = (xblock+1)*1024;
+    maxs[1] = (yblock+1)*1024;
+    maxs[2] = 4096;
 
-	// the makelist and chopbrushes could be cached between the passes...
-	brushes = MakeBspBrushList (brush_start, brush_end, mins, maxs);
-	if (!brushes)
-	{
-		node = AllocNode ();
-		node->planenum = PLANENUM_LEAF;
-		node->contents = CONTENTS_SOLID;
-		block_nodes[xblock+5][yblock+5] = node;
-		return;
-	}
+    // the makelist and chopbrushes could be cached between the passes...
+    brushes = MakeBspBrushList (brush_start, brush_end, mins, maxs);
+    if (!brushes)
+    {
+        node = AllocNode ();
+        node->planenum = PLANENUM_LEAF;
+        node->contents = CONTENTS_SOLID;
+        block_nodes[xblock+5][yblock+5] = node;
+        return;
+    }
 
-	if (!nocsg)
-		brushes = ChopBrushes (brushes);
+    if (!nocsg)
+        brushes = ChopBrushes (brushes);
 
-	tree = BrushBSP (brushes, mins, maxs);
+    tree = BrushBSP (brushes, mins, maxs);
 
-	block_nodes[xblock+5][yblock+5] = tree->headnode;
+    block_nodes[xblock+5][yblock+5] = tree->headnode;
 }
 
 /*
@@ -161,105 +164,105 @@ ProcessWorldModel
 */
 void ProcessWorldModel (void)
 {
-	entity_t	*e;
-	tree_t		*tree;
-	qboolean	leaked;
-	qboolean	optimize;
+    entity_t	*e;
+    tree_t		*tree;
+    qboolean	leaked;
+    qboolean	optimize;
 
-	e = &entities[entity_num];
+    e = &entities[entity_num];
 
-	brush_start = e->firstbrush;
-	brush_end = brush_start + e->numbrushes;
-	leaked = false;
+    brush_start = e->firstbrush;
+    brush_end = brush_start + e->numbrushes;
+    leaked = false;
 
-	//
-	// perform per-block operations
-	//
-	if (block_xh * 1024 > map_maxs[0])
-		block_xh = floor(map_maxs[0]/1024.0);
-	if ( (block_xl+1) * 1024 < map_mins[0])
-		block_xl = floor(map_mins[0]/1024.0);
-	if (block_yh * 1024 > map_maxs[1])
-		block_yh = floor(map_maxs[1]/1024.0);
-	if ( (block_yl+1) * 1024 < map_mins[1])
-		block_yl = floor(map_mins[1]/1024.0);
+    //
+    // perform per-block operations
+    //
+    if (block_xh * 1024 > map_maxs[0])
+        block_xh = floor(map_maxs[0]/1024.0);
+    if ( (block_xl+1) * 1024 < map_mins[0])
+        block_xl = floor(map_mins[0]/1024.0);
+    if (block_yh * 1024 > map_maxs[1])
+        block_yh = floor(map_maxs[1]/1024.0);
+    if ( (block_yl+1) * 1024 < map_mins[1])
+        block_yl = floor(map_mins[1]/1024.0);
 
-	if (block_xl <-4)
-		block_xl = -4;
-	if (block_yl <-4)
-		block_yl = -4;
-	if (block_xh > 3)
-		block_xh = 3;
-	if (block_yh > 3)
-		block_yh = 3;
+    if (block_xl <-4)
+        block_xl = -4;
+    if (block_yl <-4)
+        block_yl = -4;
+    if (block_xh > 3)
+        block_xh = 3;
+    if (block_yh > 3)
+        block_yh = 3;
 
-	for (optimize = false ; optimize <= true ; optimize++)
-	{
-		qprintf ("--------------------------------------------\n");
+    for (optimize = false ; optimize <= true ; optimize++)
+    {
+        qprintf ("--------------------------------------------\n");
 
-		RunThreadsOnIndividual ((block_xh-block_xl+1)*(block_yh-block_yl+1),
-			!verbose, ProcessBlock_Thread);
+        RunThreadsOnIndividual ((block_xh-block_xl+1)*(block_yh-block_yl+1),
+                                !verbose, ProcessBlock_Thread);
 
-		//
-		// build the division tree
-		// oversizing the blocks guarantees that all the boundaries
-		// will also get nodes.
-		//
+        //
+        // build the division tree
+        // oversizing the blocks guarantees that all the boundaries
+        // will also get nodes.
+        //
 
-		qprintf ("--------------------------------------------\n");
+        qprintf ("--------------------------------------------\n");
 
-		tree = AllocTree ();
-		tree->headnode = BlockTree (block_xl-1, block_yl-1, block_xh+1, block_yh+1);
+        tree = AllocTree ();
+        tree->headnode = BlockTree (block_xl-1, block_yl-1, block_xh+1, block_yh+1);
 
-		tree->mins[0] = (block_xl)*1024;
-		tree->mins[1] = (block_yl)*1024;
-		tree->mins[2] = map_mins[2] - 8;
+        tree->mins[0] = (block_xl)*1024;
+        tree->mins[1] = (block_yl)*1024;
+        tree->mins[2] = map_mins[2] - 8;
 
-		tree->maxs[0] = (block_xh+1)*1024;
-		tree->maxs[1] = (block_yh+1)*1024;
-		tree->maxs[2] = map_maxs[2] + 8;
+        tree->maxs[0] = (block_xh+1)*1024;
+        tree->maxs[1] = (block_yh+1)*1024;
+        tree->maxs[2] = map_maxs[2] + 8;
 
-		//
-		// perform the global operations
-		//
-		MakeTreePortals (tree);
+        //
+        // perform the global operations
+        //
+        MakeTreePortals (tree);
 
-		if (FloodEntities (tree))
-			FillOutside (tree->headnode);
-		else
-		{
-			printf ("**** leaked ****\n");
-			leaked = true;
-			LeakFile (tree);
-			if (leaktest)
-			{
-				printf ("--- MAP LEAKED ---\n");
-				exit (0);
-			}
-		}
+        if (FloodEntities (tree))
+            FillOutside (tree->headnode);
+        else
+        {
+            printf ("**** leaked ****\n");
+            leaked = true;
+            LeakFile (tree);
+            if (leaktest)
+            {
+                printf ("--- MAP LEAKED ---\n");
+                exit (0);
+            }
+        }
 
-		MarkVisibleSides (tree, brush_start, brush_end);
-		if (leaked)
-			break;
-		if (!optimize)
-		{
-			FreeTree (tree);
-		}
-	}
+        MarkVisibleSides (tree, brush_start, brush_end);
+        if (leaked)
+            break;
+        if (!optimize)
+        {
+            FreeTree (tree);
+        }
+    }
 
-	FloodAreas (tree);
-	MakeFaces (tree->headnode);
-	FixTjuncs (tree->headnode);
+    FloodAreas (tree);
+    MakeFaces (tree->headnode);
+    FixTjuncs (tree->headnode);
 
-	if (!noprune)
-		PruneNodes (tree->headnode);
+    if (!noprune)
+        PruneNodes (tree->headnode);
 
-	WriteBSP (tree->headnode);
+    WriteBSP (tree->headnode);
 
-	if (!leaked)
-		WritePortalFile (tree);
+    if (!leaked)
+        WritePortalFile (tree);
 
-	FreeTree (tree);
+    FreeTree (tree);
 }
 
 /*
@@ -270,29 +273,29 @@ ProcessSubModel
 */
 void ProcessSubModel (void)
 {
-	entity_t	*e;
-	int			start, end;
-	tree_t		*tree;
-	bspbrush_t	*list;
-	vec3_t		mins, maxs;
+    entity_t	*e;
+    int			start, end;
+    tree_t		*tree;
+    bspbrush_t	*list;
+    vec3_t		mins, maxs;
 
-	e = &entities[entity_num];
+    e = &entities[entity_num];
 
-	start = e->firstbrush;
-	end = start + e->numbrushes;
+    start = e->firstbrush;
+    end = start + e->numbrushes;
 
-	mins[0] = mins[1] = mins[2] = -4096;
-	maxs[0] = maxs[1] = maxs[2] = 4096;
-	list = MakeBspBrushList (start, end, mins, maxs);
-	if (!nocsg)
-		list = ChopBrushes (list);
-	tree = BrushBSP (list, mins, maxs);
-	MakeTreePortals (tree);
-	MarkVisibleSides (tree, start, end);
-	MakeFaces (tree->headnode);
-	FixTjuncs (tree->headnode);
-	WriteBSP (tree->headnode);
-	FreeTree (tree);
+    mins[0] = mins[1] = mins[2] = -4096;
+    maxs[0] = maxs[1] = maxs[2] = 4096;
+    list = MakeBspBrushList (start, end, mins, maxs);
+    if (!nocsg)
+        list = ChopBrushes (list);
+    tree = BrushBSP (list, mins, maxs);
+    MakeTreePortals (tree);
+    MarkVisibleSides (tree, start, end);
+    MakeFaces (tree->headnode);
+    FixTjuncs (tree->headnode);
+    WriteBSP (tree->headnode);
+    FreeTree (tree);
 }
 
 /*
@@ -302,23 +305,23 @@ ProcessModels
 */
 void ProcessModels (void)
 {
-	BeginBSPFile ();
+    BeginBSPFile ();
 
-	for (entity_num=0 ; entity_num< num_entities ; entity_num++)
-	{
-		if (!entities[entity_num].numbrushes)
-			continue;
+    for (entity_num=0 ; entity_num< num_entities ; entity_num++)
+    {
+        if (!entities[entity_num].numbrushes)
+            continue;
 
-		qprintf ("############### model %i ###############\n", nummodels);
-		BeginModel ();
-		if (entity_num == 0)
-			ProcessWorldModel ();
-		else
-			ProcessSubModel ();
-		EndModel ();
-	}
+        qprintf ("############### model %i ###############\n", nummodels);
+        BeginModel ();
+        if (entity_num == 0)
+            ProcessWorldModel ();
+        else
+            ProcessSubModel ();
+        EndModel ();
+    }
 
-	EndBSPFile ();
+    EndBSPFile ();
 }
 
 
@@ -329,205 +332,225 @@ main
 */
 int main (int argc, char **argv)
 {
-	int		i;
-	char		path[1024] = "";
+    int		i;
+    char		path[1024] = "";
 
 
-	printf( "\n<<<<<<<<<<<<<<<<<<<< QBSP3 >>>>>>>>>>>>>>>>>>>>\n" );
-	printf( "BSP compiler build " __DATE__ "\n" );
+    printf( "\n<<<<<<<<<<<<<<<<<<<< QBSP3 >>>>>>>>>>>>>>>>>>>>\n" );
+    printf( "BSP compiler build " __DATE__ "\n" );
 
-	for (i=1 ; i<argc ; i++)
-	{
-		if (!strcmp(argv[i], "-noorigfix"))
-		{
-			printf ("origfix = false\n");
-			origfix = false;
-		}
-		else if (!strcmp(argv[i], "-v"))
-		{
-			printf ("verbose = true\n");
-			verbose = true;
-		}
-		else if (!strcmp(argv[i], "-help"))
-		{
+    for (i=1 ; i<argc ; i++)
+    {
+        if (!strcmp(argv[i], "-noorigfix"))
+        {
+            printf ("origfix = false\n");
+            origfix = false;
+        }
+        else if (!strcmp(argv[i], "-v"))
+        {
+            printf ("verbose = true\n");
+            verbose = true;
+        }
+        else if (!strcmp(argv[i], "-help"))
+        {
             printf ("qbsp3 supporting v38 and v220 map formats.\n"
-		"usage: qbsp3 [options] mapfile\n\n"
-                "    -help                 -nomerge           -noprune\n"
-                "    -block # #            -nosubdiv          -notjunc\n"
-                "    -blocks # # # #       -nocsg             -nowater\n"
-                "    -chop #               -nodetail          -noweld\n"
-                "    -leaktest             -nofill            -onlyents\n"
-                "    -fulldetail           -noshare           -tmpout\n"
-                "    -micro #              -noorigfix         -v (verbose)\n\n");
+                    "usage: qbsp3 [options] mapfile\n\n"
+                    "    -help                 -nomerge           -noprune\n"
+                    "    -block # #            -nosubdiv          -notjunc\n"
+                    "    -blocks # # # #       -nocsg             -nowater\n"
+                    "    -chop #               -nodetail          -noweld\n"
+                    "    -leaktest             -nofill            -onlyents\n"
+                    "    -fulldetail           -noshare           -tmpout\n"
+                    "    -micro #              -noorigfix         -v (verbose)\n\n");
 
-			exit(1);
-		}
-		else if (!strcmp(argv[i], "-noweld"))
-		{
-			printf ("noweld = true\n");
-			noweld = true;
-		}
-		else if (!strcmp(argv[i], "-nocsg"))
-		{
-			printf ("nocsg = true\n");
-			nocsg = true;
-		}
-		else if (!strcmp(argv[i], "-noshare"))
-		{
-			printf ("noshare = true\n");
-			noshare = true;
-		}
-		else if (!strcmp(argv[i], "-notjunc"))
-		{
-			printf ("notjunc = true\n");
-			notjunc = true;
-		}
-		else if (!strcmp(argv[i], "-nowater"))
-		{
-			printf ("nowater = true\n");
-			nowater = true;
-		}
-		else if (!strcmp(argv[i], "-noprune"))
-		{
-			printf ("noprune = true\n");
-			noprune = true;
-		}
-		else if (!strcmp(argv[i], "-nofill"))
-		{
-			printf ("nofill = true\n");
-			nofill = true;
-		}
-		else if (!strcmp(argv[i], "-nomerge"))
-		{
-			printf ("nomerge = true\n");
-			nomerge = true;
-		}
-		else if (!strcmp(argv[i], "-nosubdiv"))
-		{
-			printf ("nosubdiv = true\n");
-			nosubdiv = true;
-		}
-		else if (!strcmp(argv[i], "-nodetail"))
-		{
-			printf ("nodetail = true\n");
-			nodetail = true;
-		}
-		else if (!strcmp(argv[i], "-fulldetail"))
-		{
-			printf ("fulldetail = true\n");
-			fulldetail = true;
-		}
-		else if (!strcmp(argv[i], "-onlyents"))
-		{
-			printf ("onlyents = true\n");
-			onlyents = true;
-		}
-		else if (!strcmp(argv[i], "-micro"))
-		{
-			microvolume = atof(argv[i+1]);
-			printf ("microvolume = %f\n", microvolume);
-			i++;
-		}
-		else if (!strcmp(argv[i], "-leaktest"))
-		{
-			printf ("leaktest = true\n");
-			leaktest = true;
-		}
-		else if (!strcmp(argv[i], "-chop"))
-		{
-			subdivide_size = atof(argv[i+1]);
-			printf ("subdivide_size = %f\n", subdivide_size);
-			i++;
-		}
-		else if (!strcmp(argv[i], "-subdiv"))
-		{
-			subdivide_size = atof(argv[i+1]);
-			printf ("subdivide_size = %f\n", subdivide_size);
-			i++;
-		}
-		else if (!strcmp(argv[i], "-block"))
-		{
-			block_xl = block_xh = atoi(argv[i+1]);
-			block_yl = block_yh = atoi(argv[i+2]);
-			printf ("block: %i,%i\n", block_xl, block_yl);
-			i+=2;
-		}
-		else if (!strcmp(argv[i], "-blocks"))
-		{
-			block_xl = atoi(argv[i+1]);
-			block_yl = atoi(argv[i+2]);
-			block_xh = atoi(argv[i+3]);
-			block_yh = atoi(argv[i+4]);
-			printf ("blocks: %i,%i to %i,%i\n",
-				block_xl, block_yl, block_xh, block_yh);
-			i+=4;
-		}
-		else if (!strcmp (argv[i],"-tmpout"))
-		{
-			strcpy (outbase, "/tmp");
-		}
-		else if (argv[i][0] == '-')
-			Error ("Unknown option \"%s\"", argv[i]);
-		else
-			break;
-	}
+            exit(1);
+        }
+        else if (!strcmp(argv[i], "-noweld"))
+        {
+            printf ("noweld = true\n");
+            noweld = true;
+        }
+        else if (!strcmp(argv[i], "-nocsg"))
+        {
+            printf ("nocsg = true\n");
+            nocsg = true;
+        }
+        else if (!strcmp(argv[i], "-noshare"))
+        {
+            printf ("noshare = true\n");
+            noshare = true;
+        }
+        else if (!strcmp(argv[i], "-notjunc"))
+        {
+            printf ("notjunc = true\n");
+            notjunc = true;
+        }
+        else if (!strcmp(argv[i], "-nowater"))
+        {
+            printf ("nowater = true\n");
+            nowater = true;
+        }
+        else if (!strcmp(argv[i], "-noprune"))
+        {
+            printf ("noprune = true\n");
+            noprune = true;
+        }
+        else if (!strcmp(argv[i], "-nofill"))
+        {
+            printf ("nofill = true\n");
+            nofill = true;
+        }
+        else if (!strcmp(argv[i], "-nomerge"))
+        {
+            printf ("nomerge = true\n");
+            nomerge = true;
+        }
+        else if (!strcmp(argv[i], "-nosubdiv"))
+        {
+            printf ("nosubdiv = true\n");
+            nosubdiv = true;
+        }
+        else if (!strcmp(argv[i], "-nodetail"))
+        {
+            printf ("nodetail = true\n");
+            nodetail = true;
+        }
+        else if (!strcmp(argv[i], "-fulldetail"))
+        {
+            printf ("fulldetail = true\n");
+            fulldetail = true;
+        }
+        else if (!strcmp(argv[i], "-onlyents"))
+        {
+            printf ("onlyents = true\n");
+            onlyents = true;
+        }
+        else if (!strcmp(argv[i], "-micro"))
+        {
+            microvolume = atof(argv[i+1]);
+            printf ("microvolume = %f\n", microvolume);
+            i++;
+        }
+        else if (!strcmp(argv[i], "-leaktest"))
+        {
+            printf ("leaktest = true\n");
+            leaktest = true;
+        }
+        else if ((!strcmp(argv[i], "-chop")) || (!strcmp(argv[i], "-subdiv")))
+        {
+            subdivide_size = atof(argv[i+1]);
+            if (subdivide_size < 32)
+            {
+                subdivide_size = 32;
+                printf ("subdivide_size set to minimum size: 32\n");
+            }
+            if (subdivide_size >1024)
+            {
+                subdivide_size = 1024;
+                printf ("subdivide_size set to maximum size: 1024\n");
+            }
+            printf ("subdivide_size = %f\n", subdivide_size);
+            i++;
+        }
+        else if ((!strcmp(argv[i], "-choplight")) || (!strcmp(argv[i], "-subdivlight"))) //qb: chop surf lights independently
+        {
+            sublight_size = atof(argv[i+1]);
+            if (sublight_size < 32)
+            {
+                sublight_size = 32;
+                printf ("sublight_size set to minimum size: 32\n");
+            }
+            if (sublight_size >1024)
+            {
+                sublight_size = 1024;
+                printf ("sublight_size set to maximum size: 1024\n");
+            }
+            printf ("sublight_size = %f\n", sublight_size);
+            i++;
+        }
+        else if (!strcmp(argv[i], "-block"))
+        {
+            block_xl = block_xh = atoi(argv[i+1]);
+            block_yl = block_yh = atoi(argv[i+2]);
+            printf ("block: %i,%i\n", block_xl, block_yl);
+            i+=2;
+        }
+        else if (!strcmp(argv[i], "-blocks"))
+        {
+            block_xl = atoi(argv[i+1]);
+            block_yl = atoi(argv[i+2]);
+            block_xh = atoi(argv[i+3]);
+            block_yh = atoi(argv[i+4]);
+            printf ("blocks: %i,%i to %i,%i\n",
+                    block_xl, block_yl, block_xh, block_yh);
+            i+=4;
+        }
+        else if (!strcmp (argv[i],"-tmpout"))
+        {
+            strcpy (outbase, "/tmp");
+        }
+        else if (argv[i][0] == '-')
+            Error ("Unknown option \"%s\"", argv[i]);
+        else
+            break;
+    }
 
-	if (i != argc - 1)
-	{
-		    Error ("usage: qbsp3 [options] mapfile\n\n"
-                "    qbsp3 -help for option list\n");
-	}
+    if (i != argc - 1)
+    {
+        Error ("usage: qbsp3 [options] mapfile\n\n"
+               "    qbsp3 -help for option list\n");
+    }
 
-	ThreadSetDefault ();
+    ThreadSetDefault ();
     numthreads = 1;		// multiple threads aren't helping...
 
-		SetQdirFromPath(argv[i]);
+    SetQdirFromPath(argv[i]);
 
-	strcpy (source, ExpandArg (argv[i]));
-	StripExtension (source);
+    strcpy (source, ExpandArg (argv[i]));
+    StripExtension (source);
 
-	// delete portal and line files
-	sprintf (path, "%s.prt", source);
-	remove (path);
-	sprintf (path, "%s.lin", source);
-	remove (path);
+    // delete portal and line files
+    sprintf (path, "%s.prt", source);
+    remove (path);
+    sprintf (path, "%s.lin", source);
+    remove (path);
 
-	strcpy (name, ExpandArg (argv[i]));
-	DefaultExtension (name, ".map");	// might be .reg
+    strcpy (name, ExpandArg (argv[i]));
+    DefaultExtension (name, ".map");	// might be .reg
 
-	//
-	// if onlyents, just grab the entites and resave
-	//
-	if (onlyents)
-	{
-		char out[1024];
+    //
+    // if onlyents, just grab the entites and resave
+    //
+    if (onlyents)
+    {
+        char out[1024];
 
-		sprintf (out, "%s.bsp", source);
-		LoadBSPFile (out);
-		num_entities = 0;
+        sprintf (out, "%s.bsp", source);
+        LoadBSPFile (out);
+        num_entities = 0;
 
-		LoadMapFile (name);
-		SetModelNumbers ();
-		SetLightStyles ();
+        LoadMapFile (name);
+        SetModelNumbers ();
+        SetLightStyles ();
 
-		UnparseEntities ();
+        UnparseEntities ();
 
-		WriteBSPFile (out);
-	}
-	else
-	{
-		//
-		// start from scratch
-		//
-		LoadMapFile (name);
-		SetModelNumbers ();
-		SetLightStyles ();
+        WriteBSPFile (out);
+    }
+    else
+    {
+        //
+        // start from scratch
+        //
+        LoadMapFile (name);
+        SetModelNumbers ();
+        SetLightStyles ();
 
-		ProcessModels ();
-	}
+        ProcessModels ();
+    }
 
-	printf( "<<<<<<<<<<<<<<<<<< END QBSP3 >>>>>>>>>>>>>>>>>>\n\n" );
+    printf( "<<<<<<<<<<<<<<<<<< END QBSP3 >>>>>>>>>>>>>>>>>>\n\n" );
 
-	return 0;
+    return 0;
 }
 
