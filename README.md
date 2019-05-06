@@ -14,6 +14,7 @@ BSP
 *   Fix microbrush deformation (Jitspoe)
 *   Caulk brushes similar to Q3 mapping (kmbsp3)	
 *   Texinfo overflow check (MaxEd)
+*   Set chop size for surface lights (qbism - idea from JDolan)
 		
 		
 radiosity
@@ -36,8 +37,9 @@ qdata
 # Instructions:
 
 qbsp3
-*   v220 support- for Trenchbroom, duplicate or modify the Q2 gametype and change the format to valve and add "mapversion" "220" to worldspawn.  JACK does this automatically when saving to v220.  Note that J.A.C.K. saves a hybrid map format that includes texture flags whereas standard v220 format does not. 
-*   -noorigfix disables 'origin fix'.  
+*   v220 support- for Trenchbroom, duplicate or modify the Q2 gametype and change the format to valve and add "mapversion" "220" to worldspawn.  JACK does this automatically when saving to v220.  Note that JACK saves a hybrid map format that includes texture flags whereas standard v220 format does not. I added JACK load/save to a fork of Trenchbroom for testing.
+*   -choplight sets the chop size for surface lights.  Lower settings may improve quality of large surface lights, especially when chop is high. Try "-chop 512 -choplight 32" as an example.
+*   -noorigfix disables 'origin fix'.
 
 
 qvis3
@@ -47,9 +49,9 @@ qvis3
 qrad3
 *   -smooth sets the angle (in degrees) for autophong.  Default is 44, so it will phong a 9-sided or more prism, but not 8-sided.  Set to zero to disable.
 *   -maxmapdata sets lightng memory limit.  Original is 0x200000 and it can be set up to 0x800000 (8388608).  Requires an engine that supports the higher limit.
-*	-saturation applies to light reflected from surfaces.  Values < 1.0 desaturate.  Values >1.0 oversaturate.  
+*	-saturation applies to light reflected from surfaces.  Values < 1.0 desaturate.  Values >1.0 oversaturate. 
 *   Any tga replacement textures found will be used for radiosity.
-*   -basedir sets the base directory, useful if working on a mod.  Defaults to baseq2.  
+*   -basedir sets the base directory.  Use this if modding other than baseq2.  Defaults to baseq2.
 
 
 qdata
