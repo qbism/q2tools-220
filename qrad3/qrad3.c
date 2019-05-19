@@ -1040,7 +1040,7 @@ int main (int argc, char **argv)
 
     if (i != argc - 1)
     {
-        Error ("usage: qbsp3 [options] mapfile\n\n"
+        Error ("usage: qrad3 [options] mapfile\n\n"
                "    -help                 -extra               -maxdata\n"
                "    -subdiv #             -scale               -direct\n"
                "    -entity               -nopvs               -noblock\n"
