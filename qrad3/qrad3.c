@@ -995,7 +995,10 @@ int main (int argc, char **argv)
         }
         else if (!strcmp(argv[i],"-smooth"))
         {
+
+            //qb: limit range
             smoothing_value = atof (argv[i+1]);
+            smoothing_value = BOUND(0, smoothing_value, 90);
             i++;
         }
         else if (!strcmp(argv[i],"-ambient"))
@@ -1052,6 +1055,7 @@ int main (int argc, char **argv)
     start = I_FloatTime ();
 
     smoothing_threshold = (float)cos(smoothing_value * (Q_PI / 180.0));
+    printf("threshold: %f \n", smoothing_threshold);
 
     SetQdirFromPath (argv[i]);
     printf("qdir = %s\n", qdir );
