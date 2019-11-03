@@ -524,7 +524,7 @@ int main (int argc, char **argv)
 {
 	char	portalfile[1024];
 	char		source[1024];
-	char		name[1024];
+	char		name[1060];
 	int		i;
 
 	printf( "\n<<<<<<<<<<<<<<<<<<<< QVIS3 >>>>>>>>>>>>>>>>>>>>\n" );

@@ -866,7 +866,7 @@ int main (int argc, char **argv)
 {
     int		i;
     double		start, end;
-    char		name[1024];
+    char		name[1060];
 
     printf( "\n<<<<<<<<<<<<<<<<<<<< QRAD3 >>>>>>>>>>>>>>>>>>>>\n" );
     printf( "radiosity compiler build " __DATE__ "\n" );

@@ -131,7 +131,7 @@ void Alphalight_Thread (int i)
 
 void Cmd_Alphalight (void)
 {
-	char	savename[1024];
+	char	savename[2080];
 
 	GetToken (false);
 
@@ -152,7 +152,7 @@ void Cmd_Alphalight (void)
 
 void Cmd_Inverse16Table( void )
 {
-	char savename[1024];
+	char savename[1060];
 
 	if ( g_release )
 	{

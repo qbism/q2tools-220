@@ -46,7 +46,7 @@ void FinishSprite (void)
 	FILE	*spriteouthandle;
 	int			i;
 	dsprite_t	spritetemp;
-	char		savename[1024];
+	char		savename[2100];
 
 	if (sprite.numframes == 0)
 		return;
@@ -58,7 +58,7 @@ void FinishSprite (void)
 
 	if (g_release)
 	{
-		char	name[1024];
+		char	name[1200];
 
 		sprintf (name, "%s.sp2", spritename);
 		ReleaseFile (name);
@@ -138,7 +138,7 @@ void Cmd_SpriteFrame (void)
 	dsprframe_t		*pframe;
 	int				ox, oy;
 	byte			*cropped;
-	char			savename[1024];
+	char			savename[2100];
 
 	GetToken (false);
 	xl = atoi (token);

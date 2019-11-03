@@ -333,7 +333,7 @@ main
 int main (int argc, char **argv)
 {
     int		i;
-    char		path[1024] = "";
+    char		path[2053] = "";
 
 
     printf( "\n<<<<<<<<<<<<<<<<<<<< QBSP3 >>>>>>>>>>>>>>>>>>>>\n" );
@@ -452,7 +452,7 @@ int main (int argc, char **argv)
             printf ("subdivide_size = %f\n", subdivide_size);
             i++;
         }
-        else if ((!strcmp(argv[i], "-choplight")) || (!strcmp(argv[i], "-subdivlight"))) //qb: chop surf lights independently
+        else if ((!strcmp(argv[i], "-choplight")) || (!strcmp(argv[i], "-choplights")) || (!strcmp(argv[i], "-subdivlight"))) //qb: chop surf lights independently
         {
             sublight_size = atof(argv[i+1]);
             if (sublight_size < 32)
@@ -523,7 +523,7 @@ int main (int argc, char **argv)
     //
     if (onlyents)
     {
-        char out[1024];
+        char out[2053];
 
         sprintf (out, "%s.bsp", source);
         LoadBSPFile (out);

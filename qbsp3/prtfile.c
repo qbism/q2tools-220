@@ -240,7 +240,7 @@ WritePortalFile
 */
 void WritePortalFile (tree_t *tree)
 {
-	char	filename[1024];
+	char	filename[1030];
 	node_t *headnode;
 
 	qprintf ("--- WritePortalFile ---\n");

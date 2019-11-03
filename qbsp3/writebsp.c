@@ -494,7 +494,7 @@ EndBSPFile
 */
 void EndBSPFile (void)
 {
-	char	path[1024];
+	char	path[1030];
 #if 0					// DarkEssence: warning fix - 'len', 'buf' unreferenced local variable
 	int		len;
 	byte	*buf;

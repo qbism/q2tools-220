@@ -42,7 +42,7 @@ void CalcTextureReflectivity(void)
     int texels, texel;
     qboolean wal_tex;
     float color[3], cur_color[3], tex_a, a;
-    char path[1024];
+    char path[1200];
     float *r, *g, *b;
     float c;
     byte* pbuffer = NULL; //mxd. "potentially uninitialized local pointer variable" in VS2017 if uninitialized

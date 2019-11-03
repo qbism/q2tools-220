@@ -29,7 +29,7 @@ textureref_t	textureref[MAX_MAP_TEXTURES];
 int	FindMiptex (char *name)
 {
 	int		i, mod_fail;
-	char	path[1024];
+	char	path[1080];
 	char	pakpath[56];
 	miptex_t	*mt;
 

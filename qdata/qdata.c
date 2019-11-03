@@ -103,7 +103,7 @@ void ReleaseFile (char *filename)
 	int		len;
 	byte	*buf;
 	char	source[1024];
-	char	dest[1024];
+	char	dest[1200];
 
 	if (!g_release)
 		return;
@@ -266,7 +266,7 @@ void PackDirectory_r (char *dir)
 	struct stat st;
 	int			i;
 	char		fullname[1024];
-	char		dirstring[1024];
+	char		dirstring[1400];
 	char		*name;
 
 	sprintf (dirstring, "%s%s", gamedir, dir);
@@ -348,7 +348,7 @@ build a list of all textures used, which are then released.
 */
 void Cmd_Maps (void)
 {
-	char	map[1024];
+	char	map[2200];
 	int		i;
 
 	while (TokenAvailable ())

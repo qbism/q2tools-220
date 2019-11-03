@@ -686,7 +686,7 @@ void UnparseEntities (void)
 {
 	char	*buf, *end;
 	epair_t	*ep;
-	char	line[2048];
+	char	line[2060];
 	int		i;
 	char	key[1024], value[1024];
 

@@ -232,7 +232,7 @@ LoadSoundtrack
 */
 void LoadSoundtrack (void)
 {
-	char	name[1024];
+	char	name[1100];
 	FILE	*f;
 	int		len;
 	int     i, val, j;
@@ -1060,7 +1060,7 @@ cblock_t LoadFrame (char *base, int frame, int digits, byte **palette)
 	int			ten3, ten2, ten1, ten0;
 	cblock_t	in;
 	int			width, height;
-	char		name[1024];
+	char		name[1100];
 	FILE		*f;
 
 	in.data = NULL;
@@ -1109,8 +1109,8 @@ video <directory> <framedigits>
 */
 void Cmd_Video (void)
 {
-	char	savename[1024];
-	char	name[1024];
+	char	savename[1100];
+	char	name[1200];
 	FILE	*output;
 	int		startframe, frame;
 	byte	*palette;

@@ -43,7 +43,7 @@ void LeakFile (tree_t *tree)
 {
 	vec3_t	mid;
 	FILE	*linefile;
-	char	filename[1024];
+	char	filename[1030];
 	node_t	*node;
 	int		count;
 

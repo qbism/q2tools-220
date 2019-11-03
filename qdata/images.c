@@ -20,7 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "qdata.h"
 
-char		mip_prefix[1024];		// directory to dump the textures in
+char		mip_prefix[64];		// directory to dump the textures in
 
 qboolean	colormap_issued;
 byte		colormap_palette[768];
@@ -69,8 +69,8 @@ void Cmd_Grab (void)
 {
 	int             xl,yl,w,h,y;
 	byte			*cropped;
-	char			savename[1024];
-	char			dest[1024];
+	char			savename[2400];
+	char			dest[1200];
 
 	GetToken (false);
 
@@ -128,8 +128,8 @@ void Cmd_Raw (void)
 {
 	int             xl,yl,w,h,y;
 	byte			*cropped;
-	char			savename[1024];
-	char			dest[1024];
+	char			savename[2100];
+	char			dest[1200];
 
 	GetToken (false);
 
@@ -238,8 +238,8 @@ void Cmd_Colormap (void)
 	float	frac, red, green, blue;
 	float	range;
 	byte	*cropped, *lump_p;
-	char	savename[1024];
-	char	dest[1024];
+	char	savename[2060];
+	char	dest[1060];
 
 	colormap_issued = true;
 	if (!g_release)
@@ -516,9 +516,10 @@ void Cmd_Mip (void)
 	int				count;
 	int				flags, value, contents;
 	mipparm_t		*mp;
+
 	char			lumpname[64];
 	byte			*lump_p;
-	char			filename[1024];
+	char			filename[1100];
 	char			animname[64];
 
 	GetToken (false);
@@ -591,6 +592,11 @@ void Cmd_Mip (void)
 	qtex->flags = LittleLong(flags);
 	qtex->contents = LittleLong(contents);
 	qtex->value = LittleLong(value);
+
+	//qb: overflow check
+	if(strlen(mip_prefix) + strlen(lumpname) > 32)
+        Error("%s/%s exceeds 32 char limit", mip_prefix, lumpname);
+
 	sprintf (qtex->name, "%s/%s", mip_prefix, lumpname);
 	if (animname[0])
 		sprintf (qtex->animname, "%s/%s", mip_prefix, animname);
@@ -681,7 +687,7 @@ Cmd_Mipdir
 */
 void Cmd_Mipdir (void)
 {
-	char	filename[1024];
+	char	filename[1100];
 
 	GetToken (false);
 	strcpy (mip_prefix, token);
@@ -713,7 +719,7 @@ Cmd_Environment
 */
 void Cmd_Environment (void)
 {
-	char	name[1024];
+	char	name[2100];
 	int		i, x, y;
 	byte	image[256*256];
 	byte	*tga;

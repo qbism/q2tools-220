@@ -71,9 +71,9 @@ int			used[MAX_TRIANGLES];
 
 char		g_skins[MAX_MD2SKINS][64];
 
-char		cdarchive[1024];
-char		cdpartial[1024];
-char		cddir[1024];
+char		cdarchive[2200];
+char		cdpartial[1100];
+char		cddir[2200];
 
 char		modelname[64];	// empty unless $modelname issued (players)
 
@@ -108,7 +108,7 @@ void ClearModel (void)
 void H_printf(char *fmt, ...)
 {
     va_list argptr;
-    char	name[1024];
+    char	name[4000];
 
     if (!headerouthandle)
     {
@@ -251,7 +251,7 @@ void FinishModel (void)
 {
     FILE		*modelouthandle;
     int			i;
-    char		name[1024];
+    char		name[4000];
 
     if (!model.num_frames)
         return;
@@ -717,7 +717,7 @@ void Cmd_Base (void)
     triangle_t	*ptri;
     int			i, j, k;
     int		time1;
-    char	file1[1024];
+    char	file1[4000];
 
     GetToken (false);
 
@@ -808,7 +808,7 @@ void Cmd_Base (void)
 char	*FindFrameFile (char *frame)
 {
     int			time1;
-    char	file1[1024];
+    char	file1[2400];
     static char	retname[1024];
     char	base[32];
     char	suffix[32];
@@ -860,7 +860,7 @@ void GrabFrame (char *frame)
     int			i, j;
     trivert_t	*ptrivert;
     int			num_tris;
-    char		file1[1024];
+    char		file1[4000];
     frame_t		*fr;
     vertexnormals_t	vnorms[MAX_VERTS];
     int		index_xyz;
@@ -1029,7 +1029,7 @@ void Cmd_Skin (void)
     int		width, height;
     byte	*cropped;
     int		y;
-    char	name[1024], savename[1024];
+    char	name[4000], savename[4000];
 
     GetToken (false);
 
