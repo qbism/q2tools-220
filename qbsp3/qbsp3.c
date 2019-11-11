@@ -512,7 +512,7 @@ int main (int argc, char **argv)
     // delete portal and line files
     sprintf (path, "%s.prt", source);
     remove (path);
-    sprintf (path, "%s.lin", source);
+    sprintf (path, "%s.pts", source);
     remove (path);
 
     strcpy (name, ExpandArg (argv[i]));

@@ -690,11 +690,11 @@ void LoadTGA (char *name, byte **pixels, int *width, int *height)
 
 	if (targa_header.image_type!=2
 		&& targa_header.image_type!=10)
-		Error ("LoadTGA: Only type 2 and 10 targa RGB images supported\n");
+		Error ("LoadTGA %s: Only type 2 and 10 targa RGB images supported\n", name);
 
 	if (targa_header.colormap_type !=0
 		|| (targa_header.pixel_size!=32 && targa_header.pixel_size!=24))
-		Error ("Texture_LoadTGA: Only 32 or 24 bit images supported (no colormaps)\n");
+		Error ("LoadTGA %s: Only 32 or 24 bit images supported (no colormaps)\n", name);
 
 	columns = targa_header.width;
 	rows = targa_header.height;
@@ -741,7 +741,7 @@ void LoadTGA (char *name, byte **pixels, int *width, int *height)
 		}
 	}
 	else if (targa_header.image_type==10) {   // Runlength encoded RGB images
-	//qb: set defaults. from AAtools	
+	//qb: set defaults. from AAtools
 		unsigned char red=255,green=255,blue=255,alphabyte=255,packetHeader,packetSize,j;
 		for(row=rows-1; row>=0; row--) {
 			pixbuf = targa_rgba + row*columns*4;
