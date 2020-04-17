@@ -47,10 +47,16 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../common/cmdlib.h" />
+		<Unit filename="../common/l3dslib.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../common/lbmlib.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../common/lbmlib.h" />
+		<Unit filename="../common/llwolib.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../common/mathlib.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -1055,7 +1055,6 @@ int main (int argc, char **argv)
     start = I_FloatTime ();
 
     smoothing_threshold = (float)cos(smoothing_value * (Q_PI / 180.0));
-    printf("threshold: %f \n", smoothing_threshold);
 
     SetQdirFromPath (argv[i]);
     printf("qdir = %s\n", qdir );

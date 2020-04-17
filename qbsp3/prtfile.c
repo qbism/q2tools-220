@@ -261,6 +261,10 @@ void WritePortalFile (tree_t *tree)
 
 // write the file
 	sprintf (filename, "%s.prt", source);
+
+	printf ("\ntexinfo count: %i of %i maximum.\n", numtexinfo, MAX_MAP_TEXINFO);
+	printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES);
+
 	printf ("writing %s\n", filename);
 	pf = fopen (filename, "w");
 	if (!pf)

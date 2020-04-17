@@ -1273,7 +1273,7 @@ void CreateDirectLights (void)
         if(strlen(target) >= 1 && !strcmp(target, sun_target))
         {
             vec3_t sun_s, sun_t;
-
+            printf ("Sun target found.\n");
             GetVectorForKey(e, "origin", sun_s);
 
 
@@ -1294,6 +1294,7 @@ void CreateDirectLights (void)
 
             VectorSubtract (sun_s, sun_t, sun_pos);
             VectorNormalize (sun_pos, sun_pos);
+            printf ("SUN VECTOR: %f, %f, %f\n", sun_pos[0], sun_pos[1], sun_pos[2]);
 
             continue;
         }

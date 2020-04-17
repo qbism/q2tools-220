@@ -41,7 +41,7 @@ evaluate split side
 cost = 0
 for all sides
 	for all sides
-		get 
+		get
 		if side splits side and splitside is on same child
 			cost++;
 }
@@ -235,7 +235,7 @@ bspbrush_t	*ClipBrushToBox (bspbrush_t *brush, vec3_t clipmins, vec3_t clipmaxs)
 	for (i=0 ; i<brush->numsides ; i++)
 	{
 		p = brush->sides[i].planenum & ~1;
-		if (p == maxplanenums[0] || p == maxplanenums[1] 
+		if (p == maxplanenums[0] || p == maxplanenums[1]
 			|| p == minplanenums[0] || p == minplanenums[1])
 		{
 			brush->sides[i].texinfo = TEXINFO_NODE;
@@ -247,7 +247,7 @@ bspbrush_t	*ClipBrushToBox (bspbrush_t *brush, vec3_t clipmins, vec3_t clipmaxs)
 
 /*
 ===============
-MakeBspBrushList 
+MakeBspBrushList
 ===============
 */
 bspbrush_t *MakeBspBrushList (int startbrush, int endbrush,
@@ -396,6 +396,8 @@ void WriteBrushMap (char *name, bspbrush_t *list)
 	int		i;
 	winding_t	*w;
 
+	printf ("\ntexinfo count: %i of %i maximum.\n", numtexinfo, MAX_MAP_TEXINFO);
+	printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES);
 	printf ("writing %s\n", name);
 	f = fopen (name, "wb");
 	if (!f)
@@ -435,7 +437,7 @@ Returns true if b1 is allowed to bite b2
 qboolean BrushGE (bspbrush_t *b1, bspbrush_t *b2)
 {
 	// detail brushes never bite structural brushes
-	if ( (b1->original->contents & CONTENTS_DETAIL) 
+	if ( (b1->original->contents & CONTENTS_DETAIL)
 		&& !(b2->original->contents & CONTENTS_DETAIL) )
 		return false;
 	if (b1->original->contents & CONTENTS_SOLID)
@@ -448,7 +450,7 @@ qboolean BrushGE (bspbrush_t *b1, bspbrush_t *b2)
 ChopBrushes
 
 Carves any intersecting solid brushes into the minimum number
-of non-intersecting brushes. 
+of non-intersecting brushes.
 =================
 */
 bspbrush_t *ChopBrushes (bspbrush_t *head)
