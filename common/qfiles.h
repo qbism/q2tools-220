@@ -247,7 +247,8 @@ typedef struct miptex_s
 #define	MAX_MAP_SURFEDGES	256000
 #define	DEFAULT_MAP_LIGHTING	0x200000  //qb: vanilla
 #define	MAX_MAP_LIGHTING	    0x800000  //qb: 0x800000 per q2pro bsp.h
-#define	MAX_MAP_VISIBILITY	    0x100000
+#define	DEFAULT_MAP_VISIBILITY	0x100000  //qb: vanilla
+#define	MAX_MAP_VISIBILITY	    0x400000  //qb: extended
 
 // key / value pair sizes
 

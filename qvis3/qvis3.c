@@ -230,10 +230,9 @@ void ClusterMerge (int leafnum)
 	vismap_p += i;
 
 	if (vismap_p > vismap_end)
-		Error ("Vismap expansion overflow");
+		Error ("Vismap expansion overflow. Exceeds extended limit");
 
 	dvis->bitofs[leafnum][DVIS_PVS] = dest-vismap;
-
 	memcpy (dest, compressed, i);
 }
 
@@ -504,8 +503,8 @@ void CalcPHS (void)
 		dest = (long *)vismap_p;
 		vismap_p += j;
 
-		if (vismap_p > vismap_end)
-			Error ("Vismap expansion overflow");
+        if (vismap_p > vismap_end)
+            Error ("Vismap expansion overflow. Exceeds extended limit");
 
 		dvis->bitofs[i][DVIS_PHS] = (byte *)dest-vismap;
 
@@ -597,7 +596,11 @@ int main (int argc, char **argv)
 	CalcPHS ();
 
 	visdatasize = vismap_p - dvisdata;
-	printf ("visdatasize:%i  compressed from %i\n", visdatasize, originalvismapsize*2);
+
+	printf ("visdatasize: %i compressed from %i\n", visdatasize, originalvismapsize*2);
+
+	if (vismap_p > (vismap + DEFAULT_MAP_VISIBILITY))
+		printf ("\nWARNING: visdatasize exceeds default limit of %i\n\n", DEFAULT_MAP_VISIBILITY);
 
 	sprintf (name, "%s%s", outbase, source);
 	WriteBSPFile (name);
