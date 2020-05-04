@@ -39,8 +39,6 @@ edgeshare_t	edgeshare[MAX_MAP_EDGES];
 int			facelinks[MAX_MAP_FACES];
 int			planelinks[2][MAX_MAP_PLANES];
 int			maxdata;
-qboolean sun_ambient_once;
-qboolean sun_main_once;
 vec3_t          face_texnormals[MAX_MAP_FACES];
 
 //qb: quemap- face extents
@@ -382,6 +380,7 @@ void            PairEdges()
                         {
                             VectorAdd(normals[0], normals[1], e->interface_normal);
                             VectorNormalize(e->interface_normal, e->interface_normal);
+                            e->smooth = true;  //qb: needed here?
                         }
                     }
                 }
@@ -390,7 +389,7 @@ void            PairEdges()
                 {
                     e->smooth = true;
                 }
-                if (!GetIntertexnormal (e->faces[0] - dfaces, e->faces[1] - dfaces))
+                else if (!GetIntertexnormal (e->faces[0] - dfaces, e->faces[1] - dfaces))  //qb: else
                 {
                     e->coplanar = false;
                     VectorClear (e->interface_normal);
@@ -1434,7 +1433,10 @@ void CreateDirectLights (void)
             dl->leaf = leaf;
             dl->plane = p->plane;
             dl->type = emit_sky;
-            dl->intensity = 1.0f;
+            //qb: for sky radiosity dl->intensity = 1.0f;
+            dl->intensity = ColorNormalize (p->totallight, dl->color);
+            dl->intensity *= p->area * direct_scale;
+
         }
         else
         {
@@ -1510,7 +1512,7 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
         qboolean *sun_ambient_once
                                      )
 {
-    vec3_t			delta, target, occluded;
+    vec3_t			delta, target, occluded, colorsky = {0,0,0};
     float			dot, dot2;
     float			dist;
     float			scale = 0.0f;
@@ -1530,66 +1532,60 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
     lcn = lowestCommonNode(nodenum, l->nodenum);
     if (!noblock && TestLine_color (lcn, pos, l->origin, occluded))
         return;		// occluded
-    scale = sun_ambient;
 
     if( l->type == emit_sky )
     {
         // this might be the sun ambient and it might be directional
         set_main = false;
-        if( *sun_main_once ) // don't do -extra multisampling on sun
-            return;
-
-
         dot2 = -DotProduct (delta, l->normal);
-        if( dot2 <= 0.001f )
-            return; // behind light surface
-
-        if( !*sun_ambient_once ) // Ambient sky, no -extra multisampling
-            scale = sun_ambient;
-        else
-            scale = 0.0f;
-
-
-        // Main sky
-        dot2 = DotProduct (sun_pos, normal); // sun_pos from target entity
-        if( dot2 > 0.001f ) // Main sky
+        if( !*sun_main_once && dot2 > 0.001f  ) // don't do -extra multisampling on sun
         {
-            set_main = true;
-            main_val = sun_main * dot2;
-            if ( !noblock )
+
+            if( !*sun_ambient_once ) // Ambient sky, no -extra multisampling
+                scale = sun_ambient;
+            else
+                scale = 0.0f;
+
+            // Main sky
+            dot2 = DotProduct (sun_pos, normal); // sun_pos from target entity
+            if( dot2 > 0.001f ) // Main sky
             {
-                if( !RayPlaneIntersect(
-                            l->plane->normal, l->plane->dist, pos, sun_pos, target )
-                        ||
-                        TestLine_color (0, pos, target, occluded)
-                  )
+                set_main = true;
+                main_val = sun_main * dot2;
+                if ( !noblock )
                 {
-                    set_main = *sun_main_once;
-                    main_val = 0.0f;
-                }
-                else
-                {
-                    scale += main_val;
-                    main_val = 0.0f; // done with it
+                    if( !RayPlaneIntersect(
+                                l->plane->normal, l->plane->dist, pos, sun_pos, target )
+                            || TestLine_color (0, pos, target, occluded))
+                    {
+                        set_main = *sun_main_once;
+                        main_val = 0.0f;
+                    }
+                    else
+                    {
+                        scale += main_val;
+                        main_val = 0.0f; // done with it
+                    }
                 }
             }
-        }
-        else
-        {
-            if( *sun_ambient_once )
-                return;
-            set_main = false;
-            main_val = 0.0f;
-        }
-        if( sun_alt_color ) // set in .map
-            VectorScale ( sun_color, scale, color );
-        else
-            VectorScale ( l->color, scale, color );
+            else
+            {
+                if( !*sun_ambient_once )
+                {
+                    set_main = false;
+                    main_val = 0.0f;
+                }
+            }
+            if( sun_alt_color ) // set in .map
+                VectorScale ( sun_color, scale, colorsky );
+            else
+                VectorScale ( l->color, scale, colorsky );
 
-        *sun_ambient_once = true;
-        *sun_main_once = set_main;
+            *sun_ambient_once = true;
+            *sun_main_once = set_main;
+        }
     }
-    else
+    //else qb: sky radiosity
     {
         switch (l->type)
         {
@@ -1598,6 +1594,7 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
             scale = (l->intensity - l->wait * dist) * dot;  //qb: wait
             break;
 
+        case emit_sky: //qb: sky radiosity
         case emit_surface:
             dot2 = -DotProduct (delta, l->normal);
             if (dot2 <= 0.001)
@@ -1609,7 +1606,7 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
                 scale = (l->intensity / (dist-15)) * dot * dot2;
             else
                 scale = l->intensity * dot * dot2;
-
+            \
             break;
 
         case emit_spotlight:
@@ -1627,17 +1624,17 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
         default:
             Error ("Bad l->type");
         }
+    }
 
-        if ( scale > 0.0f )
-        {
-            scale *= lightscale2; // adjust for multisamples, -extra cmd line arg
-            VectorScale ( l->color, scale * 0.25, color ); //qb: scale hack for intensity similar to original qrad3
-        }
+    if ( scale > 0.0f )
+    {
+        scale *= lightscale2; // adjust for multisamples, -extra cmd line arg
+        VectorScale ( l->color, scale * 0.25, color ); //qb: scale hack for intensity similar to original qrad3
     }
 
     for (i = 0; i < 3; i++)
     {
-
+        color[i] += colorsky[i];
         color[i] *= occluded[i];
     }
 
