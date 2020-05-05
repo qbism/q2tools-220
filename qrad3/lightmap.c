@@ -1329,7 +1329,7 @@ void CreateDirectLights (void)
                 dl->wait = 1.0f;
         }
 
-        if (dl->wait <= 0.001)
+        if (dl->wait <= EQUAL_EPSILON)
             dl->wait = 1.0f;
 
         proc_num = ValueForKey(e, "_angwait");
@@ -1526,7 +1526,7 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
     VectorSubtract (l->origin, pos, delta);
     dist = VectorNormalize (delta, delta);
     dot = DotProduct (delta, normal);
-    if (dot <= 0.001)
+    if (dot <= EQUAL_EPSILON)
         return;	// behind sample surface
 
     lcn = lowestCommonNode(nodenum, l->nodenum);
@@ -1538,7 +1538,7 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
         // this might be the sun ambient and it might be directional
         set_main = false;
         dot2 = -DotProduct (delta, l->normal);
-        if( !*sun_main_once && dot2 > 0.001f  ) // don't do -extra multisampling on sun
+        if( !*sun_main_once && dot2 > EQUAL_EPSILON  ) // don't do -extra multisampling on sun
         {
 
             if( !*sun_ambient_once ) // Ambient sky, no -extra multisampling
@@ -1548,7 +1548,7 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
 
             // Main sky
             dot2 = DotProduct (sun_pos, normal); // sun_pos from target entity
-            if( dot2 > 0.001f ) // Main sky
+            if( dot2 > EQUAL_EPSILON ) // Main sky
             {
                 set_main = true;
                 main_val = sun_main * dot2;
@@ -1595,9 +1595,8 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
             break;
 
         case emit_sky: //qb: sky radiosity
-        case emit_surface:
             dot2 = -DotProduct (delta, l->normal);
-            if (dot2 <= 0.001)
+            if (dot2 <= EQUAL_EPSILON)
                 return;	// behind light surface
 
             if (dist > 36) //qb: edge lighting fix- don't drop off right away
@@ -1606,7 +1605,20 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
                 scale = (l->intensity / (dist-15)) * dot * dot2;
             else
                 scale = l->intensity * dot * dot2;
-            \
+            scale *= 0.5; //qb: reduce scale for sun active.
+            break;
+
+        case emit_surface:
+            dot2 = -DotProduct (delta, l->normal);
+            if (dot2 <= EQUAL_EPSILON)
+                return;	// behind light surface
+
+            if (dist > 36) //qb: edge lighting fix- don't drop off right away
+                scale = (l->intensity / ((dist-30)*(dist-30))) * dot * dot2;
+            else if (dist > 16)
+                scale = (l->intensity / (dist-15)) * dot * dot2;
+            else
+                scale = l->intensity * dot * dot2;
             break;
 
         case emit_spotlight:
