@@ -358,10 +358,11 @@ int main (int argc, char **argv)
                     "    -help                 -nomerge           -noprune\n"
                     "    -block # #            -nosubdiv          -notjunc\n"
                     "    -blocks # # # #       -nocsg             -nowater\n"
-                    "    -chop #               -nodetail          -noweld\n"
+                    "    -chop #               -choplight         -noweld\n"
                     "    -leaktest             -nofill            -onlyents\n"
                     "    -fulldetail           -noshare           -tmpout\n"
-                    "    -micro #              -noorigfix         -v (verbose)\n\n");
+                    "    -micro #              -noorigfix         -nodetail\n"
+                    "    -v (verbose)\n\n");
 
             exit(1);
         }

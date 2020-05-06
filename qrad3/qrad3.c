@@ -31,6 +31,8 @@ every surface must be divided into at least two patches each axis
 
 */
 
+extern	float sunradscale;
+
 patch_t		*face_patches[MAX_MAP_FACES];
 entity_t	*face_entity[MAX_MAP_FACES];
 patch_t		patches[MAX_PATCHES];
@@ -899,6 +901,7 @@ int main (int argc, char **argv)
                     "-bounce #: Max number of light bounces for radiosity\n"
                     "-maxdata #: Requires modded engine. Default: 2097152 Limit: 8388608\n"
                     "-scale #: Intensity multiplier\n"
+                    "-sunradscale #: Sky light intensity scale when sun is active\n"
                     "-direct #: Direct light scaling\n"
                     "-entity #: Entity light scaling\n"
                     "-ambient: Minimum light level\n"
@@ -954,6 +957,17 @@ int main (int argc, char **argv)
         else if (!strcmp(argv[i],"-scale"))
         {
             lightscale = atof (argv[i+1]);
+            i++;
+        }
+        else if (!strcmp(argv[i], "-sunradscale"))
+        {
+            sunradscale = atof(argv[i+1]);
+            if (sunradscale < 0)
+            {
+                sunradscale = 0;
+                printf ("sunradscale set to minimum: 0\n");
+            }
+            printf ("sunradscale = %f\n", sunradscale);
             i++;
         }
         else if (!strcmp(argv[i],"-saturation"))
@@ -1044,13 +1058,13 @@ int main (int argc, char **argv)
     if (i != argc - 1)
     {
         Error ("usage: qrad3 [options] mapfile\n\n"
-               "    -help                 -extra               -maxdata\n"
-               "    -subdiv #             -scale               -direct\n"
-               "    -entity               -nopvs               -noblock\n"
-               "    -basedir              -ambient             -savetrace\n"
-               "    -maxlight             -tmpin               -tmpout\n"
-               "    -dump	              -bounce              -threads\n"
-               "    -smooth               -v (verbose output)\n\n");
+               "    -help                -extra               -maxdata\n"
+               "    -subdiv #            -scale               -direct\n"
+               "    -entity              -nopvs               -noblock\n"
+               "    -basedir             -ambient             -savetrace\n"
+               "    -maxlight            -tmpin               -tmpout\n"
+               "    -dump                -bounce              -threads\n"
+               "    -smooth              -sunradscale #     -v (verbose output)\n\n");
     }
     start = I_FloatTime ();
 

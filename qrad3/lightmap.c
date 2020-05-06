@@ -40,6 +40,7 @@ int			facelinks[MAX_MAP_FACES];
 int			planelinks[2][MAX_MAP_PLANES];
 int			maxdata;
 vec3_t          face_texnormals[MAX_MAP_FACES];
+float   sunradscale = 0.5;
 
 //qb: quemap- face extents
 typedef struct face_extents_s
@@ -1238,6 +1239,7 @@ void CreateDirectLights (void)
                 if(strlen(sun_target) > 0)
                 {
                     printf("Sun activated.\n");
+                    printf("Sky radiosity (sunradscale): %f \n", sunradscale);
                     sun = true;
                 }
 
@@ -1605,7 +1607,7 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
                 scale = (l->intensity / (dist-15)) * dot * dot2;
             else
                 scale = l->intensity * dot * dot2;
-            scale *= 0.5; //qb: reduce scale for sun active.
+            scale *= sunradscale; //qb: adjust scale when sun is active
             break;
 
         case emit_surface:

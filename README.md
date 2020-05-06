@@ -24,7 +24,7 @@ radiosity
 *   Face extents (quemap)
 *   Edge lighting fix (qbism)	
 *   Automatic phong smoothing (vluzacn VHLT)
-*   Add face for vertext normal (vluzacn VHLT)
+*   Add face for vertex normal (vluzacn VHLT)
 *	File path determination asumptions (Alien Arena tools):
     *   moddir is parent of whatever directory contains the .map/.bsp
     *   gamedir is parent of moddir
@@ -37,7 +37,7 @@ qdata
 # Instructions:
 
 qbsp3
-*   v220 support- for Trenchbroom, duplicate or modify the Q2 gametype and change the format to valve and add "mapversion" "220" to worldspawn.  JACK does this automatically when saving to v220.  Note that JACK saves a hybrid map format that includes texture flags whereas standard v220 format does not. I added JACK load/save to a fork of Trenchbroom for testing.
+*   v220 support- for Trenchbroom, duplicate or modify the Q2 gametype and change the format to valve and add "mapversion" "220" to worldspawn.  JACK does this automatically when saving to v220.  Note that JACK saves a hybrid map format that includes texture flags whereas standard v220 format does not. Current Trenchbroom source adds this hybrid format load/save.
 *   -choplight sets the chop size for surface lights.  Lower settings may improve quality of large surface lights, especially when chop is high. Try "-chop 512 -choplight 32" as an example.
 *   -noorigfix disables 'origin fix'.
 
@@ -47,11 +47,12 @@ qvis3
 
 
 qrad3
-*   -smooth sets the angle (in degrees) for autophong.  Default is 44, so it will phong a 9-sided or more prism, but not 8-sided.  Set to zero to disable.
+*   -smooth sets the angle (in degrees) for autophong. Corners between (angle) and (180-angle) will not be phonged.  Default is 44, so it will phong a 9-sided or more prism, but not 8-sided.  Set to zero to disable.
 *   -maxmapdata sets lightng memory limit.  Original is 0x200000 and it can be set up to 0x800000 (8388608).  Requires an engine that supports the higher limit.
 *	-saturation applies to light reflected from surfaces.  Values < 1.0 desaturate.  Values >1.0 oversaturate. 
 *   Any tga replacement textures found will be used for radiosity.
 *   -basedir sets the base directory.  Use this if modding other than baseq2.  Defaults to baseq2.
+*   -sunradscale sets sky radiosity scale when the sun (directional lighting) is active.  Default is 0.5.
 
 
 qdata
