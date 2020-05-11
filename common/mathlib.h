@@ -55,7 +55,7 @@ typedef vec_t vec3_t[3];
 
 extern vec3_t vec3_origin;
 
-#define	EQUAL_EPSILON	0.0001 //qb: was 0.001
+#define	EQUAL_EPSILON	0.001
 #define NORMAL_EPSILON   0.00001
 
 
