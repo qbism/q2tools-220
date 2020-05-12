@@ -407,11 +407,13 @@ re_test:
     //goto instead of while(1) because it makes the CPU branch predict easier
     goto re_test;
 }
+
+
 void MakeTransfers (int i)
 {
     int			j;
     vec3_t		delta;
-    vec_t		dist, inv_dist, scale;
+    vec_t		dist, inv_dist = 0, scale;
     float		trans;
     int			itrans;
     patch_t		*patch, *patch2;
@@ -434,8 +436,10 @@ void MakeTransfers (int i)
     if (!PvsForOrigin (patch->origin, pvs))
         return;
 
-    // find out which patch2s will collect light
-    // from patch
+    if (patch->area == 0)
+        return;
+
+    // find out which patch2s will collect light from patch
 
     patch->numtransfers = 0;
     calc_trace = (save_trace && memory && first_transfer);
@@ -456,6 +460,9 @@ void MakeTransfers (int i)
         if (j == i)
             continue;
 
+        if (patch2->area == 0)
+            continue;
+
         // check pvs bit
         if (!nopvs)
         {
@@ -470,10 +477,7 @@ void MakeTransfers (int i)
 
         // calculate vector
         VectorSubtract (patch2->origin, origin, delta);
-        //dist = VectorNormalize (delta, delta);
-
-        // Not calling normalize function to save function call overhead
-        dist = delta[0]*delta[0] + delta[1]*delta[1] + delta[2]*delta[2];
+        dist = VectorNormalize(delta, delta);
 
         if (dist == 0)
         {

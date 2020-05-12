@@ -369,7 +369,7 @@ void            PairEdges()
                     //qb: fabs, so to include concave angles
                     e->cos_normals_angle = fabs(DotProduct(normals[0], normals[1]));
 
-                    if (e->cos_normals_angle > (1.0 - NORMAL_EPSILON))
+                    if (e->cos_normals_angle > (1.0 - 0.1)) //qb: get sloppy NORMAL_EPSILON))
                     {
                         e->coplanar = true;
                         VectorCopy(getPlaneFromFace(e->faces[0])->normal, e->interface_normal);
@@ -1926,7 +1926,7 @@ void    GetPhongNormal(int facenum, vec3_t spot, vec3_t phongnormal)
  * surface normal to reduce false-positive traces. Test the PVS at the new
  * position, returning true if the new point is valid, false otherwise.
  */
-#define SAMPLE_NUDGE 0.4 //qb: was 0.25
+#define SAMPLE_NUDGE 0.01 //qb: was 0.25
 static qboolean NudgeSamplePosition(const vec3_t in, const vec3_t normal, const vec3_t center,
                                     vec3_t out, byte *pvs)
 {
