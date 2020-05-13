@@ -137,6 +137,7 @@ void LinkPlaneFaces (void);
 extern float grayscale;
 extern float saturation;
 extern	qboolean	extrasamples;
+extern	qboolean	dicepatches;
 extern int numbounce;
 extern qboolean noblock;
 

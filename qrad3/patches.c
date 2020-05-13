@@ -657,8 +657,10 @@ void SubdividePatches (void)
     num = num_patches;	// because the list will grow
     for (i=0 ; i<num ; i++)
     {
-//		SubdividePatch (&patches[i]);
+		if (dicepatches)
         DicePatch (&patches[i]);
+		else
+ 		SubdividePatch (&patches[i]);
     }
     for (i=0; i<num_patches; i++)
         patches[i].nodenum = PointInNodenum (patches[i].origin);

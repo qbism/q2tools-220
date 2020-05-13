@@ -51,7 +51,8 @@ int			fakeplanes;					// created planes for origin offset
 
 int		numbounce = 4; //default was 8
 qboolean noblock = false; // when true, disables occlusion testing on light rays
-qboolean	extrasamples;
+qboolean	extrasamples = false;
+qboolean	dicepatches = false;
 int memory = false;
 float patch_cutoff = 0.0f; // set with -radmin 0.0..1.0, see MakeTransfers()
 
@@ -902,6 +903,7 @@ int main (int argc, char **argv)
                     "-smooth #: Threshold angle for phong smoothing\n"
                     "-extra: Use extra samples to smooth lighting\n"
                     "-subdiv #: Maximum patch size  Default: 64\n"
+                    "-dice: Subdivide patches with a global grid rather than per patch\n"
                     "-bounce #: Max number of light bounces for radiosity\n"
                     "-maxdata #: Requires modded engine. Default: 2097152 Limit: 8388608\n"
                     "-scale #: Intensity multiplier\n"
@@ -927,6 +929,11 @@ int main (int argc, char **argv)
         {
             extrasamples = true;
             printf ("extrasamples = true\n");
+        }
+        else if (!strcmp(argv[i],"-dice"))
+        {
+            dicepatches = true;
+            printf ("dicepatches = true\n");
         }
         else if (!strcmp(argv[i],"-threads"))
         {
@@ -1068,7 +1075,8 @@ int main (int argc, char **argv)
                "    -basedir             -ambient             -savetrace\n"
                "    -maxlight            -tmpin               -tmpout\n"
                "    -dump                -bounce              -threads\n"
-               "    -smooth              -sunradscale #     -v (verbose output)\n\n");
+               "    -smooth              -sunradscale #       -dice\n"
+               "    -v (verbose output)\n\n");
     }
     start = I_FloatTime ();
 
