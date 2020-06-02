@@ -34,7 +34,6 @@ qboolean	fulldetail = false;
 qboolean	onlyents = false;
 qboolean	nomerge = false;
 qboolean	nowater = false;
-qboolean	nofill = false;
 qboolean	nocsg = false;
 qboolean	noweld = false;
 qboolean	noshare = false;
@@ -43,8 +42,6 @@ qboolean	notjunc = false;
 qboolean	leaktest = false;
 qboolean	badnormal_check = false;
 qboolean	origfix = true; //default to true
-
-char		outbase[32] = "";
 
 int			block_xl = -8, block_xh = 7, block_yl = -8, block_yh = 7;
 
@@ -355,14 +352,27 @@ int main (int argc, char **argv)
         {
             printf ("qbsp3 supporting v38 and v220 map formats.\n"
                     "usage: qbsp3 [options] mapfile\n\n"
-                    "    -help                 -nomerge           -noprune\n"
-                    "    -block # #            -nosubdiv          -notjunc\n"
-                    "    -blocks # # # #       -nocsg             -nowater\n"
-                    "    -chop #               -choplight         -noweld\n"
-                    "    -leaktest             -nofill            -onlyents\n"
-                    "    -fulldetail           -noshare           -tmpout\n"
-                    "    -micro #              -noorigfix         -nodetail\n"
-                    "    -v (verbose)\n\n");
+                    "    -chop #: Subdivide size.  Default: 240  Range: 32-1024\n"
+                    "    -choplight #: Subdivide size for surface lights.\n"
+                    "        Default: 240  Range: 32-1024\n"
+                    "    -nosubdiv: Disable subdivision.\n"
+                    "    -micro #: Minimum microbrush size. Default: 0.02\n"
+                    "        Suggested range: 0.02 - 1.0\n"
+                    "    -nomerge: Don't merge visible faces per node.\n"
+                    "    -block # #: Division tree block size, square\n"
+                    "    -block # # # #: Division tree block size, rectangular\n"
+                    "    -noweld: Disable vertex welding.\n"
+                    "    -notjunc: Disable edge cleanup.\n"
+                    "    -nocsg: Disable brush chopping.\n"
+                    "    -nowater: Ignore water.\n"
+                    "    -leaktest: Perform leak test only.\n"
+                    "    -onlyents: Grab the entites and resave.\n"
+                    "    -fulldetail: Change most brushes to detail.\n"
+                    "    -noshare: Don't look for shared edges on save.\n"
+                    "    -noprune: Disable node pruning.\n"
+                    "    -noorigfix: Disable texture fix for origin offsets.\n"
+                    "    -v: Display more verbose output.\n"
+            "<<<<<<<<<<<<<<<<<< QBSP3 HELP >>>>>>>>>>>>>>>>>>\n\n");
 
             exit(1);
         }
@@ -395,11 +405,6 @@ int main (int argc, char **argv)
         {
             printf ("noprune = true\n");
             noprune = true;
-        }
-        else if (!strcmp(argv[i], "-nofill"))
-        {
-            printf ("nofill = true\n");
-            nofill = true;
         }
         else if (!strcmp(argv[i], "-nomerge"))
         {
@@ -486,20 +491,23 @@ int main (int argc, char **argv)
                     block_xl, block_yl, block_xh, block_yh);
             i+=4;
         }
-        else if (!strcmp (argv[i],"-tmpout"))
-        {
-            strcpy (outbase, "/tmp");
-        }
-        else if (argv[i][0] == '-')
-            Error ("Unknown option \"%s\"", argv[i]);
         else
             break;
     }
 
     if (i != argc - 1)
     {
-        Error ("usage: qbsp3 [options] mapfile\n\n"
-               "    qbsp3 -help for option list\n");
+        printf ("qbsp3 supporting v38 and v220 map formats.\n"
+                "usage: qbsp3 [options] mapfile\n\n"
+                "    -help                 -chop #            -choplight\n"
+                "    -nosubdiv             -micro #           -nomerge\n"
+                "    -block # #            -noweld            -notjunc\n"
+                "    -blocks # # # #       -nocsg             -nowater\n"
+                "    -leaktest             -nodetail          -onlyents\n"
+                "    -fulldetail           -noshare           -noprune\n"
+                "    -noorigfix            -v (verbose)\n\n");
+
+        exit(1);
     }
 
     ThreadSetDefault ();
