@@ -333,7 +333,7 @@ int main (int argc, char **argv)
     char		path[2053] = "";
 
 
-    printf( "\n<<<<<<<<<<<<<<<<<<<< QBSP3 >>>>>>>>>>>>>>>>>>>>\n" );
+    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<< QBSP3 >>>>>>>>>>>>>>>>>>>>>>>>\n" );
     printf( "BSP compiler build " __DATE__ "\n" );
 
     for (i=1 ; i<argc ; i++)
@@ -352,7 +352,8 @@ int main (int argc, char **argv)
         {
             printf ("qbsp3 supporting v38 and v220 map formats.\n"
                     "usage: qbsp3 [options] mapfile\n\n"
-                    "    -chop #: Subdivide size.  Default: 240  Range: 32-1024\n"
+                    "    -chop #: Subdivide size.\n"
+                    "        Default: 240  Range: 32-1024\n"
                     "    -choplight #: Subdivide size for surface lights.\n"
                     "        Default: 240  Range: 32-1024\n"
                     "    -nosubdiv: Disable subdivision.\n"
@@ -360,7 +361,7 @@ int main (int argc, char **argv)
                     "        Suggested range: 0.02 - 1.0\n"
                     "    -nomerge: Don't merge visible faces per node.\n"
                     "    -block # #: Division tree block size, square\n"
-                    "    -block # # # #: Division tree block size, rectangular\n"
+                    "    -block # # # #: Div tree block size, rectangular\n"
                     "    -noweld: Disable vertex welding.\n"
                     "    -notjunc: Disable edge cleanup.\n"
                     "    -nocsg: Disable brush chopping.\n"
@@ -372,7 +373,7 @@ int main (int argc, char **argv)
                     "    -noprune: Disable node pruning.\n"
                     "    -noorigfix: Disable texture fix for origin offsets.\n"
                     "    -v: Display more verbose output.\n"
-            "<<<<<<<<<<<<<<<<<< QBSP3 HELP >>>>>>>>>>>>>>>>>>\n\n");
+                    "<<<<<<<<<<<<<<<<<<<<< QBSP3 HELP >>>>>>>>>>>>>>>>>>>>>\n\n");
 
             exit(1);
         }

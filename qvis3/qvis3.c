@@ -46,8 +46,6 @@ int		portalbytes, portallongs;
 qboolean		fastvis;
 qboolean		nosort;
 
-int			testlevel = 2;
-
 int		totalvis;
 
 portal_t	*sorted_portals[MAX_MAP_PORTALS*2];
@@ -526,7 +524,7 @@ int main (int argc, char **argv)
 	char		name[1060];
 	int		i;
 
-	printf( "\n<<<<<<<<<<<<<<<<<<<< QVIS3 >>>>>>>>>>>>>>>>>>>>\n" );
+    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<< QVIS3 >>>>>>>>>>>>>>>>>>>>>>>>\n" );
 	printf( "visibility compiler build " __DATE__ "\n" );
 
 	verbose = false;
@@ -537,16 +535,21 @@ int main (int argc, char **argv)
 			numthreads = atoi (argv[i+1]);
 			i++;
 		}
+		else if (!strcmp(argv[i], "-help"))
+		{
+        printf ("usage: qvis3 [options] mapfile\n\n"
+                "    -fast: uses 'might see' for a quick loose bound\n"
+                "    -threads: number of CPU threads to use\n"
+                "    -tmpin: read map from 'tmp' folder\n"
+                "    -tmpout: write map to 'tmp' folder\n"
+                "    -v: extra verbose console output\n\n");
+     printf( "<<<<<<<<<<<<<<<<<<<<< QVIS3 HELP >>>>>>>>>>>>>>>>>>>>>\n\n" );
+		exit(1);
+		}
 		else if (!strcmp(argv[i], "-fast"))
 		{
 			printf ("fastvis = true\n");
 			fastvis = true;
-		}
-		else if (!strcmp(argv[i], "-level"))
-		{
-			testlevel = atoi(argv[i+1]);
-			printf ("testlevel = %i\n", testlevel);
-			i++;
 		}
 		else if (!strcmp(argv[i], "-v"))
 		{
@@ -569,7 +572,12 @@ int main (int argc, char **argv)
 	}
 
 	if (i != argc - 1)
-		Error ("usage: vis [-threads #] [-level 0-4] [-fast] [-v] bspfile");
+	{
+        printf ("usage: qvis3 [options] mapfile\n\n"
+                "    -help             -fast          -threads\n"
+                "    -tmpin            -tmpout        -v (verbose)\n\n");
+		exit(1);
+    }
 
 	ThreadSetDefault ();
 

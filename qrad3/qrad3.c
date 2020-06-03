@@ -875,7 +875,7 @@ int main (int argc, char **argv)
     double		start, end;
     char		name[1060];
 
-    printf( "\n<<<<<<<<<<<<<<<<<<<< QRAD3 >>>>>>>>>>>>>>>>>>>>\n" );
+    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<< QRAD3 >>>>>>>>>>>>>>>>>>>>>>>>\n" );
     printf( "radiosity compiler build " __DATE__ "\n" );
 
     verbose = false;
@@ -899,7 +899,7 @@ int main (int argc, char **argv)
         else if (!strcmp(argv[i], "-help"))
         {
             printf ("qrad3 with automatic phong.\n"
-                    "usage: qbsp3 [options] mapfile\n\n"
+                    "usage: qrad3 [options] mapfile\n\n"
                     "-smooth #: Threshold angle for phong smoothing\n"
                     "-extra: Use extra samples to smooth lighting\n"
                     "-subdiv #: Maximum patch size  Default: 64\n"
@@ -922,6 +922,8 @@ int main (int argc, char **argv)
                     "-noblock: Brushes don't block lighting path\n"
                     "-threads #:  Number of CPU cores to use\n\n"
                    );
+    printf( "<<<<<<<<<<<<<<<<<<<<< QRAD3 HELP >>>>>>>>>>>>>>>>>>>>>\n\n" );
+
             exit(1);
         }
 
@@ -1068,7 +1070,7 @@ int main (int argc, char **argv)
 
     if (i != argc - 1)
     {
-        Error ("usage: qrad3 [options] mapfile\n\n"
+        printf ("usage: qrad3 [options] mapfile\n\n"
                "    -help                -extra               -maxdata\n"
                "    -subdiv #            -scale               -direct\n"
                "    -entity              -nopvs               -noblock\n"
@@ -1077,6 +1079,7 @@ int main (int argc, char **argv)
                "    -dump                -bounce              -threads\n"
                "    -smooth              -sunradscale #       -dice\n"
                "    -v (verbose output)\n\n");
+        exit(1);
     }
     start = I_FloatTime ();
 
