@@ -22,7 +22,7 @@ RELEASE_CFLAGS ?= $(BASE_CFLAGS) -O3
 DEBUG_CFLAGS ?= $(BASE_CFLAGS) -O0 -g -ggdb
 
 # Link Options
-LDFLAGS ?= -lm -lz
+LDFLAGS ?= -lm -lz -m32
 
 #
 srcdir = .

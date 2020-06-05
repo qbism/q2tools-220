@@ -16,8 +16,11 @@ BSP
 *   Texinfo overflow check (MaxEd)
 *   Set chop size for surface lights (qbism - idea from JDolan)
 		
+vis
+*   Increase vis data size max. Issue warning for > vanilla limit. (qbism)
 		
 radiosity
+*   Keep emit_surface active for sky planes when sun is active. Adjust with -sunradscale. (qbism)
 *   Use any existing TGA replacement textures for radiosity (AA tools)
 *   Spotlight center to surface point attenuation (AA tools)
 *   Radiosity texture checking (GDD tools)
@@ -25,6 +28,7 @@ radiosity
 *   Edge lighting fix (qbism)	
 *   Automatic phong smoothing (vluzacn VHLT)
 *   Add face for vertex normal (vluzacn VHLT)
+*   Add -dice to subdivide patches with a global grid rather than per patch
 *	File path determination asumptions (Alien Arena tools):
     *   moddir is parent of whatever directory contains the .map/.bsp
     *   gamedir is parent of moddir

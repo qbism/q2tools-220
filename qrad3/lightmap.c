@@ -367,6 +367,7 @@ void            PairEdges()
                     VectorCopy(getPlaneFromFace(e->faces[1])->normal, normals[1]);
 
                     //qb: fabs, so to include concave angles
+                    e->cos_normals_angle = (DotProduct(normals[0], normals[1]));
                     e->cos_normals_angle = fabs(DotProduct(normals[0], normals[1]));
 
                     if (e->cos_normals_angle > (1.0 - 0.1)) //qb: get sloppy NORMAL_EPSILON))
