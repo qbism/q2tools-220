@@ -1642,7 +1642,7 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
     if ( scale > 0.0f )
     {
         scale *= lightscale2; // adjust for multisamples, -extra cmd line arg
-        VectorScale ( l->color, scale * 0.25, color ); //qb: scale hack for intensity similar to original qrad3
+        VectorScale ( l->color, scale * 0.25, color ); //qb: scale hack for intensity similar to original 4rad
     }
 
     for (i = 0; i < 3; i++)

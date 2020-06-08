@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 ===========================================================================
 */
 
-#include "qdata.h"
+#include "4data.h"
 
 qboolean	g_compress_pak;
 qboolean	g_release;			// don't grab, copy output data to new tree
@@ -532,7 +532,7 @@ int main (int argc, char **argv)
 	}
 
 	if (i >= argc)
-		Error ("usage: qdata [-archive <directory>] [-release <directory>] [-only <model>] [-3ds] file.qgt");
+		Error ("usage: 4data [-archive <directory>] [-release <directory>] [-only <model>] [-3ds] file.qgt");
 
 	if (do3ds)
 		trifileext = ext_3ds;

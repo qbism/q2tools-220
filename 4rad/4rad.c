@@ -875,7 +875,7 @@ int main (int argc, char **argv)
     double		start, end;
     char		name[1060];
 
-    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<< QRAD3 >>>>>>>>>>>>>>>>>>>>>>>>\n" );
+    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<< 4rad >>>>>>>>>>>>>>>>>>>>>>>>\n" );
     printf( "radiosity compiler build " __DATE__ "\n" );
 
     verbose = false;
@@ -898,8 +898,8 @@ int main (int argc, char **argv)
         }
         else if (!strcmp(argv[i], "-help"))
         {
-            printf ("qrad3 with automatic phong.\n"
-                    "usage: qrad3 [options] mapfile\n\n"
+            printf ("4rad with automatic phong.\n"
+                    "usage: 4rad [options] mapfile\n\n"
                     "-smooth #: Threshold angle for phong smoothing\n"
                     "-extra: Use extra samples to smooth lighting\n"
                     "-subdiv #: Maximum patch size  Default: 64\n"
@@ -922,7 +922,7 @@ int main (int argc, char **argv)
                     "-noblock: Brushes don't block lighting path\n"
                     "-threads #:  Number of CPU cores to use\n\n"
                    );
-    printf( "<<<<<<<<<<<<<<<<<<<<< QRAD3 HELP >>>>>>>>>>>>>>>>>>>>>\n\n" );
+    printf( "<<<<<<<<<<<<<<<<<<<<< 4rad HELP >>>>>>>>>>>>>>>>>>>>>\n\n" );
 
             exit(1);
         }
@@ -1070,7 +1070,7 @@ int main (int argc, char **argv)
 
     if (i != argc - 1)
     {
-        printf ("usage: qrad3 [options] mapfile\n\n"
+        printf ("usage: 4rad [options] mapfile\n\n"
                "    -help                -extra               -maxdata\n"
                "    -subdiv #            -scale               -direct\n"
                "    -entity              -nopvs               -noblock\n"
@@ -1118,7 +1118,7 @@ int main (int argc, char **argv)
     printf ("%5.0f seconds elapsed\n", end-start);
     printf ("%i bytes light data used of %i max.\n", lightdatasize, maxdata);
 
-    printf( "<<<<<<<<<<<<<<<<<< END QRAD3 >>>>>>>>>>>>>>>>>>\n\n" );
+    printf( "<<<<<<<<<<<<<<<<<< END 4rad >>>>>>>>>>>>>>>>>>\n\n" );
     return 0;
 }
 

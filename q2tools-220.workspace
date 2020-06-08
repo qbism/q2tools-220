@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
-		<Project filename="qvis3/qvis3.cbp" />
-		<Project filename="qrad3/qrad3.cbp" />
-		<Project filename="qdata/qdata.cbp" />
-		<Project filename="qbsp3/qbsp3.cbp" />
+		<Project filename="4vis/4vis.cbp" />
+		<Project filename="4rad/4rad.cbp" />
+		<Project filename="4data/4data.cbp" />
+		<Project filename="4bsp/4bsp.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

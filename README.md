@@ -1,6 +1,6 @@
 # q2tools-220
 Q2 compiler tools featuring ability to bsp v220 map format, automatic phong and soft spotlights, and other enhancements.
-Includes qbsp3, qvis3, qrad3, and qdata.
+Includes 4bsp, 4vis, 4rad, and 4data.
 
 Forked from compiler tools supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
 
@@ -34,23 +34,23 @@ radiosity
     *   gamedir is parent of moddir
     *   qdir is parent of gamedir	
 	
-qdata
+4data
 *	LWO support (KDT)
 
 
 # Instructions:
 
-qbsp3
+4bsp
 *   v220 support- for Trenchbroom, duplicate or modify the Q2 gametype and change the format to valve and add "mapversion" "220" to worldspawn.  JACK does this automatically when saving to v220.  Note that JACK saves a hybrid map format that includes texture flags whereas standard v220 format does not. Current Trenchbroom source adds this hybrid format load/save.
 *   -choplight sets the chop size for surface lights.  Lower settings may improve quality of large surface lights, especially when chop is high. Try "-chop 512 -choplight 32" as an example.
 *   -noorigfix disables 'origin fix'.
 
 
-qvis3
+4vis
 *   works the same as always
 
 
-qrad3
+4rad
 *   -smooth sets the angle (in degrees) for autophong. Corners between (angle) and (180-angle) will not be phonged.  Default is 44, so it will phong a 9-sided or more prism, but not 8-sided.  Set to zero to disable.
 *   -maxmapdata sets lightng memory limit.  Original is 0x200000 and it can be set up to 0x800000 (8388608).  Requires an engine that supports the higher limit.
 *	-saturation applies to light reflected from surfaces.  Values < 1.0 desaturate.  Values >1.0 oversaturate. 
@@ -59,7 +59,7 @@ qrad3
 *   -sunradscale sets sky radiosity scale when the sun (directional lighting) is active.  Default is 0.5.
 
 
-qdata
+4data
 *   help for this tool is scarce, but it runs a script file to convert assets to Q2 data types.  This example creates the colormap:
     
     $load base/pics/pal.pcx

@@ -23,7 +23,7 @@
     <ProjectGuid>{DFDD965B-AE08-4D9F-A48E-AC6F7EC3DCC8}</ProjectGuid>
     <RootNamespace>bsp</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
-    <ProjectName>qbsp3</ProjectName>
+    <ProjectName>4bsp</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -76,7 +76,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;WIN32;_CONSOLE;QBSP3;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions);</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;WIN32;_CONSOLE;4bsp;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions);</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -96,7 +96,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;WIN32;_CONSOLE;QBSP3;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_CONSOLE;4bsp;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -133,7 +133,7 @@
     <ClCompile Include="map.c" />
     <ClCompile Include="portals.c" />
     <ClCompile Include="prtfile.c" />
-    <ClCompile Include="qbsp3.c" />
+    <ClCompile Include="4bsp.c" />
     <ClCompile Include="textures.c" />
     <ClCompile Include="tree.c" />
     <ClCompile Include="writebsp.c" />
@@ -146,7 +146,7 @@
     <ClInclude Include="..\..\q2tools-220\common\qfiles.h" />
     <ClInclude Include="..\..\q2tools-220\common\scriplib.h" />
     <ClInclude Include="..\..\q2tools-220\common\threads.h" />
-    <ClInclude Include="..\..\q2tools-220\qbsp3\qbsp.h" />
+    <ClInclude Include="..\..\q2tools-220\4bsp\qbsp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

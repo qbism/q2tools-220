@@ -2,13 +2,13 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="qdata" />
+		<Option title="4data" />
 		<Option makefile="makefile" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Win32 Release">
-				<Option output="./Release/qdata" prefix_auto="1" extension_auto="1" />
+				<Option output="./Release/4data" prefix_auto="1" extension_auto="1" />
 				<Option object_output="./Release" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -37,7 +37,7 @@
 				</Linker>
 			</Target>
 			<Target title="Win32 Debug">
-				<Option output="./Debug/qdata" prefix_auto="1" extension_auto="1" />
+				<Option output="./Debug/4data" prefix_auto="1" extension_auto="1" />
 				<Option object_output="./Debug" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -66,7 +66,7 @@
 				</Linker>
 			</Target>
 			<Target title="linux">
-				<Option output="qdata" prefix_auto="1" extension_auto="1" />
+				<Option output="4data" prefix_auto="1" extension_auto="1" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
@@ -125,10 +125,10 @@
 		<Unit filename="models.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="qdata.c">
+		<Unit filename="4data.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="qdata.h" />
+		<Unit filename="4data.h" />
 		<Unit filename="sprites.c">
 			<Option compilerVar="CC" />
 		</Unit>

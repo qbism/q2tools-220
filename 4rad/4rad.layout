@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<FileVersion major="1" minor="0" />
+	<ActiveTarget name="Release Win32" />
+	<File name="lightmap.c" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="10717" topLine="355" />
+		</Cursor>
+	</File>
+	<File name="4rad.c" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="22789" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="trace.c" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3019" topLine="237" />
+		</Cursor>
+	</File>
+	<File name="../common/polylib.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1031" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="qrad.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3348" topLine="124" />
+		</Cursor>
+	</File>
+	<File name="patches.c" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="17166" topLine="394" />
+		</Cursor>
+		<Folding>
+			<Collapse line="39" />
+			<Collapse line="272" />
+		</Folding>
+	</File>
+</CodeBlocks_layout_file>

@@ -333,7 +333,7 @@ int main (int argc, char **argv)
     char		path[2053] = "";
 
 
-    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<< QBSP3 >>>>>>>>>>>>>>>>>>>>>>>>\n" );
+    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<< 4bsp >>>>>>>>>>>>>>>>>>>>>>>>\n" );
     printf( "BSP compiler build " __DATE__ "\n" );
 
     for (i=1 ; i<argc ; i++)
@@ -350,8 +350,8 @@ int main (int argc, char **argv)
         }
         else if (!strcmp(argv[i], "-help"))
         {
-            printf ("qbsp3 supporting v38 and v220 map formats.\n"
-                    "usage: qbsp3 [options] mapfile\n\n"
+            printf ("4bsp supporting v38 and v220 map formats.\n"
+                    "usage: 4bsp [options] mapfile\n\n"
                     "    -chop #: Subdivide size.\n"
                     "        Default: 240  Range: 32-1024\n"
                     "    -choplight #: Subdivide size for surface lights.\n"
@@ -373,7 +373,7 @@ int main (int argc, char **argv)
                     "    -noprune: Disable node pruning.\n"
                     "    -noorigfix: Disable texture fix for origin offsets.\n"
                     "    -v: Display more verbose output.\n"
-                    "<<<<<<<<<<<<<<<<<<<<< QBSP3 HELP >>>>>>>>>>>>>>>>>>>>>\n\n");
+                    "<<<<<<<<<<<<<<<<<<<<< 4bsp HELP >>>>>>>>>>>>>>>>>>>>>\n\n");
 
             exit(1);
         }
@@ -498,8 +498,8 @@ int main (int argc, char **argv)
 
     if (i != argc - 1)
     {
-        printf ("qbsp3 supporting v38 and v220 map formats.\n"
-                "usage: qbsp3 [options] mapfile\n\n"
+        printf ("4bsp supporting v38 and v220 map formats.\n"
+                "usage: 4bsp [options] mapfile\n\n"
                 "    -help                 -chop #            -choplight\n"
                 "    -nosubdiv             -micro #           -nomerge\n"
                 "    -block # #            -noweld            -notjunc\n"
@@ -559,7 +559,7 @@ int main (int argc, char **argv)
         ProcessModels ();
     }
 
-    printf( "<<<<<<<<<<<<<<<<<< END QBSP3 >>>>>>>>>>>>>>>>>>\n\n" );
+    printf( "<<<<<<<<<<<<<<<<<< END 4bsp >>>>>>>>>>>>>>>>>>\n\n" );
 
     return 0;
 }

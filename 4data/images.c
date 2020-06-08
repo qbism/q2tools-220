@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 ===========================================================================
 */
 
-#include "qdata.h"
+#include "4data.h"
 
 char		mip_prefix[64];		// directory to dump the textures in
 
@@ -519,8 +519,8 @@ void Cmd_Mip (void)
 
 	char			lumpname[64];
 	byte			*lump_p;
-	char			filename[1100];
-	char			animname[64];
+	char			filename[1200];
+	char			animname[124];
 
 	GetToken (false);
 	strcpy (lumpname, token);

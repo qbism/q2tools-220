@@ -524,7 +524,7 @@ int main (int argc, char **argv)
 	char		name[1060];
 	int		i;
 
-    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<< QVIS3 >>>>>>>>>>>>>>>>>>>>>>>>\n" );
+    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<< 4vis >>>>>>>>>>>>>>>>>>>>>>>>\n" );
 	printf( "visibility compiler build " __DATE__ "\n" );
 
 	verbose = false;
@@ -537,13 +537,13 @@ int main (int argc, char **argv)
 		}
 		else if (!strcmp(argv[i], "-help"))
 		{
-        printf ("usage: qvis3 [options] mapfile\n\n"
+        printf ("usage: 4vis [options] mapfile\n\n"
                 "    -fast: uses 'might see' for a quick loose bound\n"
                 "    -threads: number of CPU threads to use\n"
                 "    -tmpin: read map from 'tmp' folder\n"
                 "    -tmpout: write map to 'tmp' folder\n"
                 "    -v: extra verbose console output\n\n");
-     printf( "<<<<<<<<<<<<<<<<<<<<< QVIS3 HELP >>>>>>>>>>>>>>>>>>>>>\n\n" );
+     printf( "<<<<<<<<<<<<<<<<<<<<< 4vis HELP >>>>>>>>>>>>>>>>>>>>>\n\n" );
 		exit(1);
 		}
 		else if (!strcmp(argv[i], "-fast"))
@@ -573,7 +573,7 @@ int main (int argc, char **argv)
 
 	if (i != argc - 1)
 	{
-        printf ("usage: qvis3 [options] mapfile\n\n"
+        printf ("usage: 4vis [options] mapfile\n\n"
                 "    -help             -fast          -threads\n"
                 "    -tmpin            -tmpout        -v (verbose)\n\n");
 		exit(1);
@@ -613,6 +613,6 @@ int main (int argc, char **argv)
 	sprintf (name, "%s%s", outbase, source);
 	WriteBSPFile (name);
 
-	printf( "<<<<<<<<<<<<<<<<<< END QVIS3 >>>>>>>>>>>>>>>>>>\n\n" );	return 0;
+	printf( "<<<<<<<<<<<<<<<<<< END 4vis >>>>>>>>>>>>>>>>>>\n\n" );	return 0;
 }
 

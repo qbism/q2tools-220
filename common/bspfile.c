@@ -423,7 +423,7 @@ void	LoadBSPFile (char *filename)
 =============
 LoadBSPFileTexinfo
 
-Only loads the texinfo lump, so qdata can scan for textures
+Only loads the texinfo lump, so 4data can scan for textures
 =============
 */
 void	LoadBSPFileTexinfo (char *filename)

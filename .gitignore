@@ -1,0 +1,11 @@
+# Compiled source #
+###################
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.d
+ *~
+ .vscode
+autosave/

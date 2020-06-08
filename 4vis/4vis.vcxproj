@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{6238FC2F-D1AD-4074-86E1-D8952824BD71}</ProjectGuid>
-    <RootNamespace>qvis3</RootNamespace>
+    <ProjectGuid>{12BD75D1-C746-4A4C-BDD6-BB2759D33255}</ProjectGuid>
+    <RootNamespace>4vis</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -76,7 +76,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;QVIS3;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;4vis;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -123,19 +123,13 @@
     <ClCompile Include="..\common\cmdlib.c" />
     <ClCompile Include="..\common\l3dslib.c" />
     <ClCompile Include="..\common\llwolib.c" />
-    <ClCompile Include="..\common\lbmlib.c" />
     <ClCompile Include="..\common\mathlib.c" />
     <ClCompile Include="..\common\mdfour.c" />
-    <ClCompile Include="..\common\polylib.c" />
     <ClCompile Include="..\common\scriplib.c" />
     <ClCompile Include="..\common\threads.c" />
     <ClCompile Include="..\common\trilib.c" />
-    <ClCompile Include="images.c" />
-    <ClCompile Include="models.c" />
-    <ClCompile Include="qdata.c" />
-    <ClCompile Include="sprites.c" />
-    <ClCompile Include="tables.c" />
-    <ClCompile Include="video.c" />
+    <ClCompile Include="flow.c" />
+    <ClCompile Include="4vis.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\bspfile.h" />
@@ -147,7 +141,7 @@
     <ClInclude Include="..\common\scriplib.h" />
     <ClInclude Include="..\common\threads.h" />
     <ClInclude Include="..\common\trilib.h" />
-    <ClInclude Include="\qvis3\vis.h" />
+    <ClInclude Include="\4vis\vis.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

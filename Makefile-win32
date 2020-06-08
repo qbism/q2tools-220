@@ -40,14 +40,14 @@ includedirs ?= -Icommon
 # depdir = .deps
 
 # source locations
-vpath %.h qbsp3
-vpath %.c qbsp3
-vpath %.h qvis3
-vpath %.c qvis3
-vpath %.h qrad3
-vpath %.c qrad3
-vpath %.h qdata
-vpath %.c qdata
+vpath %.h 4bsp
+vpath %.c 4bsp
+vpath %.h 4vis
+vpath %.c 4vis
+vpath %.h 4rad
+vpath %.c 4rad
+vpath %.h 4data
+vpath %.c 4data
 vpath %.h common
 vpath %.c common
 
@@ -81,10 +81,10 @@ cmn_objs = $(cmn_srcs:.c=.o)
 
 
 #
-# files for qbsp3
+# files for 4bsp
 #
-qbsp3_srcs =	\
-    qbsp3.c     \
+4bsp_srcs =	\
+    4bsp.c     \
 	brushbsp.c	\
 	faces.c		\
 	leakfile.c	\
@@ -96,7 +96,7 @@ qbsp3_srcs =	\
 	writebsp.c	\
 	csg.c
 
-qbsp3_cmnobjs = \
+4bsp_cmnobjs = \
 	bspfile.o	\
 	cmdlib.o	\
 	lbmlib.o	\
@@ -105,41 +105,41 @@ qbsp3_cmnobjs = \
 	scriplib.o	\
 	threads.o
 
-qbsp3_objs = $(qbsp3_srcs:.c=.o)
-qbsp3_objs_all = $(qbsp3_objs) $(qbsp3_cmnobjs)
-# qbsp3_dep = $(addprefix $(depdir)/, $(qbsp3_srcs:.c=.d) )
+4bsp_objs = $(4bsp_srcs:.c=.o)
+4bsp_objs_all = $(4bsp_objs) $(4bsp_cmnobjs)
+# 4bsp_dep = $(addprefix $(depdir)/, $(4bsp_srcs:.c=.d) )
 
 #
-# files for qvis3
+# files for 4vis
 #
-qvis3_srcs =	\
-	qvis3.c		\
+4vis_srcs =	\
+	4vis.c		\
 	flow.c
 
-qvis3_cmnobjs =	\
+4vis_cmnobjs =	\
 	bspfile.o	\
 	cmdlib.o	\
 	mathlib.o	\
 	scriplib.o	\
 	threads.o
 
-qvis3_objs = $(qvis3_srcs:.c=.o)
-qvis3_objs_all = $(qvis3_objs) $(qvis3_cmnobjs)
-# qvis3_dep = $(addprefix $(depdir)/, $(qvis3_srcs:.c=.d) )
+4vis_objs = $(4vis_srcs:.c=.o)
+4vis_objs_all = $(4vis_objs) $(4vis_cmnobjs)
+# 4vis_dep = $(addprefix $(depdir)/, $(4vis_srcs:.c=.d) )
 
 
 #
-# files for qdata
+# files for 4data
 #
-qdata_srcs =	\
+4data_srcs =	\
 	images.c	\
 	models.c	\
-	qdata.c	\
+	4data.c	\
 	sprites.c	\
 	tables.c	\
 	video.c
 
-qdata_cmnobjs =	\
+4data_cmnobjs =	\
 	bspfile.o	\
 	cmdlib.o	\
 	lbmlib.o	\
@@ -152,21 +152,21 @@ qdata_cmnobjs =	\
 	trilib.o	\
 	threads.o
 
-qdata_objs = $(qdata_srcs:.c=.o)
-qdata_objs_all = $(qdata_objs) $(qdata_cmnobjs)
-# qdata_dep = $(addprefix $(depdir)/, $(qdata_srcs:.c=.d) )
+4data_objs = $(4data_srcs:.c=.o)
+4data_objs_all = $(4data_objs) $(4data_cmnobjs)
+# 4data_dep = $(addprefix $(depdir)/, $(4data_srcs:.c=.d) )
 
 
 #
-# files for qrad3
+# files for 4rad
 #
-qrad3_srcs =	\
-	qrad3.c		\
+4rad_srcs =	\
+	4rad.c		\
 	lightmap.c	\
 	patches.c 	\
 	trace.c
 
-qrad3_cmnobjs = \
+4rad_cmnobjs = \
 	bspfile.o	\
 	cmdlib.o	\
 	lbmlib.o	\
@@ -175,59 +175,59 @@ qrad3_cmnobjs = \
 	scriplib.o	\
 	threads.o
 
-qrad3_objs = $(qrad3_srcs:.c=.o)
-qrad3_objs_all = $(qrad3_objs) $(qrad3_cmnobjs)
-# qrad3_dep = $(addprefix $(depdir)/, $(qrad3_srcs:.c=.d) )
+4rad_objs = $(4rad_srcs:.c=.o)
+4rad_objs_all = $(4rad_objs) $(4rad_cmnobjs)
+# 4rad_dep = $(addprefix $(depdir)/, $(4rad_srcs:.c=.d) )
 
 #
 # --- targets ---
 #
 
-all: subdirectories $(builddir)/qbsp3 $(builddir)/qvis3 $(builddir)/qrad3 $(builddir)/qdata
+all: subdirectories $(builddir)/4bsp $(builddir)/4vis $(builddir)/4rad $(builddir)/4data
 
 # dependency (.d) files
 include $(cmn_dep)
 ## include $(bspinfo3_dep)
-include $(qbsp3_dep)
-include $(qvis3_dep)
-include $(qrad3_dep)
-include $(qdata_dep)
+include $(4bsp_dep)
+include $(4vis_dep)
+include $(4rad_dep)
+include $(4data_dep)
 
 # compile common sources
 $(cmn_objs): %o : %c
 	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
 
 
-# link qbsp3
-$(builddir)/qbsp3: $(qbsp3_objs_all)
-	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(qbsp3_objs_all)) -o $(builddir)/qbsp3.exe $(LDFLAGS) $(LIBS)
+# link 4bsp
+$(builddir)/4bsp: $(4bsp_objs_all)
+	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(4bsp_objs_all)) -o $(builddir)/4bsp.exe $(LDFLAGS) $(LIBS)
 
-# compile qbsp3 sources
-$(qbsp3_objs): %o : %c
+# compile 4bsp sources
+$(4bsp_objs): %o : %c
 	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
 
-# link qvis3
-$(builddir)/qvis3: $(qvis3_objs_all)
-	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(qvis3_objs_all)) -o $(builddir)/qvis3.exe $(LDFLAGS) $(LIBS)
+# link 4vis
+$(builddir)/4vis: $(4vis_objs_all)
+	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(4vis_objs_all)) -o $(builddir)/4vis.exe $(LDFLAGS) $(LIBS)
 
-# compile qvis3 sources
-$(qvis3_objs): %o : %c
+# compile 4vis sources
+$(4vis_objs): %o : %c
 	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
 
-# link qrad3
-$(builddir)/qrad3: $(qrad3_objs_all)
-	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(qrad3_objs_all)) -o $(builddir)/qrad3.exe $(LDFLAGS) $(LIBS)
+# link 4rad
+$(builddir)/4rad: $(4rad_objs_all)
+	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(4rad_objs_all)) -o $(builddir)/4rad.exe $(LDFLAGS) $(LIBS)
 
-# compile qrad3 sources
-$(qrad3_objs): %o : %c
+# compile 4rad sources
+$(4rad_objs): %o : %c
 	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
 
-# link qdata
-$(builddir)/qdata: $(qdata_objs_all)
-	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(qdata_objs_all)) -o $(builddir)/qdata.exe $(LDFLAGS) $(LIBS)
+# link 4data
+$(builddir)/4data: $(4data_objs_all)
+	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(4data_objs_all)) -o $(builddir)/4data.exe $(LDFLAGS) $(LIBS)
 
-# compile qdata sources
-$(qdata_objs): %o : %c
+# compile 4data sources
+$(4data_objs): %o : %c
 	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
 
 
@@ -244,41 +244,41 @@ subdirectories:
 
 clean:
 	rm -f $(builddir)/*.o
-	rm -f $(builddir)/qbsp3.exe
-	rm -f $(builddir)/qvis3.exe
-	rm -f $(builddir)/qrad3.exe
-	rm -f $(builddir)/qdata.exe
+	rm -f $(builddir)/4bsp.exe
+	rm -f $(builddir)/4vis.exe
+	rm -f $(builddir)/4rad.exe
+	rm -f $(builddir)/4data.exe
 
 # Add these to remove executables from install directory
 
-#	rm -f $(INSTALL_DIR)/qbsp3.exe
-#	rm -f $(INSTALL_DIR)/qvis3.exe
-#	rm -f $(INSTALL_DIR)/qrad3.exe
-#	rm -f $(INSTALL_DIR)/qdata.exe
+#	rm -f $(INSTALL_DIR)/4bsp.exe
+#	rm -f $(INSTALL_DIR)/4vis.exe
+#	rm -f $(INSTALL_DIR)/4rad.exe
+#	rm -f $(INSTALL_DIR)/4data.exe
 
 install:
 	mkdir -p $(INSTALL_DIR)
-	cp $(builddir)/qbsp3.exe   $(INSTALL_DIR)
-	cp $(builddir)/qvis3.exe   $(INSTALL_DIR)
-	cp $(builddir)/qrad3.exe   $(INSTALL_DIR)
-	cp $(builddir)/qdata.exe   $(INSTALL_DIR)r)/qbsp3.*
-	rm -f $(builddir)/qvis3.*
-	rm -f $(builddir)/qrad3.*
-	rm -f $(builddir)/qdata.*
+	cp $(builddir)/4bsp.exe   $(INSTALL_DIR)
+	cp $(builddir)/4vis.exe   $(INSTALL_DIR)
+	cp $(builddir)/4rad.exe   $(INSTALL_DIR)
+	cp $(builddir)/4data.exe   $(INSTALL_DIR)r)/4bsp.*
+	rm -f $(builddir)/4vis.*
+	rm -f $(builddir)/4rad.*
+	rm -f $(builddir)/4data.*
 
 # Add these to remove executables from install directory
 
-#	rm -f $(INSTALL_DIR)/qbsp3.*
-#	rm -f $(INSTALL_DIR)/qvis3.*
-#	rm -f $(INSTALL_DIR)/qrad3.*
-#	rm -f $(INSTALL_DIR)/qdata.*
+#	rm -f $(INSTALL_DIR)/4bsp.*
+#	rm -f $(INSTALL_DIR)/4vis.*
+#	rm -f $(INSTALL_DIR)/4rad.*
+#	rm -f $(INSTALL_DIR)/4data.*
 
 install:
 	mkdir -p $(INSTALL_DIR)
-	cp $(builddir)/qbsp3.*   $(INSTALL_DIR)
-	cp $(builddir)/qvis3.*   $(INSTALL_DIR)
-	cp $(builddir)/qrad3.*   $(INSTALL_DIR)
-	cp $(builddir)/qdata.*   $(INSTALL_DIR)
+	cp $(builddir)/4bsp.*   $(INSTALL_DIR)
+	cp $(builddir)/4vis.*   $(INSTALL_DIR)
+	cp $(builddir)/4rad.*   $(INSTALL_DIR)
+	cp $(builddir)/4data.*   $(INSTALL_DIR)
 
 
 

@@ -2,19 +2,19 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="qrad3" />
+		<Option title="4rad" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Release PPro Win32">
-				<Option output="qrad3" prefix_auto="1" extension_auto="1" />
+				<Option output="4rad" prefix_auto="1" extension_auto="1" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-DWIN32" />
 					<Add option="-DNDEBUG" />
 					<Add option="-D_CONSOLE" />
-					<Add option="-DQRAD3" />
+					<Add option="-D4rad" />
 					<Add option="-DPPRO" />
 					<Add directory="../../common" />
 				</Compiler>
@@ -24,7 +24,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
-				<Option output="qrad3" prefix_auto="1" extension_auto="1" />
+				<Option output="4rad" prefix_auto="1" extension_auto="1" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -40,14 +40,14 @@
 				</Linker>
 			</Target>
 			<Target title="Debug Win32">
-				<Option output="qrad3" prefix_auto="1" extension_auto="1" />
+				<Option output="4rad" prefix_auto="1" extension_auto="1" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-DWIN32" />
 					<Add option="-D_DEBUG" />
 					<Add option="-D_CONSOLE" />
-					<Add option="-DQRAD3" />
+					<Add option="-D4rad" />
 					<Add directory="../../common" />
 				</Compiler>
 				<Linker>
@@ -117,7 +117,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="qrad.h" />
-		<Unit filename="qrad3.c">
+		<Unit filename="4rad.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="trace.c">

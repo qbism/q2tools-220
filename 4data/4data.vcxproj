@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{33DF1C04-5C0E-4BAB-BD23-5B8F903CB5E2}</ProjectGuid>
-    <RootNamespace>qrad3</RootNamespace>
+    <ProjectGuid>{6238FC2F-D1AD-4074-86E1-D8952824BD71}</ProjectGuid>
+    <RootNamespace>4vis</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -76,7 +76,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;QRAD3;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;4vis;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -96,7 +96,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;QRAD3;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -110,7 +110,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_MBCS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;_CRT_SECURE_NO_WARNINGS ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -121,25 +121,33 @@
   <ItemGroup>
     <ClCompile Include="..\common\bspfile.c" />
     <ClCompile Include="..\common\cmdlib.c" />
+    <ClCompile Include="..\common\l3dslib.c" />
+    <ClCompile Include="..\common\llwolib.c" />
     <ClCompile Include="..\common\lbmlib.c" />
     <ClCompile Include="..\common\mathlib.c" />
+    <ClCompile Include="..\common\mdfour.c" />
     <ClCompile Include="..\common\polylib.c" />
     <ClCompile Include="..\common\scriplib.c" />
     <ClCompile Include="..\common\threads.c" />
-    <ClCompile Include="lightmap.c" />
-    <ClCompile Include="patches.c" />
-    <ClCompile Include="qrad3.c" />
-    <ClCompile Include="trace.c" />
+    <ClCompile Include="..\common\trilib.c" />
+    <ClCompile Include="images.c" />
+    <ClCompile Include="models.c" />
+    <ClCompile Include="4data.c" />
+    <ClCompile Include="sprites.c" />
+    <ClCompile Include="tables.c" />
+    <ClCompile Include="video.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\bspfile.h" />
     <ClInclude Include="..\common\cmdlib.h" />
-    <ClInclude Include="..\common\lbmlib.h" />
+    <ClInclude Include="..\common\l3dslib.h" />
+    <ClInclude Include="..\common\llwolib.h" />
     <ClInclude Include="..\common\mathlib.h" />
-    <ClInclude Include="..\common\polylib.h" />
+    <ClInclude Include="..\common\mdfour.h" />
     <ClInclude Include="..\common\scriplib.h" />
     <ClInclude Include="..\common\threads.h" />
-    <ClInclude Include="qrad.h" />
+    <ClInclude Include="..\common\trilib.h" />
+    <ClInclude Include="\4vis\vis.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
