@@ -603,6 +603,10 @@ void ParseBrush (entity_t *mapent)
 		// read the texturedef
 		//
 		GetToken (false);
+        if (!strcmp (token, "__TB_empty"))
+			{
+				printf(">>> Missing texture?  %s found at line %i\n",token, scriptline+1);
+			}
 		strcpy (td.name, token);
 
 		// DarkEssence: take parms according to mapversion

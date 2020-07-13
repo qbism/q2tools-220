@@ -6,6 +6,7 @@
 *.o
 *.so
 *.d
+*.layout
  *~
  .vscode
 autosave/

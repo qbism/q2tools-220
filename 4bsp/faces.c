@@ -33,7 +33,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define	USE_HASHING
 
 #define	INTEGRAL_EPSILON	0.01
-#define	POINT_EPSILON		0.5
+#define	POINT_EPSILON		0.1  //qb: was 0.5. fix by tapir to 0.1 via jdolan on insideqc.
 #define	OFF_EPSILON		0.5
 
 extern brush_texture_t    side_brushtextures[MAX_MAP_SIDES];  //qb: kmbsp3: caulk

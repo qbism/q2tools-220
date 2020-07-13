@@ -7,7 +7,7 @@ Forked from compiler tools supporting the v220 map format by XaeroX and DarkEsse
 
 # Enhancements:
 
-BSP
+bsp
 *   Split microbrushes (GDD tools)
 *	Fix for scaled textures using an origin brush. (DWH)
 *   Fix for rotation using origin brush (MaxEd)

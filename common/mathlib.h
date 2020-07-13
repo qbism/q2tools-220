@@ -30,6 +30,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // big enough without being so big we get major floating point errors.
 #define	BOGUS_RANGE	((1<<14)<<1)
 
+#ifdef BSP // only do this for qbsp, leads to stack overflows on qrad3.
+#define DOUBLEVEC_T // jit - might as well be more accurate, and sometimes doubles are even faster on modern hardware, anyway...
+#endif
+
 #ifdef DOUBLEVEC_T
 typedef double vec_t;
 #else

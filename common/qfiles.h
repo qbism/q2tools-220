@@ -197,10 +197,10 @@ typedef struct {
 #define	MIPLEVELS	4
 typedef struct miptex_s
 {
-	char		name[64];
+	char		name[32];
 	unsigned	width, height;
 	unsigned	offsets[MIPLEVELS];		// four mip maps stored
-	char		animname[64];			// next frame in animation chain
+	char		animname[32];			// next frame in animation chain
 	int			flags;
 	int			contents;
 	int			value;

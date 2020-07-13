@@ -191,7 +191,7 @@ $(cmn_objs): %o : %c
 
 # link 4bsp
 $(builddir)/4bsp: $(4bsp_objs_all)
-	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(4bsp_objs_all)) -o $(builddir)/4bsp $(LDFLAGS)
+	$(CC) $(CFLAGS) -DBSP $(addprefix $(builddir)/, $(4bsp_objs_all)) -o $(builddir)/4bsp $(LDFLAGS)
 
 # compile 4bsp sources
 $(4bsp_objs): %o : %c
