@@ -1214,8 +1214,8 @@ tree_t *BrushBSP (bspbrush_t *brushlist, vec3_t mins, vec3_t maxs)
 		volume = BrushVolume (b);
 		if (volume < microvolume)
 		{
-			printf ("WARNING: entity %i, brush %i: microbrush\n  Bounds: %g %g %g -> %g %g %g\n",
-				b->original->entitynum, b->original->brushnum,
+			printf ("WARNING: Entity %i, Brush %i, Line %i: microbrush\n  Bounds: %g %g %g -> %g %g %g\n",
+				b->original->entitynum, b->original->brushnum, scriptline+1,  //qb: add scriptline
 				b->mins[0], b->mins[1], b->mins[2], b->maxs[0], b->maxs[1], b->maxs[2]);
 		}
 

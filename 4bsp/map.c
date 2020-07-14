@@ -307,8 +307,8 @@ int	BrushContents (mapbrush_t *b)
 		trans |= texinfo[s->texinfo].flags;
 		if (s->contents != contents)
 		{
-			printf ("Entity %i, Brush %i: mixed face contents\n"
-				, b->entitynum, b->brushnum);
+			printf ("Entity %i, Brush %i, Line %i: mixed face contents\n"
+				, b->entitynum, b->brushnum, scriptline+1);  //qb: add scriptline
 			break;
 		}
 	}
@@ -526,14 +526,14 @@ qboolean MakeBrushWindings (mapbrush_t *ob)
 	{
 		if (ob->mins[i] < -4096 || ob->maxs[i] > 4096)
 		{
-			printf ("entity %i, brush %i: bounds out of range\n", ob->entitynum, ob->brushnum);
+			printf ("Entity %i, Brush %i, Line %i: bounds out of range\n", ob->entitynum, ob->brushnum, scriptline+1);  //qb: add scriptline
 			printf ("bounds: %g %g %g -> %g %g %g\n",
 				ob->mins[0], ob->mins[1], ob->mins[2], ob->maxs[0], ob->maxs[1], ob->maxs[2]);
 			return true;
 		}
 		if (ob->mins[i] > 4096 || ob->maxs[i] < -4096)
 		{
-			printf ("entity %i, brush %i: no visible sides on brush\n", ob->entitynum, ob->brushnum);
+			printf ("Entity %i, Brush %i, Line %i: no visible sides on brush\n", ob->entitynum, ob->brushnum, scriptline+1);  //qb: add scriptline
 			printf ("bounds: %g %g %g -> %g %g %g\n",
 				ob->mins[0], ob->mins[1], ob->mins[2], ob->maxs[0], ob->maxs[1], ob->maxs[2]);
 			return true;
@@ -605,7 +605,7 @@ void ParseBrush (entity_t *mapent)
 		GetToken (false);
         if (!strcmp (token, "__TB_empty"))
 			{
-				printf(">>> Missing texture?  %s found at line %i\n",token, scriptline+1);
+				printf("Face without texture ( %s ) at line %i\n",token, scriptline+1);
 			}
 		strcpy (td.name, token);
 
@@ -713,8 +713,8 @@ void ParseBrush (entity_t *mapent)
 		planenum = PlaneFromPoints (planepts[0], planepts[1], planepts[2], b);
 		if (planenum == -1)
 		{
-			printf ("Entity %i, Brush %i: plane with no normal\n"
-				, b->entitynum, b->brushnum);
+			printf ("Entity %i, Brush %i, Line %i: plane with no normal\n"
+				, b->entitynum, b->brushnum, scriptline+1);  //qb: add scriptline
 			continue;
 		}
 
@@ -726,14 +726,14 @@ void ParseBrush (entity_t *mapent)
 			s2 = b->original_sides + k;
 			if (s2->planenum == planenum)
 			{
-				printf ("Entity %i, Brush %i: duplicate plane\n"
-					, b->entitynum, b->brushnum);
+				printf ("Entity %i, Brush %i, Line %i: duplicate plane\n"
+					, b->entitynum, b->brushnum, scriptline+1);  //qb: add scriptline
 				break;
 			}
 			if ( s2->planenum == (planenum^1) )
 			{
-				printf ("Entity %i, Brush %i: mirrored plane\n"
-					, b->entitynum, b->brushnum);
+				printf ("Entity %i, Brush %i, Line %i: mirrored plane\n"
+					, b->entitynum, b->brushnum, scriptline+1);  //qb: add scriptline
 				break;
 			}
 		}
@@ -800,7 +800,7 @@ void ParseBrush (entity_t *mapent)
 
 		if (num_entities == 1)
 		{
-			Error ("Entity %i, Brush %i: origin brushes not allowed in world", b->entitynum, b->brushnum);
+			Error ("Entity %i, Brush %i, Line %i: origin brushes not allowed in world", b->entitynum, b->brushnum, scriptline+1);  //qb: add scriptline
 			return;
 		}
 
