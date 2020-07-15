@@ -71,6 +71,7 @@ typedef struct
 #define	MAX_PATCHES	65535			// larger will cause 32 bit overflows
 
 #define DEFAULT_SMOOTHING_VALUE     44.0
+#define DEFAULT_NUDGE_VALUE     0.25
 
 typedef struct patch_s
 {
@@ -180,6 +181,7 @@ extern vec3_t sun_color;
 
 extern float    smoothing_threshold;
 extern float    smoothing_value;
+extern float    sample_nudge;
 extern int  num_smoothing;
 
 int	refine_amt, refine_setting;

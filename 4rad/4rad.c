@@ -64,6 +64,7 @@ void BuildFaceExtents(void); //qb: from quemap
 int TestLine (vec3_t start, vec3_t stop);
 float           smoothing_threshold; //qb: phong from VHLT
 float           smoothing_value = DEFAULT_SMOOTHING_VALUE;
+float           sample_nudge = DEFAULT_NUDGE_VALUE; //qb: adjustable nudge for multisample
 
 
 /*
@@ -901,27 +902,28 @@ int main (int argc, char **argv)
         {
             printf ("4rad with automatic phong.\n"
                     "usage: 4rad [options] mapfile\n\n"
-                    "-smooth #: Threshold angle for phong smoothing\n"
-                    "-extra: Use extra samples to smooth lighting\n"
-                    "-subdiv #: Maximum patch size  Default: 64\n"
-                    "-dice: Subdivide patches with a global grid rather than per patch\n"
-                    "-bounce #: Max number of light bounces for radiosity\n"
+                    "-smooth #: Threshold angle (# and 180deg - #) for phong smoothing.\n"
+                    "-extra: Use extra samples to smooth lighting.\n"
+                    "-nudge: Nudge factor for samples. Fraction of distance from center.\n"
+                    "-subdiv #: Maximum patch size.  Default: 64\n"
+                    "-dice: Subdivide patches with a global grid rather than per patch.\n"
+                    "-bounce #: Max number of light bounces for radiosity.\n"
                     "-maxdata #: Requires modded engine. Default: 2097152 Limit: 8388608\n"
-                    "-scale #: Intensity multiplier\n"
-                    "-sunradscale #: Sky light intensity scale when sun is active\n"
-                    "-direct #: Direct light scaling\n"
-                    "-entity #: Entity light scaling\n"
-                    "-ambient: Minimum light level\n"
-                    "-maxlight: Maximium light level\n"
-                    "-basedir <dir> :et the base directory for textures\n"
-                    "-v: verbose output for debugging\n"
-                    "-tmpin: Read sfrom tmp directory\n"
-                    "-tmpout: Wite to tmp directory\n"
-                    "-savetrace: Test traces and report errors\n"
-                    "-dump: dump patches to a text file\n"
-                    "-nopvs:  Don't do potential visibility set check\n"
-                    "-noblock: Brushes don't block lighting path\n"
-                    "-threads #:  Number of CPU cores to use\n\n"
+                    "-scale #: Light intensity multiplier.\n"
+                    "-sunradscale #: Sky light intensity scale when sun is active.\n"
+                    "-direct #: Direct light scaling.\n"
+                    "-entity #: Entity light scaling.\n"
+                    "-ambient: Minimum light level.\n"
+                    "-maxlight: Maximium light level.\n"
+                    "-basedir <dir> :The base (mod) directory for textures.\n"
+                    "-v: Verbose output for debugging.\n"
+                    "-tmpin: Read from tmp directory.\n"
+                    "-tmpout: Write to tmp directory.\n"
+                    "-savetrace: Test traces and report errors.\n"
+                    "-dump: Dump patches to a text file.\n"
+                    "-nopvs:  Don't do potential visibility set check.\n"
+                    "-noblock: Brushes don't block lighting path.\n"
+                    "-threads #:  Number of CPU cores to use.\n\n"
                    );
     printf( "<<<<<<<<<<<<<<<<<<<<< 4rad HELP >>>>>>>>>>>>>>>>>>>>>\n\n" );
 
@@ -1029,7 +1031,13 @@ int main (int argc, char **argv)
             smoothing_value = BOUND(0, smoothing_value, 90);
             i++;
         }
-        else if (!strcmp(argv[i],"-ambient"))
+        else if (!strcmp(argv[i],"-nudge"))
+        {
+            sample_nudge = atof (argv[i+1]);
+            sample_nudge = BOUND(0, sample_nudge, 1.0);
+            i++;
+        }
+       else if (!strcmp(argv[i],"-ambient"))
         {
             ambient = atof (argv[i+1]) * 128;
             i++;
@@ -1051,18 +1059,19 @@ int main (int argc, char **argv)
         else
             break;
     }
-    printf("ambient   : %f\n", ambient );
-    printf("scale     : %f\n", lightscale );
-    printf("maxlight  : %f\n", maxlight );
-    printf("maxdata   : %i\n", maxdata );
-    printf("entity    : %f\n", entity_scale );
-    printf("direct    : %f\n", direct_scale );
-    printf("saturation: %f\n", saturation );
-    printf("bounce    : %d\n", numbounce );
-    printf("radmin    : %f\n", patch_cutoff );
-    printf("subdiv    : %f\n", subdiv );
-    printf("smooth    : %f\n", smoothing_value );
-    printf("threads   : %d\n", numthreads );
+    printf("sample nudge: %f\n", sample_nudge );
+    printf("ambient     : %f\n", ambient );
+    printf("scale       : %f\n", lightscale );
+    printf("maxlight    : %f\n", maxlight );
+    printf("maxdata     : %i\n", maxdata );
+    printf("entity      : %f\n", entity_scale );
+    printf("direct      : %f\n", direct_scale );
+    printf("saturation  : %f\n", saturation );
+    printf("bounce      : %d\n", numbounce );
+    printf("radmin      : %f\n", patch_cutoff );
+    printf("subdiv      : %f\n", subdiv );
+    printf("smooth angle: %f\n", smoothing_value );
+    printf("threads     : %d\n", numthreads );
 
     // ThreadSetDefault ();
 
@@ -1079,7 +1088,7 @@ int main (int argc, char **argv)
                "    -maxlight            -tmpin               -tmpout\n"
                "    -dump                -bounce              -threads\n"
                "    -smooth              -sunradscale #       -dice\n"
-               "    -v (verbose output)\n\n");
+               "    -nudge               -v (verbose output)\n\n");
         exit(1);
     }
     start = I_FloatTime ();

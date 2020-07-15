@@ -1910,7 +1910,6 @@ void    GetPhongNormal(int facenum, vec3_t spot, vec3_t phongnormal)
 
                 // Interpolate between the center and edge normals based on sample position
                 // VectorScale(facenormal, 1.0 - a1 - a2, phongnormal);
-                //(facenormal, fabs((1.0 - a1) - a2), phongnormal);  //qb: eureka... need that fabs()!
                 VectorScale(facenormal, fabs((1.0 - a1) - a2), phongnormal);  //qb: eureka... need that fabs()!
                 VectorScale(n1, a1, temp);
                 VectorAdd(phongnormal, temp, phongnormal);
@@ -1929,7 +1928,6 @@ void    GetPhongNormal(int facenum, vec3_t spot, vec3_t phongnormal)
  * surface normal to reduce false-positive traces. Test the PVS at the new
  * position, returning true if the new point is valid, false otherwise.
  */
-#define SAMPLE_NUDGE 0.1 //qb: was 0.25
 static qboolean NudgeSamplePosition(const vec3_t in, const vec3_t normal, const vec3_t center,
                                     vec3_t out, byte *pvs)
 {
@@ -1941,8 +1939,8 @@ static qboolean NudgeSamplePosition(const vec3_t in, const vec3_t normal, const 
     VectorSubtract(out, center, dir);
     VectorNormalize(dir,dir);
 
-    VectorMA(out, SAMPLE_NUDGE, dir, out);
-    VectorMA(out, SAMPLE_NUDGE, normal, out);
+    VectorMA(out, sample_nudge, dir, out);
+    VectorMA(out, sample_nudge, normal, out);
 
     return PvsForOrigin (out, pvs);
 }
