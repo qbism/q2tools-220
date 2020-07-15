@@ -37,6 +37,7 @@ patch_t		*face_patches[MAX_MAP_FACES];
 entity_t	*face_entity[MAX_MAP_FACES];
 patch_t		patches[MAX_PATCHES];
 unsigned	num_patches;
+int    num_smoothing;  //qb: number of phong hits
 
 vec3_t		radiosity[MAX_PATCHES];		// light leaving a patch
 vec3_t		illumination[MAX_PATCHES];	// light arriving at a patch
@@ -1109,6 +1110,11 @@ int main (int argc, char **argv)
     }
 
     RadWorld ();
+
+    if (smoothing_threshold > 0.0)
+    {
+        printf ("Smoothing edges found: %i\n", num_smoothing);
+    }
 
     sprintf (name, "%s%s", outbase, source);
     printf ("writing %s\n", name);

@@ -370,7 +370,7 @@ void            PairEdges()
                     e->cos_normals_angle = (DotProduct(normals[0], normals[1]));
                     e->cos_normals_angle = fabs(DotProduct(normals[0], normals[1]));
 
-                    if (e->cos_normals_angle > (1.0 - 0.1)) //qb: get sloppy NORMAL_EPSILON))
+                    if (e->cos_normals_angle > (1.0 - 0.01)) //qb: get sloppier than 1 - NORMAL_EPSILON
                     {
                         e->coplanar = true;
                         VectorCopy(getPlaneFromFace(e->faces[0])->normal, e->interface_normal);
@@ -380,6 +380,7 @@ void            PairEdges()
                     {
                         if (e->cos_normals_angle >= smoothing_threshold)
                         {
+                            num_smoothing += 1;
                             VectorAdd(normals[0], normals[1], e->interface_normal);
                             VectorNormalize(e->interface_normal, e->interface_normal);
                         }
@@ -1909,6 +1910,7 @@ void    GetPhongNormal(int facenum, vec3_t spot, vec3_t phongnormal)
 
                 // Interpolate between the center and edge normals based on sample position
                 // VectorScale(facenormal, 1.0 - a1 - a2, phongnormal);
+                //(facenormal, fabs((1.0 - a1) - a2), phongnormal);  //qb: eureka... need that fabs()!
                 VectorScale(facenormal, fabs((1.0 - a1) - a2), phongnormal);  //qb: eureka... need that fabs()!
                 VectorScale(n1, a1, temp);
                 VectorAdd(phongnormal, temp, phongnormal);
@@ -1927,7 +1929,7 @@ void    GetPhongNormal(int facenum, vec3_t spot, vec3_t phongnormal)
  * surface normal to reduce false-positive traces. Test the PVS at the new
  * position, returning true if the new point is valid, false otherwise.
  */
-#define SAMPLE_NUDGE 0.01 //qb: was 0.25
+#define SAMPLE_NUDGE 0.1 //qb: was 0.25
 static qboolean NudgeSamplePosition(const vec3_t in, const vec3_t normal, const vec3_t center,
                                     vec3_t out, byte *pvs)
 {

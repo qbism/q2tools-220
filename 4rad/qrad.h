@@ -180,6 +180,7 @@ extern vec3_t sun_color;
 
 extern float    smoothing_threshold;
 extern float    smoothing_value;
+extern int  num_smoothing;
 
 int	refine_amt, refine_setting;
 int	PointInLeafnum (vec3_t point);
