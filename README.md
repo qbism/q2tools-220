@@ -28,6 +28,7 @@ radiosity
 *   Edge lighting fix (qbism)	
 *   Automatic phong smoothing (vluzacn VHLT)
 *   Add face for vertex normal (vluzacn VHLT)
+*   Add -nudge to adjust sample nudge distance for -extra (qbism)
 *   Add -dice to subdivide patches with a global grid rather than per patch
 *	File path determination asumptions (Alien Arena tools):
     *   moddir is parent of whatever directory contains the .map/.bsp
@@ -47,16 +48,17 @@ radiosity
 
 
 4vis
-*   works the same as always
+*   It works the same as always. -fast for a quick single pass.
 
 
 4rad
-*   -smooth sets the angle (in degrees) for autophong. Corners between (angle) and (180-angle) will not be phonged.  Default is 44, so it will phong a 9-sided or more prism, but not 8-sided.  Set to zero to disable.
+*   -smooth sets the angle (in degrees) for autophong. Applies to convex and concave corners. Corners between (angle) and (180-angle) will not be phonged.  Default is 44, so it will phong a 9-sided or more prism, but not 8-sided.  Set to zero to disable.
 *   -maxmapdata sets lightng memory limit.  Original is 0x200000 and it can be set up to 0x800000 (8388608).  Requires an engine that supports the higher limit.
 *	-saturation applies to light reflected from surfaces.  Values < 1.0 desaturate.  Values >1.0 oversaturate. 
 *   Any tga replacement textures found will be used for radiosity.
 *   -basedir sets the base directory.  Use this if modding other than baseq2.  Defaults to baseq2.
 *   -sunradscale sets sky radiosity scale when the sun (directional lighting) is active.  Default is 0.5.
+*   -nudge sets the fractional distance from face center when extra lighting samples are used (-extra).  Default is 0.25.
 
 
 4data
