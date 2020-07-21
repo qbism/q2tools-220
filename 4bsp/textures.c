@@ -139,7 +139,7 @@ qboolean TexinfosMatch (texinfo_t t1, texinfo_t t2) //mxd
 
 	for (int j = 0; j < 2; j++)
 		for (int k = 0; k < 4; k++)
-			if (t1.vecs[j][k] != t2.vecs[j][k])
+			if ((int)(t1.vecs[j][k]*100) != (int)(t2.vecs[j][k]*100))  //qb: round to two decimal places
 				return false;
 
 	return true;

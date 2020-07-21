@@ -62,11 +62,26 @@ radiosity
 
 
 4data
-*   help for this tool is scarce, but it runs a script file to convert assets to Q2 data types.  This example creates the colormap:
+*   Runs a script file to convert assets to Q2 data types.  This example creates the colormap:
     
     $load base/pics/pal.pcx
-	
 	$colormap colormap 
+
+Compile a model from individual .tri, .3ds, or .lwo frames. Example:
+    $cd monsters/berserk
+    $origin 0 0 24
+    $base base
+    $skin skin
+    $skin pain
+
+    //idle
+    $frame stand1 stand2 stand3 stand4 stand5
+    $frame standb1 standb2 standb3 standb4 standb5 standb6 standb7 standb8 standb9 standb10
+    $frame standb11 standb12 standb13 standb14 standb15 standb16 standb17 standb18 standb19 standb20
+
+    //walk
+    //$frame walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8 walk9 walk10
+    ...etc.
 
 
 # Build from source:
