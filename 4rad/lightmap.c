@@ -1340,6 +1340,11 @@ void CreateDirectLights (void)
         else
             dl->adjangle = 1.0f;
 
+        // [slipyx] add _falloff
+        dl->falloff = atoi(ValueForKey(e, "_falloff"));
+        if (dl->falloff < 0)
+            dl->falloff = 0;
+
         intensity = FloatForKey (e, "light");
         if (!intensity)
             intensity = FloatForKey (e, "_light");
@@ -1593,7 +1598,15 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
         {
         case emit_point:
             // linear falloff
-            scale = (l->intensity - l->wait * dist) * dot;  //qb: wait
+            if (l->falloff == 0)
+                scale = (l->intensity - l->wait * dist) * dot;  //qb: wait
+            // [slipyx] additional falloff behavior, from zzsort/blarghrad
+            // inverse
+            else if (l->falloff == 1)
+                scale = l->intensity / dist * dot;
+            // inverse square
+            else
+                scale = l->intensity / (dist * dist) * dot;
             break;
 
         case emit_sky: //qb: sky radiosity
