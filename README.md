@@ -23,6 +23,7 @@ radiosity
 *   Keep emit_surface active for sky planes when sun is active. Adjust with -sunradscale. (qbism)
 *   Use any existing TGA replacement textures for radiosity (AA tools)
 *   Spotlight center to surface point attenuation (AA tools)
+*   Add \_falloff property for point lights (blarghrad)
 *   Radiosity texture checking (GDD tools)
 *   Face extents (quemap)
 *   Edge lighting fix (qbism)	
