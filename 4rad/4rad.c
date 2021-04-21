@@ -31,8 +31,6 @@ every surface must be divided into at least two patches each axis
 
 */
 
-extern	float sunradscale;
-
 patch_t		*face_patches[MAX_MAP_FACES];
 entity_t	*face_entity[MAX_MAP_FACES];
 patch_t		patches[MAX_PATCHES];
@@ -66,6 +64,15 @@ float           smoothing_threshold; //qb: phong from VHLT
 float           smoothing_value = DEFAULT_SMOOTHING_VALUE;
 float           sample_nudge = DEFAULT_NUDGE_VALUE; //qb: adjustable nudge for multisample
 
+int	refine_amt, refine_setting;
+int	PointInLeafnum (vec3_t point);
+void MakeTnodes (dmodel_t *bm);
+void MakePatches (void);
+void SubdividePatches (void);
+void PairEdges (void);
+void CalcTextureReflectivity (void);
+byte	*dlightdata_ptr;
+byte	dlightdata_raw[MAX_MAP_LIGHTING];
 
 /*
  * 2010-09 Notes

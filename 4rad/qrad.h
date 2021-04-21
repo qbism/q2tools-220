@@ -121,11 +121,7 @@ extern char		basedir[64];
 
 void MakeShadowSplits (void);
 
-float			*texture_data[MAX_MAP_TEXINFO];
-int				texture_sizes[MAX_MAP_TEXINFO][2];
-
 //==============================================
-
 
 void BuildVisMatrix (void);
 qboolean CheckVisBit (unsigned p1, unsigned p2);
@@ -185,12 +181,14 @@ extern float    smoothing_value;
 extern float    sample_nudge;
 extern int  num_smoothing;
 
-int	refine_amt, refine_setting;
-int	PointInLeafnum (vec3_t point);
-void MakeTnodes (dmodel_t *bm);
-void MakePatches (void);
-void SubdividePatches (void);
-void PairEdges (void);
-void CalcTextureReflectivity (void);
-byte	*dlightdata_ptr;
-byte	dlightdata_raw[MAX_MAP_LIGHTING];
+extern int	refine_amt, refine_setting;
+extern int	PointInLeafnum (vec3_t point);
+extern void MakeTnodes (dmodel_t *bm);
+extern void MakePatches (void);
+extern void SubdividePatches (void);
+extern void PairEdges (void);
+extern void CalcTextureReflectivity (void);
+extern byte	*dlightdata_ptr;
+extern byte	dlightdata_raw[MAX_MAP_LIGHTING];
+
+extern	float sunradscale;

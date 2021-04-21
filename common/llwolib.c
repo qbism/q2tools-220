@@ -22,8 +22,6 @@ union {char c[2];short i;} buffer2;
 FILE *lwo;
 short numpoints, numpolys;
 
-triangle_t	*ptri;
-
 void skipchunk()
 {
 	long chunksize;
@@ -87,6 +85,7 @@ void getpolys(){
 void LoadLWOTriangleList (char *filename, triangle_t **pptri, int *numtriangles)
 {
 	int		i, j;
+    triangle_t	*ptri;
 
 	if ((lwo = fopen(filename, "rb")) == 0) {
 		fprintf(stderr,"reader: could not open file '%s'\n", filename);

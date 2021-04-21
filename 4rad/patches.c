@@ -23,6 +23,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 vec3_t	texture_reflectivity[MAX_MAP_TEXINFO];
 
 int cluster_neg_one = 0;
+float			*texture_data[MAX_MAP_TEXINFO];
+int				texture_sizes[MAX_MAP_TEXINFO][2];
 /*
 ===================================================================
 
