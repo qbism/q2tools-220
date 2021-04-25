@@ -41,6 +41,7 @@ int			planelinks[2][MAX_MAP_PLANES];
 int			maxdata;
 vec3_t      face_texnormals[MAX_MAP_FACES];
 float       sunradscale = 0.5;
+byte	*dlightdata_ptr;
 
 //qb: quemap- face extents
 typedef struct face_extents_s

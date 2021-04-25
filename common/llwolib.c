@@ -85,7 +85,7 @@ void getpolys(){
 void LoadLWOTriangleList (char *filename, triangle_t **pptri, int *numtriangles)
 {
 	int		i, j;
-    triangle_t	*ptri;
+	triangle_t	*ptri;
 
 	if ((lwo = fopen(filename, "rb")) == 0) {
 		fprintf(stderr,"reader: could not open file '%s'\n", filename);

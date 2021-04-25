@@ -60,6 +60,7 @@ radiosity
 *   -basedir sets the base directory.  Use this if modding other than baseq2.  Defaults to baseq2.
 *   -sunradscale sets sky radiosity scale when the sun (directional lighting) is active.  Default is 0.5.
 *   -nudge sets the fractional distance from face center when extra lighting samples are used (-extra).  Default is 0.25.
+*   _falloff property values; intensity - distance), 1 (inverse; intensity/distance), 2 (inverse-square; intensity/dist*dist)  default: 0  Note that inverse and inverse-square falloff require very high brightness values to be visible.
 
 
 4data

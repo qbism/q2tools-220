@@ -47,8 +47,6 @@ tri		tris[MAXTRIANGLES];
 int	bytesread, level, numtris, totaltris;
 int	vertsfound, trisfound;
 
-triangle_t	*ptri;
-
 
 // Alias stores triangles as 3 explicit vertices in .tri files, so even though we
 // start out with a vertex pool and vertex indices for triangles, we have to convert
@@ -56,6 +54,7 @@ triangle_t	*ptri;
 void StoreAliasTriangles (void)
 {
 	int		i, j, k;
+    triangle_t	*ptri;
 
 	if ((totaltris + numtris) > MAXTRIANGLES)
 		Error ("Error: Too many triangles");
@@ -256,6 +255,7 @@ void Load3DSTriangleList (char *filename, triangle_t **pptri, int *numtriangles)
 {
 	FILE        *input;
 	short int	tshort;
+    triangle_t	*ptri;
 
 	bytesread = 0;
 	level = 0;
