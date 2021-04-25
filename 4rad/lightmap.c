@@ -367,9 +367,7 @@ void            PairEdges()
                     VectorCopy(getPlaneFromFace(e->faces[0])->normal, normals[0]);
                     VectorCopy(getPlaneFromFace(e->faces[1])->normal, normals[1]);
 
-                    //qb: fabs, so to include concave angles
-                    e->cos_normals_angle = (DotProduct(normals[0], normals[1]));
-                    e->cos_normals_angle = fabs(DotProduct(normals[0], normals[1]));
+                     e->cos_normals_angle = DotProduct(normals[0], normals[1]);
 
                     if (e->cos_normals_angle > (1.0 - 0.01)) //qb: get sloppier than 1 - NORMAL_EPSILON
                     {
@@ -392,11 +390,11 @@ void            PairEdges()
                 {
                     e->smooth = true;
                 }
-                else if (!GetIntertexnormal (e->faces[0] - dfaces, e->faces[1] - dfaces))  //qb: else
+                if (!GetIntertexnormal (e->faces[0] - dfaces, e->faces[1] - dfaces))
                 {
+                    printf ("!GetIntertexnormal hit.\n");
                     e->coplanar = false;
                     VectorClear (e->interface_normal);
-                    e->smooth = false;
                 }
             }
         }
@@ -1457,7 +1455,7 @@ void CreateDirectLights (void)
     }
 
 
-    qprintf ("%i direct lights\n", numdlights);
+    printf ("%i direct lights\n", numdlights);
 }
 
 
