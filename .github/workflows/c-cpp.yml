@@ -15,9 +15,3 @@ jobs:
     - uses: actions/checkout@v2
     - name: make
       run: make
-    - name: make x86
-      run: make -f Makefile-x86
-    - name: make win64
-      run: make -f Makefile-win64
-    - name: make win32
-      run: make -f Makefile-win32
