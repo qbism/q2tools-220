@@ -181,5 +181,6 @@ void LoadTriangleList (char *filename, triangle_t **pptri, int *numtriangles)
 	*numtriangles = ptri - *pptri;
 
 	fclose (input);
+	free (ptri); //qb: stop mem leak
 }
 

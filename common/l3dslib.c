@@ -76,6 +76,8 @@ void StoreAliasTriangles (void)
 	numtris = 0;
 	vertsfound = 0;
 	trisfound = 0;
+
+	free (ptri);
 }
 
 
@@ -297,5 +299,6 @@ void Load3DSTriangleList (char *filename, triangle_t **pptri, int *numtriangles)
 	*numtriangles = totaltris;
 
 	fclose (input);
+	free (ptri); //qb: stop mem leak
 }
 

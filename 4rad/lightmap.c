@@ -1271,7 +1271,7 @@ void CreateDirectLights (void)
 
         target = ValueForKey (e, "target");
 
-        if(strlen(target) >= 1 && !strcmp(target, sun_target))
+        if(strlen(target) >= 1 && sun_target && !strcmp(target, sun_target))  //qb: add sun_target check
         {
             vec3_t sun_s, sun_t;
             printf ("Sun target found.\n");

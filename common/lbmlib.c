@@ -276,6 +276,7 @@ void WriteLBMfile (char *filename, byte *data,
 	bmhd_t  basebmhd;
 
 	lbm = lbmptr = malloc (width*height+1000);
+	if (!lbm) return; //qb: NULL if width or height is zero.
 
 //
 // start FORM
@@ -818,6 +819,6 @@ void LoadTGA (char *name, byte **pixels, int *width, int *height)
 			breakOut:;
 		}
 	}
-
+    free (targa_rgba);  //qb: memory leak
 	fclose(fin);
 }

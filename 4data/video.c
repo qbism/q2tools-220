@@ -605,6 +605,9 @@ cblock_t RLE (cblock_t in)
 
 	out_p = out.data = malloc (in.count*2);
 
+	if (!out_p)
+        Error ("RLE: in.count = 0"); //qb: NULL check
+
 	// write count
 	*out_p++ = in.count&255;
 	*out_p++ = (in.count>>8)&255;

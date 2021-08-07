@@ -747,10 +747,13 @@ void 	SetKeyValue (entity_t *ent, char *key, char *value)
 			return;
 		}
 	ep = malloc (sizeof(*ep));
-	ep->next = ent->epairs;
-	ent->epairs = ep;
-	ep->key = copystring(key);
-	ep->value = copystring(value);
+	if (ep) //qb: gcc -fanalyzer: could be NULL
+    {
+        ep->next = ent->epairs;
+        ent->epairs = ep;
+        ep->key = copystring(key);
+        ep->value = copystring(value);
+    }
 }
 
 char 	*ValueForKey (entity_t *ent, char *key)
