@@ -395,7 +395,8 @@ void            PairEdges()
                     printf ("!GetIntertexnormal hit.\n");
                     e->coplanar = false;
                     VectorClear (e->interface_normal);
-                }
+                    e->smooth = false;
+               }
             }
         }
     }

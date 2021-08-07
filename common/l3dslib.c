@@ -59,6 +59,8 @@ void StoreAliasTriangles (void)
 	if ((totaltris + numtris) > MAXTRIANGLES)
 		Error ("Error: Too many triangles");
 
+    ptri = malloc (MAXTRIANGLES * sizeof(triangle_t));
+
 	for (i=0; i<numtris ; i++)
 	{
 		for (j=0 ; j<3 ; j++)
