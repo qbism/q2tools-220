@@ -525,7 +525,7 @@ int main (int argc, char **argv)
                 "    -blocks # # # #       -nocsg             -nowater\n"
                 "    -leaktest             -nodetail          -onlyents\n"
                 "    -fulldetail           -noshare           -noprune\n"
-                "    -noorigfix            -largebounds       -moreents\n");
+                "    -noorigfix            -largebounds       -moreents\n"
                 "    -v (verbose)\n\n");
 
         exit(1);
