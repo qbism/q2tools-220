@@ -49,20 +49,6 @@ void FindBrushInTree (node_t *node, int brushnum)
 
 //==================================================
 
-
-
-void PrintBrush (bspbrush_t *brush)
-{
-	int		i;
-
-	printf ("brush: %p\n", brush);
-	for (i=0;i<brush->numsides ; i++)
-	{
-		pw(brush->sides[i].winding);
-		printf ("\n");
-	}
-}
-
 /*
 ==================
 BoundBrush
@@ -599,7 +585,7 @@ qboolean WindingIsHuge (winding_t *w)
 	for (i=0 ; i<w->numpoints ; i++)
 	{
 		for (j=0 ; j<3 ; j++)
-			if (w->p[i][j] < -max_bounds*2 || w->p[i][j] > max_bounds*2)
+			if (w->p[i][j] < -2*max_bounds || w->p[i][j] > 2*max_bounds)
 				return true;
 	}
 	return false;

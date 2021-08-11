@@ -177,7 +177,7 @@ AddPortalToNodes
 void AddPortalToNodes (portal_t *p, node_t *front, node_t *back)
 {
 	if (p->nodes[0] || p->nodes[1])
-		Error ("AddPortalToNode: allready included");
+		Error ("AddPortalToNode: already included");
 
 	p->nodes[0] = front;
 	p->next[0] = front->portals;
@@ -328,8 +328,8 @@ winding_t	*BaseWindingForNode (node_t *node)
 	vec3_t		normal;
 	vec_t		dist;
 
-	w = BaseWindingForPlane (mapplanes[node->planenum].normal
-		, mapplanes[node->planenum].dist);
+	w = BaseWindingForPlane (mapplanes[node->planenum].normal,
+		mapplanes[node->planenum].dist);
 
 	// clip by all the parents
 	for (n=node->parent ; n && w ; )
@@ -553,13 +553,19 @@ void MakeTreePortals_r (node_t *node)
 	if (node->mins[0] >= node->maxs[0])
 	{
 		printf ("WARNING: node without a volume\n");
+
+		//qb: print bounds, from kmqbsp3
+		printf("  Bounds: %g %g %g -> %g %g %g\n",
+			node->mins[0], node->mins[1], node->mins[2], node->maxs[0], node->maxs[1], node->maxs[2]);
 	}
 
 	for (i=0 ; i<3 ; i++)
 	{
-		if (node->mins[i] < -max_bounds*2 || node->maxs[i] > max_bounds*2)
+		if (node->mins[i] < -2*max_bounds || node->maxs[i] > 2*max_bounds)
 		{
 			printf ("WARNING: node with unbounded volume\n");
+			printf("  Bounds: %g %g %g -> %g %g %g\n",
+				node->mins[0], node->mins[1], node->mins[2], node->maxs[0], node->maxs[1], node->maxs[2]);
 			break;
 		}
 	}
@@ -757,7 +763,8 @@ void FloodAreas_r (node_t *node)
 		// note the current area as bounding the portal
 		if (e->portalareas[1])
 		{
-			printf ("WARNING: areaportal entity %i touches > 2 areas\n", b->original->entitynum);
+			printf ("WARNING: areaportal entity %i touches > 2 areas\n  Node Bounds: %g %g %g -> %g %g %g\n", b->original->entitynum,
+				node->mins[0], node->mins[1], node->mins[2], node->maxs[0], node->maxs[1], node->maxs[2]);
 			return;
 		}
 		if (e->portalareas[0])
@@ -851,7 +858,8 @@ void SetAreaPortalAreas_r (node_t *node)
 		node->area = e->portalareas[0];
 		if (!e->portalareas[1])
 		{
-			printf ("WARNING: areaportal entity %i doesn't touch two areas\n", b->original->entitynum);
+			printf ("WARNING: areaportal entity %i doesn't touch two areas\n  Node Bounds: %g %g %g -> %g %g %g\n", b->original->entitynum,
+					node->mins[0], node->mins[1], node->mins[2], node->maxs[0], node->maxs[1], node->maxs[2]);
 			return;
 		}
 	}

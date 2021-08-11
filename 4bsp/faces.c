@@ -80,7 +80,7 @@ typedef struct hashvert_s
 } hashvert_t;
 
 
-#define	HASH_SIZE	64
+#define	HASH_SIZE	MAX_POINTS_HASH //qb: per kmbsp3. Was 64
 
 
 int	vertexchain[MAX_MAP_VERTS];		// the next vertex in a hash chain
