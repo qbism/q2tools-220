@@ -524,14 +524,14 @@ qboolean MakeBrushWindings (mapbrush_t *ob)
 
 	for (i=0 ; i<3 ; i++)
 	{
-		if (ob->mins[i] < -4096 || ob->maxs[i] > 4096)
+		if (ob->mins[i] < -max_bounds || ob->maxs[i] > max_bounds)
 		{
 			printf ("Entity %i, Brush %i, Line %i: bounds out of range\n", ob->entitynum, ob->brushnum, scriptline+1);  //qb: add scriptline
 			printf ("bounds: %g %g %g -> %g %g %g\n",
 				ob->mins[0], ob->mins[1], ob->mins[2], ob->maxs[0], ob->maxs[1], ob->maxs[2]);
 			return true;
 		}
-		if (ob->mins[i] > 4096 || ob->maxs[i] < -4096)
+		if (ob->mins[i] > max_bounds || ob->maxs[i] < -max_bounds)
 		{
 			printf ("Entity %i, Brush %i, Line %i: no visible sides on brush\n", ob->entitynum, ob->brushnum, scriptline+1);  //qb: add scriptline
 			printf ("bounds: %g %g %g -> %g %g %g\n",
@@ -887,7 +887,7 @@ qboolean	ParseMapEntity (void)
 	if (strcmp (token, "{") )
 		Error ("ParseEntity: { not found");
 
-	if (num_entities == MAX_MAP_ENTITIES)
+	if (num_entities == max_entities) //qb: from kmqbsp Knightmare changed- was MAX_MAP_ENTITIES
 		Error ("num_entities == MAX_MAP_ENTITIES");
 
 	entity_t *mapent = &entities[num_entities];
@@ -1007,7 +1007,7 @@ void LoadMapFile (char *filename)
 	ClearBounds (map_mins, map_maxs);
 	for (i=0 ; i<entities[0].numbrushes ; i++)
 	{
-		if (mapbrushes[i].mins[0] > 4096)
+		if (mapbrushes[i].mins[0] > max_bounds)
 			continue;	// no valid points
 		AddPointToBounds (mapbrushes[i].mins, map_mins, map_maxs);
 		AddPointToBounds (mapbrushes[i].maxs, map_mins, map_maxs);

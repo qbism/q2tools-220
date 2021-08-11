@@ -47,6 +47,9 @@ int			block_xl = -8, block_xh = 7, block_yl = -8, block_yh = 7;
 
 int			entity_num;
 
+int			max_entities = OLD_MAX_MAP_ENTITIES;	//qb: from kmqbsp- Knightmare- adjustable entity limit
+int			max_bounds = OLD_MAX_BOUNDS;			// Knightmare- adjustable max bounds
+int			block_size = 1024;						// Knightmare- adjustable block size
 
 node_t		*block_nodes[10][10];
 
@@ -127,12 +130,12 @@ void ProcessBlock_Thread (int blocknum)
 
     qprintf ("############### block %2i,%2i ###############\n", xblock, yblock);
 
-    mins[0] = xblock*1024;
-    mins[1] = yblock*1024;
-    mins[2] = -4096;
-    maxs[0] = (xblock+1)*1024;
-    maxs[1] = (yblock+1)*1024;
-    maxs[2] = 4096;
+	mins[0] = xblock*block_size;
+	mins[1] = yblock*block_size;
+	mins[2] = -max_bounds; // was -4096
+	maxs[0] = (xblock+1)*block_size;
+	maxs[1] = (yblock+1)*block_size;
+	maxs[2] = max_bounds; // was 4096
 
     // the makelist and chopbrushes could be cached between the passes...
     brushes = MakeBspBrushList (brush_start, brush_end, mins, maxs);
@@ -281,8 +284,8 @@ void ProcessSubModel (void)
     start = e->firstbrush;
     end = start + e->numbrushes;
 
-    mins[0] = mins[1] = mins[2] = -4096;
-    maxs[0] = maxs[1] = maxs[2] = 4096;
+    mins[0] = mins[1] = mins[2] = -max_bounds;
+    maxs[0] = maxs[1] = maxs[2] = max_bounds;
     list = MakeBspBrushList (start, end, mins, maxs);
     if (!nocsg)
         list = ChopBrushes (list);
@@ -443,6 +446,20 @@ int main (int argc, char **argv)
             printf ("leaktest = true\n");
             leaktest = true;
         }
+        //qb: from kmqbsp- Knightmare added
+		else if (!strcmp(argv[i], "-largebounds") || !strcmp(argv[i], "-lb"))
+		{
+			max_bounds = MAX_HALF_SIZE;
+			block_size = MAX_BLOCK_SIZE;
+			printf ("using max bound size of %i\n", MAX_HALF_SIZE);
+		}
+		else if (!strcmp(argv[i], "-moreents"))
+		{
+			max_entities = MAX_MAP_ENTITIES;
+			printf ("using entity limit of %i\n", MAX_MAP_ENTITIES);
+		}
+		// end Knightmare
+
         else if ((!strcmp(argv[i], "-chop")) || (!strcmp(argv[i], "-subdiv")))
         {
             subdivide_size = atof(argv[i+1]);

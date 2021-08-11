@@ -5,5 +5,6 @@
 		<Project filename="4rad/4rad.cbp" />
 		<Project filename="4data/4data.cbp" />
 		<Project filename="4bsp/4bsp.cbp" />
+		<Project filename="../kmqbsp/src/qbsp3/qbsp3.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

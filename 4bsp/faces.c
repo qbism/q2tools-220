@@ -95,8 +95,8 @@ unsigned HashVec (vec3_t vec)
 {
     int			x, y;
 
-    x = (4096 + (int)(vec[0]+0.5)) >> 7;
-    y = (4096 + (int)(vec[1]+0.5)) >> 7;
+    x = (max_bounds + (int)(vec[0]+0.5)) >> 7;
+    y = (max_bounds + (int)(vec[1]+0.5)) >> 7;
     if ( x < 0 || x >= HASH_SIZE || y < 0 || y >= HASH_SIZE )
         Error ("HashVec: point outside valid range");
 
@@ -188,8 +188,8 @@ int	GetVertexnum (vec3_t v)
     {
         if ( fabs(v[i] - (int)(v[i]+0.5)) < INTEGRAL_EPSILON )
             v[i] = (int)(v[i]+0.5);
-        if (v[i] < -4096 || v[i] > 4096)
-            Error ("GetVertexnum: outside +/- 4096");
+        if (v[i] < -max_bounds || v[i] > max_bounds)
+            Error ("GetVertexnum: outside +/- max_bounds");
     }
 
     // search for an existing vertex match
@@ -351,10 +351,10 @@ void FindEdgeVerts (vec3_t v1, vec3_t v2)
     }
 #endif
 
-    x1 = (4096 + (int)(v1[0]+0.5)) >> 7;
-    y1 = (4096 + (int)(v1[1]+0.5)) >> 7;
-    x2 = (4096 + (int)(v2[0]+0.5)) >> 7;
-    y2 = (4096 + (int)(v2[1]+0.5)) >> 7;
+    x1 = (max_bounds + (int)(v1[0]+0.5)) >> 7;
+    y1 = (max_bounds + (int)(v1[1]+0.5)) >> 7;
+    x2 = (max_bounds + (int)(v2[0]+0.5)) >> 7;
+    y2 = (max_bounds + (int)(v2[1]+0.5)) >> 7;
 
     if (x1 > x2)
     {
