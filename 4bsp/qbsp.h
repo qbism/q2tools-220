@@ -28,7 +28,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define	MAX_BRUSH_SIDES	128
 #define	TEXINFO_NODE		-1		// side is already on a node
 
-//qb: from kmqbsp- Typhontaur's large bounds
+//qb: from kmqbsp3- Typhontaur's large bounds
 #define USE_OUT_DIMENSIONS
 
 #define MAX_MAP_SIZE 32768
@@ -197,7 +197,7 @@ extern	char		outbase[32];
 
 extern	char		source[1024];
 
-extern	int		max_entities;	//qb: from kmqbsp-  Knightmare- adjustable entity limit
+extern	int		max_entities;	//qb: from kmqbsp3-  Knightmare- adjustable entity limit
 extern	int		max_bounds;		// Knightmare- adjustable max bounds
 
 void 	LoadMapFile (char *filename);

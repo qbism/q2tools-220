@@ -15,6 +15,7 @@ bsp
 *   Caulk brushes similar to Q3 mapping (kmbsp3)	
 *   Texinfo overflow check (MaxEd)
 *   Set chop size for surface lights (qbism - idea from JDolan)
+*   Support increased maps size and entity limits.  Requires a supporting engine. (kmqbsp3)
 		
 vis
 *   Increase vis data size max. Issue warning for > vanilla limit. (qbism)
@@ -46,6 +47,8 @@ radiosity
 *   v220 support- for Trenchbroom, duplicate or modify the Q2 gametype and change the format to valve and add "mapversion" "220" to worldspawn.  JACK does this automatically when saving to v220.  Note that JACK saves a hybrid map format that includes texture flags whereas standard v220 format does not. Current Trenchbroom source adds this hybrid format load/save.
 *   -choplight sets the chop size for surface lights.  Lower settings may improve quality of large surface lights, especially when chop is high. Try "-chop 512 -choplight 32" as an example.
 *   -noorigfix disables 'origin fix'.
+*   -largebounds: Increase max map size for supporting engines.
+*   -moreents: Increase max number of entities for supporting engines.
 
 
 4vis

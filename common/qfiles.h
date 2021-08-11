@@ -227,7 +227,7 @@ typedef struct miptex_s
 // 16 bit short limits
 #define	MAX_MAP_MODELS		1024
 #define	MAX_MAP_BRUSHES		8192
-#define	OLD_MAX_MAP_ENTITIES	2048 //qb: from kmqbsp- Knightmare- old limit
+#define	OLD_MAX_MAP_ENTITIES	2048 //qb: from kmqbsp3- Knightmare- old limit
 #define	MAX_MAP_ENTITIES	8192	// new limit, was 2048
 #define	MAX_MAP_ENTSTRING	0x40000
 #define	DEFAULT_MAP_TEXINFO	8192  //mxd: vanilla
@@ -251,7 +251,7 @@ typedef struct miptex_s
 #define	DEFAULT_MAP_VISIBILITY	0x100000  //qb: vanilla
 #define	MAX_MAP_VISIBILITY	    0x400000  //qb: extended
 
-//qb: from kmqbsp- Knightmare- new and old max bounds sizes
+//qb: from kmqbsp3- Knightmare- new and old max bounds sizes
 #define	OLD_MAX_BOUNDS		4096
 // probably couldn't make a map larger than this without execceding the 16-bit bounded limits
 #define NEW_MAX_BOUNDS		( 32768 ) // was 131072

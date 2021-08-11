@@ -887,7 +887,7 @@ qboolean	ParseMapEntity (void)
 	if (strcmp (token, "{") )
 		Error ("ParseEntity: { not found");
 
-	if (num_entities == max_entities) //qb: from kmqbsp Knightmare changed- was MAX_MAP_ENTITIES
+	if (num_entities == max_entities) //qb: from kmqbsp3 Knightmare changed- was MAX_MAP_ENTITIES
 		Error ("num_entities == MAX_MAP_ENTITIES");
 
 	entity_t *mapent = &entities[num_entities];

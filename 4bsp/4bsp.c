@@ -47,7 +47,7 @@ int			block_xl = -8, block_xh = 7, block_yl = -8, block_yh = 7;
 
 int			entity_num;
 
-int			max_entities = OLD_MAX_MAP_ENTITIES;	//qb: from kmqbsp- Knightmare- adjustable entity limit
+int			max_entities = OLD_MAX_MAP_ENTITIES;	//qb: from kmqbsp3- Knightmare- adjustable entity limit
 int			max_bounds = OLD_MAX_BOUNDS;			// Knightmare- adjustable max bounds
 int			block_size = 1024;						// Knightmare- adjustable block size
 
@@ -375,6 +375,8 @@ int main (int argc, char **argv)
                     "    -noshare: Don't look for shared edges on save.\n"
                     "    -noprune: Disable node pruning.\n"
                     "    -noorigfix: Disable texture fix for origin offsets.\n"
+                    "    -largebounds: Increase max map size for supporting engines.\n"
+                    "    -moreents: Increase max number of entities for supporting engines.\n"
                     "    -v: Display more verbose output.\n"
                     "<<<<<<<<<<<<<<<<<<<<< 4bsp HELP >>>>>>>>>>>>>>>>>>>>>\n\n");
 
@@ -446,7 +448,7 @@ int main (int argc, char **argv)
             printf ("leaktest = true\n");
             leaktest = true;
         }
-        //qb: from kmqbsp- Knightmare added
+        //qb: from kmqbsp3- Knightmare added
 		else if (!strcmp(argv[i], "-largebounds") || !strcmp(argv[i], "-lb"))
 		{
 			max_bounds = MAX_HALF_SIZE;
@@ -523,7 +525,8 @@ int main (int argc, char **argv)
                 "    -blocks # # # #       -nocsg             -nowater\n"
                 "    -leaktest             -nodetail          -onlyents\n"
                 "    -fulldetail           -noshare           -noprune\n"
-                "    -noorigfix            -v (verbose)\n\n");
+                "    -noorigfix            -largebounds       -moreents\n");
+                "    -v (verbose)\n\n");
 
         exit(1);
     }
