@@ -32,6 +32,8 @@ Save out name.prt for qvis to read
 
 #define	PORTALFILE	"PRT1"
 
+extern qboolean use_xbsp;
+
 FILE	*pf;
 int		num_visclusters;				// clusters the player can be in
 int		num_visportals;
@@ -226,7 +228,11 @@ void SaveClusters_r (node_t *node)
 {
 	if (node->planenum == PLANENUM_LEAF)
 	{
-		dleafs[clusterleaf++].cluster = node->cluster;
+		if(use_xbsp)
+            dleafsX[clusterleaf++].cluster = node->cluster;
+        else
+            dleafs[clusterleaf++].cluster = node->cluster;
+
 		return;
 	}
 	SaveClusters_r (node->children[0]);
@@ -262,8 +268,12 @@ void WritePortalFile (tree_t *tree)
 // write the file
 	sprintf (filename, "%s.prt", source);
 
-	printf ("\ntexinfo count: %i of %i maximum.\n", numtexinfo, MAX_MAP_TEXINFO);
-	printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES);
+	printf ("\ntexinfo count: %i of %i maximum.\n", numtexinfo, MAX_MAP_TEXINFO_XBSP);
+
+	if(use_xbsp)
+        printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES_XBSP);
+	else
+        printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES);
 
 	printf ("writing %s\n", filename);
 	pf = fopen (filename, "w");

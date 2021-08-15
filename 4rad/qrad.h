@@ -55,6 +55,7 @@ typedef struct directlight_s
 	float		stopdot;		// for spotlights
     dplane_t    *plane;
     dleaf_t     *leaf;
+    dleaf_tx     *leafX;
     int			nodenum;
 } directlight_t;
 
@@ -69,7 +70,8 @@ typedef struct
 } transfer_t;
 
 
-#define	MAX_PATCHES	65535			// larger will cause 32 bit overflows
+#define	MAX_PATCHES	          65535			// larger will cause 32 bit overflows
+#define	MAX_PATCHES_XBSP	8388608	        //qb: xbsp
 
 #define DEFAULT_SMOOTHING_VALUE     44.0
 #define DEFAULT_NUDGE_VALUE     0.25
@@ -106,18 +108,20 @@ typedef struct patch_s
 	int			samples;		// for averaging direct light
 } patch_t;
 
-extern	patch_t		*face_patches[MAX_MAP_FACES];
-extern	entity_t	*face_entity[MAX_MAP_FACES];
-extern	vec3_t		face_offset[MAX_MAP_FACES];		// for rotating bmodels
-extern	patch_t		patches[MAX_PATCHES];
+extern	patch_t		*face_patches[MAX_MAP_FACES_XBSP];
+extern	entity_t	*face_entity[MAX_MAP_FACES_XBSP];
+extern	vec3_t		face_offset[MAX_MAP_FACES_XBSP];		// for rotating bmodels
+extern	patch_t		patches[MAX_PATCHES_XBSP];
 extern	unsigned	num_patches;
 
-extern	int		leafparents[MAX_MAP_LEAFS];
-extern	int		nodeparents[MAX_MAP_NODES];
+extern	int		leafparents[MAX_MAP_LEAFS_XBSP];
+extern	int		nodeparents[MAX_MAP_NODES_XBSP];
 
 extern	float	lightscale;
 
 extern char		basedir[64];
+
+extern qboolean use_xbsp;
 
 void MakeShadowSplits (void);
 
@@ -139,9 +143,9 @@ extern	qboolean	dicepatches;
 extern int numbounce;
 extern qboolean noblock;
 
-extern	directlight_t	*directlights[MAX_MAP_LEAFS];
+extern	directlight_t	*directlights[MAX_MAP_LEAFS_XBSP];
 
-extern	byte	nodehit[MAX_MAP_NODES];
+extern	byte	nodehit[MAX_MAP_NODES_XBSP];
 
 void BuildLightmaps (void);
 
@@ -158,9 +162,10 @@ int TestLine_r (int node, vec3_t start, vec3_t stop);
 void CreateDirectLights (void);
 
 dleaf_t		*PointInLeaf (vec3_t point);
+dleaf_tx		*PointInLeafX (vec3_t point);
 
 
-extern	dplane_t	backplanes[MAX_MAP_PLANES];
+extern	dplane_t	backplanes[MAX_MAP_PLANES_XBSP];
 extern	int			fakeplanes;					// created planes for origin offset
 extern  int		maxdata;
 
@@ -189,6 +194,6 @@ extern void SubdividePatches (void);
 extern void PairEdges (void);
 extern void CalcTextureReflectivity (void);
 extern byte	*dlightdata_ptr;
-extern byte	dlightdata_raw[MAX_MAP_LIGHTING];
+extern byte	dlightdata_raw[MAX_MAP_LIGHTING_XBSP];
 
 extern	float sunradscale;

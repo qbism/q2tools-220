@@ -189,7 +189,7 @@ qboolean RayPlaneIntersect(vec3_t p_n, vec_t p_d, vec3_t l_o, vec3_t l_n,
     res[0] = l_o[0] + (t * l_n[0]);
     res[1] = l_o[1] + (t * l_n[1]);
     res[2] = l_o[2] + (t * l_n[2]);
-                
+
     return true;
 }
 #endif

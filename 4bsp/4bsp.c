@@ -22,6 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 extern	float subdivide_size;
 extern	float sublight_size;
+extern qboolean use_xbsp;
 
 char		source[1024];
 char		name[1024];
@@ -130,12 +131,12 @@ void ProcessBlock_Thread (int blocknum)
 
     qprintf ("############### block %2i,%2i ###############\n", xblock, yblock);
 
-	mins[0] = xblock*block_size;
-	mins[1] = yblock*block_size;
-	mins[2] = -max_bounds; // was -4096
-	maxs[0] = (xblock+1)*block_size;
-	maxs[1] = (yblock+1)*block_size;
-	maxs[2] = max_bounds; // was 4096
+    mins[0] = xblock*block_size;
+    mins[1] = yblock*block_size;
+    mins[2] = -max_bounds; // was -4096
+    maxs[0] = (xblock+1)*block_size;
+    maxs[1] = (yblock+1)*block_size;
+    maxs[2] = max_bounds; // was 4096
 
     // the makelist and chopbrushes could be cached between the passes...
     brushes = MakeBspBrushList (brush_start, brush_end, mins, maxs);
@@ -377,6 +378,7 @@ int main (int argc, char **argv)
                     "    -noorigfix: Disable texture fix for origin offsets.\n"
                     "    -largebounds: Increase max map size for supporting engines.\n"
                     "    -moreents: Increase max number of entities for supporting engines.\n"
+                    "    -xbsp: Greatly expanded map and entity limits for supporting engines.\n"
                     "    -v: Display more verbose output.\n"
                     "<<<<<<<<<<<<<<<<<<<<< 4bsp HELP >>>>>>>>>>>>>>>>>>>>>\n\n");
 
@@ -448,19 +450,25 @@ int main (int argc, char **argv)
             printf ("leaktest = true\n");
             leaktest = true;
         }
+        else if (!strcmp(argv[i], "-xbsp"))
+        {
+            printf ("use_xbsp = true\n");
+            use_xbsp = true;
+            max_entities = MAX_MAP_ENTITIES_XBSP;
+        }
         //qb: from kmqbsp3- Knightmare added
-		else if (!strcmp(argv[i], "-largebounds") || !strcmp(argv[i], "-lb"))
-		{
-			max_bounds = MAX_HALF_SIZE;
-			block_size = MAX_BLOCK_SIZE;
-			printf ("using max bound size of %i\n", MAX_HALF_SIZE);
-		}
-		else if (!strcmp(argv[i], "-moreents"))
-		{
-			max_entities = MAX_MAP_ENTITIES;
-			printf ("using entity limit of %i\n", MAX_MAP_ENTITIES);
-		}
-		// end Knightmare
+        else if (!strcmp(argv[i], "-largebounds") || !strcmp(argv[i], "-lb"))
+        {
+            max_bounds = MAX_HALF_SIZE;
+            block_size = MAX_BLOCK_SIZE;
+            printf ("using max bound size of %i\n", MAX_HALF_SIZE);
+        }
+        else if (!strcmp(argv[i], "-moreents"))
+        {
+            max_entities = MAX_MAP_ENTITIES;
+            printf ("using entity limit of %i\n", MAX_MAP_ENTITIES);
+        }
+        // end Knightmare
 
         else if ((!strcmp(argv[i], "-chop")) || (!strcmp(argv[i], "-subdiv")))
         {
@@ -526,7 +534,7 @@ int main (int argc, char **argv)
                 "    -leaktest             -nodetail          -onlyents\n"
                 "    -fulldetail           -noshare           -noprune\n"
                 "    -noorigfix            -largebounds       -moreents\n"
-                "    -v (verbose)\n\n");
+                "    -xbsp                 -v (verbose)\n\n");
 
         exit(1);
     }
@@ -557,6 +565,9 @@ int main (int argc, char **argv)
 
         sprintf (out, "%s.bsp", source);
         LoadBSPFile (out);
+        if(use_xbsp)
+            printf ("use_xbsp = true\n");
+
         num_entities = 0;
 
         LoadMapFile (name);
@@ -579,6 +590,7 @@ int main (int argc, char **argv)
         ProcessModels ();
     }
 
+    PrintBSPFileSizes();
     printf( "<<<<<<<<<<<<<<<<<< END 4bsp >>>>>>>>>>>>>>>>>>\n\n" );
 
     return 0;

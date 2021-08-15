@@ -31,17 +31,17 @@ every surface must be divided into at least two patches each axis
 
 */
 
-patch_t		*face_patches[MAX_MAP_FACES];
-entity_t	*face_entity[MAX_MAP_FACES];
-patch_t		patches[MAX_PATCHES];
+patch_t		*face_patches[MAX_MAP_FACES_XBSP];
+entity_t	*face_entity[MAX_MAP_FACES_XBSP];
+patch_t		patches[MAX_PATCHES_XBSP];
 unsigned	num_patches;
 int    num_smoothing;  //qb: number of phong hits
 
-vec3_t		radiosity[MAX_PATCHES];		// light leaving a patch
-vec3_t		illumination[MAX_PATCHES];	// light arriving at a patch
+vec3_t		radiosity[MAX_PATCHES_XBSP];		// light leaving a patch
+vec3_t		illumination[MAX_PATCHES_XBSP];	// light arriving at a patch
 
-vec3_t		face_offset[MAX_MAP_FACES];		// for rotating bmodels
-dplane_t	backplanes[MAX_MAP_PLANES];
+vec3_t		face_offset[MAX_MAP_FACES_XBSP];		// for rotating bmodels
+dplane_t	backplanes[MAX_MAP_PLANES_XBSP];
 
 char		inbase[32], outbase[32];
 char		basedir[64] = "baseq2"; //qb; default
@@ -167,8 +167,8 @@ void MakeBackplanes (void)
     }
 }
 
-int		leafparents[MAX_MAP_LEAFS];
-int		nodeparents[MAX_MAP_NODES];
+int		leafparents[MAX_MAP_LEAFS_XBSP];
+int		nodeparents[MAX_MAP_NODES_XBSP];
 
 /*
 =============
@@ -178,18 +178,34 @@ MakeParents
 void MakeParents (int nodenum, int parent)
 {
     int		i, j;
-    dnode_t	*node;
 
     nodeparents[nodenum] = parent;
-    node = &dnodes[nodenum];
 
-    for (i=0 ; i<2 ; i++)
+    if (use_xbsp)
     {
-        j = node->children[i];
-        if (j < 0)
-            leafparents[-j - 1] = nodenum;
-        else
-            MakeParents (j, nodenum);
+        dnode_tx	*node;
+        node = &dnodesX[nodenum];
+        for (i=0 ; i<2 ; i++)
+        {
+            j = node->children[i];
+            if (j < 0)
+                leafparents[-j - 1] = nodenum;
+            else
+                MakeParents (j, nodenum);
+        }
+    }
+    else
+    {
+        dnode_t	*node;
+        node = &dnodes[nodenum];
+        for (i=0 ; i<2 ; i++)
+        {
+            j = node->children[i];
+            if (j < 0)
+                leafparents[-j - 1] = nodenum;
+            else
+                MakeParents (j, nodenum);
+        }
     }
 }
 
@@ -206,24 +222,49 @@ int	PointInLeafnum (vec3_t point)
 {
     int		nodenum;
     vec_t	dist;
-    dnode_t	*node;
     dplane_t	*plane;
 
     nodenum = 0;
-    while (nodenum >= 0)
+    if (use_xbsp)
     {
-        node = &dnodes[nodenum];
-        plane = &dplanes[node->planenum];
-        dist = DotProduct (point, plane->normal) - plane->dist;
-        if (dist > 0)
-            nodenum = node->children[0];
-        else
-            nodenum = node->children[1];
+        dnode_tx *node;
+        while (nodenum >= 0)
+        {
+            node = &dnodesX[nodenum];
+            plane = &dplanes[node->planenum];
+            dist = DotProduct (point, plane->normal) - plane->dist;
+            if (dist > 0)
+                nodenum = node->children[0];
+            else
+                nodenum = node->children[1];
+        }
+    }
+    else
+    {
+        dnode_t	*node;
+        while (nodenum >= 0)
+        {
+            node = &dnodes[nodenum];
+            plane = &dplanes[node->planenum];
+            dist = DotProduct (point, plane->normal) - plane->dist;
+            if (dist > 0)
+                nodenum = node->children[0];
+            else
+                nodenum = node->children[1];
+        }
     }
 
     return -nodenum - 1;
 }
 
+
+dleaf_tx		*PointInLeafX (vec3_t point)
+{
+    int		num;
+
+    num = PointInLeafnum (point);
+    return &dleafsX[num];
+}
 
 dleaf_t		*PointInLeaf (vec3_t point)
 {
@@ -236,19 +277,28 @@ dleaf_t		*PointInLeaf (vec3_t point)
 
 qboolean PvsForOrigin (vec3_t org, byte *pvs)
 {
-    dleaf_t	*leaf;
-
     if (!visdatasize)
     {
         memset (pvs, 255, (numleafs+7)/8 );
         return true;
     }
 
-    leaf = PointInLeaf (org);
-    if (leaf->cluster == -1)
-        return false;		// in solid leaf
-
-    DecompressVis (dvisdata + dvis->bitofs[leaf->cluster][DVIS_PVS], pvs);
+    if (use_xbsp)
+    {
+        dleaf_tx	*leaf;
+        leaf = PointInLeafX (org);
+        if (leaf->cluster == -1)
+            return false;		// in solid leaf
+        DecompressVis (dvisdata + dvis->bitofs[leaf->cluster][DVIS_PVS], pvs);
+    }
+    else
+    {
+        dleaf_t	*leaf;
+        leaf = PointInLeaf (org);
+        if (leaf->cluster == -1)
+            return false;		// in solid leaf
+        DecompressVis (dvisdata + dvis->bitofs[leaf->cluster][DVIS_PVS], pvs);
+    }
     return true;
 }
 
@@ -271,7 +321,7 @@ static long total_mem;
 
 static int first_transfer = 1;
 
-#define MAX_TRACE_BUF ((MAX_PATCHES + 7) / 8)
+#define MAX_TRACE_BUF ((MAX_PATCHES_XBSP + 7) / 8)
 
 #define TRACE_BYTE(x) (((x)+7) >> 3)
 #define TRACE_BIT(x) ((x) & 0x1F)
@@ -369,7 +419,6 @@ static __inline int lowestCommonNode (int nodeNum1, int nodeNum2)
 static inline int lowestCommonNode (int nodeNum1, int nodeNum2)
 #endif
 {
-    dnode_t *node;
     int child1, tmp, headNode = 0;
 
     if (nodeNum1 > nodeNum2)
@@ -384,28 +433,45 @@ re_test:
     if (headNode == nodeNum1)
         return headNode;
 
-    child1 = (node = dnodes+headNode)->children[1];
-
-    if (nodeNum2 < child1)
-        //Both nodeNum1 and nodeNum2 are less than child1.
-        //In this case, child0 is always a node, not a leaf, so we don't need
-        //to check to make sure.
-        headNode = node->children[0];
-    else if (nodeNum1 < child1)
-        //Child1 sits between nodeNum1 and nodeNum2.
-        //This means that headNode is the lowest node which contains both
-        //nodeNum1 and nodeNum2.
-        return headNode;
-    else if (child1 > 0)
-        //Both nodeNum1 and nodeNum2 are greater than child1.
-        //If child1 is a node, that means it contains both nodeNum1 and
-        //nodeNum2.
-        headNode = child1;
+    if(use_xbsp)
+    {
+        dnode_tx *node;
+        child1 = (node = dnodesX+headNode)->children[1];
+        if (nodeNum2 < child1)
+            //Both nodeNum1 and nodeNum2 are less than child1.
+            //In this case, child0 is always a node, not a leaf, so we don't need
+            //to check to make sure.
+            headNode = node->children[0];
+        else if (nodeNum1 < child1)
+            //Child1 sits between nodeNum1 and nodeNum2.
+            //This means that headNode is the lowest node which contains both
+            //nodeNum1 and nodeNum2.
+            return headNode;
+        else if (child1 > 0)
+            //Both nodeNum1 and nodeNum2 are greater than child1.
+            //If child1 is a node, that means it contains both nodeNum1 and
+            //nodeNum2.
+            headNode = child1;
+        else
+            //Child1 is a leaf, therefore by process of elimination child0 must be
+            //a node and must contain boste nodeNum1 and nodeNum2.
+            headNode = node->children[0];
+        //goto instead of while(1) because it makes the CPU branch predict easier
+    }
     else
-        //Child1 is a leaf, therefore by process of elimination child0 must be
-        //a node and must contain boste nodeNum1 and nodeNum2.
-        headNode = node->children[0];
-    //goto instead of while(1) because it makes the CPU branch predict easier
+    {
+        dnode_t *node;
+        child1 = (node = dnodes+headNode)->children[1];
+        if (nodeNum2 < child1)
+            headNode = node->children[0];
+        else if (nodeNum1 < child1)
+            return headNode;
+        else if (child1 > 0)
+            headNode = child1;
+        else
+            headNode = node->children[0];
+    }
+
     goto re_test;
 }
 
@@ -421,10 +487,10 @@ void MakeTransfers (int i)
     float		total, inv_total;
     dplane_t	plane;
     vec3_t		origin;
-    float		transfers[MAX_PATCHES];
+    float		transfers[MAX_PATCHES_XBSP];
     int			s;
     int			itotal;
-    byte		pvs[(MAX_MAP_LEAFS+7)/8];
+    byte		pvs[(MAX_MAP_LEAFS_XBSP+7)/8];
     int			cluster;
     int			calc_trace, test_trace;
 
@@ -440,7 +506,7 @@ void MakeTransfers (int i)
     if (patch->area == 0)
         return;
 
-    // find out which patch2s will collect light from patch
+    // find out which patches will collect light from patch
 
     patch->numtransfers = 0;
     calc_trace = (save_trace && memory && first_transfer);
@@ -529,7 +595,7 @@ void MakeTransfers (int i)
     {
         transfer_t	*t;
 
-        if (patch->numtransfers < 0 || patch->numtransfers > MAX_PATCHES)
+        if (patch->numtransfers < 0 || patch->numtransfers > MAX_PATCHES_XBSP)
             Error ("Weird numtransfers");
         s = patch->numtransfers * sizeof(transfer_t);
         patch->transfers = malloc (s);
@@ -880,7 +946,7 @@ int main (int argc, char **argv)
 
     verbose = false;
     numthreads = 4;
-    maxdata = DEFAULT_MAP_LIGHTING; //qb: adjustable
+    maxdata = DEFAULT_MAP_LIGHTING;
     dlightdata_ptr = dlightdata;
 
     for (i=1 ; i<argc ; i++)
@@ -906,7 +972,7 @@ int main (int argc, char **argv)
                     "-subdiv #: Maximum patch size.  Default: 64\n"
                     "-dice: Subdivide patches with a global grid rather than per patch.\n"
                     "-bounce #: Max number of light bounces for radiosity.\n"
-                    "-maxdata #: Requires modded engine. Default: 2097152 Limit: 8388608\n"
+                    "-maxdata #: Value above 2097152 requires a modded engine.\n"
                     "-scale #: Light intensity multiplier.\n"
                     "-sunradscale #: Sky light intensity scale when sun is active.\n"
                     "-direct #: Direct light scaling.\n"
@@ -923,7 +989,7 @@ int main (int argc, char **argv)
                     "-noblock: Brushes don't block lighting path.\n"
                     "-threads #:  Number of CPU cores to use.\n\n"
                    );
-    printf( "<<<<<<<<<<<<<<<<<<<<< 4rad HELP >>>>>>>>>>>>>>>>>>>>>\n\n" );
+            printf( "<<<<<<<<<<<<<<<<<<<<< 4rad HELP >>>>>>>>>>>>>>>>>>>>>\n\n" );
 
             exit(1);
         }
@@ -947,10 +1013,9 @@ int main (int argc, char **argv)
         {
             maxdata = atoi (argv[i+1]);
             i++;
-            if (maxdata > MAX_MAP_LIGHTING)
+            if (maxdata > DEFAULT_MAP_LIGHTING)
             {
-                printf ("maxdata (%i) reset to MAX_MAP_LIGHTING (%i).\n", maxdata, MAX_MAP_LIGHTING);
-                maxdata = MAX_MAP_LIGHTING;
+                printf ("lighting maxdata (%i) exceeds typical limit (%i).\n", maxdata, DEFAULT_MAP_LIGHTING);
             }
         }
         else if (!strcmp(argv[i],"-basedir")) //qb: secondary dir for texture search
@@ -1035,7 +1100,7 @@ int main (int argc, char **argv)
             sample_nudge = BOUND(0, sample_nudge, 1.0);
             i++;
         }
-       else if (!strcmp(argv[i],"-ambient"))
+        else if (!strcmp(argv[i],"-ambient"))
         {
             ambient = atof (argv[i+1]) * 128;
             i++;
@@ -1061,7 +1126,6 @@ int main (int argc, char **argv)
     printf("ambient     : %f\n", ambient );
     printf("scale       : %f\n", lightscale );
     printf("maxlight    : %f\n", maxlight );
-    printf("maxdata     : %i\n", maxdata );
     printf("entity      : %f\n", entity_scale );
     printf("direct      : %f\n", direct_scale );
     printf("saturation  : %f\n", saturation );
@@ -1079,14 +1143,14 @@ int main (int argc, char **argv)
     if (i != argc - 1)
     {
         printf ("usage: 4rad [options] mapfile\n\n"
-               "    -help                -extra               -maxdata\n"
-               "    -subdiv #            -scale               -direct\n"
-               "    -entity              -nopvs               -noblock\n"
-               "    -basedir             -ambient             -savetrace\n"
-               "    -maxlight            -tmpin               -tmpout\n"
-               "    -dump                -bounce              -threads\n"
-               "    -smooth              -sunradscale #       -dice\n"
-               "    -nudge               -v (verbose output)\n\n");
+                "    -help                -extra               -maxdata\n"
+                "    -subdiv #            -scale               -direct\n"
+                "    -entity              -nopvs               -noblock\n"
+                "    -basedir             -ambient             -savetrace\n"
+                "    -maxlight            -tmpin               -tmpout\n"
+                "    -dump                -bounce              -threads\n"
+                "    -smooth              -sunradscale #       -dice\n"
+                "    -nudge               -v (verbose output)\n\n");
         exit(1);
     }
     start = I_FloatTime ();
@@ -1106,6 +1170,8 @@ int main (int argc, char **argv)
     sprintf (name, "%s%s", inbase, source);
     printf ("reading %s\n", name);
     LoadBSPFile (name);
+    if (use_xbsp)
+        maxdata = MAX_MAP_LIGHTING_XBSP;
     ParseEntities ();
     CalcTextureReflectivity ();
 
@@ -1131,6 +1197,7 @@ int main (int argc, char **argv)
     printf ("%5.0f seconds elapsed\n", end-start);
     printf ("%i bytes light data used of %i max.\n", lightdatasize, maxdata);
 
+    PrintBSPFileSizes();
     printf( "<<<<<<<<<<<<<<<<<< END 4rad >>>>>>>>>>>>>>>>>>\n\n" );
     return 0;
 }

@@ -29,9 +29,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 */
 
-// undefine for dumb linear searches
-#define	USE_HASHING
-
 #define	INTEGRAL_EPSILON	0.01
 #define	POINT_EPSILON		0.1  //qb: was 0.5. fix by tapir to 0.1 via jdolan on insideqc.
 #define	OFF_EPSILON		0.5
@@ -52,7 +49,7 @@ int	c_badstartverts;
 int	superverts[MAX_SUPERVERTS];
 int	numsuperverts;
 
-face_t		*edgefaces[MAX_MAP_EDGES][2];
+face_t		*edgefaces[MAX_MAP_EDGES_XBSP][2];
 int		firstmodeledge = 1;
 int		firstmodelface;
 
@@ -63,7 +60,7 @@ vec3_t	edge_start;
 vec_t	edge_len;
 
 int		num_edge_verts;
-int		edge_verts[MAX_MAP_VERTS];
+int		edge_verts[MAX_MAP_VERTS_XBSP];
 
 
 float	subdivide_size = 240;
@@ -83,10 +80,8 @@ typedef struct hashvert_s
 #define	HASH_SIZE	MAX_POINTS_HASH //qb: per kmbsp3. Was 64
 
 
-int	vertexchain[MAX_MAP_VERTS];		// the next vertex in a hash chain
+int	vertexchain[MAX_MAP_VERTS_XBSP];		// the next vertex in a hash chain
 int	hashverts[HASH_SIZE*HASH_SIZE];	// a vertex number, or 0 for no verts
-
-face_t		*edgefaces[MAX_MAP_EDGES][2];
 
 //============================================================================
 
@@ -105,7 +100,7 @@ unsigned HashVec (vec3_t vec)
 vec_t g_min_vertex_diff_sq = 99999.9f; // jitdebug
 vec3_t g_min_vertex_pos; // jitdebug
 
-#ifdef USE_HASHING
+
 /*
 =============
 GetVertex
@@ -151,8 +146,13 @@ int	GetVertexnum (vec3_t in)
     }
 
 // emit a vertex
-    if (numvertexes == MAX_MAP_VERTS)
-        Error ("numvertexes == MAX_MAP_VERTS");
+    if (use_xbsp)
+    {
+        if (numvertexes == MAX_MAP_VERTS_XBSP)
+        Error ("MAX_MAP_VERTS_XBSP");
+    }
+    else if (numvertexes == MAX_MAP_VERTS)
+        Error ("MAX_MAP_VERTS");
 
     dvertexes[numvertexes].point[0] = vert[0];
     dvertexes[numvertexes].point[1] = vert[1];
@@ -167,54 +167,6 @@ int	GetVertexnum (vec3_t in)
 
     return numvertexes-1;
 }
-#else
-/*
-==================
-GetVertexnum
-
-Dumb linear search
-==================
-*/
-int	GetVertexnum (vec3_t v)
-{
-    int			i, j;
-    dvertex_t	*dv;
-    vec_t		d;
-
-    c_totalverts++;
-
-    // make really close values exactly integral
-    for (i=0 ; i<3 ; i++)
-    {
-        if ( fabs(v[i] - (int)(v[i]+0.5)) < INTEGRAL_EPSILON )
-            v[i] = (int)(v[i]+0.5);
-        if (v[i] < -max_bounds || v[i] > max_bounds)
-            Error ("GetVertexnum: outside +/- max_bounds");
-    }
-
-    // search for an existing vertex match
-    for (i=0, dv=dvertexes ; i<numvertexes ; i++, dv++)
-    {
-        for (j=0 ; j<3 ; j++)
-        {
-            d = v[j] - dv->point[j];
-            if ( d > POINT_EPSILON || d < -POINT_EPSILON)
-                break;
-        }
-        if (j == 3)
-            return i;		// a match
-    }
-
-    // new point
-    if (numvertexes == MAX_MAP_VERTS)
-        Error ("MAX_MAP_VERTS");
-    VectorCopy (v, dv->point);
-    numvertexes++;
-    c_uniqueverts++;
-
-    return numvertexes-1;
-}
-#endif
 
 
 /*
@@ -268,7 +220,6 @@ void FaceFromSuperverts (node_t *node, face_t *f, int base)
         f->vertexnums[i] = superverts[(i+base)%numsuperverts];
 }
 
-
 /*
 ==================
 EmitFaceVertexes
@@ -288,7 +239,12 @@ void EmitFaceVertexes (node_t *node, face_t *f)
         if (noweld)
         {
             // make every point unique
-            if (numvertexes == MAX_MAP_VERTS)
+            if (use_xbsp)
+            {
+                if (numvertexes == MAX_MAP_VERTS_XBSP)
+                Error ("MAX_MAP_VERTS_XBSP");
+            }
+            else if (numvertexes == MAX_MAP_VERTS)
                 Error ("MAX_MAP_VERTS");
             superverts[i] = numvertexes;
             VectorCopy (w->p[i], dvertexes[numvertexes].point);
@@ -328,7 +284,6 @@ void EmitVertexes_r (node_t *node)
 }
 
 
-#ifdef USE_HASHING
 /*
 ==========
 FindEdgeVerts
@@ -341,15 +296,6 @@ void FindEdgeVerts (vec3_t v1, vec3_t v2)
     int		x1, x2, y1, y2, t;
     int		x, y;
     int		vnum;
-
-#if 0
-    {
-        int		i;
-        num_edge_verts = numvertexes-1;
-        for (i=0 ; i<numvertexes-1 ; i++)
-            edge_verts[i] = i+1;
-    }
-#endif
 
     x1 = (max_bounds + (int)(v1[0]+0.5)) >> 7;
     y1 = (max_bounds + (int)(v1[1]+0.5)) >> 7;
@@ -368,20 +314,7 @@ void FindEdgeVerts (vec3_t v1, vec3_t v2)
         y1 = y2;
         y2 = t;
     }
-#if 0
-    x1--;
-    x2++;
-    y1--;
-    y2++;
-    if (x1 < 0)
-        x1 = 0;
-    if (x2 >= HASH_SIZE)
-        x2 = HASH_SIZE;
-    if (y1 < 0)
-        y1 = 0;
-    if (y2 >= HASH_SIZE)
-        y2 = HASH_SIZE;
-#endif
+
     num_edge_verts = 0;
     for (x=x1 ; x <= x2 ; x++)
     {
@@ -395,23 +328,6 @@ void FindEdgeVerts (vec3_t v1, vec3_t v2)
     }
 }
 
-#else
-/*
-==========
-FindEdgeVerts
-
-Forced a dumb check of everything
-==========
-*/
-void FindEdgeVerts (vec3_t v1, vec3_t v2)
-{
-    int		i;
-
-    num_edge_verts = numvertexes-1;
-    for (i=0 ; i<num_edge_verts ; i++)
-        edge_verts[i] = i+1;
-}
-#endif
 
 /*
 ==========
@@ -638,46 +554,65 @@ Called by writebsp.
 Don't allow four way edges
 ==================
 */
-int GetEdge2 (int v1, int v2,  face_t *f)
+int GetEdge (int v1, int v2,  face_t *f)
 {
-    dedge_t	*edge;
     int		i;
 
     c_tryedges++;
 
     if (!noshare)
     {
-        for (i=firstmodeledge ; i < numedges ; i++)
+        if(use_xbsp)
         {
-            edge = &dedges[i];
-            if (v1 == edge->v[1] && v2 == edge->v[0]
-                    && edgefaces[i][0]->contents == f->contents)
+            dedge_tx	*edge;
+            for (i=firstmodeledge ; i < numedges ; i++)
             {
-                if (edgefaces[i][1])
-                    //				printf ("WARNING: multiple backward edge\n");
-                    continue;
-                edgefaces[i][1] = f;
-                return -i;
+                edge = &dedgesX[i];
+                if (v1 == edge->v[1] && v2 == edge->v[0]
+                        && edgefaces[i][0]->contents == f->contents)
+                {
+                    if (edgefaces[i][1])
+                        //				printf ("WARNING: multiple backward edge\n");
+                        continue;
+                    edgefaces[i][1] = f;
+                    return -i;
+                }
             }
-#if 0
-            if (v1 == edge->v[0] && v2 == edge->v[1])
+// emit an edge
+            if (numedges >= MAX_MAP_EDGES_XBSP)
+                Error ("numedges == MAX_MAP_EDGES_XBSP");
+            edge = &dedgesX[numedges];
+            numedges++;
+            edge->v[0] = v1;
+            edge->v[1] = v2;
+            edgefaces[numedges-1][0] = f;
+        }
+        else
+        {
+            dedge_t	*edge;
+            for (i=firstmodeledge ; i < numedges ; i++)
             {
-                printf ("WARNING: multiple forward edge\n");
-                return i;
+                edge = &dedges[i];
+                if (v1 == edge->v[1] && v2 == edge->v[0]
+                        && edgefaces[i][0]->contents == f->contents)
+                {
+                    if (edgefaces[i][1])
+                        //				printf ("WARNING: multiple backward edge\n");
+                        continue;
+                    edgefaces[i][1] = f;
+                    return -i;
+                }
             }
-#endif
+            // emit an edge
+            if (numedges >= MAX_MAP_EDGES)
+                Error ("numedges == MAX_MAP_EDGES");
+            edge = &dedges[numedges];
+            numedges++;
+            edge->v[0] = v1;
+            edge->v[1] = v2;
+            edgefaces[numedges-1][0] = f;
         }
     }
-
-// emit an edge
-    if (numedges >= MAX_MAP_EDGES)
-        Error ("numedges == MAX_MAP_EDGES");
-    edge = &dedges[numedges];
-    numedges++;
-    edge->v[0] = v1;
-    edge->v[1] = v2;
-    edgefaces[numedges-1][0] = f;
-
     return numedges-1;
 }
 

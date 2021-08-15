@@ -166,15 +166,15 @@ typedef struct
 
 extern	int			entity_num;
 
-extern	plane_t		mapplanes[MAX_MAP_PLANES];
+extern	plane_t		mapplanes[MAX_MAP_PLANES_XBSP];
 extern	int			nummapplanes;
 
 extern	int			nummapbrushes;
-extern	mapbrush_t	mapbrushes[MAX_MAP_BRUSHES];
+extern	mapbrush_t	mapbrushes[MAX_MAP_BRUSHES_XBSP];
 
 extern	vec3_t		map_mins, map_maxs;
 
-#define	MAX_MAP_SIDES		(MAX_MAP_BRUSHSIDES)
+#define	MAX_MAP_SIDES		(MAX_MAP_BRUSHSIDES_XBSP)
 
 extern	int			nummapbrushsides;
 extern	side_t		brushsides[MAX_MAP_SIDES];
@@ -189,7 +189,8 @@ extern	qboolean	noweld;
 extern	qboolean	noshare;
 extern	qboolean	notjunc;
 extern	qboolean	badnormal_check;
-extern float badnormal;
+extern float        badnormal;
+extern	qboolean	use_xbsp; //qb: xbsp
 
 extern	vec_t		microvolume;
 
@@ -334,7 +335,7 @@ void EndModel (void);
 
 void MakeFaces (node_t *headnode);
 void FixTjuncs (node_t *headnode);
-int GetEdge2 (int v1, int v2,  face_t *f);
+int GetEdge (int v1, int v2,  face_t *f);
 
 face_t	*AllocFace (void);
 void FreeFace (face_t *f);
