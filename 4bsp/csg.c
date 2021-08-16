@@ -403,36 +403,36 @@ void WriteBrushMap (char *name, bspbrush_t *list)
     if(use_qbsp)
         printf ("\ntexinfo count: %i of %i maximum.\n", numtexinfo, MAX_MAP_TEXINFO_QBSP);
     else
-        printf ("\ntexinfo count: %i of %i maximum.\n", numtexinfo, MAX_MAP_TEXINFO;
+        printf ("\ntexinfo count: %i of %i maximum.\n", numtexinfo, MAX_MAP_TEXINFO);
 
-                if(use_qbsp)
-                printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES_QBSP);
-                else
-                    printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES);
+    if(use_qbsp)
+        printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES_QBSP);
+    else
+        printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES);
 
-                    printf ("writing %s\n", name);
-                    f = fopen (name, "wb");
-                    if (!f)
-                        Error ("Can't write %s\b", name);
+    printf ("writing %s\n", name);
+    f = fopen (name, "wb");
+    if (!f)
+        Error ("Can't write %s\b", name);
 
-                        fprintf (f, "{\n\"classname\" \"worldspawn\"\n");
+    fprintf (f, "{\n\"classname\" \"worldspawn\"\n");
 
-                        for ( ; list ; list=list->next )
-                {
-                    fprintf (f, "{\n");
-                        for (i=0,s=list->sides ; i<list->numsides ; i++,s++)
-                        {
-                            w = BaseWindingForPlane (mapplanes[s->planenum].normal, mapplanes[s->planenum].dist);
+    for ( ; list ; list=list->next )
+    {
+        fprintf (f, "{\n");
+        for (i=0,s=list->sides ; i<list->numsides ; i++,s++)
+        {
+            w = BaseWindingForPlane (mapplanes[s->planenum].normal, mapplanes[s->planenum].dist);
 
-                            fprintf (f,"( %i %i %i ) ", (int)w->p[0][0], (int)w->p[0][1], (int)w->p[0][2]);
-                            fprintf (f,"( %i %i %i ) ", (int)w->p[1][0], (int)w->p[1][1], (int)w->p[1][2]);
-                            fprintf (f,"( %i %i %i ) ", (int)w->p[2][0], (int)w->p[2][1], (int)w->p[2][2]);
+            fprintf (f,"( %i %i %i ) ", (int)w->p[0][0], (int)w->p[0][1], (int)w->p[0][2]);
+            fprintf (f,"( %i %i %i ) ", (int)w->p[1][0], (int)w->p[1][1], (int)w->p[1][2]);
+            fprintf (f,"( %i %i %i ) ", (int)w->p[2][0], (int)w->p[2][1], (int)w->p[2][2]);
 
-                            fprintf (f, "%s 0 0 0 1 1\n", texinfo[s->texinfo].texture);
-                            FreeWinding (w);
-                        }
-                        fprintf (f, "}\n");
-                    }
+            fprintf (f, "%s 0 0 0 1 1\n", texinfo[s->texinfo].texture);
+            FreeWinding (w);
+        }
+        fprintf (f, "}\n");
+    }
     fprintf (f, "}\n");
 
     fclose (f);
