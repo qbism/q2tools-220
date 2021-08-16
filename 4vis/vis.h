@@ -24,7 +24,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #define	MAX_PORTALS	32768
 
-#define	MAX_PORTALS_XBSP 65536  //qb: half of MAX_MAP_PORTALS_XBSP
+#define	MAX_PORTALS_XBSP MAX_MAP_PORTALS_XBSP / 2  //qb: half 
 
 #define	PORTALFILE	"PRT1"
 

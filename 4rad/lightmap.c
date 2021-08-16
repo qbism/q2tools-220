@@ -1713,13 +1713,12 @@ void CreateDirectLights (void)
 
         if (use_xbsp)
         {
-            leaf = PointInLeaf (dl->origin);
-            cluster = leaf->cluster;
-        }
+            leafX = PointInLeafX (dl->origin);
+            cluster = leafX->cluster;     }
         else
         {
-            leafX = PointInLeafX (dl->origin);
-            cluster = leafX->cluster;
+            leaf = PointInLeaf (dl->origin);
+            cluster = leaf->cluster;
         }
 
         dl->next = directlights[cluster];

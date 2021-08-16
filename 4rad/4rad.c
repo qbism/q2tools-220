@@ -33,12 +33,12 @@ every surface must be divided into at least two patches each axis
 
 patch_t		*face_patches[MAX_MAP_FACES_XBSP];
 entity_t	*face_entity[MAX_MAP_FACES_XBSP];
-patch_t		patches[MAX_PATCHES_XBSP];
+patch_t		patches[MAX_PATCHES];
 unsigned	num_patches;
 int    num_smoothing;  //qb: number of phong hits
 
-vec3_t		radiosity[MAX_PATCHES_XBSP];		// light leaving a patch
-vec3_t		illumination[MAX_PATCHES_XBSP];	// light arriving at a patch
+vec3_t		radiosity[MAX_PATCHES];		// light leaving a patch
+vec3_t		illumination[MAX_PATCHES];	// light arriving at a patch
 
 vec3_t		face_offset[MAX_MAP_FACES_XBSP];		// for rotating bmodels
 dplane_t	backplanes[MAX_MAP_PLANES_XBSP];
@@ -302,8 +302,6 @@ qboolean PvsForOrigin (vec3_t org, byte *pvs)
     return true;
 }
 
-
-
 typedef struct tnode_s
 {
     int		type;
@@ -321,7 +319,7 @@ static long total_mem;
 
 static int first_transfer = 1;
 
-#define MAX_TRACE_BUF ((MAX_PATCHES_XBSP + 7) / 8)
+#define MAX_TRACE_BUF ((MAX_PATCHES + 7) / 8)
 
 #define TRACE_BYTE(x) (((x)+7) >> 3)
 #define TRACE_BIT(x) ((x) & 0x1F)
@@ -478,6 +476,7 @@ re_test:
 
 void MakeTransfers (int i)
 {
+
     int			j;
     vec3_t		delta;
     vec_t		dist, inv_dist = 0, scale;
@@ -487,7 +486,7 @@ void MakeTransfers (int i)
     float		total, inv_total;
     dplane_t	plane;
     vec3_t		origin;
-    float		transfers[MAX_PATCHES_XBSP];
+    float		transfers[MAX_PATCHES];
     int			s;
     int			itotal;
     byte		pvs[(MAX_MAP_LEAFS_XBSP+7)/8];
@@ -499,15 +498,12 @@ void MakeTransfers (int i)
 
     VectorCopy (patch->origin, origin);
     plane = *patch->plane;
-
     if (!PvsForOrigin (patch->origin, pvs))
         return;
 
     if (patch->area == 0)
         return;
-
     // find out which patches will collect light from patch
-
     patch->numtransfers = 0;
     calc_trace = (save_trace && memory && first_transfer);
     test_trace = (save_trace && memory && !first_transfer);
@@ -595,7 +591,7 @@ void MakeTransfers (int i)
     {
         transfer_t	*t;
 
-        if (patch->numtransfers < 0 || patch->numtransfers > MAX_PATCHES_XBSP)
+        if (patch->numtransfers < 0 || patch->numtransfers > MAX_PATCHES)
             Error ("Weird numtransfers");
         s = patch->numtransfers * sizeof(transfer_t);
         patch->transfers = malloc (s);
@@ -945,7 +941,7 @@ int main (int argc, char **argv)
     printf( "radiosity compiler build " __DATE__ "\n" );
 
     verbose = false;
-    numthreads = 4;
+    numthreads = -1;
     maxdata = DEFAULT_MAP_LIGHTING;
     dlightdata_ptr = dlightdata;
 

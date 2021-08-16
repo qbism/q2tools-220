@@ -70,8 +70,7 @@ typedef struct
 } transfer_t;
 
 
-#define	MAX_PATCHES	          65535			// larger will cause 32 bit overflows
-#define	MAX_PATCHES_XBSP	8388608	        //qb: xbsp
+#define	MAX_PATCHES	          262144 //qb: was 65535			// larger will cause 32 bit overflows
 
 #define DEFAULT_SMOOTHING_VALUE     44.0
 #define DEFAULT_NUDGE_VALUE     0.25
@@ -111,7 +110,7 @@ typedef struct patch_s
 extern	patch_t		*face_patches[MAX_MAP_FACES_XBSP];
 extern	entity_t	*face_entity[MAX_MAP_FACES_XBSP];
 extern	vec3_t		face_offset[MAX_MAP_FACES_XBSP];		// for rotating bmodels
-extern	patch_t		patches[MAX_PATCHES_XBSP];
+extern	patch_t		patches[MAX_PATCHES];
 extern	unsigned	num_patches;
 
 extern	int		leafparents[MAX_MAP_LEAFS_XBSP];

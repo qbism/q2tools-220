@@ -4,6 +4,7 @@ Includes 4bsp, 4vis, 4rad, and 4data.
 
 Forked from compiler tools supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
 
+# Test feature:  Extended map limits for very large maps.  Requires a supporting engine.  Several 16-bit data types are changed to 32-bit.
 
 # Enhancements:
 

@@ -416,8 +416,8 @@ void MakePatchForFace (int fn, winding_t *w)
     patch = &patches[num_patches];
     if (use_xbsp)
     {
-        if (num_patches == MAX_PATCHES_XBSP)
-            Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES_XBSP);
+        if (num_patches == MAX_PATCHES)
+            Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
     }
     else if (num_patches == MAX_PATCHES)
         Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
@@ -740,8 +740,8 @@ void	SubdividePatch (patch_t *patch)
     //
     if (use_xbsp)
     {
-        if (num_patches == MAX_PATCHES_XBSP)
-            Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES_XBSP);
+        if (num_patches == MAX_PATCHES)
+            Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
     }
     else if (num_patches == MAX_PATCHES)
         Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
@@ -802,8 +802,8 @@ void	DicePatch (patch_t *patch)
     //
     if (use_xbsp)
     {
-        if (num_patches == MAX_PATCHES_XBSP)
-            Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES_XBSP);
+        if (num_patches == MAX_PATCHES)
+            Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
     }
     else if (num_patches == MAX_PATCHES)
         Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
