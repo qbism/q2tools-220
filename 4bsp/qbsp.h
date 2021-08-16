@@ -166,15 +166,15 @@ typedef struct
 
 extern	int			entity_num;
 
-extern	plane_t		mapplanes[MAX_MAP_PLANES_XBSP];
+extern	plane_t		mapplanes[MAX_MAP_PLANES_QBSP];
 extern	int			nummapplanes;
 
 extern	int			nummapbrushes;
-extern	mapbrush_t	mapbrushes[MAX_MAP_BRUSHES_XBSP];
+extern	mapbrush_t	mapbrushes[MAX_MAP_BRUSHES_QBSP];
 
 extern	vec3_t		map_mins, map_maxs;
 
-#define	MAX_MAP_SIDES		(MAX_MAP_BRUSHSIDES_XBSP)
+#define	MAX_MAP_SIDES		(MAX_MAP_BRUSHSIDES_QBSP)
 
 extern	int			nummapbrushsides;
 extern	side_t		brushsides[MAX_MAP_SIDES];
@@ -190,7 +190,7 @@ extern	qboolean	noshare;
 extern	qboolean	notjunc;
 extern	qboolean	badnormal_check;
 extern float        badnormal;
-extern	qboolean	use_xbsp; //qb: xbsp
+extern	qboolean	use_qbsp; //qb: qbsp
 
 extern	vec_t		microvolume;
 

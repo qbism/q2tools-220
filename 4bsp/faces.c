@@ -49,7 +49,7 @@ int	c_badstartverts;
 int	superverts[MAX_SUPERVERTS];
 int	numsuperverts;
 
-face_t		*edgefaces[MAX_MAP_EDGES_XBSP][2];
+face_t	*edgefaces[MAX_MAP_EDGES_QBSP][2];
 int		firstmodeledge = 1;
 int		firstmodelface;
 
@@ -60,7 +60,7 @@ vec3_t	edge_start;
 vec_t	edge_len;
 
 int		num_edge_verts;
-int		edge_verts[MAX_MAP_VERTS_XBSP];
+int		edge_verts[MAX_MAP_VERTS_QBSP];
 
 
 float	subdivide_size = 240;
@@ -80,7 +80,7 @@ typedef struct hashvert_s
 #define	HASH_SIZE	MAX_POINTS_HASH //qb: per kmbsp3. Was 64
 
 
-int	vertexchain[MAX_MAP_VERTS_XBSP];		// the next vertex in a hash chain
+int	vertexchain[MAX_MAP_VERTS_QBSP];		// the next vertex in a hash chain
 int	hashverts[HASH_SIZE*HASH_SIZE];	// a vertex number, or 0 for no verts
 
 //============================================================================
@@ -146,10 +146,10 @@ int	GetVertexnum (vec3_t in)
     }
 
 // emit a vertex
-    if (use_xbsp)
+    if (use_qbsp)
     {
-        if (numvertexes == MAX_MAP_VERTS_XBSP)
-        Error ("MAX_MAP_VERTS_XBSP");
+        if (numvertexes == MAX_MAP_VERTS_QBSP)
+        Error ("MAX_MAP_VERTS_QBSP");
     }
     else if (numvertexes == MAX_MAP_VERTS)
         Error ("MAX_MAP_VERTS");
@@ -239,10 +239,10 @@ void EmitFaceVertexes (node_t *node, face_t *f)
         if (noweld)
         {
             // make every point unique
-            if (use_xbsp)
+            if (use_qbsp)
             {
-                if (numvertexes == MAX_MAP_VERTS_XBSP)
-                Error ("MAX_MAP_VERTS_XBSP");
+                if (numvertexes == MAX_MAP_VERTS_QBSP)
+                Error ("MAX_MAP_VERTS_QBSP");
             }
             else if (numvertexes == MAX_MAP_VERTS)
                 Error ("MAX_MAP_VERTS");
@@ -562,7 +562,7 @@ int GetEdge (int v1, int v2,  face_t *f)
 
     if (!noshare)
     {
-        if(use_xbsp)
+        if(use_qbsp)
         {
             dedge_tx	*edge;
             for (i=firstmodeledge ; i < numedges ; i++)
@@ -579,8 +579,8 @@ int GetEdge (int v1, int v2,  face_t *f)
                 }
             }
 // emit an edge
-            if (numedges >= MAX_MAP_EDGES_XBSP)
-                Error ("numedges == MAX_MAP_EDGES_XBSP");
+            if (numedges >= MAX_MAP_EDGES_QBSP)
+                Error ("numedges == MAX_MAP_EDGES_QBSP");
             edge = &dedgesX[numedges];
             numedges++;
             edge->v[0] = v1;

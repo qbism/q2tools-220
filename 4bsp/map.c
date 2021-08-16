@@ -23,14 +23,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 extern qboolean onlyents;
 
 int			nummapbrushes;
-mapbrush_t	mapbrushes[MAX_MAP_BRUSHES_XBSP];
+mapbrush_t	mapbrushes[MAX_MAP_BRUSHES_QBSP];
 
 int			nummapbrushsides;
 side_t		brushsides[MAX_MAP_SIDES];
 brush_texture_t	side_brushtextures[MAX_MAP_SIDES];
 
 int			nummapplanes;
-plane_t		mapplanes[MAX_MAP_PLANES_XBSP];
+plane_t		mapplanes[MAX_MAP_PLANES_QBSP];
 
 #define	PLANE_HASHES	1024
 plane_t		*planehash[PLANE_HASHES];
@@ -140,10 +140,10 @@ int CreateNewFloatPlane (vec3_t normal, vec_t dist, int bnum)
     if (VectorLength(normal) < 0.5)
         Error ("FloatPlane: bad normal. Brush %i", bnum); //qb: add brushnum
     // create a new plane
-    if (use_xbsp)
+    if (use_qbsp)
     {
-        if (nummapplanes+2 > MAX_MAP_PLANES_XBSP)
-            Error ("MAX_MAP_PLANES_XBSP");
+        if (nummapplanes+2 > MAX_MAP_PLANES_QBSP)
+            Error ("MAX_MAP_PLANES_QBSP");
     }
     else if (nummapplanes+2 > MAX_MAP_PLANES)
         Error ("MAX_MAP_PLANES");
@@ -357,10 +357,10 @@ void AddBrushBevels (mapbrush_t *b)
             if (i == b->numsides)
             {
                 // add a new side
-                if (use_xbsp)
+                if (use_qbsp)
                 {
-                    if (nummapbrushsides == MAX_MAP_BRUSHSIDES_XBSP)
-                        Error ("MAX_MAP_BRUSHSIDES_XBSP");
+                    if (nummapbrushsides == MAX_MAP_BRUSHSIDES_QBSP)
+                        Error ("MAX_MAP_BRUSHSIDES_QBSP");
                 }
                 else if (nummapbrushsides == MAX_MAP_BRUSHSIDES)
                     Error ("MAX_MAP_BRUSHSIDES");
@@ -459,10 +459,10 @@ void AddBrushBevels (mapbrush_t *b)
                         continue;	// wasn't part of the outer hull
 
                     // add this plane
-                    if (use_xbsp)
+                    if (use_qbsp)
                     {
-                        if (nummapbrushsides == MAX_MAP_BRUSHSIDES_XBSP)
-                            Error ("MAX_MAP_BRUSHSIDES_XBSP");
+                        if (nummapbrushsides == MAX_MAP_BRUSHSIDES_QBSP)
+                            Error ("MAX_MAP_BRUSHSIDES_QBSP");
                     }
                     else if (nummapbrushsides == MAX_MAP_BRUSHSIDES)
                         Error ("MAX_MAP_BRUSHSIDES");
@@ -560,10 +560,10 @@ void ParseBrush (entity_t *mapent)
     vec3_t		planepts[3];
     vec_t		UVaxis[6];  // DarkEssence: UV axis in 220 #mapversion
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
-        if (nummapbrushes == MAX_MAP_BRUSHES_XBSP)
-            Error ("nummapbrushes == MAX_MAP_BRUSHES_XBSP  (%i)", MAX_MAP_BRUSHES_XBSP);
+        if (nummapbrushes == MAX_MAP_BRUSHES_QBSP)
+            Error ("nummapbrushes == MAX_MAP_BRUSHES_QBSP  (%i)", MAX_MAP_BRUSHES_QBSP);
     }
     else if (nummapbrushes == MAX_MAP_BRUSHES)
         Error ("nummapbrushes == MAX_MAP_BRUSHES  (%i)", MAX_MAP_BRUSHES);
@@ -580,10 +580,10 @@ void ParseBrush (entity_t *mapent)
         if (!strcmp (token, "}") )
             break;
 
-        if (use_xbsp)
+        if (use_qbsp)
         {
-            if (nummapbrushsides == MAX_MAP_BRUSHSIDES_XBSP)
-                Error ("MAX_MAP_BRUSHSIDES_XBSP");
+            if (nummapbrushsides == MAX_MAP_BRUSHSIDES_QBSP)
+                Error ("MAX_MAP_BRUSHSIDES_QBSP");
         }
         else if (nummapbrushsides == MAX_MAP_BRUSHSIDES)
             Error ("MAX_MAP_BRUSHSIDES");
@@ -897,10 +897,10 @@ qboolean	ParseMapEntity (void)
     if (strcmp (token, "{") )
         Error ("ParseEntity: { not found");
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
         if (num_entities == max_entities)
-            Error ("num_entities == MAX_MAP_ENTITIES_XBSP  (%i)", MAX_MAP_ENTITIES_XBSP);
+            Error ("num_entities == MAX_MAP_ENTITIES_QBSP  (%i)", MAX_MAP_ENTITIES_QBSP);
     }
     if (num_entities == max_entities) //qb: from kmqbsp3 Knightmare changed- was MAX_MAP_ENTITIES
         Error ("num_entities == MAX_MAP_ENTITIES  (%i)", MAX_MAP_ENTITIES);

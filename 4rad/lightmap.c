@@ -35,12 +35,12 @@ typedef struct
     vec3_t			vertex_normal[2];
 } edgeshare_t;
 
-edgeshare_t	edgeshare[MAX_MAP_EDGES_XBSP];
+edgeshare_t	edgeshare[MAX_MAP_EDGES_QBSP];
 
-int			facelinks[MAX_MAP_FACES_XBSP];
-int			planelinks[2][MAX_MAP_PLANES_XBSP];
+int			facelinks[MAX_MAP_FACES_QBSP];
+int			planelinks[2][MAX_MAP_PLANES_QBSP];
 int			maxdata;
-vec3_t      face_texnormals[MAX_MAP_FACES_XBSP];
+vec3_t      face_texnormals[MAX_MAP_FACES_QBSP];
 float       sunradscale = 0.5;
 byte	*dlightdata_ptr;
 
@@ -52,11 +52,11 @@ typedef struct face_extents_s
     vec_t st_mins[2], st_maxs[2];
 } face_extents_t;
 
-static face_extents_t face_extents[MAX_MAP_FACES_XBSP];
+static face_extents_t face_extents[MAX_MAP_FACES_QBSP];
 
 const dplane_t* getPlaneFromFaceNumber(const unsigned int faceNumber)
 {
-    if (use_xbsp)
+    if (use_qbsp)
     {
         dface_tx*        face = &dfacesX[faceNumber];
         if (face->side)
@@ -110,7 +110,7 @@ void BuildFaceExtents(void)
     const dvertex_t *v;
     int32_t i, j, k;
 
-    if (use_xbsp)
+    if (use_qbsp)
         for (k = 0; k < numfaces; k++)
         {
 
@@ -243,7 +243,7 @@ void LinkPlaneFaces (void)
 {
     int		i;
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
         dface_tx	*f;
         f = dfacesX;
@@ -484,7 +484,7 @@ void            PairEdges()
 
     memset(&edgeshare, 0, sizeof(edgeshare));
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
         dface_tx*        f;
         f = dfacesX;
@@ -670,8 +670,8 @@ void            PairEdges()
         vec3_t normal, normals;
         vec3_t edgenormal;
         int r, count, mme;
-        if (use_xbsp)
-            mme = MAX_MAP_EDGES_XBSP;
+        if (use_qbsp)
+            mme = MAX_MAP_EDGES_QBSP;
         else
             mme = MAX_MAP_EDGES;
 
@@ -683,7 +683,7 @@ void            PairEdges()
             VectorCopy(e->interface_normal, edgenormal);
 
 
-            if (use_xbsp)
+            if (use_qbsp)
             {
                 dface_tx *f, *fcurrent, *fnext;
 
@@ -1270,7 +1270,7 @@ void CalcFaceExtents (lightinfo_t *l)
     texinfo_t	*tex;
     vec3_t		vt;
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
         dface_tx *s;
         s = l->faceX;
@@ -1387,7 +1387,7 @@ void CalcFaceVectors (lightinfo_t *l)
     vec_t	dist, len;
     int			w, h;
 
-    if (use_xbsp)
+    if (use_qbsp)
         tex = &texinfo[l->faceX->texinfo];
     else
         tex = &texinfo[l->face->texinfo];
@@ -1501,7 +1501,7 @@ void CalcPoints (lightinfo_t *l, float sofs, float tofs)
                     surf[j] = l->texorg[j] + l->textoworld[0][j]*us
                               + l->textoworld[1][j]*ut;
 
-                if (use_xbsp)
+                if (use_qbsp)
                 {
                     dleaf_tx	*leaf;
                     leaf = PointInLeafX (surf);
@@ -1572,8 +1572,8 @@ typedef struct
     float		*samples[MAX_STYLES];
 } facelight_t;
 
-directlight_t	*directlights[MAX_MAP_LEAFS_XBSP];
-facelight_t		facelight[MAX_MAP_FACES_XBSP];
+directlight_t	*directlights[MAX_MAP_LEAFS_QBSP];
+facelight_t		facelight[MAX_MAP_FACES_QBSP];
 int				numdlights;
 
 /*
@@ -1711,7 +1711,7 @@ void CreateDirectLights (void)
 
         dl->nodenum = PointInNodenum (dl->origin);
 
-        if (use_xbsp)
+        if (use_qbsp)
         {
             leafX = PointInLeafX (dl->origin);
             cluster = leafX->cluster;     }
@@ -1834,7 +1834,7 @@ void CreateDirectLights (void)
 
         VectorCopy (p->origin, dl->origin);
 
-        if (use_xbsp)
+        if (use_qbsp)
         {
             leafX = PointInLeafX (dl->origin);
             cluster = leafX->cluster;
@@ -1895,7 +1895,7 @@ re_test:
     if (headNode == nodeNum1)
         return headNode;
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
         dnode_tx *node;
         child1 = (node = dnodesX+headNode)->children[1];
@@ -2222,7 +2222,7 @@ void    GetPhongNormal(int facenum, vec3_t spot, vec3_t phongnormal)
     const dface_tx*  fx = dfacesX + facenum;
     const dface_t*  fi = dfaces + facenum;
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
         const dplane_t* p = getPlaneFromFaceX(fx);
         ne = fx->numedges;
@@ -2258,7 +2258,7 @@ void    GetPhongNormal(int facenum, vec3_t spot, vec3_t phongnormal)
         float           bb;
         float           ab;
 
-        if (use_xbsp)
+        if (use_qbsp)
         {
             if (j)
             {
@@ -2475,7 +2475,7 @@ void BuildFacelights (int facenum)
     vec3_t      pos;
     vec3_t      pointnormal;
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
         dface_tx	*this_face;
         this_face = &dfacesX[facenum];
@@ -2567,7 +2567,7 @@ void BuildFacelights (int facenum)
 
         for (j=0 ; j<numsamples ; j++)
         {
-            byte pvs[(MAX_MAP_LEAFS_XBSP + 7) / 8];
+            byte pvs[(MAX_MAP_LEAFS_QBSP + 7) / 8];
 
             if (numsamples > 1)
             {
@@ -2665,7 +2665,7 @@ void FinalLightFace (int facenum)
     }
     ThreadUnlock ();
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
         dface_tx		*f;
         f = &dfacesX[facenum];

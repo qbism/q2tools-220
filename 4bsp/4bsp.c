@@ -22,7 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 extern	float subdivide_size;
 extern	float sublight_size;
-extern qboolean use_xbsp;
+extern qboolean use_qbsp;
 
 char		source[1024];
 char		name[1024];
@@ -378,7 +378,7 @@ int main (int argc, char **argv)
                     "    -noorigfix: Disable texture fix for origin offsets.\n"
                     "    -largebounds: Increase max map size for supporting engines.\n"
                     "    -moreents: Increase max number of entities for supporting engines.\n"
-                    "    -xbsp: Greatly expanded map and entity limits for supporting engines.\n"
+                    "    -qbsp: Greatly expanded map and entity limits for supporting engines.\n"
                     "    -v: Display more verbose output.\n"
                     "<<<<<<<<<<<<<<<<<<<<< 4bsp HELP >>>>>>>>>>>>>>>>>>>>>\n\n");
 
@@ -450,11 +450,11 @@ int main (int argc, char **argv)
             printf ("leaktest = true\n");
             leaktest = true;
         }
-        else if (!strcmp(argv[i], "-xbsp"))
+        else if (!strcmp(argv[i], "-qbsp"))
         {
-            printf ("use_xbsp = true\n");
-            use_xbsp = true;
-            max_entities = MAX_MAP_ENTITIES_XBSP;
+            printf ("use_qbsp = true\n");
+            use_qbsp = true;
+            max_entities = MAX_MAP_ENTITIES_QBSP;
         }
         //qb: from kmqbsp3- Knightmare added
         else if (!strcmp(argv[i], "-largebounds") || !strcmp(argv[i], "-lb"))
@@ -534,7 +534,7 @@ int main (int argc, char **argv)
                 "    -leaktest             -nodetail          -onlyents\n"
                 "    -fulldetail           -noshare           -noprune\n"
                 "    -noorigfix            -largebounds       -moreents\n"
-                "    -xbsp                 -v (verbose)\n\n");
+                "    -qbsp                 -v (verbose)\n\n");
 
         exit(1);
     }
@@ -565,8 +565,8 @@ int main (int argc, char **argv)
 
         sprintf (out, "%s.bsp", source);
         LoadBSPFile (out);
-        if(use_xbsp)
-            printf ("use_xbsp = true\n");
+        if(use_qbsp)
+            printf ("use_qbsp = true\n");
 
         num_entities = 0;
 

@@ -31,7 +31,7 @@ ONLY SAVE OUT PLANES THAT ARE ACTUALLY USED AS NODES
 =========================================================
 */
 
-int		planeused[MAX_MAP_PLANES_XBSP];
+int		planeused[MAX_MAP_PLANES_QBSP];
 
 /*
 ============
@@ -122,8 +122,8 @@ void EmitMarkFaceX (dleaf_tx *leaf_p, face_t *f)
             break;		// merged out face
     if (i == numleaffaces)
     {
-        if (numleaffaces >= MAX_MAP_LEAFFACES_XBSP)
-            Error ("MAX_MAP_LEAFFACES_XBSP");
+        if (numleaffaces >= MAX_MAP_LEAFFACES_QBSP)
+            Error ("MAX_MAP_LEAFFACES_QBSP");
 
         dleaffacesX[numleaffaces] =  facenum;
         numleaffaces++;
@@ -147,11 +147,11 @@ void EmitLeaf (node_t *node)
     int			brushnum;
 
     // emit a leaf
-    if (use_xbsp) //qb: xbsp
+    if (use_qbsp) //qb: qbsp
     {
         dleaf_tx		*leaf_p;
-        if (numleafs >= MAX_MAP_LEAFS_XBSP)
-            Error ("MAX_MAP_LEAFS_XBSP");
+        if (numleafs >= MAX_MAP_LEAFS_QBSP)
+            Error ("MAX_MAP_LEAFS_QBSP");
 
         leaf_p = &dleafsX[numleafs];
         numleafs++;
@@ -172,8 +172,8 @@ void EmitLeaf (node_t *node)
         leaf_p->firstleafbrush = numleafbrushes;
         for (b=node->brushlist ; b ; b=b->next)
         {
-            if (numleafbrushes >= MAX_MAP_LEAFBRUSHES_XBSP)
-                Error ("MAX_MAP_LEAFBRUSHES_XBSP");
+            if (numleafbrushes >= MAX_MAP_LEAFBRUSHES_QBSP)
+                Error ("MAX_MAP_LEAFBRUSHES_QBSP");
 
             brushnum = b->original - mapbrushes;
             for (i=leaf_p->firstleafbrush ; i<numleafbrushes ; i++)
@@ -294,11 +294,11 @@ void EmitFace (face_t *f)
     // save output number so leaffaces can use
     f->outputnumber = numfaces;
 
-    if(use_xbsp)
+    if(use_qbsp)
     {
         dface_tx	*df;
-        if (numfaces >= MAX_MAP_FACES_XBSP)
-            Error ("numfaces == MAX_MAP_FACES_XBSP");
+        if (numfaces >= MAX_MAP_FACES_QBSP)
+            Error ("numfaces == MAX_MAP_FACES_QBSP");
         df = &dfacesX[numfaces];
         numfaces++;
 
@@ -312,8 +312,8 @@ void EmitFace (face_t *f)
         for (i=0 ; i<f->numpoints ; i++)
         {
             e = GetEdge (f->vertexnums[i], f->vertexnums[(i+1)%f->numpoints], f);
-            if (numsurfedges >= MAX_MAP_SURFEDGES_XBSP)
-                Error ("numsurfedges == MAX_MAP_SURFEDGES_XBSP");
+            if (numsurfedges >= MAX_MAP_SURFEDGES_QBSP)
+                Error ("numsurfedges == MAX_MAP_SURFEDGES_QBSP");
             dsurfedges[numsurfedges] = e;
             numsurfedges++;
         }
@@ -362,11 +362,11 @@ int EmitDrawNode_r (node_t *node)
     }
 
 // emit a node
-    if (use_xbsp)
+    if (use_qbsp)
     {
         dnode_tx	*n;
-        if (numnodes == MAX_MAP_NODES_XBSP)
-            Error ("MAX_MAP_NODES_XBSP");
+        if (numnodes == MAX_MAP_NODES_QBSP)
+            Error ("MAX_MAP_NODES_QBSP");
         n = &dnodesX[numnodes];
         numnodes++;
 
@@ -584,13 +584,13 @@ void EmitBrushes (void)
         db->firstside = numbrushsides;
         db->numsides = b->numsides;
 
-        if(use_xbsp)
+        if(use_qbsp)
         {
             dbrushside_tx	*cp;
             for (j=0 ; j<b->numsides ; j++)
             {
-                if (numbrushsides == MAX_MAP_BRUSHSIDES_XBSP)
-                    Error ("MAX_MAP_BRUSHSIDES_XBSP");
+                if (numbrushsides == MAX_MAP_BRUSHSIDES_QBSP)
+                    Error ("MAX_MAP_BRUSHSIDES_QBSP");
                 cp = &dbrushsidesX[numbrushsides];
                 numbrushsides++;
                 cp->planenum = b->original_sides[j].planenum;
@@ -628,10 +628,10 @@ void EmitBrushes (void)
                         break;
                 if (i == b->numsides)
                 {
-                    if (use_xbsp)
+                    if (use_qbsp)
                     {
-                        if (numbrushsides >= MAX_MAP_BRUSHSIDES_XBSP)
-                            Error ("MAX_MAP_BRUSHSIDES_XBSP");
+                        if (numbrushsides >= MAX_MAP_BRUSHSIDES_QBSP)
+                            Error ("MAX_MAP_BRUSHSIDES_QBSP");
                         dbrushsidesX[numbrushsides].planenum = planenum;
                         dbrushsidesX[numbrushsides].texinfo = dbrushsidesX[numbrushsides-1].texinfo;
 
@@ -732,10 +732,10 @@ void BeginModel (void)
     entity_t	*e;
     vec3_t		mins, maxs;
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
-        if (nummodels == MAX_MAP_MODELS_XBSP)
-            Error ("MAX_MAP_MODELS_XBSP");
+        if (nummodels == MAX_MAP_MODELS_QBSP)
+            Error ("MAX_MAP_MODELS_QBSP");
     }
     else if (nummodels == MAX_MAP_MODELS)
         Error ("MAX_MAP_MODELS");

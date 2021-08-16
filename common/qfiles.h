@@ -219,8 +219,8 @@ typedef struct miptex_s
 #define IDBSPHEADER	(('P'<<24)+('S'<<16)+('B'<<8)+'I')
 		// little-endian "IBSP"
 
-//qb: xbsp
-#define XBSPHEADER   ('X' | ('B' << 8) | ('S' << 16) | ('P' << 24))
+//qb: qbsp
+#define QBSPHEADER   ('Q' | ('B' << 8) | ('S' << 16) | ('P' << 24))
 
 #define BSPVERSION	38
 
@@ -259,25 +259,25 @@ typedef struct miptex_s
 #define NEW_MIN_BOUNDS		( -32728 )
 #define NEW_WORLD_SIZE		( NEW_MAX_BOUNDS - NEW_MIN_BOUNDS )
 
-//qb: xbsp limits
-#define	MAX_MAP_MODELS_XBSP	         32768
-#define	MAX_MAP_BRUSHES_XBSP   		262144
-#define	MAX_MAP_ENTITIES_XBSP        32768
-#define	MAX_MAP_ENTSTRING_XBSP     4194304
-#define	MAX_MAP_TEXINFO_XBSP        262144
-#define	MAX_MAP_PLANES_XBSP	        262144
-#define	MAX_MAP_NODES_XBSP          262144
-#define	MAX_MAP_LEAFS_XBSP          262144
-#define	MAX_MAP_VERTS_XBSP		    524288
-#define	MAX_MAP_FACES_XBSP		    262144
-#define	MAX_MAP_LEAFFACES_XBSP	    262144
-#define	MAX_MAP_LEAFBRUSHES_XBSP    262144
-#define	MAX_MAP_EDGES_XBSP		    524288
-#define	MAX_MAP_BRUSHSIDES_XBSP	   1048576
-#define	MAX_MAP_PORTALS_XBSP	    262144
-#define	MAX_MAP_SURFEDGES_XBSP	   1048576
-#define	MAX_MAP_LIGHTING_XBSP     13631488
-#define	MAX_MAP_VISIBILITY_XBSP    8388608
+//qb: qbsp limits
+#define	MAX_MAP_MODELS_QBSP         32768
+#define	MAX_MAP_BRUSHES_QBSP   		262144
+#define	MAX_MAP_ENTITIES_QBSP        32768
+#define	MAX_MAP_ENTSTRING_QBSP     4194304
+#define	MAX_MAP_TEXINFO_QBSP        262144
+#define	MAX_MAP_PLANES_QBSP	        262144
+#define	MAX_MAP_NODES_QBSP          262144
+#define	MAX_MAP_LEAFS_QBSP          262144
+#define	MAX_MAP_VERTS_QBSP		    524288
+#define	MAX_MAP_FACES_QBSP		    262144
+#define	MAX_MAP_LEAFFACES_QBSP	    262144
+#define	MAX_MAP_LEAFBRUSHES_QBSP    262144
+#define	MAX_MAP_EDGES_QBSP		    524288
+#define	MAX_MAP_BRUSHSIDES_QBSP	   1048576
+#define	MAX_MAP_PORTALS_QBSP	    262144
+#define	MAX_MAP_SURFEDGES_QBSP	   1048576
+#define	MAX_MAP_LIGHTING_QBSP     13631488
+#define	MAX_MAP_VISIBILITY_QBSP    8388608
 
 // key / value pair sizes
 
@@ -411,7 +411,7 @@ typedef struct
 #define SURF_SKIP   	0x0200  // ignore surface to make non-closed brushes
 
 
-//qb: xbsp types - dnode_tx, dedge_tx, dface_tx, dleaf_tx, dbrushside_tx
+//qb: qbsp types - dnode_tx, dedge_tx, dface_tx, dleaf_tx, dbrushside_tx
 
 typedef struct
 {
@@ -431,7 +431,7 @@ typedef struct
 	float		    maxs[3];
 	unsigned int	firstface;
 	unsigned int	numfaces;	// counting both sides
-} dnode_tx; //qb: xbsp
+} dnode_tx; //qb: qbsp
 
 typedef struct texinfo_s
 {
@@ -453,7 +453,7 @@ typedef struct
 typedef struct
 {
 	unsigned int	v[2];		// vertex numbers
-} dedge_tx; //qb: xbsp
+} dedge_tx; //qb: qbsp
 
 
 #define	MAXLIGHTMAPS	4
@@ -483,7 +483,7 @@ typedef struct
 // lighting info
 	byte		styles[MAXLIGHTMAPS];
 	int			lightofs;		// start of [numstyles*surfsize] samples
-} dface_tx; //qb: xbsp
+} dface_tx; //qb: qbsp
 
 typedef struct
 {
@@ -517,7 +517,7 @@ typedef struct
 
 	unsigned int	firstleafbrush;
 	unsigned int	numleafbrushes;
-} dleaf_tx; //qb: xbsp
+} dleaf_tx; //qb: qbsp
 
 
 typedef struct
@@ -530,9 +530,9 @@ typedef struct
 {
 	unsigned int	planenum;		// facing out of the leaf
 	int	texinfo;
-} dbrushside_tx; //qb: xbsp
+} dbrushside_tx; //qb: qbsp
 
-// xbsp /////////////////////////
+// qbsp /////////////////////////
 
 
 typedef struct

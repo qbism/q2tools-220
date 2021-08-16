@@ -31,8 +31,8 @@ every surface must be divided into at least two patches each axis
 
 */
 
-patch_t		*face_patches[MAX_MAP_FACES_XBSP];
-entity_t	*face_entity[MAX_MAP_FACES_XBSP];
+patch_t		*face_patches[MAX_MAP_FACES_QBSP];
+entity_t	*face_entity[MAX_MAP_FACES_QBSP];
 patch_t		patches[MAX_PATCHES];
 unsigned	num_patches;
 int    num_smoothing;  //qb: number of phong hits
@@ -40,8 +40,8 @@ int    num_smoothing;  //qb: number of phong hits
 vec3_t		radiosity[MAX_PATCHES];		// light leaving a patch
 vec3_t		illumination[MAX_PATCHES];	// light arriving at a patch
 
-vec3_t		face_offset[MAX_MAP_FACES_XBSP];		// for rotating bmodels
-dplane_t	backplanes[MAX_MAP_PLANES_XBSP];
+vec3_t		face_offset[MAX_MAP_FACES_QBSP];		// for rotating bmodels
+dplane_t	backplanes[MAX_MAP_PLANES_QBSP];
 
 char		inbase[32], outbase[32];
 char		basedir[64] = "baseq2"; //qb; default
@@ -167,8 +167,8 @@ void MakeBackplanes (void)
     }
 }
 
-int		leafparents[MAX_MAP_LEAFS_XBSP];
-int		nodeparents[MAX_MAP_NODES_XBSP];
+int		leafparents[MAX_MAP_LEAFS_QBSP];
+int		nodeparents[MAX_MAP_NODES_QBSP];
 
 /*
 =============
@@ -181,7 +181,7 @@ void MakeParents (int nodenum, int parent)
 
     nodeparents[nodenum] = parent;
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
         dnode_tx	*node;
         node = &dnodesX[nodenum];
@@ -225,7 +225,7 @@ int	PointInLeafnum (vec3_t point)
     dplane_t	*plane;
 
     nodenum = 0;
-    if (use_xbsp)
+    if (use_qbsp)
     {
         dnode_tx *node;
         while (nodenum >= 0)
@@ -283,7 +283,7 @@ qboolean PvsForOrigin (vec3_t org, byte *pvs)
         return true;
     }
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
         dleaf_tx	*leaf;
         leaf = PointInLeafX (org);
@@ -431,7 +431,7 @@ re_test:
     if (headNode == nodeNum1)
         return headNode;
 
-    if(use_xbsp)
+    if(use_qbsp)
     {
         dnode_tx *node;
         child1 = (node = dnodesX+headNode)->children[1];
@@ -489,7 +489,7 @@ void MakeTransfers (int i)
     float		transfers[MAX_PATCHES];
     int			s;
     int			itotal;
-    byte		pvs[(MAX_MAP_LEAFS_XBSP+7)/8];
+    byte		pvs[(MAX_MAP_LEAFS_QBSP+7)/8];
     int			cluster;
     int			calc_trace, test_trace;
 
@@ -1166,8 +1166,8 @@ int main (int argc, char **argv)
     sprintf (name, "%s%s", inbase, source);
     printf ("reading %s\n", name);
     LoadBSPFile (name);
-    if (use_xbsp)
-        maxdata = MAX_MAP_LIGHTING_XBSP;
+    if (use_qbsp)
+        maxdata = MAX_MAP_LIGHTING_QBSP;
     ParseEntities ();
     CalcTextureReflectivity ();
 

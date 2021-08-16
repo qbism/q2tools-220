@@ -22,7 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "threads.h"
 #include "stdlib.h"
 
-extern qboolean use_xbsp;
+extern qboolean use_qbsp;
 
 int			numportals;
 int			portalclusters;
@@ -50,7 +50,7 @@ qboolean		nosort;
 
 int		totalvis;
 
-portal_t	*sorted_portals[MAX_MAP_PORTALS_XBSP*2];
+portal_t	*sorted_portals[MAX_MAP_PORTALS_QBSP*2];
 
 
 //=============================================================================
@@ -182,9 +182,9 @@ Merges the portal visibility for a leaf
 void ClusterMerge (int leafnum)
 {
     leaf_t		*leaf;
-    byte		portalvector[MAX_PORTALS_XBSP/8];
-    byte		uncompressed[MAX_MAP_LEAFS_XBSP/8];
-    byte		compressed[MAX_MAP_LEAFS_XBSP/8];
+    byte		portalvector[MAX_PORTALS_QBSP/8];
+    byte		uncompressed[MAX_MAP_LEAFS_QBSP/8];
+    byte		compressed[MAX_MAP_LEAFS_QBSP/8];
     int			i, j;
     int			numvis;
     byte		*dest;
@@ -374,7 +374,7 @@ void LoadPortals (char *name)
     dvis->numclusters = portalclusters;
     vismap_p = (byte *)&dvis->bitofs[portalclusters];
 
-    vismap_end = vismap + MAX_MAP_VISIBILITY_XBSP;
+    vismap_end = vismap + MAX_MAP_VISIBILITY_QBSP;
 
     for (i=0, p=portals ; i<numportals ; i++)
     {
@@ -463,8 +463,8 @@ void CalcPHS (void)
     long	*dest, *src;
     byte	*scan;
     int		count;
-    byte	uncompressed[MAX_MAP_LEAFS_XBSP/8];
-    byte	compressed[MAX_MAP_LEAFS_XBSP/8];
+    byte	uncompressed[MAX_MAP_LEAFS_QBSP/8];
+    byte	compressed[MAX_MAP_LEAFS_QBSP/8];
 
     printf ("Building PHS...\n");
 
@@ -610,7 +610,7 @@ int main (int argc, char **argv)
 
     printf ("visdatasize: %i compressed from %i\n", visdatasize, originalvismapsize*2);
 
-    if (!use_xbsp && vismap_p > (vismap + DEFAULT_MAP_VISIBILITY))
+    if (!use_qbsp && vismap_p > (vismap + DEFAULT_MAP_VISIBILITY))
         printf ("\nWARNING: visdatasize exceeds default limit of %i\n\n", DEFAULT_MAP_VISIBILITY);
 
     sprintf (name, "%s%s", outbase, source);

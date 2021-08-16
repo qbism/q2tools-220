@@ -70,7 +70,7 @@ typedef struct
 } transfer_t;
 
 
-#define	MAX_PATCHES	          262144 //qb: was 65535			// larger will cause 32 bit overflows
+#define	MAX_PATCHES	          524288 //qb: was 65535
 
 #define DEFAULT_SMOOTHING_VALUE     44.0
 #define DEFAULT_NUDGE_VALUE     0.25
@@ -107,20 +107,20 @@ typedef struct patch_s
 	int			samples;		// for averaging direct light
 } patch_t;
 
-extern	patch_t		*face_patches[MAX_MAP_FACES_XBSP];
-extern	entity_t	*face_entity[MAX_MAP_FACES_XBSP];
-extern	vec3_t		face_offset[MAX_MAP_FACES_XBSP];		// for rotating bmodels
+extern	patch_t		*face_patches[MAX_MAP_FACES_QBSP];
+extern	entity_t	*face_entity[MAX_MAP_FACES_QBSP];
+extern	vec3_t		face_offset[MAX_MAP_FACES_QBSP];		// for rotating bmodels
 extern	patch_t		patches[MAX_PATCHES];
 extern	unsigned	num_patches;
 
-extern	int		leafparents[MAX_MAP_LEAFS_XBSP];
-extern	int		nodeparents[MAX_MAP_NODES_XBSP];
+extern	int		leafparents[MAX_MAP_LEAFS_QBSP];
+extern	int		nodeparents[MAX_MAP_NODES_QBSP];
 
 extern	float	lightscale;
 
 extern char		basedir[64];
 
-extern qboolean use_xbsp;
+extern qboolean use_qbsp;
 
 void MakeShadowSplits (void);
 
@@ -142,9 +142,9 @@ extern	qboolean	dicepatches;
 extern int numbounce;
 extern qboolean noblock;
 
-extern	directlight_t	*directlights[MAX_MAP_LEAFS_XBSP];
+extern	directlight_t	*directlights[MAX_MAP_LEAFS_QBSP];
 
-extern	byte	nodehit[MAX_MAP_NODES_XBSP];
+extern	byte	nodehit[MAX_MAP_NODES_QBSP];
 
 void BuildLightmaps (void);
 
@@ -164,7 +164,7 @@ dleaf_t		*PointInLeaf (vec3_t point);
 dleaf_tx		*PointInLeafX (vec3_t point);
 
 
-extern	dplane_t	backplanes[MAX_MAP_PLANES_XBSP];
+extern	dplane_t	backplanes[MAX_MAP_PLANES_QBSP];
 extern	int			fakeplanes;					// created planes for origin offset
 extern  int		maxdata;
 
@@ -193,6 +193,6 @@ extern void SubdividePatches (void);
 extern void PairEdges (void);
 extern void CalcTextureReflectivity (void);
 extern byte	*dlightdata_ptr;
-extern byte	dlightdata_raw[MAX_MAP_LIGHTING_XBSP];
+extern byte	dlightdata_raw[MAX_MAP_LIGHTING_QBSP];
 
 extern	float sunradscale;

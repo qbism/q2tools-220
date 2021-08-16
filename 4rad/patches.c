@@ -20,11 +20,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "qrad.h"
 
-vec3_t	texture_reflectivity[MAX_MAP_TEXINFO_XBSP];
+vec3_t	texture_reflectivity[MAX_MAP_TEXINFO_QBSP];
 
 int cluster_neg_one = 0;
-float			*texture_data[MAX_MAP_TEXINFO_XBSP];
-int				texture_sizes[MAX_MAP_TEXINFO_XBSP][2];
+float			*texture_data[MAX_MAP_TEXINFO_QBSP];
+int				texture_sizes[MAX_MAP_TEXINFO_QBSP][2];
 /*
 ===================================================================
 
@@ -414,7 +414,7 @@ void MakePatchForFace (int fn, winding_t *w)
     totalarea += area;
 
     patch = &patches[num_patches];
-    if (use_xbsp)
+    if (use_qbsp)
     {
         if (num_patches == MAX_PATCHES)
             Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
@@ -426,7 +426,7 @@ void MakePatchForFace (int fn, winding_t *w)
 
     patch->winding = w;
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
         dface_tx    *f;
         dleaf_tx	*leaf;
@@ -439,10 +439,10 @@ void MakePatchForFace (int fn, winding_t *w)
         if (face_offset[fn][0] || face_offset[fn][1] || face_offset[fn][2] )
         {
             // origin offset faces must create new planes
-            if (use_xbsp)
+            if (use_qbsp)
             {
-                if (numplanes + fakeplanes >= MAX_MAP_PLANES_XBSP)
-                    Error ("numplanes + fakeplanes >= MAX_MAP_PLANES_XBSP");
+                if (numplanes + fakeplanes >= MAX_MAP_PLANES_QBSP)
+                    Error ("numplanes + fakeplanes >= MAX_MAP_PLANES_QBSP");
             }
             else if (numplanes + fakeplanes >= MAX_MAP_PLANES)
                 Error ("numplanes + fakeplanes >= MAX_MAP_PLANES");
@@ -500,10 +500,10 @@ void MakePatchForFace (int fn, winding_t *w)
         if (face_offset[fn][0] || face_offset[fn][1] || face_offset[fn][2] )
         {
             // origin offset faces must create new planes
-            if (use_xbsp)
+            if (use_qbsp)
             {
-                if (numplanes + fakeplanes >= MAX_MAP_PLANES_XBSP)
-                    Error ("numplanes + fakeplanes >= MAX_MAP_PLANES_XBSP");
+                if (numplanes + fakeplanes >= MAX_MAP_PLANES_QBSP)
+                    Error ("numplanes + fakeplanes >= MAX_MAP_PLANES_QBSP");
             }
             else if (numplanes + fakeplanes >= MAX_MAP_PLANES)
                 Error ("numplanes + fakeplanes >= MAX_MAP_PLANES");
@@ -600,7 +600,7 @@ void MakePatches (void)
             fn = mod->firstface + j;
             face_entity[fn] = ent;
             VectorCopy (origin, face_offset[fn]);
-            if (use_xbsp)
+            if (use_qbsp)
             {
                 dface_tx	*f;
                 f = &dfacesX[fn];
@@ -648,7 +648,7 @@ void FinishSplit (patch_t *patch, patch_t *newp)
     if (newp->area <= 1)
         newp->area = 1;
 
-    if(use_xbsp)
+    if(use_qbsp)
     {
         dleaf_tx		*leaf;
         WindingCenter (patch->winding, patch->origin);
@@ -738,7 +738,7 @@ void	SubdividePatch (patch_t *patch)
     //
     // create a new patch
     //
-    if (use_xbsp)
+    if (use_qbsp)
     {
         if (num_patches == MAX_PATCHES)
             Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
@@ -800,7 +800,7 @@ void	DicePatch (patch_t *patch)
     //
     // create a new patch
     //
-    if (use_xbsp)
+    if (use_qbsp)
     {
         if (num_patches == MAX_PATCHES)
             Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);

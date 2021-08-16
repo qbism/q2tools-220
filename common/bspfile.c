@@ -23,69 +23,69 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "bspfile.h"
 #include "scriplib.h"
 
-qboolean use_xbsp;
+qboolean use_qbsp;
 
 void GetLeafNums (void);
 
 //=============================================================================
 
-//qb: add xbsp types
+//qb: add qbsp types
 
 int			nummodels;
-dmodel_t	dmodels[MAX_MAP_MODELS_XBSP];
+dmodel_t	dmodels[MAX_MAP_MODELS_QBSP];
 
 int			visdatasize;
-byte		dvisdata[MAX_MAP_VISIBILITY_XBSP];
+byte		dvisdata[MAX_MAP_VISIBILITY_QBSP];
 dvis_t		*dvis = (dvis_t *)dvisdata;
 
 int			lightdatasize;
-byte		dlightdata[MAX_MAP_LIGHTING_XBSP];
+byte		dlightdata[MAX_MAP_LIGHTING_QBSP];
 
 int			entdatasize;
-char		dentdata[MAX_MAP_ENTSTRING_XBSP];
+char		dentdata[MAX_MAP_ENTSTRING_QBSP];
 
 int			numleafs;
 dleaf_t	dleafs[MAX_MAP_LEAFS];
-dleaf_tx	dleafsX[MAX_MAP_LEAFS_XBSP];
+dleaf_tx	dleafsX[MAX_MAP_LEAFS_QBSP];
 
 int			numplanes;
-dplane_t	dplanes[MAX_MAP_PLANES_XBSP];
+dplane_t	dplanes[MAX_MAP_PLANES_QBSP];
 
 int			numvertexes;
-dvertex_t	dvertexes[MAX_MAP_VERTS_XBSP];
+dvertex_t	dvertexes[MAX_MAP_VERTS_QBSP];
 
 int			numnodes;
 dnode_t	dnodes[MAX_MAP_NODES];
-dnode_tx	dnodesX[MAX_MAP_NODES_XBSP];
+dnode_tx	dnodesX[MAX_MAP_NODES_QBSP];
 
 int			numtexinfo;
-texinfo_t	texinfo[MAX_MAP_TEXINFO_XBSP];
+texinfo_t	texinfo[MAX_MAP_TEXINFO_QBSP];
 
 int			numfaces;
 dface_t	dfaces[MAX_MAP_FACES];
-dface_tx	dfacesX[MAX_MAP_FACES_XBSP];
+dface_tx	dfacesX[MAX_MAP_FACES_QBSP];
 
 int			numedges;
 dedge_t	dedges[MAX_MAP_EDGES];
-dedge_tx	dedgesX[MAX_MAP_EDGES_XBSP];
+dedge_tx	dedgesX[MAX_MAP_EDGES_QBSP];
 
 int			numleaffaces;
 unsigned short		dleaffaces[MAX_MAP_LEAFFACES];
-unsigned int		dleaffacesX[MAX_MAP_LEAFFACES_XBSP];
+unsigned int		dleaffacesX[MAX_MAP_LEAFFACES_QBSP];
 
 int			numleafbrushes;
 unsigned short		dleafbrushes[MAX_MAP_LEAFBRUSHES];
-unsigned int		dleafbrushesX[MAX_MAP_LEAFBRUSHES_XBSP];
+unsigned int		dleafbrushesX[MAX_MAP_LEAFBRUSHES_QBSP];
 
 int			numsurfedges;
-int			dsurfedges[MAX_MAP_SURFEDGES_XBSP];
+int			dsurfedges[MAX_MAP_SURFEDGES_QBSP];
 
 int			numbrushes;
-dbrush_t	dbrushes[MAX_MAP_BRUSHES_XBSP];
+dbrush_t	dbrushes[MAX_MAP_BRUSHES_QBSP];
 
 int			numbrushsides;
 dbrushside_t	dbrushsides[MAX_MAP_BRUSHSIDES];
-dbrushside_tx	dbrushsidesX[MAX_MAP_BRUSHSIDES_XBSP];
+dbrushside_tx	dbrushsidesX[MAX_MAP_BRUSHSIDES_QBSP];
 
 int			numareas;
 darea_t		dareas[MAX_MAP_AREAS];
@@ -233,7 +233,7 @@ void SwapBSPFile (qboolean todisk)
 //
 // faces nodes leafs brushsides leafbrushes leaffaces
 //
-    if (use_xbsp)
+    if (use_qbsp)
     {
         for (i=0 ; i<numfaces ; i++)
         {
@@ -354,7 +354,7 @@ void SwapBSPFile (qboolean todisk)
 //
 // edges
 //
-    if(use_xbsp)
+    if(use_qbsp)
         for (i=0 ; i<numedges ; i++)
         {
             dedgesX[i].v[0] = LittleLong (dedgesX[i].v[0]);
@@ -446,16 +446,16 @@ void	LoadBSPFile (char *filename)
     for (i=0 ; i< sizeof(dheader_t)/4 ; i++)
         ((int *)header)[i] = LittleLong ( ((int *)header)[i]);
 
-//qb: XBSP
-    use_xbsp = false;
+//qb: qbsp
+    use_qbsp = false;
 
     switch (header->ident)
     {
     case IDBSPHEADER:
         break;
-    case XBSPHEADER:
-        use_xbsp = true;
-        printf("using XBSP extended limits \n");
+    case QBSPHEADER:
+        use_qbsp = true;
+        printf("using qbsp extended limits \n");
         break;
     default:
         Error("%s is not a recognized BSP file.",
@@ -468,7 +468,7 @@ void	LoadBSPFile (char *filename)
     numvertexes = CopyLump (LUMP_VERTEXES, dvertexes, sizeof(dvertex_t));
     numplanes = CopyLump (LUMP_PLANES, dplanes, sizeof(dplane_t));
 
-    if(use_xbsp)
+    if(use_qbsp)
     {
         numleafs = CopyLump (LUMP_LEAFS, dleafsX, sizeof(dleaf_tx));
         numnodes = CopyLump (LUMP_NODES, dnodesX, sizeof(dnode_tx));
@@ -489,14 +489,14 @@ void	LoadBSPFile (char *filename)
 
     numsurfedges = CopyLump (LUMP_SURFEDGES, dsurfedges, sizeof(dsurfedges[0]));
 
-    if(use_xbsp)
+    if(use_qbsp)
         numedges = CopyLump (LUMP_EDGES, dedgesX, sizeof(dedge_tx));
     else
         numedges = CopyLump (LUMP_EDGES, dedges, sizeof(dedge_t));
 
     numbrushes = CopyLump (LUMP_BRUSHES, dbrushes, sizeof(dbrush_t));
 
-    if(use_xbsp)
+    if(use_qbsp)
         numbrushsides = CopyLump (LUMP_BRUSHSIDES, dbrushsidesX, sizeof(dbrushside_tx));
     else
         numbrushsides = CopyLump (LUMP_BRUSHSIDES, dbrushsides, sizeof(dbrushside_t));
@@ -542,8 +542,8 @@ void	LoadBSPFileTexinfo (char *filename)
     for (i=0 ; i< sizeof(dheader_t)/4 ; i++)
         ((int *)header)[i] = LittleLong ( ((int *)header)[i]);
 
-    if (header->ident != IDBSPHEADER && header->ident != XBSPHEADER)
-        Error ("%s is not an IBSP or XBSP file", filename);
+    if (header->ident != IDBSPHEADER && header->ident != QBSPHEADER)
+        Error ("%s is not an IBSP or QBSP file", filename);
     if (header->version != BSPVERSION)
         Error ("%s is version %i, not %i", filename, header->version, BSPVERSION);
 
@@ -595,8 +595,8 @@ void	WriteBSPFile (char *filename)
 
     SwapBSPFile (true);
 
-    if (use_xbsp)
-        header->ident = LittleLong (XBSPHEADER);
+    if (use_qbsp)
+        header->ident = LittleLong (QBSPHEADER);
     else
         header->ident = LittleLong (IDBSPHEADER);
 
@@ -607,28 +607,28 @@ void	WriteBSPFile (char *filename)
 
     AddLump (LUMP_PLANES, dplanes, numplanes*sizeof(dplane_t));
 
-    if(use_xbsp)
+    if(use_qbsp)
         AddLump (LUMP_LEAFS, dleafsX, numleafs*sizeof(dleaf_tx));
     else
         AddLump (LUMP_LEAFS, dleafs, numleafs*sizeof(dleaf_t));
 
     AddLump (LUMP_VERTEXES, dvertexes, numvertexes*sizeof(dvertex_t));
 
-    if(use_xbsp)
+    if(use_qbsp)
         AddLump (LUMP_NODES, dnodesX, numnodes*sizeof(dnode_tx));
     else
         AddLump (LUMP_NODES, dnodes, numnodes*sizeof(dnode_t));
 
     AddLump (LUMP_TEXINFO, texinfo, numtexinfo*sizeof(texinfo_t));
 
-    if(use_xbsp)
+    if(use_qbsp)
         AddLump (LUMP_FACES, dfacesX, numfaces*sizeof(dface_tx));
     else
         AddLump (LUMP_FACES, dfaces, numfaces*sizeof(dface_t));
 
     AddLump (LUMP_BRUSHES, dbrushes, numbrushes*sizeof(dbrush_t));
 
-    if(use_xbsp)
+    if(use_qbsp)
     {
         AddLump (LUMP_BRUSHSIDES, dbrushsidesX, numbrushsides*sizeof(dbrushside_tx));
         AddLump (LUMP_LEAFFACES, dleaffacesX, numleaffaces*sizeof(dleaffacesX[0]));
@@ -643,7 +643,7 @@ void	WriteBSPFile (char *filename)
 
     AddLump (LUMP_SURFEDGES, dsurfedges, numsurfedges*sizeof(dsurfedges[0]));
 
-    if(use_xbsp)
+    if(use_qbsp)
         AddLump (LUMP_EDGES, dedgesX, numedges*sizeof(dedge_tx));
     else
         AddLump (LUMP_EDGES, dedges, numedges*sizeof(dedge_t));
@@ -681,7 +681,7 @@ void PrintBSPFileSizes (void)
     printf ("models:     %5i        size: %7i\n", nummodels, (int)(nummodels*sizeof(dmodel_t)));
     printf ("brushes:    %5i        size: %7i\n", numbrushes, (int)(numbrushes*sizeof(dbrush_t)));
 
-    if (use_xbsp)
+    if (use_qbsp)
     printf ("brushsides: %5i        size: %7i\n", numbrushsides, (int)(numbrushsides*sizeof(dbrushside_tx)));
     else
     printf ("brushsides: %5i        size: %7i\n", numbrushsides, (int)(numbrushsides*sizeof(dbrushside_t)));
@@ -694,7 +694,7 @@ void PrintBSPFileSizes (void)
 
         printf ("vertices:    %5i       size: %7i\n", numvertexes, (int)(numvertexes*sizeof(dvertex_t)));
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
         printf ("nodes:       %5i       size: %7i\n", numnodes, (int)(numnodes*sizeof(dnode_tx)));
         printf ("faces:       %5i       size: %7i\n",numfaces, (int)(numfaces*sizeof(dface_tx)));
@@ -722,7 +722,7 @@ void PrintBSPFileSizes (void)
 //============================================
 
 int			num_entities;
-entity_t	entities[MAX_MAP_ENTITIES_XBSP];
+entity_t	entities[MAX_MAP_ENTITIES_QBSP];
 
 void StripTrailing (char *e)
 {
@@ -780,10 +780,10 @@ qboolean	ParseEntity (void)
     if (strcmp (token, "{") )
         Error ("ParseEntity: { not found");
 
-    if (use_xbsp)
+    if (use_qbsp)
     {
-        if (num_entities == MAX_MAP_ENTITIES_XBSP)
-            Error ("num_entities == MAX_MAP_ENTITIES_XBSP  (%i)", MAX_MAP_ENTITIES_XBSP);
+        if (num_entities == MAX_MAP_ENTITIES_QBSP)
+            Error ("num_entities == MAX_MAP_ENTITIES_QBSP  (%i)", MAX_MAP_ENTITIES_QBSP);
     }
     else if (num_entities == MAX_MAP_ENTITIES)
         Error ("num_entities == MAX_MAP_ENTITIES  (%i)", MAX_MAP_ENTITIES);
@@ -866,10 +866,10 @@ void UnparseEntities (void)
         strcat (end,"}\n");
         end += 2;
 
-        if (use_xbsp)
+        if (use_qbsp)
         {
-            if (end > buf + MAX_MAP_ENTSTRING_XBSP)
-                Error ("XBSP Entity text too long");
+            if (end > buf + MAX_MAP_ENTSTRING_QBSP)
+                Error ("QBSP Entity text too long");
         }
         else if (end > buf + MAX_MAP_ENTSTRING)
             Error ("Entity text too long");

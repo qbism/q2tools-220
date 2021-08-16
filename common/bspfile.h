@@ -35,53 +35,53 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #endif
 
 extern	int			nummodels;
-extern	dmodel_t	dmodels[MAX_MAP_MODELS_XBSP];
+extern	dmodel_t	dmodels[MAX_MAP_MODELS_QBSP];
 
 extern	int			visdatasize;
-extern	byte		dvisdata[MAX_MAP_VISIBILITY_XBSP];
+extern	byte		dvisdata[MAX_MAP_VISIBILITY_QBSP];
 extern	dvis_t		*dvis;
 
 extern	int			lightdatasize;
-extern	byte		dlightdata[MAX_MAP_LIGHTING_XBSP];
+extern	byte		dlightdata[MAX_MAP_LIGHTING_QBSP];
 
 extern	int			entdatasize;
-extern	char		dentdata[MAX_MAP_ENTSTRING_XBSP];
+extern	char		dentdata[MAX_MAP_ENTSTRING_QBSP];
 
 extern	int			numleafs;
 extern	dleaf_t	    dleafs[MAX_MAP_LEAFS];
-extern	dleaf_tx	dleafsX[MAX_MAP_LEAFS_XBSP];
+extern	dleaf_tx	dleafsX[MAX_MAP_LEAFS_QBSP];
 
 extern	int			numplanes;
-extern	dplane_t	dplanes[MAX_MAP_PLANES_XBSP];
+extern	dplane_t	dplanes[MAX_MAP_PLANES_QBSP];
 
 extern	int			numvertexes;
-extern	dvertex_t	dvertexes[MAX_MAP_VERTS_XBSP];
+extern	dvertex_t	dvertexes[MAX_MAP_VERTS_QBSP];
 
 extern	int			numnodes;
 extern	dnode_t	    dnodes[MAX_MAP_NODES];
-extern	dnode_tx	dnodesX[MAX_MAP_NODES_XBSP];
+extern	dnode_tx	dnodesX[MAX_MAP_NODES_QBSP];
 
 extern	int			numtexinfo;
-extern	texinfo_t	texinfo[MAX_MAP_TEXINFO_XBSP];
+extern	texinfo_t	texinfo[MAX_MAP_TEXINFO_QBSP];
 
 extern	int			numfaces;
 extern	dface_t	    dfaces[MAX_MAP_FACES];
-extern	dface_tx	dfacesX[MAX_MAP_FACES_XBSP];
+extern	dface_tx	dfacesX[MAX_MAP_FACES_QBSP];
 
 extern	int			numedges;
 extern	dedge_t	    dedges[MAX_MAP_EDGES];
-extern	dedge_tx	dedgesX[MAX_MAP_EDGES_XBSP];
+extern	dedge_tx	dedgesX[MAX_MAP_EDGES_QBSP];
 
 extern	int			    numleaffaces;
 extern	unsigned short	dleaffaces[MAX_MAP_LEAFFACES];
-extern	unsigned int	dleaffacesX[MAX_MAP_LEAFFACES_XBSP];
+extern	unsigned int	dleaffacesX[MAX_MAP_LEAFFACES_QBSP];
 
 extern	int			    numleafbrushes;
 extern	unsigned short	dleafbrushes[MAX_MAP_LEAFBRUSHES];
-extern	unsigned int	dleafbrushesX[MAX_MAP_LEAFBRUSHES_XBSP];
+extern	unsigned int	dleafbrushesX[MAX_MAP_LEAFBRUSHES_QBSP];
 
 extern	int			numsurfedges;
-extern	int			dsurfedges[MAX_MAP_SURFEDGES_XBSP];
+extern	int			dsurfedges[MAX_MAP_SURFEDGES_QBSP];
 
 extern	int			numareas;
 extern	darea_t		dareas[MAX_MAP_AREAS];
@@ -90,11 +90,11 @@ extern	int			    numareaportals;
 extern	dareaportal_t	dareaportals[MAX_MAP_AREAPORTALS];
 
 extern	int			numbrushes;
-extern	dbrush_t	dbrushes[MAX_MAP_BRUSHES_XBSP];
+extern	dbrush_t	dbrushes[MAX_MAP_BRUSHES_QBSP];
 
 extern	int			    numbrushsides;
 extern	dbrushside_t	dbrushsides[MAX_MAP_BRUSHSIDES];
-extern	dbrushside_tx	dbrushsidesX[MAX_MAP_BRUSHSIDES_XBSP];
+extern	dbrushside_tx	dbrushsidesX[MAX_MAP_BRUSHSIDES_QBSP];
 
 extern	byte		dpop[256];
 
@@ -128,7 +128,7 @@ typedef struct
 } entity_t;
 
 extern	int			num_entities;
-extern	entity_t	entities[MAX_MAP_ENTITIES_XBSP];
+extern	entity_t	entities[MAX_MAP_ENTITIES_QBSP];
 
 void	ParseEntities (void);
 void	UnparseEntities (void);

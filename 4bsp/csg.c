@@ -400,36 +400,39 @@ void WriteBrushMap (char *name, bspbrush_t *list)
     int		i;
     winding_t	*w;
 
-    printf ("\ntexinfo count: %i of %i maximum.\n", numtexinfo, MAX_MAP_TEXINFO_XBSP);
-
-    if(use_xbsp)
-        printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES_XBSP);
+    if(use_qbsp)
+        printf ("\ntexinfo count: %i of %i maximum.\n", numtexinfo, MAX_MAP_TEXINFO_QBSP);
     else
-        printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES);
+        printf ("\ntexinfo count: %i of %i maximum.\n", numtexinfo, MAX_MAP_TEXINFO;
 
-    printf ("writing %s\n", name);
-    f = fopen (name, "wb");
-    if (!f)
-        Error ("Can't write %s\b", name);
+                if(use_qbsp)
+                printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES_QBSP);
+                else
+                    printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES);
 
-    fprintf (f, "{\n\"classname\" \"worldspawn\"\n");
+                    printf ("writing %s\n", name);
+                    f = fopen (name, "wb");
+                    if (!f)
+                        Error ("Can't write %s\b", name);
 
-    for ( ; list ; list=list->next )
-    {
-        fprintf (f, "{\n");
-        for (i=0,s=list->sides ; i<list->numsides ; i++,s++)
-        {
-            w = BaseWindingForPlane (mapplanes[s->planenum].normal, mapplanes[s->planenum].dist);
+                        fprintf (f, "{\n\"classname\" \"worldspawn\"\n");
 
-            fprintf (f,"( %i %i %i ) ", (int)w->p[0][0], (int)w->p[0][1], (int)w->p[0][2]);
-            fprintf (f,"( %i %i %i ) ", (int)w->p[1][0], (int)w->p[1][1], (int)w->p[1][2]);
-            fprintf (f,"( %i %i %i ) ", (int)w->p[2][0], (int)w->p[2][1], (int)w->p[2][2]);
+                        for ( ; list ; list=list->next )
+                {
+                    fprintf (f, "{\n");
+                        for (i=0,s=list->sides ; i<list->numsides ; i++,s++)
+                        {
+                            w = BaseWindingForPlane (mapplanes[s->planenum].normal, mapplanes[s->planenum].dist);
 
-            fprintf (f, "%s 0 0 0 1 1\n", texinfo[s->texinfo].texture);
-            FreeWinding (w);
-        }
-        fprintf (f, "}\n");
-    }
+                            fprintf (f,"( %i %i %i ) ", (int)w->p[0][0], (int)w->p[0][1], (int)w->p[0][2]);
+                            fprintf (f,"( %i %i %i ) ", (int)w->p[1][0], (int)w->p[1][1], (int)w->p[1][2]);
+                            fprintf (f,"( %i %i %i ) ", (int)w->p[2][0], (int)w->p[2][1], (int)w->p[2][2]);
+
+                            fprintf (f, "%s 0 0 0 1 1\n", texinfo[s->texinfo].texture);
+                            FreeWinding (w);
+                        }
+                        fprintf (f, "}\n");
+                    }
     fprintf (f, "}\n");
 
     fclose (f);

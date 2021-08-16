@@ -615,7 +615,7 @@ all seperating planes, and both portals must be behind the mew portal
 
 int		c_flood, c_vis;
 
-char test_leaf[MAX_MAP_LEAFS_XBSP];
+char test_leaf[MAX_MAP_LEAFS_QBSP];
 
 /*
 ==================

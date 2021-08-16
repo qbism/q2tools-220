@@ -50,7 +50,7 @@ void MakeTnode (int nodenum)
 
     t = tnode_p++;
 
-    if(use_xbsp)
+    if(use_qbsp)
     {
         dnode_tx 		*node;
         node = dnodesX + nodenum;
@@ -140,7 +140,7 @@ int	PointInNodenum (vec3_t point)
     dplane_t	*plane;
 
     nodenum = 0;
-    if (use_xbsp)
+    if (use_qbsp)
     {
         dnode_tx	*node;
         while (nodenum >= 0)
