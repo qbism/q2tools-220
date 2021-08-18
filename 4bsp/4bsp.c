@@ -450,25 +450,43 @@ int main (int argc, char **argv)
             printf ("leaktest = true\n");
             leaktest = true;
         }
+
+        //qb: qbsp
         else if (!strcmp(argv[i], "-qbsp"))
         {
             printf ("use_qbsp = true\n");
             use_qbsp = true;
             max_entities = MAX_MAP_ENTITIES_QBSP;
         }
+
         //qb: from kmqbsp3- Knightmare added
         else if (!strcmp(argv[i], "-largebounds") || !strcmp(argv[i], "-lb"))
         {
-            max_bounds = MAX_HALF_SIZE;
-            block_size = MAX_BLOCK_SIZE;
-            printf ("using max bound size of %i\n", MAX_HALF_SIZE);
+            if (use_qbsp)
+            {
+                printf ("[-largebounds is not required with -qbsp]\n");
+            }
+            else
+            {
+                max_bounds = MAX_HALF_SIZE;
+                block_size = MAX_BLOCK_SIZE;
+                printf ("using max bound size of %i\n", MAX_HALF_SIZE);
+            }
         }
         else if (!strcmp(argv[i], "-moreents"))
         {
-            max_entities = MAX_MAP_ENTITIES;
-            printf ("using entity limit of %i\n", MAX_MAP_ENTITIES);
+            if (use_qbsp)
+            {
+                printf ("[-moreents is not required with -qbsp]\n");
+            }
+            else
+            {
+                max_entities = MAX_MAP_ENTITIES;
+                printf ("using entity limit of %i\n", MAX_MAP_ENTITIES);
+            }
         }
         // end Knightmare
+
 
         else if ((!strcmp(argv[i], "-chop")) || (!strcmp(argv[i], "-subdiv")))
         {

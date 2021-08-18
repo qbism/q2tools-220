@@ -124,7 +124,7 @@ void TextureAxisFromPlane(plane_t *pln, vec3_t xv, vec3_t yv)
 	VectorCopy (baseaxis[bestaxis*3+2], yv);
 }
 
-inline void CheckTexinfoCount() //mxd
+static inline void CheckTexinfoCount() //mxd
 {
     if (use_qbsp)
     {

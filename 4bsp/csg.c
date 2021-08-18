@@ -401,14 +401,14 @@ void WriteBrushMap (char *name, bspbrush_t *list)
     winding_t	*w;
 
     if(use_qbsp)
-        printf ("\ntexinfo count: %i of %i maximum.\n", numtexinfo, MAX_MAP_TEXINFO_QBSP);
+        printf ("\ntexinfo count: %i of %i maximum\n", numtexinfo, MAX_MAP_TEXINFO_QBSP);
     else
-        printf ("\ntexinfo count: %i of %i maximum.\n", numtexinfo, MAX_MAP_TEXINFO);
+        printf ("\ntexinfo count: %i of %i maximum\n", numtexinfo, MAX_MAP_TEXINFO);
 
     if(use_qbsp)
-        printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES_QBSP);
+        printf ("brushsides count: %i of %i maximum\n", nummapbrushsides, MAX_MAP_BRUSHSIDES_QBSP);
     else
-        printf ("brush sides count: %i of %i maximum.\n", nummapbrushsides, MAX_MAP_BRUSHSIDES);
+        printf ("brushsides count: %i of %i maximum\n", nummapbrushsides, MAX_MAP_BRUSHSIDES);
 
     printf ("writing %s\n", name);
     f = fopen (name, "wb");

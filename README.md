@@ -4,7 +4,12 @@ Includes 4bsp, 4vis, 4rad, and 4data.
 
 Forked from compiler tools supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
 
-# Test feature:  Extended map limits for very large maps.  Requires a supporting engine.  Several 16-bit data types are changed to 32-bit.
+# Test feature:  
+Extended map limits for very large maps patterned after the Quake BSP2 format.  Several 16-bit data types are changed to 32-bit.  This feature requires a supporting engine.  See common/qfiles.h for differences in limits.
+
+Usage:  Add -qbsp to the 4bsp command line.  4vis and 4rad will detect QBSP automatically.
+
+
 
 # Enhancements:
 

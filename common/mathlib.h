@@ -103,12 +103,12 @@ qboolean RayPlaneIntersect(vec3_t p_n, vec_t p_d, vec3_t l_o, vec3_t l_n,
 
 #else
 
- __inline double VectorLengthSq (vec3_t v) // jit
+static inline double VectorLengthSq (vec3_t v) // jit
 {
     return v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
 }
 
-static __inline qboolean VectorCompare (vec3_t v1, vec3_t v2)
+static inline qboolean VectorCompare (vec3_t v1, vec3_t v2)
 {
 	int		i;
 
@@ -119,40 +119,40 @@ static __inline qboolean VectorCompare (vec3_t v1, vec3_t v2)
 	return true;
 }
 
-static __inline vec_t _DotProduct (vec3_t v1, vec3_t v2)
+static inline vec_t _DotProduct (vec3_t v1, vec3_t v2)
 {
 	return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
 }
 
-static __inline void _VectorSubtract (vec3_t va, vec3_t vb, vec3_t out)
+static inline void _VectorSubtract (vec3_t va, vec3_t vb, vec3_t out)
 {
 	out[0] = va[0]-vb[0];
 	out[1] = va[1]-vb[1];
 	out[2] = va[2]-vb[2];
 }
 
-static __inline void _VectorAdd (vec3_t va, vec3_t vb, vec3_t out)
+static inline void _VectorAdd (vec3_t va, vec3_t vb, vec3_t out)
 {
 	out[0] = va[0]+vb[0];
 	out[1] = va[1]+vb[1];
 	out[2] = va[2]+vb[2];
 }
 
-static __inline void _VectorCopy (vec3_t in, vec3_t out)
+static inline void _VectorCopy (vec3_t in, vec3_t out)
 {
 	out[0] = in[0];
 	out[1] = in[1];
 	out[2] = in[2];
 }
 
-static __inline void _VectorScale (vec3_t v, vec_t scale, vec3_t out)
+static inline void _VectorScale (vec3_t v, vec_t scale, vec3_t out)
 {
 	out[0] = v[0] * scale;
 	out[1] = v[1] * scale;
 	out[2] = v[2] * scale;
 }
 
-static __inline vec_t VectorNormalize (vec3_t in, vec3_t out)
+static inline vec_t VectorNormalize (vec3_t in, vec3_t out)
 {
 	vec_t	length, ilength;
 
@@ -171,7 +171,7 @@ static __inline vec_t VectorNormalize (vec3_t in, vec3_t out)
 	return length;
 }
 
-static __inline vec_t ColorNormalize (vec3_t in, vec3_t out)
+static inline vec_t ColorNormalize (vec3_t in, vec3_t out)
 {
 	float	max, scale;
 
@@ -191,13 +191,13 @@ static __inline vec_t ColorNormalize (vec3_t in, vec3_t out)
 	return max;
 }
 
-static __inline void ClearBounds (vec3_t mins, vec3_t maxs)
+static inline void ClearBounds (vec3_t mins, vec3_t maxs)
 {
 	mins[0] = mins[1] = mins[2] = BOGUS_RANGE;
 	maxs[0] = maxs[1] = maxs[2] = -BOGUS_RANGE;
 }
 
-static __inline void AddPointToBounds (vec3_t v, vec3_t mins, vec3_t maxs)
+static inline void AddPointToBounds (vec3_t v, vec3_t mins, vec3_t maxs)
 {
 	int		i;
 	vec_t	val;
@@ -212,7 +212,7 @@ static __inline void AddPointToBounds (vec3_t v, vec3_t mins, vec3_t maxs)
 	}
 }
 
-static __inline qboolean RayPlaneIntersect(vec3_t p_n, vec_t p_d, vec3_t l_o, vec3_t l_n,
+static inline qboolean RayPlaneIntersect(vec3_t p_n, vec_t p_d, vec3_t l_o, vec3_t l_n,
         vec3_t res)
     {
     float dot, t;
@@ -232,7 +232,7 @@ static __inline qboolean RayPlaneIntersect(vec3_t p_n, vec_t p_d, vec3_t l_o, ve
     }
 
 
-static __inline void AngleVector (vec3_t angles, vec3_t out) // jit
+static inline void AngleVector (vec3_t angles, vec3_t out) // jit
 {
 	float		angle;
 	static float		sp, sy, cp, cy;

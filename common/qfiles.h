@@ -227,16 +227,16 @@ typedef struct miptex_s
 // upper design bounds
 // leaffaces, leafbrushes, planes, and verts are still bounded by
 // 16 bit short limits
-#define	MAX_MAP_MODELS		1024
-#define	MAX_MAP_BRUSHES		8192
+#define	MAX_MAP_MODELS		    1024
+#define	MAX_MAP_BRUSHES		    8192
 #define	OLD_MAX_MAP_ENTITIES	2048 //qb: from kmqbsp3- Knightmare- old limit
-#define	MAX_MAP_ENTITIES	8192	// new limit, was 2048
-#define	MAX_MAP_ENTSTRING	0x40000
-#define	DEFAULT_MAP_TEXINFO	8192  //mxd: vanilla
-#define	MAX_MAP_TEXINFO		16384 //mxd: KMQ2
+#define	MAX_MAP_ENTITIES	    8192 // new limit, was 2048
+#define	MAX_MAP_ENTSTRING	  262144
+#define	DEFAULT_MAP_TEXINFO	    8192  //mxd: vanilla
+#define	MAX_MAP_TEXINFO		   16384  //mxd: KMQ2
 
-#define	MAX_MAP_AREAS		    256
-#define	MAX_MAP_AREAPORTALS	    1024
+#define	MAX_MAP_AREAS		      256
+#define	MAX_MAP_AREAPORTALS	     1024
 #define	MAX_MAP_PLANES  	    65536
 #define	MAX_MAP_NODES		    65536
 #define	MAX_MAP_BRUSHSIDES  	65536
@@ -260,7 +260,7 @@ typedef struct miptex_s
 #define NEW_WORLD_SIZE		( NEW_MAX_BOUNDS - NEW_MIN_BOUNDS )
 
 //qb: qbsp limits
-#define	MAX_MAP_MODELS_QBSP         32768
+#define	MAX_MAP_MODELS_QBSP          32768
 #define	MAX_MAP_BRUSHES_QBSP   		262144
 #define	MAX_MAP_ENTITIES_QBSP        32768
 #define	MAX_MAP_ENTSTRING_QBSP     4194304

@@ -455,10 +455,10 @@ void	LoadBSPFile (char *filename)
         break;
     case QBSPHEADER:
         use_qbsp = true;
-        printf("using qbsp extended limits \n");
+        printf("using QBSP extended limits \n");
         break;
     default:
-        Error("%s is not a recognized BSP file.",
+        Error("%s is not a recognized BSP file (IBSP or QBSP).",
               filename);
     }
     if (header->version != BSPVERSION)
@@ -676,46 +676,44 @@ void PrintBSPFileSizes (void)
     if (!num_entities)
         ParseEntities ();
 
-             printf( "\n\n<<<<<<<<<<<<<<<<<< FILE STATS >>>>>>>>>>>>>>>>>>\n" );
+             printf( "\n<<<<<<<<<<<<<<<<<< FILE STATS >>>>>>>>>>>>>>>>>>\n" );
 
-    printf ("models:     %5i        size: %7i\n", nummodels, (int)(nummodels*sizeof(dmodel_t)));
-    printf ("brushes:    %5i        size: %7i\n", numbrushes, (int)(numbrushes*sizeof(dbrush_t)));
+    printf ("models:      %7i        size: %7i\n", nummodels, (int)(nummodels*sizeof(dmodel_t)));
+    printf ("brushes:     %7i        size: %7i\n", numbrushes, (int)(numbrushes*sizeof(dbrush_t)));
 
     if (use_qbsp)
-    printf ("brushsides: %5i        size: %7i\n", numbrushsides, (int)(numbrushsides*sizeof(dbrushside_tx)));
+    printf ("brushsides:  %7i        size: %7i\n", numbrushsides, (int)(numbrushsides*sizeof(dbrushside_tx)));
     else
-    printf ("brushsides: %5i        size: %7i\n", numbrushsides, (int)(numbrushsides*sizeof(dbrushside_t)));
+    printf ("brushsides:  %7i        size: %7i\n", numbrushsides, (int)(numbrushsides*sizeof(dbrushside_t)));
 
-    printf ("planes:     %5i        size: %7i\n", numplanes, (int)(numplanes*sizeof(dplane_t)));
-    printf ("texinfo:    %5i        size: %7i\n", numtexinfo, (int)(numtexinfo*sizeof(texinfo_t)));
-    printf ("entdata:    %5i        size: %7i\n", num_entities, entdatasize);
+    printf ("planes:      %7i        size: %7i\n", numplanes, (int)(numplanes*sizeof(dplane_t)));
+    printf ("texinfo:     %7i        size: %7i\n", numtexinfo, (int)(numtexinfo*sizeof(texinfo_t)));
+    printf ("entdata:     %7i        size: %7i\n", num_entities, entdatasize);
 
-    printf ("\n");
-
-        printf ("vertices:    %5i       size: %7i\n", numvertexes, (int)(numvertexes*sizeof(dvertex_t)));
+    printf ("vertices:    %7i        size: %7i\n", numvertexes, (int)(numvertexes*sizeof(dvertex_t)));
 
     if (use_qbsp)
     {
-        printf ("nodes:       %5i       size: %7i\n", numnodes, (int)(numnodes*sizeof(dnode_tx)));
-        printf ("faces:       %5i       size: %7i\n",numfaces, (int)(numfaces*sizeof(dface_tx)));
-        printf ("leafs:       %5i       size: %7i\n", numleafs, (int)(numleafs*sizeof(dleaf_tx)));
-        printf ("leaffaces:   %5i       size: %7i\n",numleaffaces, (int)(numleaffaces*sizeof(dleaffacesX[0])));
-        printf ("leafbrushes: %5i       size: %7i\n",numleafbrushes, (int)(numleafbrushes*sizeof(dleafbrushesX[0])));
-        printf ("edges:       %5i       size: %7i\n",numedges, (int)(numedges*sizeof(dedge_tx)));
+        printf ("nodes:       %7i        size: %7i\n", numnodes, (int)(numnodes*sizeof(dnode_tx)));
+        printf ("faces:       %7i        size: %7i\n",numfaces, (int)(numfaces*sizeof(dface_tx)));
+        printf ("leafs:       %7i        size: %7i\n", numleafs, (int)(numleafs*sizeof(dleaf_tx)));
+        printf ("leaffaces:   %7i        size: %7i\n",numleaffaces, (int)(numleaffaces*sizeof(dleaffacesX[0])));
+        printf ("leafbrushes: %7i        size: %7i\n",numleafbrushes, (int)(numleafbrushes*sizeof(dleafbrushesX[0])));
+        printf ("edges:       %7i        size: %7i\n",numedges, (int)(numedges*sizeof(dedge_tx)));
     }
     else
     {
-        printf ("nodes:       %5i       size: %7i\n", numnodes, (int)(numnodes*sizeof(dnode_t)));
-        printf ("faces:       %5i       size: %7i\n", numfaces, (int)(numfaces*sizeof(dface_t)));
-        printf ("leafs:       %5i       size: %7i\n", numleafs, (int)(numleafs*sizeof(dleaf_t)));
-        printf ("leaffaces:   %5i       size: %7i\n", numleaffaces, (int)(numleaffaces*sizeof(dleaffaces[0])));
-        printf ("leafbrushes: %5i       size: %7i\n", numleafbrushes, (int)(numleafbrushes*sizeof(dleafbrushes[0])));
-        printf ("edges:       %5i       size: %7i\n", numedges, (int)(numedges*sizeof(dedge_t)));
+        printf ("nodes:       %7i        size: %7i\n", numnodes, (int)(numnodes*sizeof(dnode_t)));
+        printf ("faces:       %7i        size: %7i\n", numfaces, (int)(numfaces*sizeof(dface_t)));
+        printf ("leafs:       %7i        size: %7i\n", numleafs, (int)(numleafs*sizeof(dleaf_t)));
+        printf ("leaffaces:   %7i        size: %7i\n", numleaffaces, (int)(numleaffaces*sizeof(dleaffaces[0])));
+        printf ("leafbrushes: %7i        size: %7i\n", numleafbrushes, (int)(numleafbrushes*sizeof(dleafbrushes[0])));
+        printf ("edges:       %7i        size: %7i\n", numedges, (int)(numedges*sizeof(dedge_t)));
     }
 
-        printf ("surfedges:   %5i       size: %7i\n",numsurfedges, (int)(numsurfedges*sizeof(dsurfedges[0])));
-        printf ("              ightdata size: %7i\n", lightdatasize);
-        printf ("               visdata size: %7i\n", visdatasize);
+        printf ("surfedges:   %7i        size: %7i\n",numsurfedges, (int)(numsurfedges*sizeof(dsurfedges[0])));
+        printf ("                  lightdata size: %7i\n", lightdatasize);
+        printf ("                    visdata size: %7i\n", visdatasize);
 }
 
 
