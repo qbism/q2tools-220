@@ -56,38 +56,38 @@ typedef struct {
 
 void ByteSwapTri (tf_triangle *tri)
 {
-	int		i;
+	int32_t		i;
 
 	for (i=0 ; i<sizeof(tf_triangle)/4 ; i++)
 	{
-		((int *)tri)[i] = BigLong (((int *)tri)[i]);
+		((int32_t *)tri)[i] = BigLong (((int32_t *)tri)[i]);
 	}
 }
 
-void LoadTriangleList (char *filename, triangle_t **pptri, int *numtriangles)
+void LoadTriangleList (char *filename, triangle_t **pptri, int32_t *numtriangles)
 {
 	FILE        *input;
 	float       start;
 	char        name[256], tex[256];
-	int         i, count, magic;
+	int32_t         i, count, magic;
 	tf_triangle	tri;
 	triangle_t	*ptri;
-	int			iLevel;
-	int			exitpattern;
+	int32_t			iLevel;
+	int32_t			exitpattern;
 	float		t;
 
 	t = -FLOAT_START;
-	*((unsigned char *)&exitpattern + 0) = *((unsigned char *)&t + 3);
-	*((unsigned char *)&exitpattern + 1) = *((unsigned char *)&t + 2);
-	*((unsigned char *)&exitpattern + 2) = *((unsigned char *)&t + 1);
-	*((unsigned char *)&exitpattern + 3) = *((unsigned char *)&t + 0);
+	*((uint8_t *)&exitpattern + 0) = *((uint8_t *)&t + 3);
+	*((uint8_t *)&exitpattern + 1) = *((uint8_t *)&t + 2);
+	*((uint8_t *)&exitpattern + 2) = *((uint8_t *)&t + 1);
+	*((uint8_t *)&exitpattern + 3) = *((uint8_t *)&t + 0);
 
 	if ((input = fopen(filename, "rb")) == 0)
 		Error ("reader: could not open file '%s'", filename);
 
 	iLevel = 0;
 
-	fread(&magic, sizeof(int), 1, input);
+	fread(&magic, sizeof(int32_t), 1, input);
 	if (BigLong(magic) != MAGIC)
 		Error ("%s is not a Alias object separated triangle file, magic number is wrong.", filename);
 
@@ -98,8 +98,8 @@ void LoadTriangleList (char *filename, triangle_t **pptri, int *numtriangles)
 	while (feof(input) == 0) {
 		if (fread(&start,  sizeof(float), 1, input) < 1)
 			break;
-		*(int *)&start = BigLong(*(int *)&start);
-		if (*(int *)&start != exitpattern)
+		*(int32_t *)&start = BigLong(*(int32_t *)&start);
+		if (*(int32_t *)&start != exitpattern)
 		{
 			if (start == FLOAT_START) {
 				/* Start of an object or group of objects. */
@@ -114,7 +114,7 @@ void LoadTriangleList (char *filename, triangle_t **pptri, int *numtriangles)
 
 //				indent();
 //				fprintf(stdout,"OBJECT START: %s\n",name);
-				fread( &count, sizeof(int), 1, input);
+				fread( &count, sizeof(int32_t), 1, input);
 				count = BigLong(count);
 				++iLevel;
 				if (count != 0) {
@@ -157,13 +157,13 @@ void LoadTriangleList (char *filename, triangle_t **pptri, int *numtriangles)
 // read the triangles
 //
 		for (i = 0; i < count; ++i) {
-			int		j;
+			int32_t		j;
 
 			fread( &tri, sizeof(tf_triangle), 1, input );
 			ByteSwapTri (&tri);
 			for (j=0 ; j<3 ; j++)
 			{
-				int		k;
+				int32_t		k;
 
 				for (k=0 ; k<3 ; k++)
 				{

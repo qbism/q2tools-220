@@ -28,15 +28,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 extern	char	token[MAXTOKEN];
 extern	char	*scriptbuffer,*script_p,*scriptend_p;
-extern	int		grabbed;
-extern	int		scriptline;
+extern	int32_t		grabbed;
+extern	int32_t		scriptline;
 extern	qboolean	endofscript;
 
 extern char brush_info[2000];
 void MarkBrushBegin();
 
 void LoadScriptFile (char *filename);
-void ParseFromMemory (char *buffer, int size);
+void ParseFromMemory (char *buffer, int32_t size);
 
 qboolean GetToken (qboolean crossline);
 void UnGetToken (void);

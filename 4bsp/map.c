@@ -22,14 +22,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 extern qboolean onlyents;
 
-int			nummapbrushes;
+int32_t			nummapbrushes;
 mapbrush_t	mapbrushes[MAX_MAP_BRUSHES_QBSP];
 
-int			nummapbrushsides;
+int32_t			nummapbrushsides;
 side_t		brushsides[MAX_MAP_SIDES];
 brush_texture_t	side_brushtextures[MAX_MAP_SIDES];
 
-int			nummapplanes;
+int32_t			nummapplanes;
 plane_t		mapplanes[MAX_MAP_PLANES_QBSP];
 
 #define	PLANE_HASHES	1024
@@ -40,14 +40,14 @@ vec3_t		map_mins, map_maxs;
 
 void TestExpandBrushes (void);
 
-int		c_boxbevels;
-int		c_edgebevels;
+int32_t		c_boxbevels;
+int32_t		c_edgebevels;
 
-int		c_areaportals;
+int32_t		c_areaportals;
 
-int		c_clipbrushes;
+int32_t		c_clipbrushes;
 
-int g_nMapFileVersion = 0;		// DarkEssence: variable for check #mapversion
+int32_t g_nMapFileVersion = 0;		// DarkEssence: variable for check #mapversion
 // #mapversion in search to find in code
 /*
 =============================================================================
@@ -63,7 +63,7 @@ PLANE FINDING
 PlaneTypeForNormal
 =================
 */
-int	PlaneTypeForNormal (vec3_t normal)
+int32_t	PlaneTypeForNormal (vec3_t normal)
 {
     vec_t	ax, ay, az;
 
@@ -119,9 +119,9 @@ AddPlaneToHash
 */
 void	AddPlaneToHash (plane_t *p)
 {
-    int		hash;
+    int32_t		hash;
 
-    hash = (int)fabs(p->dist) / 8;
+    hash = (int32_t)fabs(p->dist) / 8;
     hash &= (PLANE_HASHES-1);
 
     p->hash_chain = planehash[hash];
@@ -133,7 +133,7 @@ void	AddPlaneToHash (plane_t *p)
 CreateNewFloatPlane
 ================
 */
-int CreateNewFloatPlane (vec3_t normal, vec_t dist, int bnum)
+int32_t CreateNewFloatPlane (vec3_t normal, vec_t dist, int32_t bnum)
 {
     plane_t	*p, temp;
 
@@ -186,7 +186,7 @@ SnapVector
 */
 void	SnapVector (vec3_t normal)
 {
-    int		i;
+    int32_t		i;
 
     for (i=0 ; i<3 ; i++)
     {
@@ -225,14 +225,14 @@ FindFloatPlane
 =============
 */
 
-int		FindFloatPlane (vec3_t normal, vec_t dist, int bnum)
+int32_t		FindFloatPlane (vec3_t normal, vec_t dist, int32_t bnum)
 {
-    int		i;
+    int32_t		i;
     plane_t	*p;
-    int		hash, h;
+    int32_t		hash, h;
 
     SnapPlane (normal, &dist);
-    hash = (int)fabs(dist) / 8;
+    hash = (int32_t)fabs(dist) / 8;
     hash &= (PLANE_HASHES-1);
 
     // search the border bins as well
@@ -254,7 +254,7 @@ int		FindFloatPlane (vec3_t normal, vec_t dist, int bnum)
 PlaneFromPoints
 ================
 */
-int PlaneFromPoints (vec3_t p0, vec3_t p1, vec3_t p2, mapbrush_t *b)
+int32_t PlaneFromPoints (vec3_t p0, vec3_t p1, vec3_t p2, mapbrush_t *b)
 {
     vec3_t	t1, t2, normal;
     vec_t	dist;
@@ -278,12 +278,12 @@ int PlaneFromPoints (vec3_t p0, vec3_t p1, vec3_t p2, mapbrush_t *b)
 BrushContents
 ===========
 */
-int	BrushContents (mapbrush_t *b)
+int32_t	BrushContents (mapbrush_t *b)
 {
-    int			contents;
+    int32_t			contents;
     side_t		*s;
-    int			i;
-    int			trans;
+    int32_t			i;
+    int32_t			trans;
 
     s = &b->original_sides[0];
     contents = s->contents;
@@ -328,8 +328,8 @@ against axial bounding boxes
 */
 void AddBrushBevels (mapbrush_t *b)
 {
-    int		axis, dir;
-    int		i, j, k, l, order;
+    int32_t		axis, dir;
+    int32_t		i, j, k, l, order;
     side_t	sidetemp;
     brush_texture_t	tdtemp;
     side_t	*s, *s2;
@@ -491,7 +491,7 @@ makes basewindigs for sides and mins / maxs for the brush
 */
 qboolean MakeBrushWindings (mapbrush_t *ob)
 {
-    int			i, j;
+    int32_t			i, j;
     winding_t	*w;
     side_t		*side;
     plane_t		*plane;
@@ -552,10 +552,10 @@ ParseBrush
 void ParseBrush (entity_t *mapent)
 {
     mapbrush_t		*b;
-    int			i,j, k;
-    int			mt;
+    int32_t			i,j, k;
+    int32_t			mt;
     side_t		*side, *s2;
-    int			planenum;
+    int32_t			planenum;
     brush_texture_t	td;
     vec3_t		planepts[3];
     vec_t		UVaxis[6];  // DarkEssence: UV axis in 220 #mapversion
@@ -817,7 +817,7 @@ void ParseBrush (entity_t *mapent)
         VectorAdd (b->mins, b->maxs, origin);
         VectorScale (origin, 0.5, origin);
 
-        sprintf (string, "%i %i %i", (int)origin[0], (int)origin[1], (int)origin[2]);
+        sprintf (string, "%i %i %i", (int32_t)origin[0], (int32_t)origin[1], (int32_t)origin[2]);
         SetKeyValue (&entities[b->entitynum], "origin", string);
 
         VectorCopy (origin, entities[b->entitynum].origin);
@@ -846,10 +846,10 @@ Used by func_group and func_areaportal
 */
 void MoveBrushesToWorld (entity_t *mapent)
 {
-    int			newbrushes;
-    int			worldbrushes;
+    int32_t			newbrushes;
+    int32_t			worldbrushes;
     mapbrush_t	*temp;
-    int			i;
+    int32_t			i;
 
     // this is pretty gross, because the brushes are expected to be
     // in linear order for each entity
@@ -946,10 +946,10 @@ qboolean	ParseMapEntity (void)
     //
     if (mapent->origin[0] || mapent->origin[1] || mapent->origin[2])
     {
-        for (int i = 0; i < mapent->numbrushes; i++)
+        for (int32_t i = 0; i < mapent->numbrushes; i++)
         {
             b = &mapbrushes[mapent->firstbrush + i];
-            for (int j = 0; j < b->numsides; j++)
+            for (int32_t j = 0; j < b->numsides; j++)
             {
                 side_t *s = &b->original_sides[j];
                 const vec_t newdist = mapplanes[s->planenum].dist - DotProduct (mapplanes[s->planenum].normal, mapent->origin);
@@ -1006,7 +1006,7 @@ LoadMapFile
 */
 void LoadMapFile (char *filename)
 {
-    int		i;
+    int32_t		i;
 
     qprintf ("--- LoadMapFile ---\n");
 
@@ -1057,7 +1057,7 @@ void TestExpandBrushes (void)
 {
     FILE	*f;
     side_t	*s;
-    int		i, j, bn;
+    int32_t		i, j, bn;
     winding_t	*w;
     char	*name = "expanded.map";
     mapbrush_t	*brush;

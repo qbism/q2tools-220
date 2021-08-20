@@ -35,13 +35,13 @@ typedef struct
 {
     char	filename[1024];
     char    *buffer,*script_p,*end_p;
-    int     line;
+    int32_t     line;
 } script_t;
 
 #define	MAX_INCLUDES	8
 script_t	scriptstack[MAX_INCLUDES];
 script_t	*script;
-int			scriptline;
+int32_t			scriptline;
 
 char    token[MAXTOKEN];
 qboolean endofscript;
@@ -49,7 +49,7 @@ qboolean tokenready;                     // only true if UnGetToken was just cal
 
 //qb: brush info from AA tools
 char brush_info[2000] = "No brushes processed yet. Look near beginning of map";
-static int brush_begin = 1;
+static int32_t brush_begin = 1;
 
 void MarkBrushBegin()
 {
@@ -72,7 +72,7 @@ AddScriptToStack
 */
 void AddScriptToStack (char *filename)
 {
-    int            size;
+    int32_t            size;
 
     script++;
     if (script == &scriptstack[MAX_INCLUDES])
@@ -110,7 +110,7 @@ void LoadScriptFile (char *filename)
 ParseFromMemory
 ==============
 */
-void ParseFromMemory (char *buffer, int size)
+void ParseFromMemory (char *buffer, int32_t size)
 {
     script = scriptstack;
     script++;

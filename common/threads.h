@@ -18,12 +18,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 ===========================================================================
 */
 
-extern	int		numthreads;
+extern	int32_t		numthreads;
 
 void ThreadSetDefault (void);
-int	GetThreadWork (void);
-void RunThreadsOnIndividual (int workcnt, qboolean showpacifier, void(*func)(int));
-void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int));
+int32_t	GetThreadWork (void);
+void RunThreadsOnIndividual (int32_t workcnt, qboolean showpacifier, void(*func)(int32_t));
+void RunThreadsOn (int32_t workcnt, qboolean showpacifier, void(*func)(int32_t));
 void ThreadLock (void);
 void ThreadUnlock (void);
 

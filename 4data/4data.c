@@ -48,19 +48,19 @@ char		*trifileext;
 =======================================================
 */
 
-unsigned Com_BlockChecksum (void *buffer, int length);
+unsigned Com_BlockChecksum (void *buffer, int32_t length);
 
 typedef struct
 {
 	char	name[56];
-	int		filepos, filelen;
+	int32_t		filepos, filelen;
 } packfile_t;
 
 typedef struct
 {
 	char	id[4];
-	int		dirofs;
-	int		dirlen;
+	int32_t		dirofs;
+	int32_t		dirlen;
 } packheader_t;
 
 packfile_t		pfiles[16384];
@@ -100,7 +100,7 @@ the pak file.
 */
 void ReleaseFile (char *filename)
 {
-	int		len;
+	int32_t		len;
 	byte	*buf;
 	char	source[1024];
 	char	dest[1200];
@@ -164,9 +164,9 @@ FinishPak
 */
 void FinishPak (void)
 {
-	int		dirlen;
-	int		d;
-	int		i;
+	int32_t		dirlen;
+	int32_t		d;
+	int32_t		i;
 	unsigned	checksum;
 
 	if (!g_pak)
@@ -221,7 +221,7 @@ PackDirectory_r
 void PackDirectory_r (char *dir)
 {
 	struct _finddata_t fileinfo;
-	int		handle;
+	int32_t		handle;
 	char	dirstring[1024];
 	char	filename[1024];
 
@@ -262,9 +262,9 @@ void PackDirectory_r (char *dir)
 #else
 	struct dirent **namelist, *ent;
 #endif
-	int		count;
+	int32_t		count;
 	struct stat st;
-	int			i;
+	int32_t			i;
 	char		fullname[1024];
 	char		dirstring[1400];
 	char		*name;
@@ -315,12 +315,12 @@ void Cmd_Dir (void)
 //========================================================================
 
 #define	MAX_RTEX	16384
-int		numrtex;
+int32_t		numrtex;
 char	rtex[MAX_RTEX][64];
 
 void ReleaseTexture (char *name)
 {
-	int		i;
+	int32_t		i;
 	char	path[1024];
 
 	for (i=0 ; i<numrtex ; i++)
@@ -349,7 +349,7 @@ build a list of all textures used, which are then released.
 void Cmd_Maps (void)
 {
 	char	map[2200];
-	int		i;
+	int32_t		i;
 
 	while (TokenAvailable ())
 	{
@@ -466,9 +466,9 @@ void ParseScript (void)
 main
 ==============
 */
-int main (int argc, char **argv)
+int32_t main (int32_t argc, char **argv)
 {
-	static	int		i;		// VC4.2 compiler bug if auto...
+	static	int32_t		i;		// VC4.2 compiler bug if auto...
 	char	path[1024];
 
 	ExpandWildcards (&argc, &argv);

@@ -35,13 +35,13 @@ Save out name.prt for qvis to read
 extern qboolean use_qbsp;
 
 FILE	*pf;
-int		num_visclusters;				// clusters the player can be in
-int		num_visportals;
+int32_t		num_visclusters;				// clusters the player can be in
+int32_t		num_visportals;
 
 void WriteFloat (FILE *f, vec_t v)
 {
     if ( fabs(v - Q_rint(v)) < 0.001 )
-        fprintf (f,"%i ",(int)Q_rint(v));
+        fprintf (f,"%i ",(int32_t)Q_rint(v));
     else
         fprintf (f,"%f ",v);
 }
@@ -53,7 +53,7 @@ WritePortalFile_r
 */
 void WritePortalFile_r (node_t *node)
 {
-    int			i, s;
+    int32_t			i, s;
     portal_t	*p;
     winding_t	*w;
     vec3_t		normal;
@@ -113,7 +113,7 @@ FillLeafNumbers_r
 All of the leafs under node will have the same cluster
 ================
 */
-void FillLeafNumbers_r (node_t *node, int num)
+void FillLeafNumbers_r (node_t *node, int32_t num)
 {
     if (node->planenum == PLANENUM_LEAF)
     {
@@ -226,7 +226,7 @@ void FinishVisPortals_r (node_t *node)
 }
 
 
-int		clusterleaf;
+int32_t		clusterleaf;
 void SaveClusters_r (node_t *node)
 {
     if (node->planenum == PLANENUM_LEAF)

@@ -21,18 +21,18 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "qbsp.h"
 
 
-int		c_nodes;
-int		c_nonvis;
-int		c_active_brushes;
+int32_t		c_nodes;
+int32_t		c_nonvis;
+int32_t		c_active_brushes;
 
 #define	PSIDE_FRONT			1
 #define	PSIDE_BACK			2
 #define	PSIDE_BOTH			(PSIDE_FRONT|PSIDE_BACK)
 #define	PSIDE_FACING		4
 
-int BrushMostlyOnSide (bspbrush_t *brush, plane_t *plane); //qb: GDD tools
+int32_t BrushMostlyOnSide (bspbrush_t *brush, plane_t *plane); //qb: GDD tools
 
-void FindBrushInTree (node_t *node, int brushnum)
+void FindBrushInTree (node_t *node, int32_t brushnum)
 {
     bspbrush_t	*b;
 
@@ -57,7 +57,7 @@ Sets the mins/maxs based on the windings
 */
 void BoundBrush (bspbrush_t *brush)
 {
-    int			i, j;
+    int32_t			i, j;
     winding_t	*w;
 
     ClearBounds (brush->mins, brush->maxs);
@@ -79,7 +79,7 @@ CreateBrushWindings
 */
 void CreateBrushWindings (bspbrush_t *brush)
 {
-    int			i, j;
+    int32_t			i, j;
     winding_t	*w;
     side_t		*side;
     plane_t		*plane;
@@ -115,7 +115,7 @@ Creates a new axial brush
 bspbrush_t	*BrushFromBounds (vec3_t mins, vec3_t maxs)
 {
     bspbrush_t	*b;
-    int			i;
+    int32_t			i;
     vec3_t		normal;
     vec_t		dist;
 
@@ -146,7 +146,7 @@ BrushVolume
 */
 vec_t BrushVolume (bspbrush_t *brush)
 {
-    int			i;
+    int32_t			i;
     winding_t	*w;
     vec3_t		corner;
     vec_t		d, area, volume;
@@ -191,9 +191,9 @@ vec_t BrushVolume (bspbrush_t *brush)
 CountBrushList
 ================
 */
-int	CountBrushList (bspbrush_t *brushes)
+int32_t	CountBrushList (bspbrush_t *brushes)
 {
-    int	c;
+    int32_t	c;
 
     c = 0;
     for ( ; brushes ; brushes = brushes->next)
@@ -238,10 +238,10 @@ node_t *AllocNode (void)
 AllocBrush
 ================
 */
-bspbrush_t *AllocBrush (int numsides)
+bspbrush_t *AllocBrush (int32_t numsides)
 {
     bspbrush_t	*bb;
-    int			c;
+    int32_t			c;
 
     c = (intptr_t)&(((bspbrush_t *)0)->sides[numsides]);
     bb = malloc(c);
@@ -258,7 +258,7 @@ FreeBrush
 */
 void FreeBrush (bspbrush_t *brushes)
 {
-    int			i;
+    int32_t			i;
 
     for (i=0 ; i<brushes->numsides ; i++)
         if (brushes->sides[i].winding)
@@ -296,8 +296,8 @@ Duplicates the brush, the sides, and the windings
 bspbrush_t *CopyBrush (bspbrush_t *brush)
 {
     bspbrush_t *newbrush;
-    int			size;
-    int			i;
+    int32_t			size;
+    int32_t			i;
 
     size = (intptr_t)&(((bspbrush_t *)0)->sides[brush->numsides]);
 
@@ -347,10 +347,10 @@ BoxOnPlaneSide
 Returns PSIDE_FRONT, PSIDE_BACK, or PSIDE_BOTH
 ==============
 */
-int BoxOnPlaneSide (vec3_t mins, vec3_t maxs, plane_t *plane)
+int32_t BoxOnPlaneSide (vec3_t mins, vec3_t maxs, plane_t *plane)
 {
-    int		side;
-    int		i;
+    int32_t		side;
+    int32_t		i;
     vec3_t	corners[2];
     vec_t	dist1, dist2;
 
@@ -398,11 +398,11 @@ QuickTestBrushToPlanenum
 
 ============
 */
-int	QuickTestBrushToPlanenum (bspbrush_t *brush, int planenum, int *numsplits)
+int32_t	QuickTestBrushToPlanenum (bspbrush_t *brush, int32_t planenum, int32_t *numsplits)
 {
-    int			i, num;
+    int32_t			i, num;
     plane_t		*plane;
-    int			s;
+    int32_t			s;
 
     *numsplits = 0;
 
@@ -439,15 +439,15 @@ TestBrushToPlanenum
 ============
 */
 //qb: GDD tools detailsplit
-int	TestBrushToPlanenum (bspbrush_t *brush, int planenum,
-                         int *numsplits, qboolean *hintsplit, qboolean *detailsplit, int *epsilonbrush)
+int32_t	TestBrushToPlanenum (bspbrush_t *brush, int32_t planenum,
+                         int32_t *numsplits, qboolean *hintsplit, qboolean *detailsplit, int32_t *epsilonbrush)
 {
-    int			i, j, num;
+    int32_t			i, j, num;
     plane_t		*plane;
-    int			s;
+    int32_t			s;
     winding_t	*w;
     vec_t		d, d_front, d_back;
-    int			front, back;
+    int32_t			front, back;
 
     *numsplits = 0;
     *hintsplit = false;
@@ -549,10 +549,10 @@ qboolean WindingIsTiny (winding_t *w)
         return true;
     return false;
 #else
-    int		i, j;
+    int32_t		i, j;
     vec_t	len;
     vec3_t	delta;
-    int		edges;
+    int32_t		edges;
 
     edges = 0;
     for (i=0 ; i<w->numpoints ; i++)
@@ -580,7 +580,7 @@ from basewinding for plane
 */
 qboolean WindingIsHuge (winding_t *w)
 {
-    int		i, j;
+    int32_t		i, j;
 
     for (i=0 ; i<w->numpoints ; i++)
     {
@@ -601,7 +601,7 @@ Leafnode
 void LeafNode (node_t *node, bspbrush_t *brushes)
 {
     bspbrush_t	*b;
-    int			i;
+    int32_t			i;
 
     node->planenum = PLANENUM_LEAF;
     node->contents = 0;
@@ -631,7 +631,7 @@ void LeafNode (node_t *node, bspbrush_t *brushes)
 //============================================================
 
 //qb: GDD tools: brush info on error
-void CheckPlaneAgainstParents (int pnum, node_t *node, bspbrush_t	*brush)
+void CheckPlaneAgainstParents (int32_t pnum, node_t *node, bspbrush_t	*brush)
 {
     node_t	*p;
 
@@ -645,7 +645,7 @@ void CheckPlaneAgainstParents (int pnum, node_t *node, bspbrush_t	*brush)
     }
 }
 
-qboolean CheckPlaneAgainstVolume (int pnum, node_t *node)
+qboolean CheckPlaneAgainstVolume (int32_t pnum, node_t *node)
 {
     bspbrush_t	*front, *back;
     qboolean	good;
@@ -673,15 +673,15 @@ Returns NULL if there are no valid planes to split with..
 */
 side_t *SelectSplitSide (bspbrush_t *brushes, node_t *node)
 {
-    int			value, bestvalue;
+    int32_t			value, bestvalue;
     bspbrush_t	*brush, *test;
     side_t		*side, *bestside;
-    int			i, j, pass, numpasses;
-    int			pnum;
-    int			s;
-    int			front, back, both, facing, splits;
-    int			bsplits;
-    int			epsilonbrush;
+    int32_t			i, j, pass, numpasses;
+    int32_t			pnum;
+    int32_t			s;
+    int32_t			front, back, both, facing, splits;
+    int32_t			bsplits;
+    int32_t			epsilonbrush;
     qboolean	hintsplit, detailsplit;
 
     bestside = NULL;
@@ -819,12 +819,12 @@ BrushMostlyOnSide
 
 ==================
 */
-int BrushMostlyOnSide (bspbrush_t *brush, plane_t *plane)
+int32_t BrushMostlyOnSide (bspbrush_t *brush, plane_t *plane)
 {
-    int			i, j;
+    int32_t			i, j;
     winding_t	*w;
     vec_t		d, max;
-    int			side;
+    int32_t			side;
 
     max = 0;
     side = PSIDE_FRONT;
@@ -859,11 +859,11 @@ Generates two new brushes, leaving the original
 unchanged
 ================
 */
-void SplitBrush (bspbrush_t *brush, int planenum,
+void SplitBrush (bspbrush_t *brush, int32_t planenum,
                  bspbrush_t **front, bspbrush_t **back)
 {
     bspbrush_t	*b[2];
-    int			i, j;
+    int32_t			i, j;
     winding_t	*w, *cw[2], *midwinding;
     plane_t		*plane, *plane2;
     side_t		*s, *cs;
@@ -914,7 +914,7 @@ void SplitBrush (bspbrush_t *brush, int planenum,
     if (!w || WindingIsTiny (w) )
     {
         // the brush isn't really split
-        int		side;
+        int32_t		side;
 
         side = BrushMostlyOnSide (brush, plane);
         if (side == PSIDE_FRONT)
@@ -1031,7 +1031,7 @@ void SplitBrush (bspbrush_t *brush, int planenum,
 
     {
         vec_t	v1;
-        int		i;
+        int32_t		i;
 
         for (i=0 ; i<2 ; i++)
         {
@@ -1059,8 +1059,8 @@ void SplitBrushList (bspbrush_t *brushes,
 {
     bspbrush_t	*brush, *newbrush, *newbrush2;
     side_t		*side;
-    int			sides;
-    int			i;
+    int32_t			sides;
+    int32_t			i;
 
     *front = *back = NULL;
 
@@ -1126,7 +1126,7 @@ node_t *BuildTree_r (node_t *node, bspbrush_t *brushes)
 {
     node_t		*newnode;
     side_t		*bestside;
-    int			i;
+    int32_t			i;
     bspbrush_t	*children[2];
 
     if (numthreads == 1)
@@ -1184,10 +1184,10 @@ tree_t *BrushBSP (bspbrush_t *brushlist, vec3_t mins, vec3_t maxs)
 {
     node_t		*node;
     bspbrush_t	*b;
-    int			c_faces, c_nonvisfaces;
-    int			c_brushes;
+    int32_t			c_faces, c_nonvisfaces;
+    int32_t			c_brushes;
     tree_t		*tree;
-    int			i;
+    int32_t			i;
     vec_t		volume;
 
     qprintf ("--- BrushBSP ---\n");

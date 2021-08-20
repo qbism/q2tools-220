@@ -24,8 +24,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 extern qboolean use_qbsp;
 
-int			numportals;
-int			portalclusters;
+int32_t			numportals;
+int32_t			portalclusters;
 
 char		inbase[32];
 char		outbase[32];
@@ -33,22 +33,22 @@ char		outbase[32];
 portal_t	*portals;
 leaf_t		*leafs;
 
-int			c_portaltest, c_portalpass, c_portalcheck;
+int32_t			c_portaltest, c_portalpass, c_portalcheck;
 
 byte		*uncompressedvis;
 
 byte	*vismap, *vismap_p, *vismap_end;	// past visfile
-int		originalvismapsize;
+int32_t		originalvismapsize;
 
-int		leafbytes;				// (portalclusters+63)>>3
-int		leaflongs;
+int32_t		leafbytes;				// (portalclusters+63)>>3
+int32_t		leaflongs;
 
-int		portalbytes, portallongs;
+int32_t		portalbytes, portallongs;
 
 qboolean		fastvis;
 qboolean		nosort;
 
-int		totalvis;
+int32_t		totalvis;
 
 portal_t	*sorted_portals[MAX_MAP_PORTALS_QBSP*2];
 
@@ -73,10 +73,10 @@ void PlaneFromWinding (winding_t *w, plane_t *plane)
 NewWinding
 ==================
 */
-winding_t *NewWinding (int points)
+winding_t *NewWinding (int32_t points)
 {
     winding_t	*w;
-    int			size;
+    int32_t			size;
 
     if (points > MAX_POINTS_ON_WINDING)
         Error ("NewWinding: %i points", points);
@@ -92,14 +92,14 @@ winding_t *NewWinding (int points)
 
 void pw(winding_t *w)
 {
-    int		i;
+    int32_t		i;
     for (i=0 ; i<w->numpoints ; i++)
         printf ("(%5.1f, %5.1f, %5.1f)\n",w->points[i][0], w->points[i][1],w->points[i][2]);
 }
 
 void prl(leaf_t *l)
 {
-    int			i;
+    int32_t			i;
     portal_t	*p;
     plane_t		pl;
 
@@ -107,7 +107,7 @@ void prl(leaf_t *l)
     {
         p = l->portals[i];
         pl = p->plane;
-        printf ("portal %4i to leaf %4i : %7.1f : (%4.1f, %4.1f, %4.1f)\n",(int)(p-portals),p->leaf,pl.dist, pl.normal[0], pl.normal[1], pl.normal[2]);
+        printf ("portal %4i to leaf %4i : %7.1f : (%4.1f, %4.1f, %4.1f)\n",(int32_t)(p-portals),p->leaf,pl.dist, pl.normal[0], pl.normal[1], pl.normal[2]);
     }
 }
 
@@ -122,7 +122,7 @@ Sorts the portals from the least complex, so the later ones can reuse
 the earlier information.
 =============
 */
-int PComp (const void *a, const void *b)
+int32_t PComp (const void *a, const void *b)
 {
     if ( (*(portal_t **)a)->nummightsee == (*(portal_t **)b)->nummightsee)
         return 0;
@@ -132,7 +132,7 @@ int PComp (const void *a, const void *b)
 }
 void SortPortals (void)
 {
-    int		i;
+    int32_t		i;
 
     for (i=0 ; i<numportals*2 ; i++)
         sorted_portals[i] = &portals[i];
@@ -148,11 +148,11 @@ void SortPortals (void)
 LeafVectorFromPortalVector
 ==============
 */
-int LeafVectorFromPortalVector (byte *portalbits, byte *leafbits)
+int32_t LeafVectorFromPortalVector (byte *portalbits, byte *leafbits)
 {
-    int			i;
+    int32_t			i;
     portal_t	*p;
-    int			c_leafs;
+    int32_t			c_leafs;
 
 
     memset (leafbits, 0, leafbytes);
@@ -179,17 +179,17 @@ ClusterMerge
 Merges the portal visibility for a leaf
 ===============
 */
-void ClusterMerge (int leafnum)
+void ClusterMerge (int32_t leafnum)
 {
     leaf_t		*leaf;
     byte		portalvector[MAX_PORTALS_QBSP/8];
     byte		uncompressed[MAX_MAP_LEAFS_QBSP/8];
     byte		compressed[MAX_MAP_LEAFS_QBSP/8];
-    int			i, j;
-    int			numvis;
+    int32_t			i, j;
+    int32_t			numvis;
     byte		*dest;
     portal_t	*p;
-    int			pnum;
+    int32_t			pnum;
 
     // OR together all the portalvis bits
 
@@ -245,7 +245,7 @@ CalcPortalVis
 */
 void CalcPortalVis (void)
 {
-    int		i;
+    int32_t		i;
 
 // fastvis just uses mightsee for a very loose bound
     if (fastvis)
@@ -270,7 +270,7 @@ CalcVis
 */
 void CalcVis (void)
 {
-    int		i;
+    int32_t		i;
 
     RunThreadsOnIndividual (numportals*2, true, BasePortalVis);
 
@@ -292,7 +292,7 @@ void CalcVis (void)
 
 void SetPortalSphere (portal_t *p)
 {
-    int		i;
+    int32_t		i;
     vec3_t	total, dist;
     winding_t	*w;
     float	r, bestr;
@@ -326,14 +326,14 @@ LoadPortals
 */
 void LoadPortals (char *name)
 {
-    int			i, j;
+    int32_t			i, j;
     portal_t	*p;
     leaf_t		*l;
     char		magic[80];
     FILE		*f;
-    int			numpoints;
+    int32_t			numpoints;
     winding_t	*w;
-    int			leafnums[2];
+    int32_t			leafnums[2];
     plane_t		plane;
 
     if (!strcmp(name,"-"))
@@ -394,7 +394,7 @@ void LoadPortals (char *name)
         for (j=0 ; j<numpoints ; j++)
         {
             double	v[3];
-            int		k;
+            int32_t		k;
 
             // scanf into double, then assign to vec_t
             // so we don't care what size vec_t is
@@ -458,11 +458,11 @@ by ORing together all the PVS visible from a leaf
 */
 void CalcPHS (void)
 {
-    int		i, j, k, l, index;
-    int		bitbyte;
+    int32_t		i, j, k, l, index;
+    int32_t		bitbyte;
     long	*dest, *src;
     byte	*scan;
-    int		count;
+    int32_t		count;
     byte	uncompressed[MAX_MAP_LEAFS_QBSP/8];
     byte	compressed[MAX_MAP_LEAFS_QBSP/8];
 
@@ -520,12 +520,12 @@ void CalcPHS (void)
 main
 ===========
 */
-int main (int argc, char **argv)
+int32_t main (int32_t argc, char **argv)
 {
     char	portalfile[1024];
     char		source[1024];
     char		name[1060];
-    int		i;
+    int32_t		i;
 
     printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<< 4vis >>>>>>>>>>>>>>>>>>>>>>>>\n" );
     printf( "visibility compiler build " __DATE__ "\n" );

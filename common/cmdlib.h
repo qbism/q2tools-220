@@ -35,7 +35,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #ifndef __BYTEBOOL__
 #define __BYTEBOOL__
 typedef enum {false, true} qboolean;
-typedef unsigned char byte;
+typedef uint8_t byte;
 #endif
 
 // the dec offsetof macro doesnt work very well...
@@ -43,17 +43,17 @@ typedef unsigned char byte;
 
 
 // set these before calling CheckParm
-extern int myargc;
+extern int32_t myargc;
 extern char **myargv;
 
 char *strtoupper (char *in);
 char *strlower (char *in);
-int Q_strncasecmp (char *s1, char *s2, int n);
-int Q_strcasecmp (char *s1, char *s2);
+int32_t Q_strncasecmp (char *s1, char *s2, int32_t n);
+int32_t Q_strcasecmp (char *s1, char *s2);
 void Q_getwd (char *out);
 
-int Q_filelength (FILE *f);
-int	FileTime (char *path);
+int32_t Q_filelength (FILE *f);
+int32_t	FileTime (char *path);
 
 void	Q_mkdir (char *path);
 
@@ -69,17 +69,17 @@ char *ExpandPathAndArchive (char *path);
 double I_FloatTime (void);
 
 void	Error (char *error, ...);
-int		CheckParm (char *check);
+int32_t		CheckParm (char *check);
 
 FILE	*SafeOpenWrite (char *filename);
 FILE	*SafeOpenRead (char *filename);
-void	SafeRead (FILE *f, void *buffer, int count);
-void	SafeWrite (FILE *f, void *buffer, int count);
+void	SafeRead (FILE *f, void *buffer, int32_t count);
+void	SafeWrite (FILE *f, void *buffer, int32_t count);
 
-int		LoadFile (char *filename, void **bufferptr);
-int		TryLoadFile (char *filename, void **bufferptr, int print_error);
-int		TryLoadFileFromPak (char *filename, void **bufferptr, char *gamedir);
-void	SaveFile (char *filename, void *buffer, int count);
+int32_t		LoadFile (char *filename, void **bufferptr);
+int32_t		TryLoadFile (char *filename, void **bufferptr, int32_t print_error);
+int32_t		TryLoadFileFromPak (char *filename, void **bufferptr, char *gamedir);
+void	SaveFile (char *filename, void *buffer, int32_t count);
 qboolean	FileExists (char *filename);
 
 void 	DefaultExtension (char *path, char *extension);
@@ -91,12 +91,12 @@ void 	ExtractFilePath (char *path, char *dest);
 void 	ExtractFileBase (char *path, char *dest);
 void	ExtractFileExtension (char *path, char *dest);
 
-int 	ParseNum (char *str);
+int32_t 	ParseNum (char *str);
 
 short	BigShort (short l);
 short	LittleShort (short l);
-int		BigLong (int l);
-int		LittleLong (int l);
+int32_t		BigLong (int32_t l);
+int32_t		LittleLong (int32_t l);
 float	BigFloat (float l);
 float	LittleFloat (float l);
 char *COM_Parse (char *data);
@@ -107,9 +107,9 @@ extern	qboolean	com_eof;
 char *copystring(char *s);
 
 
-void CRC_Init(unsigned short *crcvalue);
-void CRC_ProcessByte(unsigned short *crcvalue, byte data);
-unsigned short CRC_Value(unsigned short crcvalue);
+void CRC_Init(uint16_t *crcvalue);
+void CRC_ProcessByte(uint16_t *crcvalue, byte data);
+uint16_t CRC_Value(uint16_t crcvalue);
 
 void	CreatePath (char *path);
 void	QCopyFile (char *from, char *to);
@@ -121,14 +121,14 @@ extern	char			archivedir[1024];
 extern	qboolean verbose;
 void qprintf (char *format, ...);
 
-void ExpandWildcards (int *argc, char ***argv);
+void ExpandWildcards (int32_t *argc, char ***argv);
 
 
 // for compression routines
 typedef struct
 {
 	byte	*data;
-	int		count;
+	int32_t		count;
 } cblock_t;
 
 

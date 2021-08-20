@@ -31,14 +31,14 @@ This isn't used anymore, but I'm keeping it around...
 =============================================================================
 */
 
-unsigned short	alphamap[32*32*32];
-unsigned char	inverse16to8table[65536];
+uint16_t	alphamap[32*32*32];
+uint8_t	inverse16to8table[65536];
 
 /*
-static int FindNearestColor( unsigned int color )
+static int32_t FindNearestColor( uint32_t color )
 {
-	int i;
-	int closest_so_far = 0;
+	int32_t i;
+	int32_t closest_so_far = 0;
 	float closest_distance_so_far = 100000000;
 	float d;
 	float r[2], g[2], b[2];
@@ -69,20 +69,20 @@ static int FindNearestColor( unsigned int color )
 }
 */
 
-extern byte BestColor( int, int, int, int, int );
+extern byte BestColor( int32_t, int32_t, int32_t, int32_t, int32_t );
 
 void Inverse16_BuildTable( void )
 {
-	int i;
+	int32_t i;
 
 	/*
 	** create the 16-to-8 table
 	*/
 	for ( i = 0; i < 65536; i++ )
 	{
-		int r = i & 31;
-		int g = ( i >> 5 ) & 63;
-		int b = ( i >> 11 ) & 31;
+		int32_t r = i & 31;
+		int32_t g = ( i >> 5 ) & 63;
+		int32_t b = ( i >> 11 ) & 31;
 
 		r <<= 3;
 		g <<= 2;
@@ -92,9 +92,9 @@ void Inverse16_BuildTable( void )
 	}
 }
 
-void Alphalight_Thread (int i)
+void Alphalight_Thread (int32_t i)
 {
-	int		j;
+	int32_t		j;
 	float	r, g, b;
 	float	mr, mg, mb, ma;
 	float	distortion, bestdistortion;

@@ -34,11 +34,11 @@ This is because NT won't let us change index 0, so any palette
 animation leaves those pixels untouched.
 ==============
 */
-void RemapZero (byte *pixels, byte *palette, int width, int height)
+void RemapZero (byte *pixels, byte *palette, int32_t width, int32_t height)
 {
-	int		i, c;
-	int		alt_zero;
-	int		value, best;
+	int32_t		i, c;
+	int32_t		alt_zero;
+	int32_t		value, best;
 
 	alt_zero = 0;
 	best = 9999999;
@@ -67,7 +67,7 @@ $grab filename x y width height
 */
 void Cmd_Grab (void)
 {
-	int             xl,yl,w,h,y;
+	int32_t             xl,yl,w,h,y;
 	byte			*cropped;
 	char			savename[2400];
 	char			dest[1200];
@@ -126,7 +126,7 @@ $grab filename x y width height
 */
 void Cmd_Raw (void)
 {
-	int             xl,yl,w,h,y;
+	int32_t             xl,yl,w,h,y;
 	byte			*cropped;
 	char			savename[2100];
 	char			dest[1200];
@@ -183,12 +183,12 @@ COLORMAP GRABBING
 BestColor
 ===============
 */
-byte BestColor (int r, int g, int b, int start, int stop)
+byte BestColor (int32_t r, int32_t g, int32_t b, int32_t start, int32_t stop)
 {
-	int	i;
-	int	dr, dg, db;
-	int	bestdistortion, distortion;
-	int	bestcolor;
+	int32_t	i;
+	int32_t	dr, dg, db;
+	int32_t	bestdistortion, distortion;
+	int32_t	bestcolor;
 	byte	*pal;
 
 //
@@ -200,9 +200,9 @@ byte BestColor (int r, int g, int b, int start, int stop)
 	pal = colormap_palette + start*3;
 	for (i=start ; i<= stop ; i++)
 	{
-		dr = r - (int)pal[0];
-		dg = g - (int)pal[1];
-		db = b - (int)pal[2];
+		dr = r - (int32_t)pal[0];
+		dg = g - (int32_t)pal[1];
+		db = b - (int32_t)pal[2];
 		pal += 3;
 		distortion = dr*dr + dg*dg + db*db;
 		if (distortion < bestdistortion)
@@ -233,8 +233,8 @@ $colormap filename
 */
 void Cmd_Colormap (void)
 {
-	int		levels, brights;
-	int		l, c;
+	int32_t		levels, brights;
+	int32_t		l, c;
 	float	frac, red, green, blue;
 	float	range;
 	byte	*cropped, *lump_p;
@@ -279,9 +279,9 @@ void Cmd_Colormap (void)
 			green = lbmpalette[c*3+1];
 			blue = lbmpalette[c*3+2];
 
-			red = (int)(red*frac+0.5);
-			green = (int)(green*frac+0.5);
-			blue = (int)(blue*frac+0.5);
+			red = (int32_t)(red*frac+0.5);
+			green = (int32_t)(green*frac+0.5);
+			blue = (int32_t)(blue*frac+0.5);
 
 //
 // note: 254 instead of 255 because 255 is the transparent color, and we
@@ -330,7 +330,7 @@ MIPTEX GRABBING
 
 byte	pixdata[256];
 
-int		d_red, d_green, d_blue;
+int32_t		d_red, d_green, d_blue;
 
 byte	palmap[32][32][32];
 qboolean	palmap_built;
@@ -340,9 +340,9 @@ qboolean	palmap_built;
 FindColor
 =============
 */
-int FindColor (int r, int g, int b)
+int32_t FindColor (int32_t r, int32_t g, int32_t b)
 {
-	int		bestcolor;
+	int32_t		bestcolor;
 
 	if (r > 255)
 		r = 255;
@@ -369,8 +369,8 @@ int FindColor (int r, int g, int b)
 void BuildPalmap (void)
 {
 #ifdef TABLECOLORS
-	int		r, g, b;
-	int		bestcolor;
+	int32_t		r, g, b;
+	int32_t		bestcolor;
 
 	if (palmap_built)
 		return;
@@ -399,13 +399,13 @@ void BuildPalmap (void)
 AveragePixels
 =============
 */
-byte AveragePixels (int count)
+byte AveragePixels (int32_t count)
 {
-	int		r,g,b;
-	int		i;
-	int		vis;
-	int		pix;
-	int		bestcolor;
+	int32_t		r,g,b;
+	int32_t		i;
+	int32_t		vis;
+	int32_t		pix;
+	int32_t		bestcolor;
 	byte	*pal;
 
 	vis = 0;
@@ -436,9 +436,9 @@ byte AveragePixels (int count)
 
 	// error diffusion
 	pal = colormap_palette + bestcolor*3;
-	d_red = r - (int)pal[0];
-	d_green = g - (int)pal[1];
-	d_blue = b - (int)pal[2];
+	d_red = r - (int32_t)pal[0];
+	d_green = g - (int32_t)pal[1];
+	d_blue = b - (int32_t)pal[2];
 
 	return bestcolor;
 }
@@ -455,7 +455,7 @@ typedef enum
 typedef struct
 {
 	char	*name;
-	int		flags;
+	int32_t		flags;
 	parmtype_t	type;
 } mipparm_t;
 
@@ -507,14 +507,14 @@ SURF_WINDOW
 */
 void Cmd_Mip (void)
 {
-	int             x,y,xl,yl,xh,yh,w,h;
+	int32_t             x,y,xl,yl,xh,yh,w,h;
 	byte            *screen_p, *source;
-	int             linedelta;
+	int32_t             linedelta;
 	miptex_t		*qtex;
-	int				miplevel, mipstep;
-	int				xx, yy, pix;
-	int				count;
-	int				flags, value, contents;
+	int32_t				miplevel, mipstep;
+	int32_t				xx, yy, pix;
+	int32_t				count;
+	int32_t				flags, value, contents;
 	mipparm_t		*mp;
 
 	char			lumpname[64];
@@ -720,7 +720,7 @@ Cmd_Environment
 void Cmd_Environment (void)
 {
 	char	name[2100];
-	int		i, x, y;
+	int32_t		i, x, y;
 	byte	image[256*256];
 	byte	*tga;
 

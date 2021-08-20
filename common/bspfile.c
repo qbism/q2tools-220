@@ -31,66 +31,66 @@ void GetLeafNums (void);
 
 //qb: add qbsp types
 
-int			nummodels;
+int32_t			nummodels;
 dmodel_t	dmodels[MAX_MAP_MODELS_QBSP];
 
-int			visdatasize;
+int32_t			visdatasize;
 byte		dvisdata[MAX_MAP_VISIBILITY_QBSP];
 dvis_t		*dvis = (dvis_t *)dvisdata;
 
-int			lightdatasize;
+int32_t			lightdatasize;
 byte		dlightdata[MAX_MAP_LIGHTING_QBSP];
 
-int			entdatasize;
+int32_t			entdatasize;
 char		dentdata[MAX_MAP_ENTSTRING_QBSP];
 
-int			numleafs;
+int32_t			numleafs;
 dleaf_t	dleafs[MAX_MAP_LEAFS];
 dleaf_tx	dleafsX[MAX_MAP_LEAFS_QBSP];
 
-int			numplanes;
+int32_t			numplanes;
 dplane_t	dplanes[MAX_MAP_PLANES_QBSP];
 
-int			numvertexes;
+int32_t			numvertexes;
 dvertex_t	dvertexes[MAX_MAP_VERTS_QBSP];
 
-int			numnodes;
+int32_t			numnodes;
 dnode_t	dnodes[MAX_MAP_NODES];
 dnode_tx	dnodesX[MAX_MAP_NODES_QBSP];
 
-int			numtexinfo;
+int32_t			numtexinfo;
 texinfo_t	texinfo[MAX_MAP_TEXINFO_QBSP];
 
-int			numfaces;
+int32_t			numfaces;
 dface_t	dfaces[MAX_MAP_FACES];
 dface_tx	dfacesX[MAX_MAP_FACES_QBSP];
 
-int			numedges;
+int32_t			numedges;
 dedge_t	dedges[MAX_MAP_EDGES];
 dedge_tx	dedgesX[MAX_MAP_EDGES_QBSP];
 
-int			numleaffaces;
-unsigned short		dleaffaces[MAX_MAP_LEAFFACES];
-unsigned int		dleaffacesX[MAX_MAP_LEAFFACES_QBSP];
+int32_t			numleaffaces;
+uint16_t		dleaffaces[MAX_MAP_LEAFFACES];
+uint32_t		dleaffacesX[MAX_MAP_LEAFFACES_QBSP];
 
-int			numleafbrushes;
-unsigned short		dleafbrushes[MAX_MAP_LEAFBRUSHES];
-unsigned int		dleafbrushesX[MAX_MAP_LEAFBRUSHES_QBSP];
+int32_t			numleafbrushes;
+uint16_t		dleafbrushes[MAX_MAP_LEAFBRUSHES];
+uint32_t		dleafbrushesX[MAX_MAP_LEAFBRUSHES_QBSP];
 
-int			numsurfedges;
-int			dsurfedges[MAX_MAP_SURFEDGES_QBSP];
+int32_t			numsurfedges;
+int32_t			dsurfedges[MAX_MAP_SURFEDGES_QBSP];
 
-int			numbrushes;
+int32_t			numbrushes;
 dbrush_t	dbrushes[MAX_MAP_BRUSHES_QBSP];
 
-int			numbrushsides;
+int32_t			numbrushsides;
 dbrushside_t	dbrushsides[MAX_MAP_BRUSHSIDES];
 dbrushside_tx	dbrushsidesX[MAX_MAP_BRUSHSIDES_QBSP];
 
-int			numareas;
+int32_t			numareas;
 darea_t		dareas[MAX_MAP_AREAS];
 
-int			numareaportals;
+int32_t			numareaportals;
 dareaportal_t	dareaportals[MAX_MAP_AREAPORTALS];
 
 byte		dpop[256];
@@ -101,11 +101,11 @@ CompressVis
 
 ===============
 */
-int CompressVis (byte *vis, byte *dest)
+int32_t CompressVis (byte *vis, byte *dest)
 {
-    int		j;
-    int		rep;
-    int		visrow;
+    int32_t		j;
+    int32_t		rep;
+    int32_t		visrow;
     byte	*dest_p;
 
     dest_p = dest;
@@ -139,9 +139,9 @@ DecompressVis
 */
 void DecompressVis (byte *in, byte *decompressed)
 {
-    int		c;
+    int32_t		c;
     byte	*out;
-    int		row;
+    int32_t		row;
 
 //	row = (r_numvisleafs+7)>>3;
     row = (dvis->numclusters+7)>>3;
@@ -179,7 +179,7 @@ Byte swaps all data in a bsp file.
 */
 void SwapBSPFile (qboolean todisk)
 {
-    int				i, j;
+    int32_t				i, j;
     dmodel_t		*d;
 
 
@@ -413,9 +413,9 @@ void SwapBSPFile (qboolean todisk)
 
 dheader_t	*header;
 
-int CopyLump (int lump, void *dest, int size)
+int32_t CopyLump (int32_t lump, void *dest, int32_t size)
 {
-    int		length, ofs;
+    int32_t		length, ofs;
 
     length = header->lumps[lump].filelen;
     ofs = header->lumps[lump].fileofs;
@@ -435,7 +435,7 @@ LoadBSPFile
 */
 void	LoadBSPFile (char *filename)
 {
-    int			i;
+    int32_t			i;
 
 //
 // load the file header
@@ -444,7 +444,7 @@ void	LoadBSPFile (char *filename)
 
 // swap the header
     for (i=0 ; i< sizeof(dheader_t)/4 ; i++)
-        ((int *)header)[i] = LittleLong ( ((int *)header)[i]);
+        ((int32_t *)header)[i] = LittleLong ( ((int32_t *)header)[i]);
 
 //qb: qbsp
     use_qbsp = false;
@@ -528,9 +528,9 @@ Only loads the texinfo lump, so 4data can scan for textures
 */
 void	LoadBSPFileTexinfo (char *filename)
 {
-    int			i;
+    int32_t			i;
     FILE		*f;
-    int		length, ofs;
+    int32_t		length, ofs;
 
     header = malloc(sizeof(dheader_t));
 
@@ -540,7 +540,7 @@ void	LoadBSPFileTexinfo (char *filename)
 
 // swap the header
     for (i=0 ; i< sizeof(dheader_t)/4 ; i++)
-        ((int *)header)[i] = LittleLong ( ((int *)header)[i]);
+        ((int32_t *)header)[i] = LittleLong ( ((int32_t *)header)[i]);
 
     if (header->ident != IDBSPHEADER && header->ident != QBSPHEADER)
         Error ("%s is not an IBSP or QBSP file", filename);
@@ -569,7 +569,7 @@ void	LoadBSPFileTexinfo (char *filename)
 FILE		*wadfile;
 dheader_t	outheader;
 
-void AddLump (int lumpnum, void *data, int len)
+void AddLump (int32_t lumpnum, void *data, int32_t len)
 {
     lump_t *lump;
 
@@ -632,7 +632,7 @@ void	WriteBSPFile (char *filename)
     {
         AddLump (LUMP_BRUSHSIDES, dbrushsidesX, numbrushsides*sizeof(dbrushside_tx));
         AddLump (LUMP_LEAFFACES, dleaffacesX, numleaffaces*sizeof(dleaffacesX[0]));
-        AddLump (LUMP_LEAFBRUSHES, dleafbrushes, numleafbrushes*sizeof(dleafbrushesX[0]));
+        AddLump (LUMP_LEAFBRUSHES, dleafbrushesX, numleafbrushes*sizeof(dleafbrushesX[0]));
     }
     else
     {
@@ -678,40 +678,40 @@ void PrintBSPFileSizes (void)
 
              printf( "\n<<<<<<<<<<<<<<<<<< FILE STATS >>>>>>>>>>>>>>>>>>\n" );
 
-    printf ("models:      %7i        size: %7i\n", nummodels, (int)(nummodels*sizeof(dmodel_t)));
-    printf ("brushes:     %7i        size: %7i\n", numbrushes, (int)(numbrushes*sizeof(dbrush_t)));
+    printf ("models:      %7i        size: %7i\n", nummodels, (int32_t)(nummodels*sizeof(dmodel_t)));
+    printf ("brushes:     %7i        size: %7i\n", numbrushes, (int32_t)(numbrushes*sizeof(dbrush_t)));
 
     if (use_qbsp)
-    printf ("brushsides:  %7i        size: %7i\n", numbrushsides, (int)(numbrushsides*sizeof(dbrushside_tx)));
+    printf ("brushsides:  %7i        size: %7i\n", numbrushsides, (int32_t)(numbrushsides*sizeof(dbrushside_tx)));
     else
-    printf ("brushsides:  %7i        size: %7i\n", numbrushsides, (int)(numbrushsides*sizeof(dbrushside_t)));
+    printf ("brushsides:  %7i        size: %7i\n", numbrushsides, (int32_t)(numbrushsides*sizeof(dbrushside_t)));
 
-    printf ("planes:      %7i        size: %7i\n", numplanes, (int)(numplanes*sizeof(dplane_t)));
-    printf ("texinfo:     %7i        size: %7i\n", numtexinfo, (int)(numtexinfo*sizeof(texinfo_t)));
+    printf ("planes:      %7i        size: %7i\n", numplanes, (int32_t)(numplanes*sizeof(dplane_t)));
+    printf ("texinfo:     %7i        size: %7i\n", numtexinfo, (int32_t)(numtexinfo*sizeof(texinfo_t)));
     printf ("entdata:     %7i        size: %7i\n", num_entities, entdatasize);
 
-    printf ("vertices:    %7i        size: %7i\n", numvertexes, (int)(numvertexes*sizeof(dvertex_t)));
+    printf ("vertices:    %7i        size: %7i\n", numvertexes, (int32_t)(numvertexes*sizeof(dvertex_t)));
 
     if (use_qbsp)
     {
-        printf ("nodes:       %7i        size: %7i\n", numnodes, (int)(numnodes*sizeof(dnode_tx)));
-        printf ("faces:       %7i        size: %7i\n",numfaces, (int)(numfaces*sizeof(dface_tx)));
-        printf ("leafs:       %7i        size: %7i\n", numleafs, (int)(numleafs*sizeof(dleaf_tx)));
-        printf ("leaffaces:   %7i        size: %7i\n",numleaffaces, (int)(numleaffaces*sizeof(dleaffacesX[0])));
-        printf ("leafbrushes: %7i        size: %7i\n",numleafbrushes, (int)(numleafbrushes*sizeof(dleafbrushesX[0])));
-        printf ("edges:       %7i        size: %7i\n",numedges, (int)(numedges*sizeof(dedge_tx)));
+        printf ("nodes:       %7i        size: %7i\n", numnodes, (int32_t)(numnodes*sizeof(dnode_tx)));
+        printf ("faces:       %7i        size: %7i\n",numfaces, (int32_t)(numfaces*sizeof(dface_tx)));
+        printf ("leafs:       %7i        size: %7i\n", numleafs, (int32_t)(numleafs*sizeof(dleaf_tx)));
+        printf ("leaffaces:   %7i        size: %7i\n",numleaffaces, (int32_t)(numleaffaces*sizeof(dleaffacesX[0])));
+        printf ("leafbrushes: %7i        size: %7i\n",numleafbrushes, (int32_t)(numleafbrushes*sizeof(dleafbrushesX[0])));
+        printf ("edges:       %7i        size: %7i\n",numedges, (int32_t)(numedges*sizeof(dedge_tx)));
     }
     else
     {
-        printf ("nodes:       %7i        size: %7i\n", numnodes, (int)(numnodes*sizeof(dnode_t)));
-        printf ("faces:       %7i        size: %7i\n", numfaces, (int)(numfaces*sizeof(dface_t)));
-        printf ("leafs:       %7i        size: %7i\n", numleafs, (int)(numleafs*sizeof(dleaf_t)));
-        printf ("leaffaces:   %7i        size: %7i\n", numleaffaces, (int)(numleaffaces*sizeof(dleaffaces[0])));
-        printf ("leafbrushes: %7i        size: %7i\n", numleafbrushes, (int)(numleafbrushes*sizeof(dleafbrushes[0])));
-        printf ("edges:       %7i        size: %7i\n", numedges, (int)(numedges*sizeof(dedge_t)));
+        printf ("nodes:       %7i        size: %7i\n", numnodes, (int32_t)(numnodes*sizeof(dnode_t)));
+        printf ("faces:       %7i        size: %7i\n", numfaces, (int32_t)(numfaces*sizeof(dface_t)));
+        printf ("leafs:       %7i        size: %7i\n", numleafs, (int32_t)(numleafs*sizeof(dleaf_t)));
+        printf ("leaffaces:   %7i        size: %7i\n", numleaffaces, (int32_t)(numleaffaces*sizeof(dleaffaces[0])));
+        printf ("leafbrushes: %7i        size: %7i\n", numleafbrushes, (int32_t)(numleafbrushes*sizeof(dleafbrushes[0])));
+        printf ("edges:       %7i        size: %7i\n", numedges, (int32_t)(numedges*sizeof(dedge_t)));
     }
 
-        printf ("surfedges:   %7i        size: %7i\n",numsurfedges, (int)(numsurfedges*sizeof(dsurfedges[0])));
+        printf ("surfedges:   %7i        size: %7i\n",numsurfedges, (int32_t)(numsurfedges*sizeof(dsurfedges[0])));
         printf ("                  lightdata size: %7i\n", lightdatasize);
         printf ("                    visdata size: %7i\n", visdatasize);
 }
@@ -719,7 +719,7 @@ void PrintBSPFileSizes (void)
 
 //============================================
 
-int			num_entities;
+int32_t			num_entities;
 entity_t	entities[MAX_MAP_ENTITIES_QBSP];
 
 void StripTrailing (char *e)
@@ -834,7 +834,7 @@ void UnparseEntities (void)
     char	*buf, *end;
     epair_t	*ep;
     char	line[2060];
-    int		i;
+    int32_t		i;
     char	key[1024], value[1024];
 
     buf = dentdata;

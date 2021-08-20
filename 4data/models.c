@@ -24,14 +24,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 typedef struct
 {
-    int		numnormals;
+    int32_t		numnormals;
     vec3_t	normalsum;
 } vertexnormals_t;
 
 typedef struct
 {
     vec3_t		v;
-    int			lightnormalindex;
+    int32_t			lightnormalindex;
 } trivert_t;
 
 typedef struct
@@ -50,7 +50,7 @@ dmdl_t		model;
 
 float		scale_up;			// set by $scale
 vec3_t		adjust;				// set by $origin
-int			g_fixedwidth, g_fixedheight;	// set by $skinsize
+int32_t			g_fixedwidth, g_fixedheight;	// set by $skinsize
 
 
 //
@@ -60,14 +60,14 @@ vec3_t		base_xyz[MAX_VERTS];
 dstvert_t	base_st[MAX_VERTS];
 dtriangle_t	triangles[MAX_TRIANGLES];
 
-int			triangle_st[MAX_TRIANGLES][3][2];
+int32_t			triangle_st[MAX_TRIANGLES][3][2];
 
 // the command list holds counts, s/t values, and xyz indexes
 // that are valid for every frame
-int			commands[16384];
-int			numcommands;
-int			numglverts;
-int			used[MAX_TRIANGLES];
+int32_t			commands[16384];
+int32_t			numcommands;
+int32_t			numglverts;
+int32_t			used[MAX_TRIANGLES];
 
 char		g_skins[MAX_MD2SKINS][64];
 
@@ -131,9 +131,9 @@ WriteModelFile
 */
 void WriteModelFile (FILE *modelouthandle)
 {
-    int				i;
+    int32_t				i;
     dmdl_t			modeltemp;
-    int				j, k;
+    int32_t				j, k;
     frame_t			*in;
     daliasframe_t	*out;
     byte			buffer[MAX_VERTS*4+128];
@@ -154,7 +154,7 @@ void WriteModelFile (FILE *modelouthandle)
     // write out the model header
     //
     for (i=0 ; i<sizeof(dmdl_t)/4 ; i++)
-        ((int *)&modeltemp)[i] = LittleLong (((int *)&model)[i]);
+        ((int32_t *)&modeltemp)[i] = LittleLong (((int32_t *)&model)[i]);
 
     SafeWrite (modelouthandle, &modeltemp, sizeof(modeltemp));
 
@@ -180,7 +180,7 @@ void WriteModelFile (FILE *modelouthandle)
     //
     for (i=0 ; i<model.num_tris ; i++)
     {
-        int			j;
+        int32_t			j;
         dtriangle_t	tri;
 
         for (j=0 ; j<3 ; j++)
@@ -250,7 +250,7 @@ FinishModel
 void FinishModel (void)
 {
     FILE		*modelouthandle;
-    int			i;
+    int32_t			i;
     char		name[4000];
 
     if (!model.num_frames)
@@ -295,7 +295,7 @@ void FinishModel (void)
     printf ("%4d glverts\n", numglverts);
     printf ("%4d glcmd\n", model.num_glcmds);
     printf ("%4d skins\n", model.num_skins);
-    printf ("file size: %d\n", (int)ftell (modelouthandle) );
+    printf ("file size: %d\n", (int32_t)ftell (modelouthandle) );
     printf ("---------------------\n");
 
     fclose (modelouthandle);
@@ -319,23 +319,23 @@ ALIAS MODEL DISPLAY LIST GENERATION
 =================================================================
 */
 
-int		strip_xyz[128];
-int		strip_st[128];
-int		strip_tris[128];
-int		stripcount;
+int32_t		strip_xyz[128];
+int32_t		strip_st[128];
+int32_t		strip_tris[128];
+int32_t		stripcount;
 
 /*
 ================
 StripLength
 ================
 */
-int	StripLength (int starttri, int startv)
+int32_t	StripLength (int32_t starttri, int32_t startv)
 {
-    int			m1, m2;
-    int			st1, st2;
-    int			j;
+    int32_t			m1, m2;
+    int32_t			st1, st2;
+    int32_t			j;
     dtriangle_t	*last, *check;
-    int			k;
+    int32_t			k;
 
     used[starttri] = 2;
 
@@ -415,13 +415,13 @@ done:
 FanLength
 ===========
 */
-int	FanLength (int starttri, int startv)
+int32_t	FanLength (int32_t starttri, int32_t startv)
 {
-    int		m1, m2;
-    int		st1, st2;
-    int		j;
+    int32_t		m1, m2;
+    int32_t		st1, st2;
+    int32_t		j;
     dtriangle_t	*last, *check;
-    int		k;
+    int32_t		k;
 
     used[starttri] = 2;
 
@@ -500,14 +500,14 @@ for the model, which holds for all frames
 */
 void BuildGlCmds (void)
 {
-    int		i, j, k;
-    int		startv;
+    int32_t		i, j, k;
+    int32_t		startv;
     float	s, t;
-    int		len, bestlen, besttype = 0;
-    int		best_xyz[1024];
-    int		best_st[1024];
-    int		best_tris[1024];
-    int		type;
+    int32_t		len, bestlen, besttype = 0;
+    int32_t		best_xyz[1024];
+    int32_t		best_st[1024];
+    int32_t		best_tris[1024];
+    int32_t		type;
 
     //
     // build tristrips
@@ -571,7 +571,7 @@ void BuildGlCmds (void)
 
             *(float *)&commands[numcommands++] = s;
             *(float *)&commands[numcommands++] = t;
-            *(int *)&commands[numcommands++] = best_xyz[j];
+            *(int32_t *)&commands[numcommands++] = best_xyz[j];
         }
     }
 
@@ -598,10 +598,10 @@ model.skinwidth / model.skinheight
   arbitrary mappings
 ============
 */
-void BuildST (triangle_t *ptri, int numtri)
+void BuildST (triangle_t *ptri, int32_t numtri)
 {
-    int			i, j;
-    int			width, height, iwidth, iheight, swidth;
+    int32_t			i, j;
+    int32_t			width, height, iwidth, iheight, swidth;
     float		basex, basey;
     float		s_scale, t_scale;
     float		scale;
@@ -690,17 +690,17 @@ void BuildST (triangle_t *ptri, int numtri)
 }
 
 // modified version that uses texture coordinates from the file
-void BuildST2 (triangle_t *ptri, int numtri)
+void BuildST2 (triangle_t *ptri, int32_t numtri)
 {
-    int			i, j;
-    int width = 512;
+    int32_t			i, j;
+    int32_t width = 512;
 
     for (i=0 ; i<numtri ; i++)
     {
         for (j=0 ; j<3 ; j++)
         {
-            triangle_st[i][j][0] = fmin(width-1, (int)(width * ptri[i].u[j]));
-            triangle_st[i][j][1] = fmin(width-1, (int)(width * ptri[i].v[j]));
+            triangle_st[i][j][0] = fmin(width-1, (int32_t)(width * ptri[i].u[j]));
+            triangle_st[i][j][1] = fmin(width-1, (int32_t)(width * ptri[i].v[j]));
         }
     }
 
@@ -715,8 +715,8 @@ Cmd_Base
 void Cmd_Base (void)
 {
     triangle_t	*ptri;
-    int			i, j, k;
-    int		time1;
+    int32_t			i, j, k;
+    int32_t		time1;
     char	file1[4000];
 
     GetToken (false);
@@ -807,7 +807,7 @@ void Cmd_Base (void)
 
 char	*FindFrameFile (char *frame)
 {
-    int			time1;
+    int32_t			time1;
     char	file1[2400];
     static char	retname[1024];
     char	base[32];
@@ -857,13 +857,13 @@ GrabFrame
 void GrabFrame (char *frame)
 {
     triangle_t	*ptri;
-    int			i, j;
+    int32_t			i, j;
     trivert_t	*ptrivert;
-    int			num_tris;
+    int32_t			num_tris;
     char		file1[4000];
     frame_t		*fr;
     vertexnormals_t	vnorms[MAX_VERTS];
-    int		index_xyz;
+    int32_t		index_xyz;
     char	*framefile;
 
     // the frame 'run1' will be looked for as either
@@ -955,11 +955,11 @@ void GrabFrame (char *frame)
 //
     for (i=0 ; i<model.num_xyz ; i++)
     {
-        int		j;
+        int32_t		j;
         vec3_t	v;
         float	maxdot;
-        int		maxdotindex;
-        int		c;
+        int32_t		maxdotindex;
+        int32_t		c;
 
         c = vnorms[i].numnormals;
         if (!c)
@@ -1026,9 +1026,9 @@ void Cmd_Skin (void)
 {
     byte	*palette;
     byte	*pixels;
-    int		width, height;
+    int32_t		width, height;
     byte	*cropped;
-    int		y;
+    int32_t		y;
     char	name[4000], savename[4000];
 
     GetToken (false);

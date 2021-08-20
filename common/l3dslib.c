@@ -38,14 +38,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define MAXVERTS	2000
 
 typedef struct {
-	int	v[4];
+	int32_t	v[4];
 } tri;
 
 float	fverts[MAXVERTS][3];
 tri		tris[MAXTRIANGLES];
 
-int	bytesread, level, numtris, totaltris;
-int	vertsfound, trisfound;
+int32_t	bytesread, level, numtris, totaltris;
+int32_t	vertsfound, trisfound;
 
 triangle_t	*ptri;
 
@@ -54,7 +54,7 @@ triangle_t	*ptri;
 // to raw, explicit triangles
 void StoreAliasTriangles (void)
 {
-	int		i, j, k;
+	int32_t		i, j, k;
 
 	if ((totaltris + numtris) > MAXTRIANGLES)
 		Error ("Error: Too many triangles");
@@ -77,10 +77,10 @@ void StoreAliasTriangles (void)
 }
 
 
-int ParseVertexL (FILE *input)
+int32_t ParseVertexL (FILE *input)
 {
-	int				i, j, startbytesread, numverts;
-	unsigned short	tshort;
+	int32_t				i, j, startbytesread, numverts;
+	uint16_t	tshort;
 
 	if (vertsfound)
 		Error ("Error: Multiple vertex chunks");
@@ -93,7 +93,7 @@ int ParseVertexL (FILE *input)
 
 	fread(&tshort, sizeof(tshort), 1, input);
 	bytesread += sizeof(tshort);
-	numverts = (int)tshort;
+	numverts = (int32_t)tshort;
 
 	if (numverts > MAXVERTS)
 		Error ("Error: Too many vertices");
@@ -117,11 +117,11 @@ int ParseVertexL (FILE *input)
 }
 
 
-int ParseFaceL1 (FILE *input)
+int32_t ParseFaceL1 (FILE *input)
 {
 
-	int				i, j, startbytesread;
-	unsigned short	tshort;
+	int32_t				i, j, startbytesread;
+	uint16_t	tshort;
 
 	if (trisfound)
 		Error ("Error: Multiple face chunks");
@@ -134,7 +134,7 @@ int ParseFaceL1 (FILE *input)
 
 	fread(&tshort, sizeof(tshort), 1, input);
 	bytesread += sizeof(tshort);
-	numtris = (int)tshort;
+	numtris = (int32_t)tshort;
 
 	if (numtris > MAXTRIANGLES)
 		Error ("Error: Too many triangles");
@@ -148,7 +148,7 @@ int ParseFaceL1 (FILE *input)
 
 			fread(&tshort, sizeof(tshort), 1, input);
 			bytesread += sizeof(tshort);
-			tris[i].v[j] = (int)tshort;
+			tris[i].v[j] = (int32_t)tshort;
 		}
 	}
 
@@ -159,12 +159,12 @@ int ParseFaceL1 (FILE *input)
 }
 
 
-int ParseChunk (FILE *input)
+int32_t ParseChunk (FILE *input)
 {
 #define BLOCK_SIZE	4096
 	char			temp[BLOCK_SIZE];
-	unsigned short	type;
-	int				i, length, w, t, retval;
+	uint16_t	type;
+	int32_t				i, length, w, t, retval;
 
 	level++;
 	retval = 0;
@@ -251,10 +251,10 @@ Done:
 }
 
 
-void Load3DSTriangleList (char *filename, triangle_t **pptri, int *numtriangles)
+void Load3DSTriangleList (char *filename, triangle_t **pptri, int32_t *numtriangles)
 {
 	FILE        *input;
-	short int	tshort;
+	int16_t	tshort;
 
 	bytesread = 0;
 	level = 0;

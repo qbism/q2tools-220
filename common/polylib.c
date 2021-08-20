@@ -25,19 +25,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "polylib.h"
 
 
-extern int numthreads;
+extern int32_t numthreads;
 
 // counters are only bumped when running single threaded,
 // because they are an awefull coherence problem
-int	c_active_windings;
-int	c_peak_windings;
-int	c_winding_allocs;
-int	c_winding_points;
+int32_t	c_active_windings;
+int32_t	c_peak_windings;
+int32_t	c_winding_allocs;
+int32_t	c_winding_points;
 
 
 void pw(winding_t *w)
 {
-	int		i;
+	int32_t		i;
 	for (i=0 ; i<w->numpoints ; i++)
 		printf ("(%5.1f, %5.1f, %5.1f)\n",w->p[i][0], w->p[i][1],w->p[i][2]);
 }
@@ -48,10 +48,10 @@ void pw(winding_t *w)
 AllocWinding
 =============
 */
-winding_t	*AllocWinding (int points)
+winding_t	*AllocWinding (int32_t points)
 {
 	winding_t	*w;
-	int			s;
+	int32_t			s;
 
 	if (numthreads == 1)
 	{
@@ -61,7 +61,7 @@ winding_t	*AllocWinding (int points)
 		if (c_active_windings > c_peak_windings)
 			c_peak_windings = c_active_windings;
 	}
-	s = sizeof(vec_t)*3*points + sizeof(int);
+	s = sizeof(vec_t)*3*points + sizeof(int32_t);
 	w = malloc (s);
 	memset (w, 0, s);
 	return w;
@@ -83,13 +83,13 @@ void FreeWinding (winding_t *w)
 RemoveColinearPoints
 ============
 */
-int	c_removed;
+int32_t	c_removed;
 
 void	RemoveColinearPoints (winding_t *w)
 {
-	int		i, j, k;
+	int32_t		i, j, k;
 	vec3_t	v1, v2;
-	int		nump;
+	int32_t		nump;
 	vec3_t	p[MAX_POINTS_ON_WINDING];
 
 	nump = 0;
@@ -141,7 +141,7 @@ WindingArea
 */
 vec_t	WindingArea (winding_t *w)
 {
-	int		i;
+	int32_t		i;
 	vec3_t	d1, d2, cross;
 	vec_t	total;
 
@@ -159,7 +159,7 @@ vec_t	WindingArea (winding_t *w)
 void	WindingBounds (winding_t *w, vec3_t mins, vec3_t maxs)
 {
 	vec_t	v;
-	int		i,j;
+	int32_t		i,j;
 
 	mins[0] = mins[1] = mins[2] = BOGUS_RANGE;
 	maxs[0] = maxs[1] = maxs[2] = -BOGUS_RANGE;
@@ -184,7 +184,7 @@ WindingCenter
 */
 void	WindingCenter (winding_t *w, vec3_t center)
 {
-	int		i;
+	int32_t		i;
 	float	scale;
 
 	VectorCopy (vec3_origin, center);
@@ -202,7 +202,7 @@ BaseWindingForPlane
 */
 winding_t *BaseWindingForPlane (vec3_t normal, vec_t dist)
 {
-	int		i, x;
+	int32_t		i, x;
 	vec_t	max, v;
 	vec3_t	org, vright, vup;
 	winding_t	*w;
@@ -273,7 +273,7 @@ CopyWinding
 */
 winding_t	*CopyWinding (const winding_t *w)
 {
-	int			size;
+	int32_t			size;
 	winding_t	*c;
 
 	c = AllocWinding (w->numpoints);
@@ -289,7 +289,7 @@ ReverseWinding
 */
 winding_t	*ReverseWinding (winding_t *w)
 {
-	int			i;
+	int32_t			i;
 	winding_t	*c;
 
 	c = AllocWinding (w->numpoints);
@@ -315,14 +315,14 @@ void	ClipWindingEpsilon (
 		winding_t **front, winding_t **back)
 {
 	vec_t	dists[MAX_POINTS_ON_WINDING+4];
-	int		sides[MAX_POINTS_ON_WINDING+4];
-	int		counts[3];
+	int32_t		sides[MAX_POINTS_ON_WINDING+4];
+	int32_t		counts[3];
 	static	vec_t	dot;		// VC 4.2 optimizer bug if not static
-	int		i, j;
+	int32_t		i, j;
 	vec_t	*p1, *p2;
 	vec3_t	mid;
 	winding_t	*f, *b;
-	int		maxpts;
+	int32_t		maxpts;
 
 	counts[0] = counts[1] = counts[2] = 0;
     sides[0] = dists[0] = 0;
@@ -426,14 +426,14 @@ void ChopWindingInPlace (winding_t **inout, vec3_t normal, vec_t dist, vec_t eps
 {
 	winding_t	*in;
 	vec_t	dists[MAX_POINTS_ON_WINDING+4];
-	int		sides[MAX_POINTS_ON_WINDING+4];
-	int		counts[3];
+	int32_t		sides[MAX_POINTS_ON_WINDING+4];
+	int32_t		counts[3];
 	static	vec_t	dot;		// VC 4.2 optimizer bug if not static
-	int		i, j;
+	int32_t		i, j;
 	vec_t	*p1, *p2;
 	vec3_t	mid;
 	winding_t	*f;
-	int		maxpts;
+	int32_t		maxpts;
 
 	in = *inout;
 	counts[0] = counts[1] = counts[2] = 0;
@@ -547,7 +547,7 @@ CheckWinding
 */
 void CheckWinding (winding_t *w)
 {
-	int		i, j;
+	int32_t		i, j;
 	vec_t	*p1, *p2;
 	vec_t	d, edgedist;
 	vec3_t	dir, edgenormal, facenormal;
@@ -608,10 +608,10 @@ void CheckWinding (winding_t *w)
 WindingOnPlaneSide
 ============
 */
-int		WindingOnPlaneSide (winding_t *w, vec3_t normal, vec_t dist)
+int32_t		WindingOnPlaneSide (winding_t *w, vec3_t normal, vec_t dist)
 {
 	qboolean	front, back;
-	int			i;
+	int32_t			i;
 	vec_t		d;
 
 	front = false;

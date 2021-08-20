@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 #include "qbsp.h"
 
-extern	int	c_nodes;
+extern	int32_t	c_nodes;
 
 void RemovePortalFromNode (portal_t *portal, node_t *l);
 
@@ -51,7 +51,7 @@ FreeTreePortals_r
 void FreeTreePortals_r (node_t *node)
 {
 	portal_t	*p, *nextp;
-	int			s;
+	int32_t			s;
 
 	// free children
 	if (node->planenum != PLANENUM_LEAF)
@@ -122,9 +122,9 @@ void FreeTree (tree_t *tree)
 
 //===============================================================
 
-void PrintTree_r (node_t *node, int depth)
+void PrintTree_r (node_t *node, int32_t depth)
 {
-	int		i;
+	int32_t		i;
 	plane_t	*plane;
 	bspbrush_t	*bb;
 
@@ -159,7 +159,7 @@ NODES THAT DON'T SEPERATE DIFFERENT CONTENTS CAN BE PRUNED
 =========================================================
 */
 
-int	c_pruned;
+int32_t	c_pruned;
 
 /*
 ============

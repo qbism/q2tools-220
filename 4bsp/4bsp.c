@@ -44,13 +44,13 @@ qboolean	leaktest = false;
 qboolean	badnormal_check = false;
 qboolean	origfix = true; //default to true
 
-int			block_xl = -8, block_xh = 7, block_yl = -8, block_yh = 7;
+int32_t			block_xl = -8, block_xh = 7, block_yl = -8, block_yh = 7;
 
-int			entity_num;
+int32_t			entity_num;
 
-int			max_entities = OLD_MAX_MAP_ENTITIES;	//qb: from kmqbsp3- Knightmare- adjustable entity limit
-int			max_bounds = OLD_MAX_BOUNDS;			// Knightmare- adjustable max bounds
-int			block_size = 1024;						// Knightmare- adjustable block size
+int32_t			max_entities = OLD_MAX_MAP_ENTITIES;	//qb: from kmqbsp3- Knightmare- adjustable entity limit
+int32_t			max_bounds = OLD_MAX_BOUNDS;			// Knightmare- adjustable max bounds
+int32_t			block_size = 1024;						// Knightmare- adjustable block size
 
 node_t		*block_nodes[10][10];
 
@@ -60,12 +60,12 @@ BlockTree
 
 ============
 */
-node_t	*BlockTree (int xl, int yl, int xh, int yh)
+node_t	*BlockTree (int32_t xl, int32_t yl, int32_t xh, int32_t yh)
 {
     node_t	*node;
     vec3_t	normal;
     vec_t	dist;
-    int		mid;
+    int32_t		mid;
 
     if (xl == xh && yl == yh)
     {
@@ -117,10 +117,10 @@ ProcessBlock_Thread
 
 ============
 */
-int			brush_start, brush_end;
-void ProcessBlock_Thread (int blocknum)
+int32_t			brush_start, brush_end;
+void ProcessBlock_Thread (int32_t blocknum)
 {
-    int		xblock, yblock;
+    int32_t		xblock, yblock;
     vec3_t		mins, maxs;
     bspbrush_t	*brushes;
     tree_t		*tree;
@@ -275,7 +275,7 @@ ProcessSubModel
 void ProcessSubModel (void)
 {
     entity_t	*e;
-    int			start, end;
+    int32_t			start, end;
     tree_t		*tree;
     bspbrush_t	*list;
     vec3_t		mins, maxs;
@@ -331,9 +331,9 @@ void ProcessModels (void)
 main
 ============
 */
-int main (int argc, char **argv)
+int32_t main (int32_t argc, char **argv)
 {
-    int		i;
+    int32_t		i;
     char		path[2053] = "";
 
 
@@ -457,7 +457,9 @@ int main (int argc, char **argv)
             printf ("use_qbsp = true\n");
             use_qbsp = true;
             max_entities = MAX_MAP_ENTITIES_QBSP;
-        }
+            max_bounds = MAX_HALF_SIZE;
+            block_size = MAX_BLOCK_SIZE;
+       }
 
         //qb: from kmqbsp3- Knightmare added
         else if (!strcmp(argv[i], "-largebounds") || !strcmp(argv[i], "-lb"))

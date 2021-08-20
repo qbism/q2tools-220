@@ -45,10 +45,10 @@ typedef struct directlight_s
 	emittype_t	type;
 
 	float		intensity;
-	int			style;
+	int32_t			style;
     float       wait;
     float       adjangle;
-    int         falloff;
+    int32_t         falloff;
 	vec3_t		origin;
 	vec3_t		color;
 	vec3_t		normal;		// for surfaces and spotlights
@@ -56,7 +56,7 @@ typedef struct directlight_s
     dplane_t    *plane;
     dleaf_t     *leaf;
     dleaf_tx     *leafX;
-    int			nodenum;
+    int32_t			nodenum;
 } directlight_t;
 
 
@@ -65,8 +65,8 @@ typedef struct directlight_s
 // reaches other patches
 typedef struct
 {
-	unsigned short	patch;
-	unsigned short	transfer;
+	uint16_t	patch;
+	uint16_t	transfer;
 } transfer_t;
 
 
@@ -79,13 +79,13 @@ typedef struct patch_s
 {
 	winding_t	*winding;
 	struct patch_s		*next;		// next in face
-	int			numtransfers;
+	int32_t			numtransfers;
 	transfer_t	*transfers;
     byte *trace_hit;
 
-    int			nodenum;
+    int32_t			nodenum;
 
-	int			cluster;			// for pvs checking
+	int32_t			cluster;			// for pvs checking
 	vec3_t		origin;
 	dplane_t	*plane;
 
@@ -95,7 +95,7 @@ typedef struct patch_s
 									// does NOT include light
 									// accounted for by direct lighting
 	float		area;
-    	int         faceNumber;
+    	int32_t         faceNumber;
 
 	// illuminance * reflectivity = radiosity
 	vec3_t		reflectivity;
@@ -104,7 +104,7 @@ typedef struct patch_s
 	// each style 0 lightmap sample in the patch will be
 	// added up to get the average illuminance of the entire patch
 	vec3_t		samplelight;
-	int			samples;		// for averaging direct light
+	int32_t			samples;		// for averaging direct light
 } patch_t;
 
 extern	patch_t		*face_patches[MAX_MAP_FACES_QBSP];
@@ -113,8 +113,8 @@ extern	vec3_t		face_offset[MAX_MAP_FACES_QBSP];		// for rotating bmodels
 extern	patch_t		patches[MAX_PATCHES];
 extern	unsigned	num_patches;
 
-extern	int		leafparents[MAX_MAP_LEAFS_QBSP];
-extern	int		nodeparents[MAX_MAP_NODES_QBSP];
+extern	int32_t		leafparents[MAX_MAP_LEAFS_QBSP];
+extern	int32_t		nodeparents[MAX_MAP_NODES_QBSP];
 
 extern	float	lightscale;
 
@@ -139,7 +139,7 @@ extern float grayscale;
 extern float saturation;
 extern	qboolean	extrasamples;
 extern	qboolean	dicepatches;
-extern int numbounce;
+extern int32_t numbounce;
 extern qboolean noblock;
 
 extern	directlight_t	*directlights[MAX_MAP_LEAFS_QBSP];
@@ -148,15 +148,15 @@ extern	byte	nodehit[MAX_MAP_NODES_QBSP];
 
 void BuildLightmaps (void);
 
-void BuildFacelights (int facenum);
+void BuildFacelights (int32_t facenum);
 
-void FinalLightFace (int facenum);
+void FinalLightFace (int32_t facenum);
 qboolean PvsForOrigin (vec3_t org, byte *pvs);
 
-int	PointInNodenum (vec3_t point);
-int TestLine (vec3_t start, vec3_t stop);
-int TestLine_color (int node, vec3_t start, vec3_t stop, vec3_t occluded);
-int TestLine_r (int node, vec3_t start, vec3_t stop);
+int32_t	PointInNodenum (vec3_t point);
+int32_t TestLine (vec3_t start, vec3_t stop);
+int32_t TestLine_color (int32_t node, vec3_t start, vec3_t stop, vec3_t occluded);
+int32_t TestLine_r (int32_t node, vec3_t start, vec3_t stop);
 
 void CreateDirectLights (void);
 
@@ -165,8 +165,8 @@ dleaf_tx		*PointInLeafX (vec3_t point);
 
 
 extern	dplane_t	backplanes[MAX_MAP_PLANES_QBSP];
-extern	int			fakeplanes;					// created planes for origin offset
-extern  int		maxdata;
+extern	int32_t			fakeplanes;					// created planes for origin offset
+extern  int32_t		maxdata;
 
 extern	float	subdiv;
 
@@ -183,10 +183,10 @@ extern vec3_t sun_color;
 extern float    smoothing_threshold;
 extern float    smoothing_value;
 extern float    sample_nudge;
-extern int  num_smoothing;
+extern int32_t  num_smoothing;
 
-extern int	refine_amt, refine_setting;
-extern int	PointInLeafnum (vec3_t point);
+extern int32_t	refine_amt, refine_setting;
+extern int32_t	PointInLeafnum (vec3_t point);
 extern void MakeTnodes (dmodel_t *bm);
 extern void MakePatches (void);
 extern void SubdividePatches (void);

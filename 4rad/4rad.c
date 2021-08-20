@@ -35,7 +35,7 @@ patch_t		*face_patches[MAX_MAP_FACES_QBSP];
 entity_t	*face_entity[MAX_MAP_FACES_QBSP];
 patch_t		patches[MAX_PATCHES];
 unsigned	num_patches;
-int    num_smoothing;  //qb: number of phong hits
+int32_t    num_smoothing;  //qb: number of phong hits
 
 vec3_t		radiosity[MAX_PATCHES];		// light leaving a patch
 vec3_t		illumination[MAX_PATCHES];	// light arriving at a patch
@@ -46,20 +46,20 @@ dplane_t	backplanes[MAX_MAP_PLANES_QBSP];
 char		inbase[32], outbase[32];
 char		basedir[64] = "baseq2"; //qb; default
 
-int			fakeplanes;					// created planes for origin offset
+int32_t			fakeplanes;					// created planes for origin offset
 
-int		numbounce = 4; //default was 8
+int32_t		numbounce = 4; //default was 8
 qboolean noblock = false; // when true, disables occlusion testing on light rays
 qboolean	extrasamples = false;
 qboolean	dicepatches = false;
-int memory = false;
+int32_t memory = false;
 float patch_cutoff = 0.0f; // set with -radmin 0.0..1.0, see MakeTransfers()
 
 float	subdiv = 64;
 qboolean	dumppatches;
 
 void BuildFaceExtents(void); //qb: from quemap
-int TestLine (vec3_t start, vec3_t stop);
+int32_t TestLine (vec3_t start, vec3_t stop);
 float           smoothing_threshold; //qb: phong from VHLT
 float           smoothing_value = DEFAULT_SMOOTHING_VALUE;
 float           sample_nudge = DEFAULT_NUDGE_VALUE; //qb: adjustable nudge for multisample
@@ -158,7 +158,7 @@ MakeBackplanes
 */
 void MakeBackplanes (void)
 {
-    int		i;
+    int32_t		i;
 
     for (i=0 ; i<numplanes ; i++)
     {
@@ -167,17 +167,17 @@ void MakeBackplanes (void)
     }
 }
 
-int		leafparents[MAX_MAP_LEAFS_QBSP];
-int		nodeparents[MAX_MAP_NODES_QBSP];
+int32_t		leafparents[MAX_MAP_LEAFS_QBSP];
+int32_t		nodeparents[MAX_MAP_NODES_QBSP];
 
 /*
 =============
 MakeParents
 =============
 */
-void MakeParents (int nodenum, int parent)
+void MakeParents (int32_t nodenum, int32_t parent)
 {
-    int		i, j;
+    int32_t		i, j;
 
     nodeparents[nodenum] = parent;
 
@@ -218,9 +218,9 @@ TRANSFER SCALES
 ===================================================================
 */
 
-int	PointInLeafnum (vec3_t point)
+int32_t	PointInLeafnum (vec3_t point)
 {
-    int		nodenum;
+    int32_t		nodenum;
     vec_t	dist;
     dplane_t	*plane;
 
@@ -260,7 +260,7 @@ int	PointInLeafnum (vec3_t point)
 
 dleaf_tx		*PointInLeafX (vec3_t point)
 {
-    int		num;
+    int32_t		num;
 
     num = PointInLeafnum (point);
     return &dleafsX[num];
@@ -268,7 +268,7 @@ dleaf_tx		*PointInLeafX (vec3_t point)
 
 dleaf_t		*PointInLeaf (vec3_t point)
 {
-    int		num;
+    int32_t		num;
 
     num = PointInLeafnum (point);
     return &dleafs[num];
@@ -304,20 +304,20 @@ qboolean PvsForOrigin (vec3_t org, byte *pvs)
 
 typedef struct tnode_s
 {
-    int		type;
+    int32_t		type;
     vec3_t	normal;
     float	dist;
-    int		children[2];
-    int		pad;
+    int32_t		children[2];
+    int32_t		pad;
 } tnode_t;
 
 extern tnode_t		*tnodes;
 
-int	total_transfer;
+int32_t	total_transfer;
 
 static long total_mem;
 
-static int first_transfer = 1;
+static int32_t first_transfer = 1;
 
 #define MAX_TRACE_BUF ((MAX_PATCHES + 7) / 8)
 
@@ -326,12 +326,12 @@ static int first_transfer = 1;
 
 static byte trace_buf[MAX_TRACE_BUF + 1];
 static byte trace_tmp[MAX_TRACE_BUF + 1];
-static int trace_buf_size;
+static int32_t trace_buf_size;
 
-int CompressBytes (int size, byte *source, byte *dest)
+int32_t CompressBytes (int32_t size, byte *source, byte *dest)
 {
-    int		j;
-    int		rep;
+    int32_t		j;
+    int32_t		rep;
     byte	*dest_p;
 
     dest_p = dest + 1;
@@ -374,9 +374,9 @@ int CompressBytes (int size, byte *source, byte *dest)
 }
 
 
-void DecompressBytes (int size, byte *in, byte *decompressed)
+void DecompressBytes (int32_t size, byte *in, byte *decompressed)
 {
-    int		c;
+    int32_t		c;
     byte	*out;
 
     if (in[0] == 0) // not compressed
@@ -409,15 +409,15 @@ void DecompressBytes (int size, byte *in, byte *decompressed)
     while (out - decompressed < size);
 }
 
-static int trace_bytes = 0;
+static int32_t trace_bytes = 0;
 
 #ifdef WIN32
-static inline int lowestCommonNode (int nodeNum1, int nodeNum2)
+static inline int32_t lowestCommonNode (int32_t nodeNum1, int32_t nodeNum2)
 #else
-static inline int lowestCommonNode (int nodeNum1, int nodeNum2)
+static inline int32_t lowestCommonNode (int32_t nodeNum1, int32_t nodeNum2)
 #endif
 {
-    int child1, tmp, headNode = 0;
+    int32_t child1, tmp, headNode = 0;
 
     if (nodeNum1 > nodeNum2)
     {
@@ -474,24 +474,24 @@ re_test:
 }
 
 
-void MakeTransfers (int i)
+void MakeTransfers (int32_t i)
 {
 
-    int			j;
+    int32_t			j;
     vec3_t		delta;
     vec_t		dist, inv_dist = 0, scale;
     float		trans;
-    int			itrans;
+    int32_t			itrans;
     patch_t		*patch, *patch2;
     float		total, inv_total;
     dplane_t	plane;
     vec3_t		origin;
     float		transfers[MAX_PATCHES];
-    int			s;
-    int			itotal;
+    int32_t			s;
+    int32_t			itotal;
     byte		pvs[(MAX_MAP_LEAFS_QBSP+7)/8];
-    int			cluster;
-    int			calc_trace, test_trace;
+    int32_t			cluster;
+    int32_t			calc_trace, test_trace;
 
     patch = patches + i;
     total = 0;
@@ -643,7 +643,7 @@ FreeTransfers
 */
 void FreeTransfers (void)
 {
-    int		i;
+    int32_t		i;
 
     for (i=0 ; i<num_patches ; i++)
     {
@@ -671,7 +671,7 @@ WriteWorld
 */
 void WriteWorld (char *name)
 {
-    int		i, j;
+    int32_t		i, j;
     FILE		*out;
     patch_t		*patch;
     winding_t	*w;
@@ -711,7 +711,7 @@ CollectLight
 */
 float CollectLight (void)
 {
-    int		i, j;
+    int32_t		i, j;
     patch_t	*patch;
     vec_t	total;
 
@@ -749,13 +749,13 @@ Send light out to other patches
   Run multi-threaded
 =============
 */
-int c_progress;
-int p_progress;
-void ShootLight (int patchnum)
+int32_t c_progress;
+int32_t p_progress;
+void ShootLight (int32_t patchnum)
 {
-    int			k, l;
+    int32_t			k, l;
     transfer_t	*trans;
-    int			num;
+    int32_t			num;
     patch_t		*patch;
     vec3_t		send;
 
@@ -800,7 +800,7 @@ BounceLight
 */
 void BounceLight (void)
 {
-    int		i, j, start=0, stop;
+    int32_t		i, j, start=0, stop;
     float	added;
     char	name[64];
     patch_t	*p;
@@ -850,7 +850,7 @@ void BounceLight (void)
 
 void CheckPatches (void)
 {
-    int		i;
+    int32_t		i;
     patch_t	*patch;
 
     for (i=0 ; i<num_patches ; i++)
@@ -931,9 +931,9 @@ main
 light modelfile
 ========
 */
-int main (int argc, char **argv)
+int32_t main (int32_t argc, char **argv)
 {
-    int		i;
+    int32_t		i;
     double		start, end;
     char		name[1060];
 

@@ -22,7 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "mathlib.h"
 #include "bspfile.h"
 
-#define	MAX_PORTALS	32768
+#define	MAX_PORTALS	32767
 
 #define	MAX_PORTALS_QBSP MAX_MAP_PORTALS_QBSP / 2  //qb: half
 
@@ -42,11 +42,11 @@ typedef struct
 typedef struct
 {
 	qboolean	original;			// don't free, it's part of the portal
-	int		numpoints;
+	int32_t		numpoints;
 	vec3_t	points[MAX_POINTS_ON_FIXED_WINDING];			// variable sized
 } winding_t;
 
-winding_t	*NewWinding (int points);
+winding_t	*NewWinding (int32_t points);
 void		FreeWinding (winding_t *w);
 winding_t	*CopyWinding (winding_t *w);
 
@@ -55,7 +55,7 @@ typedef enum {stat_none, stat_working, stat_done} vstatus_t;
 typedef struct
 {
 	plane_t		plane;	// normal pointing into neighbor
-	int			leaf;	// neighbor
+	int32_t			leaf;	// neighbor
 
 	vec3_t		origin;	// for fast clip testing
 	float		radius;
@@ -66,7 +66,7 @@ typedef struct
 	byte		*portalflood;	// [portals], intermediate
 	byte		*portalvis;		// [portals], final
 
-	int			nummightsee;	// bit count on portalflood for sort
+	int32_t			nummightsee;	// bit count on portalflood for sort
 } portal_t;
 
 typedef struct seperating_plane_s
@@ -79,14 +79,14 @@ typedef struct seperating_plane_s
 typedef struct passage_s
 {
 	struct passage_s	*next;
-	int			from, to;		// leaf numbers
+	int32_t			from, to;		// leaf numbers
 	sep_t				*planes;
 } passage_t;
 
 #define	MAX_PORTALS_ON_LEAF		128
 typedef struct leaf_s
 {
-	int			numportals;
+	int32_t			numportals;
 	passage_t	*passages;
 	portal_t	*portals[MAX_PORTALS_ON_LEAF];
 } leaf_t;
@@ -102,7 +102,7 @@ typedef struct pstack_s
 	winding_t	*pass;
 
 	winding_t	windings[3];	// source, pass, temp in any order
-	int			freewindings[3];
+	int32_t			freewindings[3];
 
 	plane_t		portalplane;
 } pstack_t;
@@ -110,38 +110,38 @@ typedef struct pstack_s
 typedef struct
 {
 	portal_t	*base;
-	int			c_chains;
+	int32_t			c_chains;
 	pstack_t	pstack_head;
 } threaddata_t;
 
 
 
-extern	int			numportals;
-extern	int			portalclusters;
+extern	int32_t			numportals;
+extern	int32_t			portalclusters;
 
 extern	portal_t	*portals;
 extern	leaf_t		*leafs;
 
-extern	int			c_portaltest, c_portalpass, c_portalcheck;
-extern	int			c_portalskip, c_leafskip;
-extern	int			c_vistest, c_mighttest;
-extern	int			c_chains;
+extern	int32_t			c_portaltest, c_portalpass, c_portalcheck;
+extern	int32_t			c_portalskip, c_leafskip;
+extern	int32_t			c_vistest, c_mighttest;
+extern	int32_t			c_chains;
 
 extern	byte	*vismap, *vismap_p, *vismap_end;	// past visfile
 
 extern	byte		*uncompressed;
 
-extern	int		leafbytes, leaflongs;
-extern	int		portalbytes, portallongs;
+extern	int32_t		leafbytes, leaflongs;
+extern	int32_t		portalbytes, portallongs;
 
 
-void LeafFlow (int leafnum);
+void LeafFlow (int32_t leafnum);
 
 
-void BasePortalVis (int portalnum);
-void BetterPortalVis (int portalnum);
-void PortalFlow (int portalnum);
+void BasePortalVis (int32_t portalnum);
+void BetterPortalVis (int32_t portalnum);
+void PortalFlow (int32_t portalnum);
 
 extern	portal_t	*sorted_portals[MAX_MAP_PORTALS_QBSP*2];
 
-int CountBits (byte *bits, int numbits);
+int32_t CountBits (byte *bits, int32_t numbits);

@@ -37,9 +37,9 @@ typedef struct
 
 edgeshare_t	edgeshare[MAX_MAP_EDGES_QBSP];
 
-int			facelinks[MAX_MAP_FACES_QBSP];
-int			planelinks[2][MAX_MAP_PLANES_QBSP];
-int			maxdata;
+int32_t			facelinks[MAX_MAP_FACES_QBSP];
+int32_t			planelinks[2][MAX_MAP_PLANES_QBSP];
+int32_t			maxdata;
 vec3_t      face_texnormals[MAX_MAP_FACES_QBSP];
 float       sunradscale = 0.5;
 byte	*dlightdata_ptr;
@@ -54,7 +54,7 @@ typedef struct face_extents_s
 
 static face_extents_t face_extents[MAX_MAP_FACES_QBSP];
 
-const dplane_t* getPlaneFromFaceNumber(const unsigned int faceNumber)
+const dplane_t* getPlaneFromFaceNumber(const uint32_t faceNumber)
 {
     if (use_qbsp)
     {
@@ -83,7 +83,7 @@ const dplane_t* getPlaneFromFaceNumber(const unsigned int faceNumber)
 }
 
 
-qboolean GetIntertexnormal (int facenum1, int facenum2)
+qboolean GetIntertexnormal (int32_t facenum1, int32_t facenum2)
 {
     vec3_t normal;
     const dplane_t *p1 = getPlaneFromFaceNumber (facenum1);
@@ -241,7 +241,7 @@ LinkPlaneFaces
 */
 void LinkPlaneFaces (void)
 {
-    int		i;
+    int32_t		i;
 
     if (use_qbsp)
     {
@@ -311,7 +311,7 @@ PairEdges
 
 //qb: VHLT
 
-int AddFaceForVertexNormalX (const int edgeabs, int edgeabsnext, const int edgeend, int edgeendnext, dface_tx *const f, dface_tx *fnext, vec_t angle, vec3_t normal)
+int32_t AddFaceForVertexNormalX (const int32_t edgeabs, int32_t edgeabsnext, const int32_t edgeend, int32_t edgeendnext, dface_tx *const f, dface_tx *fnext, vec_t angle, vec3_t normal)
 // Must guarantee these faces will form a loop or a chain, otherwise will result in endless loop.
 //
 //   e[end]/enext[endnext]
@@ -325,9 +325,9 @@ int AddFaceForVertexNormalX (const int edgeabs, int edgeabsnext, const int edgee
 //
 {
     VectorCopy(getPlaneFromFaceX(f)->normal, normal);
-    int vnum = dedgesX[edgeabs].v[edgeend];
-    int edge = 0, edgenext = 0;
-    int i, e, count1, count2;
+    int32_t vnum = dedgesX[edgeabs].v[edgeend];
+    int32_t edge = 0, edgenext = 0;
+    int32_t i, e, count1, count2;
     vec_t dot;
     for (count1 = count2 = 0, i = 0; i < f->numedges; i++)
     {
@@ -350,7 +350,7 @@ int AddFaceForVertexNormalX (const int edgeabs, int edgeabsnext, const int edgee
         qprintf ("AddFaceForVertexNormalX bad face: edgeabs=%d edgeend=%d\n", edgeabs, edgeend);
         return -1;
     }
-    int vnum11, vnum12, vnum21, vnum22;
+    int32_t vnum11, vnum12, vnum21, vnum22;
     vec3_t vec1, vec2;
 
     vnum11 = dedgesX[abs(edge)].v[edge>0?0:1];
@@ -397,12 +397,12 @@ int AddFaceForVertexNormalX (const int edgeabs, int edgeabsnext, const int edgee
     return 0;
 }
 
-int AddFaceForVertexNormal (const int edgeabs, int edgeabsnext, const int edgeend, int edgeendnext, dface_t *const f, dface_t *fnext, vec_t angle, vec3_t normal)
+int32_t AddFaceForVertexNormal (const int32_t edgeabs, int32_t edgeabsnext, const int32_t edgeend, int32_t edgeendnext, dface_t *const f, dface_t *fnext, vec_t angle, vec3_t normal)
 {
     VectorCopy(getPlaneFromFace(f)->normal, normal);
-    int vnum = dedgesX[edgeabs].v[edgeend];
-    int edge = 0, edgenext = 0;
-    int i, e, count1, count2;
+    int32_t vnum = dedgesX[edgeabs].v[edgeend];
+    int32_t edge = 0, edgenext = 0;
+    int32_t i, e, count1, count2;
     vec_t dot;
     for (count1 = count2 = 0, i = 0; i < f->numedges; i++)
     {
@@ -425,7 +425,7 @@ int AddFaceForVertexNormal (const int edgeabs, int edgeabsnext, const int edgeen
         qprintf ("AddFaceForVertexNormal bad face: edgeabs=%d edgeend=%d\n", edgeabs, edgeend);
         return -1;
     }
-    int vnum11, vnum12, vnum21, vnum22;
+    int32_t vnum11, vnum12, vnum21, vnum22;
     vec3_t vec1, vec2;
 
     vnum11 = dedges[abs(edge)].v[edge>0?0:1];
@@ -479,7 +479,7 @@ int AddFaceForVertexNormal (const int edgeabs, int edgeabsnext, const int edgeen
 
 void            PairEdges()
 {
-    int             i, j, k;
+    int32_t             i, j, k;
     edgeshare_t*    e;
 
     memset(&edgeshare, 0, sizeof(edgeshare));
@@ -663,13 +663,13 @@ void            PairEdges()
 
     //qb: VHLT
     {
-        int edgeabs, edgeabsnext;
-        int edgeend, edgeendnext;
-        int d;
+        int32_t edgeabs, edgeabsnext;
+        int32_t edgeend, edgeendnext;
+        int32_t d;
         vec_t angle = 0, angles = 0;
         vec3_t normal, normals;
         vec3_t edgenormal;
-        int r, count, mme;
+        int32_t r, count, mme;
         if (use_qbsp)
             mme = MAX_MAP_EDGES_QBSP;
         else
@@ -846,7 +846,7 @@ void            PairEdges()
 
 typedef struct triedge_s
 {
-    int			p0, p1;
+    int32_t			p0, p1;
     vec3_t		normal;
     vec_t		dist;
     struct triangle_s	*tri;
@@ -863,9 +863,9 @@ typedef struct triangle_s
 
 typedef struct
 {
-    int			numpoints;
-    int			numedges;
-    int			numtris;
+    int32_t			numpoints;
+    int32_t			numedges;
+    int32_t			numtris;
     dplane_t	*plane;
     triedge_t	*edgematrix[MAX_TRI_POINTS][MAX_TRI_POINTS];
     patch_t		*points[MAX_TRI_POINTS];
@@ -905,7 +905,7 @@ void FreeTriangulation (triangulation_t *tr)
 }
 
 
-triedge_t	*FindEdge (triangulation_t *trian, int p0, int p1)
+triedge_t	*FindEdge (triangulation_t *trian, int32_t p0, int32_t p1)
 {
     triedge_t	*e, *be;
     vec3_t		v1;
@@ -965,7 +965,7 @@ TriEdge_r
 */
 void TriEdge_r (triangulation_t *trian, triedge_t *e)
 {
-    int		i, bestp = 0;
+    int32_t		i, bestp = 0;
     vec3_t	v1, v2;
     vec_t	*p0, *p1, *p;
     vec_t	best, ang;
@@ -1020,7 +1020,7 @@ void TriangulatePoints (triangulation_t *trian)
 {
     vec_t	d, bestd;
     vec3_t	v1;
-    int		bp1=0, bp2=0, i, j;
+    int32_t		bp1=0, bp2=0, i, j;
     vec_t	*p1, *p2;
     triedge_t	*e, *e2;
 
@@ -1059,7 +1059,7 @@ AddPointToTriangulation
 */
 void AddPointToTriangulation (patch_t *patch, triangulation_t *trian)
 {
-    int			pnum;
+    int32_t			pnum;
 
     pnum = trian->numpoints;
     if (pnum == MAX_TRI_POINTS)
@@ -1108,7 +1108,7 @@ void	LerpTriangle (triangulation_t *trian, triangle_t *t, vec3_t point, vec3_t c
 
 qboolean PointInTriangle (vec3_t point, triangle_t *t)
 {
-    int		i;
+    int32_t		i;
     triedge_t	*e;
     vec_t	d;
 
@@ -1135,7 +1135,7 @@ void SampleTriangulation (vec3_t point, triangulation_t *trian, triangle_t **las
     vec_t		d, best;
     patch_t		*p0, *p1;
     vec3_t		v1, v2;
-    int			i, j;
+    int32_t			i, j;
 
     if (trian->numpoints == 0)
     {
@@ -1236,7 +1236,7 @@ typedef struct
     vec_t	facedist;
     vec3_t	facenormal;
 
-    int		numsurfpt;
+    int32_t		numsurfpt;
     vec3_t	surfpt[SINGLEMAP];
 
     vec3_t	modelorg;		// for origined bmodels
@@ -1247,8 +1247,8 @@ typedef struct
 
     vec_t	exactmins[2], exactmaxs[2];
 
-    int		texmins[2], texsize[2];
-    int		surfnum;
+    int32_t		texmins[2], texsize[2];
+    int32_t		surfnum;
     dface_t	*face;
     dface_tx	*faceX;
 } lightinfo_t;
@@ -1265,7 +1265,7 @@ also sets exactmins[] and exactmaxs[]
 void CalcFaceExtents (lightinfo_t *l)
 {
     vec_t	mins[2], maxs[2], val;
-    int		i,j, e;
+    int32_t		i,j, e;
     dvertex_t	*v;
     texinfo_t	*tex;
     vec3_t		vt;
@@ -1381,11 +1381,11 @@ Fills in texorg, worldtotex. and textoworld
 void CalcFaceVectors (lightinfo_t *l)
 {
     texinfo_t	*tex;
-    int			i, j;
+    int32_t			i, j;
     vec3_t	texnormal;
     vec_t	distscale;
     vec_t	dist, len;
-    int			w, h;
+    int32_t			w, h;
 
     if (use_qbsp)
         tex = &texinfo[l->faceX->texinfo];
@@ -1463,9 +1463,9 @@ to get the world xyz value of the sample point
 */
 void CalcPoints (lightinfo_t *l, float sofs, float tofs)
 {
-    int		i;
-    int		s, t, j;
-    int		w, h; //qb: remove step - always 16.
+    int32_t		i;
+    int32_t		s, t, j;
+    int32_t		w, h; //qb: remove step - always 16.
     vec_t	starts, startt, us, ut;
     vec_t	*surf;
     vec_t	mids, midt;
@@ -1565,16 +1565,16 @@ void CalcPoints (lightinfo_t *l, float sofs, float tofs)
 #define	MAX_STYLES	32
 typedef struct
 {
-    int			numsamples;
+    int32_t			numsamples;
     float		*origins;
-    int			numstyles;
-    int			stylenums[MAX_STYLES];
+    int32_t			numstyles;
+    int32_t			stylenums[MAX_STYLES];
     float		*samples[MAX_STYLES];
 } facelight_t;
 
 directlight_t	*directlights[MAX_MAP_LEAFS_QBSP];
 facelight_t		facelight[MAX_MAP_FACES_QBSP];
-int				numdlights;
+int32_t				numdlights;
 
 /*
 ==================
@@ -1583,7 +1583,7 @@ FindTargetEntity
 */
 entity_t *FindTargetEntity (char *target)
 {
-    int		i;
+    int32_t		i;
     char	*n;
 
     for (i=0 ; i<num_entities ; i++)
@@ -1606,12 +1606,12 @@ CreateDirectLights
 */
 void CreateDirectLights (void)
 {
-    int		i;
+    int32_t		i;
     patch_t	*p;
     directlight_t	*dl;
     dleaf_t	*leaf;
     dleaf_tx	*leafX;
-    int		cluster;
+    int32_t		cluster;
     entity_t	*e, *e2;
     char	*name;
     char	*target;
@@ -1784,7 +1784,7 @@ void CreateDirectLights (void)
                 e2 = FindTargetEntity (target);
                 if (!e2)
                     printf ("WARNING: light at (%i %i %i) has missing target\n",
-                            (int)dl->origin[0], (int)dl->origin[1], (int)dl->origin[2]);
+                            (int32_t)dl->origin[0], (int32_t)dl->origin[1], (int32_t)dl->origin[2]);
                 else
                 {
                     GetVectorForKey (e2, "origin", dest);
@@ -1876,12 +1876,12 @@ void CreateDirectLights (void)
 
 
 #ifdef WIN32
-static inline int lowestCommonNode (int nodeNum1, int nodeNum2)
+static inline int32_t lowestCommonNode (int32_t nodeNum1, int32_t nodeNum2)
 #else
-static inline int lowestCommonNode (int nodeNum1, int nodeNum2)
+static inline int32_t lowestCommonNode (int32_t nodeNum1, int32_t nodeNum2)
 #endif
 {
-    int child1, tmp, headNode = 0;
+    int32_t child1, tmp, headNode = 0;
 
     if (nodeNum1 > nodeNum2)
     {
@@ -1945,7 +1945,7 @@ re_test:
 LightContributionToPoint
 =============
 */
-static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum,
+static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int32_t nodenum,
         vec3_t normal, vec3_t color,
         float lightscale2,
         qboolean *sun_main_once,
@@ -1957,8 +1957,8 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int nodenum
     float			dist;
     float			scale = 0.0f;
     float           main_val;
-    int				i;
-    int				lcn;
+    int32_t				i;
+    int32_t				lcn;
     qboolean		set_main;
 
     VectorClear (color);
@@ -2110,14 +2110,14 @@ Lightscale2 is the normalizer for multisampling, -extra cmd line arg
 */
 
 void GatherSampleLight (vec3_t pos, vec3_t normal,
-                        float **styletable, int offset, int mapsize, float lightscale2,
+                        float **styletable, int32_t offset, int32_t mapsize, float lightscale2,
                         qboolean *sun_main_once, qboolean *sun_ambient_once, byte *pvs)
 {
-    int				i;
+    int32_t				i;
     directlight_t	*l;
     float			*dest;
     vec3_t			color;
-    int				nodenum;
+    int32_t				nodenum;
 
     // get the PVS for the pos to limit the number of checks
     if (!PvsForOrigin (pos, pvs))
@@ -2170,11 +2170,11 @@ doesn't generate extra light.
 =============
 */
 
-void AddSampleToPatch (vec3_t pos, vec3_t color, int facenum)
+void AddSampleToPatch (vec3_t pos, vec3_t color, int32_t facenum)
 {
     patch_t	*patch;
     vec3_t	mins, maxs;
-    int		i;
+    int32_t		i;
 
     if (numbounce == 0)
         return;
@@ -2206,10 +2206,10 @@ nextpatch:
 // =====================================================================================
 //  GetPhongNormal
 // =====================================================================================
-void    GetPhongNormal(int facenum, vec3_t spot, vec3_t phongnormal)
+void    GetPhongNormal(int32_t facenum, vec3_t spot, vec3_t phongnormal)
 {
-    int             j, ne;
-    int				s; // split every edge into two parts
+    int32_t             j, ne;
+    int32_t				s; // split every edge into two parts
     vec3_t          facenormal;
 
 
@@ -2246,9 +2246,9 @@ void    GetPhongNormal(int facenum, vec3_t spot, vec3_t phongnormal)
         vec3_t          vspot;
         unsigned        prev_edge;
         unsigned        next_edge;
-        int             e;
-        int             e1;
-        int             e2;
+        int32_t             e;
+        int32_t             e1;
+        int32_t             e2;
         edgeshare_t*    es;
         edgeshare_t*    es1;
         edgeshare_t*    es2;
@@ -2460,15 +2460,15 @@ float	sampleofs[5][2] =
 {  {0,0}, {-0.25, -0.25}, {0.25, -0.25}, {0.25, 0.25}, {-0.25, 0.25} };
 
 
-void BuildFacelights (int facenum)
+void BuildFacelights (int32_t facenum)
 {
     lightinfo_t	liteinfo[5];
     float		*styletable[MAX_LSTYLES];
-    int			i, j;
+    int32_t			i, j;
     float		*spot;
     patch_t		*patch;
-    int			numsamples;
-    int			tablesize;
+    int32_t			numsamples;
+    int32_t			tablesize;
     facelight_t		*fl;
     qboolean	sun_main_once, sun_ambient_once;
     vec_t      *center;
@@ -2638,9 +2638,9 @@ Add the indirect lighting on top of the direct
 lighting and save into final map format
 =============
 */
-void FinalLightFace (int facenum)
+void FinalLightFace (int32_t facenum)
 {
-    int			i, j, st;
+    int32_t			i, j, st;
     vec3_t		lb;
     patch_t		*patch;
     triangulation_t	*trian = NULL;
@@ -2649,7 +2649,7 @@ void FinalLightFace (int facenum)
     float newmax;
     byte		*dest;
     triangle_t	*last_valid;
-    int			pfacenum;
+    int32_t			pfacenum;
     vec3_t		facemins, facemaxs;
 
     fl = &facelight[facenum];
@@ -2685,7 +2685,7 @@ void FinalLightFace (int facenum)
             ClearBounds (facemins, facemaxs);
             for (i=0 ; i<f->numedges ; i++)
             {
-                int		ednum;
+                int32_t		ednum;
 
                 ednum = dsurfedges[f->firstedge+i];
                 if (ednum >= 0)
@@ -2827,7 +2827,7 @@ void FinalLightFace (int facenum)
             ClearBounds (facemins, facemaxs);
             for (i=0 ; i<f->numedges ; i++)
             {
-                int		ednum;
+                int32_t		ednum;
 
                 ednum = dsurfedges[f->firstedge+i];
                 if (ednum >= 0)

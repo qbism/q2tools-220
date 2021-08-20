@@ -33,12 +33,12 @@ WAV loading
 
 typedef struct
 {
-	int			rate;
-	int			width;
-	int			channels;
-	int			loopstart;
-	int			samples;
-	int			dataofs;		// chunk starts this many bytes from file start
+	int32_t			rate;
+	int32_t			width;
+	int32_t			channels;
+	int32_t			loopstart;
+	int32_t			samples;
+	int32_t			dataofs;		// chunk starts this many bytes from file start
 } wavinfo_t;
 
 
@@ -46,10 +46,10 @@ byte	*data_p;
 byte 	*iff_end;
 byte 	*last_chunk;
 byte 	*iff_data;
-int 	iff_chunk_len;
+int32_t 	iff_chunk_len;
 
 
-int		samplecounts[0x10000];
+int32_t		samplecounts[0x10000];
 
 wavinfo_t	wavinfo;
 
@@ -62,9 +62,9 @@ short GetLittleShort(void)
 	return val;
 }
 
-int GetLittleLong(void)
+int32_t GetLittleLong(void)
 {
-	int val = 0;
+	int32_t val = 0;
 	val = *data_p;
 	val = val + (*(data_p+1)<<8);
 	val = val + (*(data_p+2)<<16);
@@ -130,12 +130,12 @@ void DumpChunks(void)
 GetWavinfo
 ============
 */
-wavinfo_t GetWavinfo (char *name, byte *wav, int wavlength)
+wavinfo_t GetWavinfo (char *name, byte *wav, int32_t wavlength)
 {
 	wavinfo_t	info;
-	int     i;
-	int     format;
-	int		samples;
+	int32_t     i;
+	int32_t     format;
+	int32_t		samples;
 
 	memset (&info, 0, sizeof(info));
 
@@ -234,8 +234,8 @@ void LoadSoundtrack (void)
 {
 	char	name[1100];
 	FILE	*f;
-	int		len;
-	int     i, val, j;
+	int32_t		len;
+	int32_t     i, val, j;
 
 	soundtrack = NULL;
 	sprintf (name, "%svideo/%s/%s.wav", gamedir, base, base);
@@ -259,7 +259,7 @@ void LoadSoundtrack (void)
 	j = wavinfo.samples/2;
 	for (i=0 ; i<j ; i++)
 	{
-		val = ((unsigned short *)( soundtrack + wavinfo.dataofs))[i];
+		val = ((uint16_t *)( soundtrack + wavinfo.dataofs))[i];
 		samplecounts[val]++;
 	}
 	val = 0;
@@ -275,14 +275,14 @@ void LoadSoundtrack (void)
 WriteSound
 ==================
 */
-void WriteSound (FILE *output, int frame)
+void WriteSound (FILE *output, int32_t frame)
 {
-	int		start, end;
-	int		count;
-	int		empty = 0;
-	int		i;
-	int		sample;
-	int		width;
+	int32_t		start, end;
+	int32_t		count;
+	int32_t		empty = 0;
+	int32_t		i;
+	int32_t		sample;
+	int32_t		width;
 
 	width = wavinfo.width * wavinfo.channels;
 
@@ -309,9 +309,9 @@ MTF
 */
 cblock_t MTF (cblock_t in)
 {
-	int			i, j, b, code;
+	int32_t			i, j, b, code;
 	byte		*out_p;
-	int			index[256];
+	int32_t			index[256];
 	cblock_t	out;
 
 	out_p = out.data = malloc(in.count + 4);
@@ -346,17 +346,17 @@ cblock_t MTF (cblock_t in)
 
 //==========================================================================
 
-int		bwt_size;
+int32_t		bwt_size;
 byte	*bwt_data;
 
-int bwtCompare (const void *elem1, const void *elem2)
+int32_t bwtCompare (const void *elem1, const void *elem2)
 {
-	int		i;
-	int		i1, i2;
-	int		b1, b2;
+	int32_t		i;
+	int32_t		i1, i2;
+	int32_t		b1, b2;
 
-	i1 = *(int *)elem1;
-	i2 = *(int *)elem2;
+	i1 = *(int32_t *)elem1;
+	i2 = *(int32_t *)elem2;
 
 	for (i=0 ; i<bwt_size ; i++)
 	{
@@ -382,8 +382,8 @@ BWT
 */
 cblock_t BWT (cblock_t in)
 {
-	int		*sorted;
-	int		i;
+	int32_t		*sorted;
+	int32_t		i;
 	byte	*out_p;
 	cblock_t	out;
 
@@ -427,20 +427,20 @@ cblock_t BWT (cblock_t in)
 
 typedef struct hnode_s
 {
-	int			count;
+	int32_t			count;
 	qboolean	used;
-	int			children[2];
+	int32_t			children[2];
 } hnode_t;
 
-int			numhnodes;
+int32_t			numhnodes;
 hnode_t		hnodes[512];
 unsigned	charbits[256];
-int			charbitscount[256];
+int32_t			charbitscount[256];
 
-int	SmallestNode (void)
+int32_t	SmallestNode (void)
 {
-	int		i;
-	int		best, bestnode;
+	int32_t		i;
+	int32_t		best, bestnode;
 
 	best = 99999999;
 	bestnode = -1;
@@ -464,7 +464,7 @@ int	SmallestNode (void)
 	return bestnode;
 }
 
-void BuildChars (int nodenum, unsigned bits, int bitcount)
+void BuildChars (int32_t nodenum, unsigned bits, int32_t bitcount)
 {
 	hnode_t	*node;
 
@@ -492,13 +492,13 @@ Huffman
 */
 cblock_t Huffman (cblock_t in)
 {
-	int			i;
+	int32_t			i;
 	hnode_t		*node;
-	int			outbits, c;
+	int32_t			outbits, c;
 	unsigned	bits;
 	byte		*out_p;
 	cblock_t	out;
-	int			max;
+	int32_t			max;
 
 	// count
 	memset (hnodes, 0, sizeof(hnodes));
@@ -592,15 +592,15 @@ RLE
 #define	RLE_CODE	0xe8
 #define	RLE_TRIPPLE	0xe9
 
-int	rle_counts[256];
-int	rle_bytes[256];
+int32_t	rle_counts[256];
+int32_t	rle_bytes[256];
 
 cblock_t RLE (cblock_t in)
 {
-	int		i;
+	int32_t		i;
 	byte	*out_p;
-	int		val;
-	int		repeat;
+	int32_t		val;
+	int32_t		repeat;
 	cblock_t	out;
 
 	out_p = out.data = malloc (in.count*2);
@@ -660,13 +660,13 @@ LZSS
 #define	FRONT_BITS		4
 cblock_t LZSS (cblock_t in)
 {
-	int		i;
+	int32_t		i;
 	byte	*out_p;
 	cblock_t	out;
-	int		val;
-	int		j, start, max;
-	int		bestlength, beststart;
-	int		outbits;
+	int32_t		val;
+	int32_t		j, start, max;
+	int32_t		bestlength, beststart;
+	int32_t		outbits;
 
 if (in.count >= sizeof(lzss_next)/4)
 Error ("LZSS: too big");
@@ -781,22 +781,22 @@ Error ("LZSS: too big");
 #define	HUF_TOKENS	(256+MAX_REPT)
 
 unsigned	charbits1[256][HUF_TOKENS];
-int			charbitscount1[256][HUF_TOKENS];
+int32_t			charbitscount1[256][HUF_TOKENS];
 
 hnode_t		hnodes1[256][HUF_TOKENS*2];
-int			numhnodes1[256];
+int32_t			numhnodes1[256];
 
-int			order0counts[256];
+int32_t			order0counts[256];
 
 /*
 ==================
 SmallestNode1
 ==================
 */
-int	SmallestNode1 (hnode_t *hnodes, int numhnodes)
+int32_t	SmallestNode1 (hnode_t *hnodes, int32_t numhnodes)
 {
-	int		i;
-	int		best, bestnode;
+	int32_t		i;
+	int32_t		best, bestnode;
 
 	best = 99999999;
 	bestnode = -1;
@@ -826,7 +826,7 @@ int	SmallestNode1 (hnode_t *hnodes, int numhnodes)
 BuildChars1
 ==================
 */
-void BuildChars1 (int prev, int nodenum, unsigned bits, int bitcount)
+void BuildChars1 (int32_t prev, int32_t nodenum, unsigned bits, int32_t bitcount)
 {
 	hnode_t	*node;
 
@@ -852,10 +852,10 @@ void BuildChars1 (int prev, int nodenum, unsigned bits, int bitcount)
 BuildTree1
 ==================
 */
-void BuildTree1 (int prev)
+void BuildTree1 (int32_t prev)
 {
 	hnode_t		*node, *nodebase;
-	int			numhnodes;
+	int32_t			numhnodes;
 
 	// build the nodes
 	numhnodes = HUF_TOKENS;
@@ -889,10 +889,10 @@ Huffman1_Count
 */
 void Huffman1_Count (cblock_t in)
 {
-	int		i;
-	int		prev;
-	int		v;
-	int		rept;
+	int32_t		i;
+	int32_t		prev;
+	int32_t		v;
+	int32_t		rept;
 
 	prev = 0;
 	for (i=0 ; i<in.count ; i++)
@@ -923,9 +923,9 @@ Huffman1_Build
 byte	scaled[256][HUF_TOKENS];
 void Huffman1_Build (FILE *f)
 {
-	int		i, j, v;
-	int		max;
-	int		total;
+	int32_t		i, j, v;
+	int32_t		max;
+	int32_t		total;
 
 	for (i=0 ; i<256 ; i++)
 	{
@@ -982,14 +982,14 @@ Order 1 compression with pre-built table
 */
 cblock_t Huffman1 (cblock_t in)
 {
-	int			i;
-	int			outbits, c;
+	int32_t			i;
+	int32_t			outbits, c;
 	unsigned	bits;
 	byte		*out_p;
 	cblock_t	out;
-	int			prev;
-	int			v;
-	int			rept;
+	int32_t			prev;
+	int32_t			v;
+	int32_t			rept;
 
 	out_p = out.data = malloc(in.count*2 + 1024);
 	memset (out_p, 0, in.count*2+1024);
@@ -1058,11 +1058,11 @@ cblock_t Huffman1 (cblock_t in)
 LoadFrame
 ===================
 */
-cblock_t LoadFrame (char *base, int frame, int digits, byte **palette)
+cblock_t LoadFrame (char *base, int32_t frame, int32_t digits, byte **palette)
 {
-	int			ten3, ten2, ten1, ten0;
+	int32_t			ten3, ten2, ten1, ten0;
 	cblock_t	in;
-	int			width, height;
+	int32_t			width, height;
 	char		name[1100];
 	FILE		*f;
 
@@ -1115,15 +1115,15 @@ void Cmd_Video (void)
 	char	savename[1100];
 	char	name[1200];
 	FILE	*output;
-	int		startframe, frame;
+	int32_t		startframe, frame;
 	byte	*palette;
-	int		width, height;
+	int32_t		width, height;
 	byte	current_palette[768];
-	int		command;
-	int		i;
-	int		digits;
+	int32_t		command;
+	int32_t		i;
+	int32_t		digits;
 	cblock_t	in, huffman;
-	int		swap;
+	int32_t		swap;
 
 
 	GetToken (false);

@@ -20,15 +20,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "qbsp.h"
 
-int		nummiptex;
+int32_t		nummiptex;
 textureref_t	textureref[MAX_MAP_TEXTURES];
 
 //==========================================================================
 
 
-int	FindMiptex (char *name)
+int32_t	FindMiptex (char *name)
 {
-	int		i, mod_fail;
+	int32_t		i, mod_fail;
 	char	path[1080];
 	char	pakpath[56];
 	miptex_t	*mt;
@@ -103,9 +103,9 @@ vec3_t	baseaxis[18] =
 
 void TextureAxisFromPlane(plane_t *pln, vec3_t xv, vec3_t yv)
 {
-	int		bestaxis;
+	int32_t		bestaxis;
 	vec_t	dot,best;
-	int		i;
+	int32_t		i;
 
 	best = 0;
 	bestaxis = 0;
@@ -142,16 +142,16 @@ qboolean TexinfosMatch (texinfo_t t1, texinfo_t t2) //mxd
 	if (t1.flags != t2.flags || t1.value != t2.value || strcmp (t1.texture, t2.texture))
 		return false;
 
-	for (int j = 0; j < 2; j++)
-		for (int k = 0; k < 4; k++)
-			if ((int)(t1.vecs[j][k]*100) != (int)(t2.vecs[j][k]*100))  //qb: round to two decimal places
+	for (int32_t j = 0; j < 2; j++)
+		for (int32_t k = 0; k < 4; k++)
+			if ((int32_t)(t1.vecs[j][k]*100) != (int32_t)(t2.vecs[j][k]*100))  //qb: round to two decimal places
 				return false;
 
 	return true;
 }
 
 //mxd. Applies origin brush offset to existing v220 texinfo...
-int ApplyTexinfoOffset_UV(int texinfoindex, const brush_texture_t *bt, const vec3_t origin)
+int32_t ApplyTexinfoOffset_UV(int32_t texinfoindex, const brush_texture_t *bt, const vec3_t origin)
 {
 	if ((!origin[0] && !origin[1] && !origin[2]) || texinfoindex < 0)
 		return texinfoindex;
@@ -177,7 +177,7 @@ int ApplyTexinfoOffset_UV(int texinfoindex, const brush_texture_t *bt, const vec
 	CheckTexinfoCount();
 
 	// Repeat for the next animation frame
-	const int mt = FindMiptex (tx.texture);
+	const int32_t mt = FindMiptex (tx.texture);
 	if (textureref[mt].animname[0])
 	{
 		brush_texture_t anim = *bt;
@@ -194,7 +194,7 @@ int ApplyTexinfoOffset_UV(int texinfoindex, const brush_texture_t *bt, const vec
 }
 
 // DarkEssence: function for new #mapversion with UVaxis
-int TexinfoForBrushTexture_UV (brush_texture_t *bt, vec_t *UVaxis)
+int32_t TexinfoForBrushTexture_UV (brush_texture_t *bt, vec_t *UVaxis)
 {
 	if (!bt->name[0])
 		return 0;
@@ -208,8 +208,8 @@ int TexinfoForBrushTexture_UV (brush_texture_t *bt, vec_t *UVaxis)
 	if (!bt->scale[1])
 		bt->scale[1] = 1;
 
-	for (int i = 0; i < 2 ; i++)
-		for (int j = 0; j < 3; j++)
+	for (int32_t i = 0; i < 2 ; i++)
+		for (int32_t j = 0; j < 3; j++)
 			tx.vecs[i][j] = UVaxis[i*3+j] / bt->scale[i];
 
 	tx.vecs[0][3] = bt->shift[0];
@@ -218,7 +218,7 @@ int TexinfoForBrushTexture_UV (brush_texture_t *bt, vec_t *UVaxis)
 	tx.value = bt->value;
 
 	// Find or replace texinfo
-	int texinfoindex;
+	int32_t texinfoindex;
 	texinfo_t *tc = texinfo;
 	for (texinfoindex = 0; texinfoindex < numtexinfo; texinfoindex++, tc++)
 		if (TexinfosMatch (*tc, tx))
@@ -229,7 +229,7 @@ int TexinfoForBrushTexture_UV (brush_texture_t *bt, vec_t *UVaxis)
 	CheckTexinfoCount(); //mxd
 
 	// Load the next animation
-	const int mt = FindMiptex (bt->name);
+	const int32_t mt = FindMiptex (bt->name);
 	if (textureref[mt].animname[0])
 	{
 		brush_texture_t anim = *bt;
@@ -244,7 +244,7 @@ int TexinfoForBrushTexture_UV (brush_texture_t *bt, vec_t *UVaxis)
 
 extern qboolean origfix;
 
-int TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin)
+int32_t TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin)
 {
 	if (!bt->name[0])
 		return 0;
@@ -308,7 +308,7 @@ int TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin)
 		shift[1] = nt;
 	}
 
-	int sv, tv;
+	int32_t sv, tv;
 	if (vecs[0][0])
 		sv = 0;
 	else if (vecs[0][1])
@@ -323,7 +323,7 @@ int TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin)
 	else
 		tv = 2;
 
-	for (int i = 0; i < 2; i++)
+	for (int32_t i = 0; i < 2; i++)
 	{
 		const vec_t ns = cosv * vecs[i][sv] - sinv * vecs[i][tv];
 		const vec_t nt = sinv * vecs[i][sv] + cosv * vecs[i][tv];
@@ -331,8 +331,8 @@ int TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin)
 		vecs[i][tv] = nt;
 	}
 
-	for (int i = 0; i < 2; i++)
-		for (int j = 0; j < 3; j++)
+	for (int32_t i = 0; i < 2; i++)
+		for (int32_t j = 0; j < 3; j++)
 			tx.vecs[i][j] = vecs[i][j] / bt->scale[i];
 
 	tx.vecs[0][3] = bt->shift[0] + shift[0];
@@ -341,7 +341,7 @@ int TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin)
 	tx.value = bt->value;
 
 	// Find or replace texinfo
-	int texinfoindex;
+	int32_t texinfoindex;
 	texinfo_t *tc = texinfo;
 	for (texinfoindex = 0; texinfoindex < numtexinfo; texinfoindex++, tc++)
 		if (TexinfosMatch (*tc, tx))
@@ -352,7 +352,7 @@ int TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin)
 	CheckTexinfoCount(); //mxd
 
 	// load the next animation
-	const int mt = FindMiptex (bt->name);
+	const int32_t mt = FindMiptex (bt->name);
 	if (textureref[mt].animname[0])
 	{
 		brush_texture_t anim = *bt;
