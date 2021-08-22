@@ -21,7 +21,8 @@ bsp
 *   Caulk brushes similar to Q3 mapping (kmbsp3)	
 *   Texinfo overflow check (MaxEd)
 *   Set chop size for surface lights (qbism - idea from JDolan)
-*   Support increased maps size and entity limits.  Requires a supporting engine. (kmqbsp3)
+*   Increased limits within standard file format.  Requires a supporting engine. (kmqbsp3)
+*   Extreme limits with extended file format. Future supporting engine. (ideas from motorsep, paril, Knightmare)
 		
 vis
 *   Increase vis data size max. Issue warning for > vanilla limit. (qbism)
