@@ -23,7 +23,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "bspfile.h"
 #include "scriplib.h"
 
-qboolean use_qbsp;
+qboolean use_qbsp = false; //qb: huge map support
+qboolean noskipfix = false;  //qb: warn about SURF_SKIP contents rather than silently changing to zero
 
 void GetLeafNums (void);
 

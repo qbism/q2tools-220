@@ -229,8 +229,8 @@ typedef struct miptex_s
 // 16 bit short limits
 #define	MAX_MAP_MODELS		    1024
 #define	MAX_MAP_BRUSHES		    8192
-#define	OLD_MAX_MAP_ENTITIES	2048 //qb: from kmqbsp3- Knightmare- old limit
-#define	MAX_MAP_ENTITIES	    8192 // new limit, was 2048
+#define	DEFAULT_MAP_ENTITIES	2048 //qb: from kmqbsp3- Knightmare- old limit
+#define	MAX_MAP_ENTITIES	    8192 //
 #define	MAX_MAP_ENTSTRING	  262144
 #define	DEFAULT_MAP_TEXINFO	    8192  //mxd: vanilla
 #define	MAX_MAP_TEXINFO		   16384  //mxd: KMQ2
@@ -249,6 +249,7 @@ typedef struct miptex_s
 #define	MAX_MAP_EDGES		    128000
 #define	MAX_MAP_SURFEDGES	    256000
 #define	DEFAULT_MAP_LIGHTING	0x200000  //qb: vanilla, 0x800000 q2pro
+#define	MAX_MAP_LIGHTING	    0x800000  //qb: more better
 #define	DEFAULT_MAP_VISIBILITY	0x100000  //qb: vanilla
 #define	MAX_MAP_VISIBILITY	    0x400000  //qb: extended
 
@@ -260,9 +261,11 @@ typedef struct miptex_s
 #define MAX_POINTS_HASH (MAX_MAP_SIZE/128)
 
 //qb: qbsp limits
-#define	MAX_MAP_MODELS_QBSP          32768
+#define	WARN_MAP_MODELS_QBSP         32768
+#define	MAX_MAP_MODELS_QBSP         131072
 #define	MAX_MAP_BRUSHES_QBSP   	   1048576
-#define	MAX_MAP_ENTITIES_QBSP        32768
+#define	WARN_MAP_ENTITIES_QBSP       32768
+#define	MAX_MAP_ENTITIES_QBSP       131072
 #define	MAX_MAP_ENTSTRING_QBSP    13631488
 #define	MAX_MAP_TEXINFO_QBSP       1048576
 #define	MAX_MAP_PLANES_QBSP	       1048576

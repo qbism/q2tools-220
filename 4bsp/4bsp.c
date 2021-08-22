@@ -22,7 +22,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 extern	float subdivide_size;
 extern	float sublight_size;
-extern qboolean use_qbsp;
 
 char		source[1024];
 char		name[1024];
@@ -48,7 +47,7 @@ int32_t			block_xl = -8, block_xh = 7, block_yl = -8, block_yh = 7;
 
 int32_t			entity_num;
 
-int32_t			max_entities = OLD_MAX_MAP_ENTITIES;	//qb: from kmqbsp3- Knightmare- adjustable entity limit
+int32_t			max_entities = MAX_MAP_ENTITIES;	    //qb: from kmqbsp3- Knightmare- adjustable entity limit
 int32_t			max_bounds = OLD_MAX_BOUNDS;			// Knightmare- adjustable max bounds
 int32_t			block_size = 1024;						// Knightmare- adjustable block size
 
@@ -377,8 +376,8 @@ int32_t main (int32_t argc, char **argv)
                     "    -noprune: Disable node pruning.\n"
                     "    -noorigfix: Disable texture fix for origin offsets.\n"
                     "    -largebounds: Increase max map size for supporting engines.\n"
-                    "    -moreents: Increase max number of entities for supporting engines.\n"
                     "    -qbsp: Greatly expanded map and entity limits for supporting engines.\n"
+                    "    -noskipfix: Do not automatically set skip contents to zero.\n"
                     "    -v: Display more verbose output.\n"
                     "<<<<<<<<<<<<<<<<<<<<< 4bsp HELP >>>>>>>>>>>>>>>>>>>>>\n\n");
 
@@ -459,7 +458,13 @@ int32_t main (int32_t argc, char **argv)
             max_entities = MAX_MAP_ENTITIES_QBSP;
             max_bounds = MAX_HALF_SIZE;
             block_size = MAX_BLOCK_SIZE;
-       }
+        }
+        else if (!strcmp(argv[i], "-noskipfix"))
+        {
+            printf ("noskipfix = true\n");
+            noskipfix = true;
+
+        }
 
         //qb: from kmqbsp3- Knightmare added
         else if (!strcmp(argv[i], "-largebounds") || !strcmp(argv[i], "-lb"))
@@ -475,20 +480,6 @@ int32_t main (int32_t argc, char **argv)
                 printf ("using max bound size of %i\n", MAX_HALF_SIZE);
             }
         }
-        else if (!strcmp(argv[i], "-moreents"))
-        {
-            if (use_qbsp)
-            {
-                printf ("[-moreents is not required with -qbsp]\n");
-            }
-            else
-            {
-                max_entities = MAX_MAP_ENTITIES;
-                printf ("using entity limit of %i\n", MAX_MAP_ENTITIES);
-            }
-        }
-        // end Knightmare
-
 
         else if ((!strcmp(argv[i], "-chop")) || (!strcmp(argv[i], "-subdiv")))
         {
@@ -553,8 +544,8 @@ int32_t main (int32_t argc, char **argv)
                 "    -blocks # # # #       -nocsg             -nowater\n"
                 "    -leaktest             -nodetail          -onlyents\n"
                 "    -fulldetail           -noshare           -noprune\n"
-                "    -noorigfix            -largebounds       -moreents\n"
-                "    -qbsp                 -v (verbose)\n\n");
+                "    -noorigfix            -largebounds       -noskipfix\n"
+                "    -v (verbose)\n\n");
 
         exit(1);
     }

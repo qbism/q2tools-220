@@ -709,11 +709,24 @@ void ParseBrush (entity_t *mapent)
                                 | CONTENTS_PLAYERCLIP|CONTENTS_MONSTERCLIP|CONTENTS_MIST)  ) )
             side->contents |= CONTENTS_SOLID;
 
-        // hints and skips are never detail, and have no content
-        if (side->surf & (SURF_HINT|SURF_SKIP) )
+
+        //qb: don't change SURF_SKIP contents
+        if (noskipfix)
         {
-            side->contents = 0;
-            side->surf &= ~CONTENTS_DETAIL;
+            if (side->surf & SURF_HINT)
+            {
+                side->contents = 0;
+                side->surf &= ~CONTENTS_DETAIL;
+            }
+        }
+        else
+        {
+            // hints and skips have no contents
+            if (side->surf & (SURF_HINT | SURF_SKIP))
+            {
+                side->contents = 0;
+                side->surf &= ~CONTENTS_DETAIL;
+            }
         }
 
 
@@ -899,11 +912,18 @@ qboolean	ParseMapEntity (void)
 
     if (use_qbsp)
     {
+        if (num_entities == WARN_MAP_ENTITIES_QBSP)
+            printf ("WARNING: num_entities may exceed protocol limit (%i)", WARN_MAP_ENTITIES_QBSP);
         if (num_entities == max_entities)
-            Error ("num_entities == MAX_MAP_ENTITIES_QBSP  (%i)", MAX_MAP_ENTITIES_QBSP);
+            Error ("num_entities exceeds MAX_MAP_ENTITIES_QBSP  (%i)", MAX_MAP_ENTITIES_QBSP);
     }
-    if (num_entities == max_entities) //qb: from kmqbsp3 Knightmare changed- was MAX_MAP_ENTITIES
-        Error ("num_entities == MAX_MAP_ENTITIES  (%i)", MAX_MAP_ENTITIES);
+    else
+    {
+        if (num_entities == DEFAULT_MAP_ENTITIES)
+            printf ("WARNING: num_entities exceeds vanilla limit (%i)", DEFAULT_MAP_ENTITIES);
+        if (num_entities == max_entities) //qb: from kmqbsp3 Knightmare changed- was MAX_MAP_ENTITIES
+            Error ("num_entities exceeds MAX_MAP_ENTITIES  (%i)", MAX_MAP_ENTITIES);
+    }
 
     entity_t *mapent = &entities[num_entities];
     num_entities++;

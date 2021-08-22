@@ -734,11 +734,14 @@ void BeginModel (void)
 
     if (use_qbsp)
     {
+        if (nummodels == WARN_MAP_MODELS_QBSP)
+            printf ("WARNING: nummodels may exceed protocol limit (%i)\n", WARN_MAP_MODELS_QBSP);
         if (nummodels == MAX_MAP_MODELS_QBSP)
-            Error ("MAX_MAP_MODELS_QBSP");
+            Error ("nummodels exceeds MAX_MAP_MODELS_QBSP");
     }
     else if (nummodels == MAX_MAP_MODELS)
-        Error ("MAX_MAP_MODELS");
+        Error ("nummodels exceeds MAX_MAP_MODELS");
+
     mod = &dmodels[nummodels];
 
     mod->firstface = numfaces;

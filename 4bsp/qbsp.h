@@ -181,8 +181,9 @@ extern	qboolean	noweld;
 extern	qboolean	noshare;
 extern	qboolean	notjunc;
 extern	qboolean	badnormal_check;
-extern float        badnormal;
-extern	qboolean	use_qbsp; //qb: qbsp
+extern  float       badnormal;
+extern	qboolean	use_qbsp;
+extern  qboolean    noskipfix;
 
 extern	vec_t		microvolume;
 
