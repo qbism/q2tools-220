@@ -75,8 +75,13 @@ int32_t	FindMiptex (char *name)
 		        textureref[i].contents = LittleLong (mt->contents);
 		        strcpy (textureref[i].animname, mt->animname);
 		        free (mt);
+				mod_fail = false;
 	        }
 	}
+
+	if (mod_fail)
+		printf("WARNING: couldn't locate texture %s\n", name);
+
 	nummiptex++;
 
 	if (textureref[i].animname[0])

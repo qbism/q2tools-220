@@ -929,8 +929,9 @@ face_t *FaceFromPortal (portal_t *p, int32_t pside)
     side = p->side;
     if (!side)
         return NULL;	// portal does not bridge different visible contents
-    //qb: fixme? use flags for caulk/nodraw faces
-    if (   !strcmp(side_brushtextures[side-brushsides].name, "common/caulk"))
+    if (   !strcmp(side_brushtextures[side-brushsides].name, "common/caulk") ||
+            (side_brushtextures[side-brushsides].flags & SURF_NODRAW)
+        )
         return NULL;
 
     f = AllocFace ();
