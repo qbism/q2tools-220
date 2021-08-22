@@ -48,7 +48,7 @@ int32_t			block_xl = -8, block_xh = 7, block_yl = -8, block_yh = 7;
 int32_t			entity_num;
 
 int32_t			max_entities = MAX_MAP_ENTITIES;	    //qb: from kmqbsp3- Knightmare- adjustable entity limit
-int32_t			max_bounds = OLD_MAX_BOUNDS;			// Knightmare- adjustable max bounds
+int32_t			max_bounds = DEFAULT_MAP_SIZE;			// Knightmare- adjustable max bounds
 int32_t			block_size = 1024;						// Knightmare- adjustable block size
 
 node_t		*block_nodes[10][10];
@@ -456,7 +456,7 @@ int32_t main (int32_t argc, char **argv)
             printf ("use_qbsp = true\n");
             use_qbsp = true;
             max_entities = MAX_MAP_ENTITIES_QBSP;
-            max_bounds = MAX_HALF_SIZE;
+            max_bounds = MAX_MAP_SIZE;
             block_size = MAX_BLOCK_SIZE;
         }
         else if (!strcmp(argv[i], "-noskipfix"))
@@ -475,9 +475,9 @@ int32_t main (int32_t argc, char **argv)
             }
             else
             {
-                max_bounds = MAX_HALF_SIZE;
+                max_bounds = MAX_MAP_SIZE;
                 block_size = MAX_BLOCK_SIZE;
-                printf ("using max bound size of %i\n", MAX_HALF_SIZE);
+                printf ("largebounds: using max bound size of %i\n", MAX_MAP_SIZE);
             }
         }
 

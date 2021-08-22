@@ -230,7 +230,7 @@ typedef struct miptex_s
 #define	MAX_MAP_MODELS		    1024
 #define	MAX_MAP_BRUSHES		    8192
 #define	DEFAULT_MAP_ENTITIES	2048 //qb: from kmqbsp3- Knightmare- old limit
-#define	MAX_MAP_ENTITIES	    8192 //
+#define	MAX_MAP_ENTITIES	    8192 //qb: KMQ2
 #define	MAX_MAP_ENTSTRING	  262144
 #define	DEFAULT_MAP_TEXINFO	    8192  //mxd: vanilla
 #define	MAX_MAP_TEXINFO		   16384  //mxd: KMQ2
@@ -248,17 +248,16 @@ typedef struct miptex_s
 #define	MAX_MAP_PORTALS	        65536
 #define	MAX_MAP_EDGES		    128000
 #define	MAX_MAP_SURFEDGES	    256000
-#define	DEFAULT_MAP_LIGHTING	0x200000  //qb: vanilla, 0x800000 q2pro
-#define	MAX_MAP_LIGHTING	    0x800000  //qb: more better
-#define	DEFAULT_MAP_VISIBILITY	0x100000  //qb: vanilla
-#define	MAX_MAP_VISIBILITY	    0x400000  //qb: extended
+#define	DEFAULT_MAP_LIGHTING	0x200000  //qb: vanilla
+#define	MAX_MAP_LIGHTING	    0x800000  //qb: q2pro
+#define	DEFAULT_MAP_VISIBILITY	0x100000
+#define	MAX_MAP_VISIBILITY	    0x400000
 
-//qb: map bound +/- 32767
-#define	OLD_MAX_BOUNDS		4096
-#define MAX_MAP_SIZE 32767*2
-#define MAX_HALF_SIZE (MAX_MAP_SIZE/2)
-#define MAX_BLOCK_SIZE (MAX_MAP_SIZE/8)
-#define MAX_POINTS_HASH (MAX_MAP_SIZE/128)
+//qb: map bounds are +/- MAX
+#define	DEFAULT_MAP_SIZE		      4096
+#define MAX_MAP_SIZE                 32767
+#define MAX_BLOCK_SIZE      MAX_MAP_SIZE/4
+#define MAX_POINTS_HASH    MAX_MAP_SIZE/64
 
 //qb: qbsp limits
 #define	WARN_MAP_MODELS_QBSP         32768
