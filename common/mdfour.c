@@ -25,13 +25,13 @@
 		Boston, MA  02111-1307, USA
 
 */
-
+#include <stdint.h>
 #include <string.h>		/* XoXus: needed for memset call */
 #include "mdfour.h"
 
 /* NOTE: This code makes no attempt to be fast!
 
-   It assumes that a int is at least 32 bits long
+   It assumes that a int32_t is at least 32 bits long
 */
 
 static struct mdfour *m;
@@ -50,12 +50,12 @@ static struct mdfour *m;
 #define ROUND3(a,b,c,d,k,s) a = lshift(a + H(b,c,d) + X[k] + 0x6ED9EBA1,s)
 
 /* this applies md4 to 64 byte chunks */
-static void mdfour64(uint32 *M)
+static void mdfour64(uint32_t *M)
 {
-	int j;
-	uint32 AA, BB, CC, DD;
-	uint32 X[16];
-	uint32 A,B,C,D;
+	int32_t j;
+	uint32_t AA, BB, CC, DD;
+	uint32_t X[16];
+	uint32_t A,B,C,D;
 
 	for (j=0;j<16;j++)
 		X[j] = M[j];
@@ -103,16 +103,16 @@ static void mdfour64(uint32 *M)
 	m->A = A; m->B = B; m->C = C; m->D = D;
 }
 
-static void copy64(uint32 *M, unsigned char *in)
+static void copy64(uint32_t *M, uint8_t *in)
 {
-	int i;
+	int32_t i;
 
 	for (i=0;i<16;i++)
 		M[i] = (in[i*4+3]<<24) | (in[i*4+2]<<16) |
 			(in[i*4+1]<<8) | (in[i*4+0]<<0);
 }
 
-static void copy4(unsigned char *out,uint32 x)
+static void copy4(uint8_t *out,uint32_t x)
 {
 	out[0] = x&0xFF;
 	out[1] = (x>>8)&0xFF;
@@ -130,11 +130,11 @@ void mdfour_begin(struct mdfour *md)
 }
 
 
-static void mdfour_tail(unsigned char *in, int n)
+static void mdfour_tail(uint8_t *in, int32_t n)
 {
-	unsigned char buf[128];
-	uint32 M[16];
-	uint32 b;
+	uint8_t buf[128];
+	uint32_t M[16];
+	uint32_t b;
 
 	m->totalN += n;
 
@@ -157,9 +157,9 @@ static void mdfour_tail(unsigned char *in, int n)
 	}
 }
 
-void mdfour_update(struct mdfour *md, unsigned char *in, int n)
+void mdfour_update(struct mdfour *md, uint8_t *in, int32_t n)
 {
-	uint32 M[16];
+	uint32_t M[16];
 
 	if (n == 0) mdfour_tail(in, n);
 
@@ -177,7 +177,7 @@ void mdfour_update(struct mdfour *md, unsigned char *in, int n)
 }
 
 
-void mdfour_result(struct mdfour *md, unsigned char *out)
+void mdfour_result(struct mdfour *md, uint8_t *out)
 {
 	m = md;
 
@@ -188,7 +188,7 @@ void mdfour_result(struct mdfour *md, unsigned char *out)
 }
 
 
-void mdfour(unsigned char *out, unsigned char *in, int n)
+void mdfour(uint8_t *out, uint8_t *in, int32_t n)
 {
 	struct mdfour md;
 	mdfour_begin(&md);
@@ -204,20 +204,20 @@ void mdfour(unsigned char *out, unsigned char *in, int n)
 //	Author: Jeff Teunissen	<d2deek@pmail.net>
 //	Date: 01 Jan 2000
 
-unsigned Com_BlockChecksum (void *buffer, int length)
+unsigned Com_BlockChecksum (void *buffer, int32_t length)
 {
-	int				digest[4];
+	int32_t				digest[4];
 	unsigned 		val;
 
-	mdfour ( (unsigned char *) digest, (unsigned char *) buffer, length );
+	mdfour ( (uint8_t *) digest, (uint8_t *) buffer, length );
 
 	val = digest[0] ^ digest[1] ^ digest[2] ^ digest[3];
 
 	return val;
 }
 
-void Com_BlockFullChecksum (void *buffer, int len, unsigned char *outbuf)
+void Com_BlockFullChecksum (void *buffer, int32_t len, uint8_t *outbuf)
 {
-	mdfour ( outbuf, (unsigned char *) buffer, len );
+	mdfour ( outbuf, (uint8_t *) buffer, len );
 }
 

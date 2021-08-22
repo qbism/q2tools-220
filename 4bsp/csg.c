@@ -49,7 +49,7 @@ for all sides
 
   */
 
-void SplitBrush2 (bspbrush_t *brush, int planenum,
+void SplitBrush2 (bspbrush_t *brush, int32_t planenum,
                   bspbrush_t **front, bspbrush_t **back)
 {
     SplitBrush (brush, planenum, front, back);
@@ -74,7 +74,7 @@ The originals are undisturbed.
 bspbrush_t *SubtractBrush (bspbrush_t *a, bspbrush_t *b)
 {
     // a - b = out (list)
-    int		i;
+    int32_t		i;
     bspbrush_t	*front, *back;
     bspbrush_t	*out, *in;
 
@@ -116,7 +116,7 @@ The originals are undisturbed.
 */
 bspbrush_t *IntersectBrush (bspbrush_t *a, bspbrush_t *b)
 {
-    int		i;
+    int32_t		i;
     bspbrush_t	*front, *back;
     bspbrush_t	*in;
 
@@ -149,7 +149,7 @@ There will be false negatives for some non-axial combinations.
 */
 qboolean BrushesDisjoint (bspbrush_t *a, bspbrush_t *b)
 {
-    int		i, j;
+    int32_t		i, j;
 
     // check bounding boxes
     for (i=0 ; i<3 ; i++)
@@ -180,9 +180,9 @@ Some combinations will generate a combination (water + clip),
 but most will be the stronger of the two contents.
 ===============
 */
-int	IntersectionContents (int c1, int c2)
+int32_t	IntersectionContents (int32_t c1, int32_t c2)
 {
-    int		out;
+    int32_t		out;
 
     out = c1 | c2;
 
@@ -193,8 +193,8 @@ int	IntersectionContents (int c1, int c2)
 }
 
 
-int		minplanenums[3];
-int		maxplanenums[3];
+int32_t		minplanenums[3];
+int32_t		maxplanenums[3];
 
 /*
 ===============
@@ -205,9 +205,9 @@ Any planes shared with the box edge will be set to no texinfo
 */
 bspbrush_t	*ClipBrushToBox (bspbrush_t *brush, vec3_t clipmins, vec3_t clipmaxs)
 {
-    int		i, j;
+    int32_t		i, j;
     bspbrush_t	*front,	*back;
-    int		p;
+    int32_t		p;
 
     for (j=0 ; j<2 ; j++)
     {
@@ -253,16 +253,16 @@ bspbrush_t	*ClipBrushToBox (bspbrush_t *brush, vec3_t clipmins, vec3_t clipmaxs)
 MakeBspBrushList
 ===============
 */
-bspbrush_t *MakeBspBrushList (int startbrush, int endbrush,
+bspbrush_t *MakeBspBrushList (int32_t startbrush, int32_t endbrush,
                               vec3_t clipmins, vec3_t clipmaxs)
 {
     mapbrush_t	*mb;
     bspbrush_t	*brushlist, *newbrush;
-    int			i, j;
-    int			c_faces;
-    int			c_brushes;
-    int			numsides;
-    int			vis;
+    int32_t			i, j;
+    int32_t			c_faces;
+    int32_t			c_brushes;
+    int32_t			numsides;
+    int32_t			vis;
     vec3_t		normal;
     vec_t		dist;  // jit (use higher precision, if enabled)
 
@@ -397,7 +397,7 @@ void WriteBrushMap (char *name, bspbrush_t *list)
 {
     FILE	*f;
     side_t	*s;
-    int		i;
+    int32_t		i;
     winding_t	*w;
 
     if(use_qbsp)
@@ -424,9 +424,9 @@ void WriteBrushMap (char *name, bspbrush_t *list)
         {
             w = BaseWindingForPlane (mapplanes[s->planenum].normal, mapplanes[s->planenum].dist);
 
-            fprintf (f,"( %i %i %i ) ", (int)w->p[0][0], (int)w->p[0][1], (int)w->p[0][2]);
-            fprintf (f,"( %i %i %i ) ", (int)w->p[1][0], (int)w->p[1][1], (int)w->p[1][2]);
-            fprintf (f,"( %i %i %i ) ", (int)w->p[2][0], (int)w->p[2][1], (int)w->p[2][2]);
+            fprintf (f,"( %i %i %i ) ", (int32_t)w->p[0][0], (int32_t)w->p[0][1], (int32_t)w->p[0][2]);
+            fprintf (f,"( %i %i %i ) ", (int32_t)w->p[1][0], (int32_t)w->p[1][1], (int32_t)w->p[1][2]);
+            fprintf (f,"( %i %i %i ) ", (int32_t)w->p[2][0], (int32_t)w->p[2][1], (int32_t)w->p[2][2]);
 
             fprintf (f, "%s 0 0 0 1 1\n", texinfo[s->texinfo].texture);
             FreeWinding (w);
@@ -471,7 +471,7 @@ bspbrush_t *ChopBrushes (bspbrush_t *head)
     bspbrush_t	*tail;
     bspbrush_t	*keep;
     bspbrush_t	*sub, *sub2;
-    int			c1, c2;
+    int32_t			c1, c2;
 
     qprintf ("---- ChopBrushes ----\n");
     qprintf ("original brushes: %i\n", CountBrushList (head));
@@ -581,7 +581,7 @@ bspbrush_t *InitialBrushList (bspbrush_t *list)
 {
     bspbrush_t *b;
     bspbrush_t	*out, *newb;
-    int			i;
+    int32_t			i;
 
     // only return brushes that have visible faces
     out = NULL;
@@ -620,7 +620,7 @@ bspbrush_t *OptimizedBrushList (bspbrush_t *list)
 {
     bspbrush_t *b;
     bspbrush_t	*out, *newb;
-    int			i;
+    int32_t			i;
 
     // only return brushes that have visible faces
     out = NULL;

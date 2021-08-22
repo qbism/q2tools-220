@@ -21,10 +21,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "qbsp.h"
 
 
-int		c_active_portals;
-int		c_peak_portals;
-int		c_boundary;
-int		c_boundary_sides;
+int32_t		c_active_portals;
+int32_t		c_peak_portals;
+int32_t		c_boundary;
+int32_t		c_boundary_sides;
 
 /*
 ===========
@@ -65,9 +65,9 @@ Returns the single content bit of the
 strongest visible content present
 ==============
 */
-int VisibleContents (int contents)
+int32_t VisibleContents (int32_t contents)
 {
-	int		i;
+	int32_t		i;
 
 	for (i=1 ; i<=LAST_VISIBLE_CONTENTS ; i<<=1)
 		if (contents & i )
@@ -82,9 +82,9 @@ int VisibleContents (int contents)
 ClusterContents
 ===============
 */
-int ClusterContents (node_t *node)
+int32_t ClusterContents (node_t *node)
 {
-	int		c1, c2, c;
+	int32_t		c1, c2, c;
 
 	if (node->planenum == PLANENUM_LEAF)
 		return node->contents;
@@ -112,7 +112,7 @@ not leafs, so all contents should be ored together
 */
 qboolean Portal_VisFlood (portal_t *p)
 {
-	int		c1, c2;
+	int32_t		c1, c2;
 
 	if (!p->onnode)
 		return false;	// to global outsideleaf
@@ -149,7 +149,7 @@ The entity flood determines which areas are
 Flowing from side s to side !s
 ===============
 */
-qboolean Portal_EntityFlood (portal_t *p, int s)
+qboolean Portal_EntityFlood (portal_t *p, int32_t s)
 {
 	if (p->nodes[0]->planenum != PLANENUM_LEAF
 		|| p->nodes[1]->planenum != PLANENUM_LEAF)
@@ -167,7 +167,7 @@ qboolean Portal_EntityFlood (portal_t *p, int s)
 
 //=============================================================================
 
-int		c_tinyportals;
+int32_t		c_tinyportals;
 
 /*
 =============
@@ -233,7 +233,7 @@ void RemovePortalFromNode (portal_t *portal, node_t *l)
 
 void PrintPortal (portal_t *p)
 {
-	int			i;
+	int32_t			i;
 	winding_t	*w;
 
 	w = p->winding;
@@ -253,7 +253,7 @@ The created portals will face the global outside_node
 void MakeHeadnodePortals (tree_t *tree)
 {
 	vec3_t		bounds[2];
-	int			i, j, n;
+	int32_t			i, j, n;
 	portal_t	*p, *portals[6];
 	plane_t		bplanes[6], *pl;
 	node_t *node;
@@ -371,7 +371,7 @@ void MakeNodePortal (node_t *node)
 	winding_t	*w;
 	vec3_t		normal;
 	vec_t		dist = 0;
-	int			side = 0;
+	int32_t			side = 0;
 
 	w = BaseWindingForNode (node);
 
@@ -429,7 +429,7 @@ void SplitNodePortals (node_t *node)
 {
 	portal_t	*p, *next_portal, *new_portal;
 	node_t		*f, *b, *other_node;
-	int			side = 0;
+	int32_t			side = 0;
 	plane_t		*plane;
 	winding_t	*frontwinding, *backwinding;
 
@@ -526,8 +526,8 @@ CalcNodeBounds
 void CalcNodeBounds (node_t *node)
 {
 	portal_t	*p;
-	int			s;
-	int			i;
+	int32_t			s;
+	int32_t			i;
 
 	// calc mins/maxs for both leafs and nodes
 	ClearBounds (node->mins, node->maxs);
@@ -547,17 +547,9 @@ MakeTreePortals_r
 */
 void MakeTreePortals_r (node_t *node)
 {
-	int		i;
+	int32_t		i;
 
 	CalcNodeBounds (node);
-	if (node->mins[0] >= node->maxs[0])
-	{
-		printf ("WARNING: node without a volume\n");
-
-		//qb: print bounds, from kmqbsp3
-		printf("  Bounds: %g %g %g -> %g %g %g\n",
-			node->mins[0], node->mins[1], node->mins[2], node->maxs[0], node->maxs[1], node->maxs[2]);
-	}
 
 	for (i=0 ; i<3 ; i++)
 	{
@@ -603,10 +595,10 @@ FLOOD ENTITIES
 FloodPortals_r
 =============
 */
-void FloodPortals_r (node_t *node, int dist)
+void FloodPortals_r (node_t *node, int32_t dist)
 {
 	portal_t	*p;
-	int			s;
+	int32_t			s;
 
 	node->occupied = dist;
 
@@ -665,7 +657,7 @@ Marks all nodes that can be reached by entites
 */
 qboolean FloodEntities (tree_t *tree)
 {
-	int		i;
+	int32_t		i;
 	vec3_t	origin;
 	char	*cl;
 	qboolean	inside;
@@ -689,7 +681,7 @@ qboolean FloodEntities (tree_t *tree)
 		// have a vlaid point
 		if (!strcmp (cl, "info_player_start"))
 		{
-			int	x, y;
+			int32_t	x, y;
 
 			for (x=-16 ; x<=16 ; x += 16)
 			{
@@ -735,7 +727,7 @@ FLOOD AREAS
 =========================================================
 */
 
-int		c_areas;
+int32_t		c_areas;
 
 /*
 =============
@@ -745,7 +737,7 @@ FloodAreas_r
 void FloodAreas_r (node_t *node)
 {
 	portal_t	*p;
-	int			s;
+	int32_t			s;
 	bspbrush_t	*b;
 	entity_t	*e;
 
@@ -873,7 +865,7 @@ EmitAreaPortals
 */
 void EmitAreaPortals (node_t *headnode)
 {
-	int				i, j;
+	int32_t				i, j;
 	entity_t		*e;
 	dareaportal_t	*dp;
 
@@ -928,9 +920,9 @@ void FloodAreas (tree_t *tree)
 
 //======================================================
 
-int		c_outside;
-int		c_inside;
-int		c_solid;
+int32_t		c_outside;
+int32_t		c_inside;
+int32_t		c_solid;
 
 void FillOutside_r (node_t *node)
 {
@@ -989,12 +981,12 @@ Finds a brush side to use for texturing the given portal
 */
 void FindPortalSide (portal_t *p)
 {
-	int			viscontents;
+	int32_t			viscontents;
 	bspbrush_t	*bb;
 	mapbrush_t	*brush;
 	node_t		*n;
-	int			i,j;
-	int			planenum;
+	int32_t			i,j;
+	int32_t			planenum;
 	side_t		*side, *bestside;
 	vec_t		dot, bestdot;
 	plane_t		*p1, *p2;
@@ -1060,7 +1052,7 @@ MarkVisibleSides_r
 void MarkVisibleSides_r (node_t *node)
 {
 	portal_t	*p;
-	int			s;
+	int32_t			s;
 
 	if (node->planenum != PLANENUM_LEAF)
 	{
@@ -1093,11 +1085,11 @@ MarkVisibleSides
 
 =============
 */
-void MarkVisibleSides (tree_t *tree, int startbrush, int endbrush)
+void MarkVisibleSides (tree_t *tree, int32_t startbrush, int32_t endbrush)
 {
-	int		i, j;
+	int32_t		i, j;
 	mapbrush_t	*mb;
-	int		numsides;
+	int32_t		numsides;
 
 	qprintf ("--- MarkVisibleSides ---\n");
 

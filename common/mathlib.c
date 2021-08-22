@@ -30,7 +30,7 @@ vec3_t vec3_origin = {0,0,0};
 
 double VectorLength(vec3_t v)
 {
-	int		i;
+	int32_t		i;
 	double	length;
 
 	length = 0;
@@ -43,7 +43,7 @@ double VectorLength(vec3_t v)
 
 qboolean VectorCompare (vec3_t v1, vec3_t v2)
 {
-	int		i;
+	int32_t		i;
 
 	for (i=0 ; i<3 ; i++)
 		if (fabs(v1[i]-v2[i]) > EQUAL_EPSILON)
@@ -160,7 +160,7 @@ void ClearBounds (vec3_t mins, vec3_t maxs)
 
 void AddPointToBounds (vec3_t v, vec3_t mins, vec3_t maxs)
 {
-	int		i;
+	int32_t		i;
 	vec_t	val;
 
 	for (i=0 ; i<3 ; i++)

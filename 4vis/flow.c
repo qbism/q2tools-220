@@ -38,10 +38,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   void CalcMightSee (leaf_t *leaf,
 */
 
-int CountBits (byte *bits, int numbits)
+int32_t CountBits (byte *bits, int32_t numbits)
 {
-	int		i;
-	int		c;
+	int32_t		i;
+	int32_t		c;
 
 	c = 0;
 	for (i=0 ; i<numbits ; i++)
@@ -51,13 +51,13 @@ int CountBits (byte *bits, int numbits)
 	return c;
 }
 
-int		c_fullskip;
-int		c_portalskip, c_leafskip;
-int		c_vistest, c_mighttest;
+int32_t		c_fullskip;
+int32_t		c_portalskip, c_leafskip;
+int32_t		c_vistest, c_mighttest;
 
-int		c_chop, c_nochop;
+int32_t		c_chop, c_nochop;
 
-int		active;
+int32_t		active;
 
 void CheckStack (leaf_t *leaf, threaddata_t *thread)
 {
@@ -78,7 +78,7 @@ void CheckStack (leaf_t *leaf, threaddata_t *thread)
 
 winding_t *AllocStackWinding (pstack_t *stack)
 {
-	int		i;
+	int32_t		i;
 
 	for (i=0 ; i<3 ; i++)
 	{
@@ -96,7 +96,7 @@ winding_t *AllocStackWinding (pstack_t *stack)
 
 void FreeStackWinding (winding_t *w, pstack_t *stack)
 {
-	int		i;
+	int32_t		i;
 
 	i = w - stack->windings;
 
@@ -117,10 +117,10 @@ ChopWinding_flow
 winding_t	*ChopWinding_flow (winding_t *in, pstack_t *stack, plane_t *split)  //qb: renamed, dupe in polylib.c
 {
 	vec_t	dists[128];
-	int		sides[128];
-	int		counts[3];
+	int32_t		sides[128];
+	int32_t		counts[3];
 	vec_t	dot;
-	int		i, j;
+	int32_t		i, j;
 	vec_t	*p1, *p2;
 	vec3_t	mid;
 	winding_t	*neww;
@@ -235,12 +235,12 @@ flipclip should be set.
 */
 winding_t	*ClipToSeperators (winding_t *source, winding_t *pass, winding_t *target, qboolean flipclip, pstack_t *stack)
 {
-	int			i, j, k, l;
+	int32_t			i, j, k, l;
 	plane_t		plane;
 	vec3_t		v1, v2;
 	float		d;
 	vec_t		length;
-	int			counts[3];
+	int32_t			counts[3];
 	qboolean		fliptest;
 
 // check all combinations
@@ -378,15 +378,15 @@ Flood fill through the leafs
 If src_portal is NULL, this is the originating leaf
 ==================
 */
-void RecursiveLeafFlow (int leafnum, threaddata_t *thread, pstack_t *prevstack)
+void RecursiveLeafFlow (int32_t leafnum, threaddata_t *thread, pstack_t *prevstack)
 {
 	pstack_t	stack;
 	portal_t	*p;
 	plane_t		backplane;
 	leaf_t 		*leaf;
-	int			i, j;
+	int32_t			i, j;
 	long		*test, *might, *vis, more;
-	int			pnum;
+	int32_t			pnum;
 
 	thread->c_chains++;
 
@@ -540,12 +540,12 @@ PortalFlow
 generates the portalvis bit vector
 ===============
 */
-void PortalFlow (int portalnum)
+void PortalFlow (int32_t portalnum)
 {
 	threaddata_t	data;
-	int				i;
+	int32_t				i;
 	portal_t		*p;
-	int				c_might, c_can;
+	int32_t				c_might, c_can;
 
 	p = sorted_portals[portalnum];
 	p->status = stat_working;
@@ -567,7 +567,7 @@ void PortalFlow (int portalnum)
 	c_can = CountBits (p->portalvis, numportals*2);
 
 	qprintf ("portal:%4i  mightsee:%4i  cansee:%4i (%i chains)\n",
-		(int)(p - portals),	c_might, c_can, data.c_chains);
+		(int32_t)(p - portals),	c_might, c_can, data.c_chains);
 }
 
 
@@ -593,7 +593,7 @@ typedef struct passage_s
 typedef struct portal_s
 {
 	struct passage_s	*passages;
-	int					leaf;		// leaf portal faces into
+	int32_t					leaf;		// leaf portal faces into
 } portal_s;
 
 leaf = portal->leaf
@@ -613,7 +613,7 @@ all seperating planes, and both portals must be behind the mew portal
 ===============================================================================
 */
 
-int		c_flood, c_vis;
+int32_t		c_flood, c_vis;
 
 char test_leaf[MAX_MAP_LEAFS_QBSP];
 
@@ -623,12 +623,12 @@ SimpleFlood
 
 ==================
 */
-void SimpleFlood (portal_t *srcportal, int leafnum)
+void SimpleFlood (portal_t *srcportal, int32_t leafnum)
 {
-	int		i;
+	int32_t		i;
 	leaf_t	*leaf;
 	portal_t	*p;
-	int		pnum;
+	int32_t		pnum;
 
 	leaf = &leafs[leafnum];
 
@@ -653,9 +653,9 @@ void SimpleFlood (portal_t *srcportal, int leafnum)
 BasePortalVis
 ==============
 */
-void BasePortalVis (int portalnum)
+void BasePortalVis (int32_t portalnum)
 {
-	int			j, k;
+	int32_t			j, k;
 	portal_t	*tp, *p;
 	float		d;
 	winding_t	*w;
@@ -729,13 +729,13 @@ RecursiveLeafBitFlow
 
 ==================
 */
-void RecursiveLeafBitFlow (int leafnum, byte *mightsee, byte *cansee)
+void RecursiveLeafBitFlow (int32_t leafnum, byte *mightsee, byte *cansee)
 {
 	portal_t	*p;
 	leaf_t 		*leaf;
-	int			i, j;
+	int32_t			i, j;
 	long		more;
-	int			pnum;
+	int32_t			pnum;
 	byte		newmight[MAX_PORTALS/8];
 
 	leaf = &leafs[leafnum];
@@ -773,7 +773,7 @@ void RecursiveLeafBitFlow (int leafnum, byte *mightsee, byte *cansee)
 BetterPortalVis
 ==============
 */
-void BetterPortalVis (int portalnum)
+void BetterPortalVis (int32_t portalnum)
 {
 	portal_t	*p;
 

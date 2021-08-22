@@ -36,14 +36,14 @@ The .pak files are just a linear collapse of a directory tree
 typedef struct
 {
 	char	name[56];
-	int		filepos, filelen;
+	int32_t		filepos, filelen;
 } dpackfile_t;
 
 typedef struct
 {
-	int		ident;		// == IDPAKHEADER
-	int		dirofs;
-	int		dirlen;
+	int32_t		ident;		// == IDPAKHEADER
+	int32_t		dirofs;
+	int32_t		dirlen;
 } dpackheader_t;
 
 #define	MAX_FILES_IN_PACK	4096
@@ -63,15 +63,15 @@ typedef struct
     char	version;
     char	encoding;
     char	bits_per_pixel;
-    unsigned short	xmin,ymin,xmax,ymax;
-    unsigned short	hres,vres;
-    unsigned char	palette[48];
+    uint16_t	xmin,ymin,xmax,ymax;
+    uint16_t	hres,vres;
+    uint8_t	palette[48];
     char	reserved;
     char	color_planes;
-    unsigned short	bytes_per_line;
-    unsigned short	palette_type;
+    uint16_t	bytes_per_line;
+    uint16_t	palette_type;
     char	filler[58];
-    unsigned char	data;			// unbounded
+    uint8_t	data;			// unbounded
 } pcx_t;
 
 
@@ -136,26 +136,26 @@ typedef struct
 
 typedef struct
 {
-	int			ident;
-	int			version;
+	int32_t			ident;
+	int32_t			version;
 
-	int			skinwidth;
-	int			skinheight;
-	int			framesize;		// byte size of each frame
+	int32_t			skinwidth;
+	int32_t			skinheight;
+	int32_t			framesize;		// byte size of each frame
 
-	int			num_skins;
-	int			num_xyz;
-	int			num_st;			// greater than num_xyz for seams
-	int			num_tris;
-	int			num_glcmds;		// dwords in strip/fan command list
-	int			num_frames;
+	int32_t			num_skins;
+	int32_t			num_xyz;
+	int32_t			num_st;			// greater than num_xyz for seams
+	int32_t			num_tris;
+	int32_t			num_glcmds;		// dwords in strip/fan command list
+	int32_t			num_frames;
 
-	int			ofs_skins;		// each skin is a MAX_SKINNAME string
-	int			ofs_st;			// byte offset from start for stverts
-	int			ofs_tris;		// offset for dtriangles
-	int			ofs_frames;		// offset for first frame
-	int			ofs_glcmds;
-	int			ofs_end;		// end of file
+	int32_t			ofs_skins;		// each skin is a MAX_SKINNAME string
+	int32_t			ofs_st;			// byte offset from start for stverts
+	int32_t			ofs_tris;		// offset for dtriangles
+	int32_t			ofs_frames;		// offset for first frame
+	int32_t			ofs_glcmds;
+	int32_t			ofs_end;		// end of file
 
 } dmdl_t;
 
@@ -173,15 +173,15 @@ typedef struct
 
 typedef struct
 {
-	int		width, height;
-	int		origin_x, origin_y;		// raster coordinates inside pic
+	int32_t		width, height;
+	int32_t		origin_x, origin_y;		// raster coordinates inside pic
 	char	name[MAX_SKINNAME];		// name of pcx file
 } dsprframe_t;
 
 typedef struct {
-	int			ident;
-	int			version;
-	int			numframes;
+	int32_t			ident;
+	int32_t			version;
+	int32_t			numframes;
 	dsprframe_t	frames[1];			// variable sized
 } dsprite_t;
 
@@ -201,9 +201,9 @@ typedef struct miptex_s
 	unsigned	width, height;
 	unsigned	offsets[MIPLEVELS];		// four mip maps stored
 	char		animname[32];			// next frame in animation chain
-	int			flags;
-	int			contents;
-	int			value;
+	int32_t			flags;
+	int32_t			contents;
+	int32_t			value;
 } miptex_t;
 
 
@@ -229,8 +229,8 @@ typedef struct miptex_s
 // 16 bit short limits
 #define	MAX_MAP_MODELS		    1024
 #define	MAX_MAP_BRUSHES		    8192
-#define	OLD_MAX_MAP_ENTITIES	2048 //qb: from kmqbsp3- Knightmare- old limit
-#define	MAX_MAP_ENTITIES	    8192 // new limit, was 2048
+#define	DEFAULT_MAP_ENTITIES	2048 //qb: from kmqbsp3- Knightmare- old limit
+#define	MAX_MAP_ENTITIES	    8192 //
 #define	MAX_MAP_ENTSTRING	  262144
 #define	DEFAULT_MAP_TEXINFO	    8192  //mxd: vanilla
 #define	MAX_MAP_TEXINFO		   16384  //mxd: KMQ2
@@ -249,35 +249,38 @@ typedef struct miptex_s
 #define	MAX_MAP_EDGES		    128000
 #define	MAX_MAP_SURFEDGES	    256000
 #define	DEFAULT_MAP_LIGHTING	0x200000  //qb: vanilla, 0x800000 q2pro
+#define	MAX_MAP_LIGHTING	    0x800000  //qb: more better
 #define	DEFAULT_MAP_VISIBILITY	0x100000  //qb: vanilla
 #define	MAX_MAP_VISIBILITY	    0x400000  //qb: extended
 
-//qb: from kmqbsp3- Knightmare- new and old max bounds sizes
+//qb: map bound +/- 32767
 #define	OLD_MAX_BOUNDS		4096
-// probably couldn't make a map larger than this without execceding the 16-bit bounded limits
-#define NEW_MAX_BOUNDS		( 32768 )
-#define NEW_MIN_BOUNDS		( -32728 )
-#define NEW_WORLD_SIZE		( NEW_MAX_BOUNDS - NEW_MIN_BOUNDS )
+#define MAX_MAP_SIZE 32767*2
+#define MAX_HALF_SIZE (MAX_MAP_SIZE/2)
+#define MAX_BLOCK_SIZE (MAX_MAP_SIZE/8)
+#define MAX_POINTS_HASH (MAX_MAP_SIZE/128)
 
 //qb: qbsp limits
-#define	MAX_MAP_MODELS_QBSP          32768 * 4
-#define	MAX_MAP_BRUSHES_QBSP   		262144 * 4
-#define	MAX_MAP_ENTITIES_QBSP        32768 * 4
-#define	MAX_MAP_ENTSTRING_QBSP     4194304 * 4
-#define	MAX_MAP_TEXINFO_QBSP        262144 * 4
-#define	MAX_MAP_PLANES_QBSP	        262144 * 4
-#define	MAX_MAP_NODES_QBSP          262144 * 4
-#define	MAX_MAP_LEAFS_QBSP          262144 * 4
-#define	MAX_MAP_VERTS_QBSP		    524288 * 4
-#define	MAX_MAP_FACES_QBSP		    262144 * 4
-#define	MAX_MAP_LEAFFACES_QBSP	    262144 * 4
-#define	MAX_MAP_LEAFBRUSHES_QBSP    262144 * 4
-#define	MAX_MAP_EDGES_QBSP		    524288 * 4
-#define	MAX_MAP_BRUSHSIDES_QBSP	   1048576 * 4
-#define	MAX_MAP_PORTALS_QBSP	    262144 * 4
-#define	MAX_MAP_SURFEDGES_QBSP	   1048576 * 4
-#define	MAX_MAP_LIGHTING_QBSP     13631488 * 4
-#define	MAX_MAP_VISIBILITY_QBSP    8388608 * 4
+#define	WARN_MAP_MODELS_QBSP         32768
+#define	MAX_MAP_MODELS_QBSP         131072
+#define	MAX_MAP_BRUSHES_QBSP   	   1048576
+#define	WARN_MAP_ENTITIES_QBSP       32768
+#define	MAX_MAP_ENTITIES_QBSP       131072
+#define	MAX_MAP_ENTSTRING_QBSP    13631488
+#define	MAX_MAP_TEXINFO_QBSP       1048576
+#define	MAX_MAP_PLANES_QBSP	       1048576
+#define	MAX_MAP_NODES_QBSP         1048576
+#define	MAX_MAP_LEAFS_QBSP         1048576
+#define	MAX_MAP_VERTS_QBSP		   4194304
+#define	MAX_MAP_FACES_QBSP		   1048576
+#define	MAX_MAP_LEAFFACES_QBSP	   1048576
+#define	MAX_MAP_LEAFBRUSHES_QBSP   1048576
+#define	MAX_MAP_EDGES_QBSP		   1048576
+#define	MAX_MAP_BRUSHSIDES_QBSP	   4194304
+#define	MAX_MAP_PORTALS_QBSP	   1048576
+#define	MAX_MAP_SURFEDGES_QBSP	   4194304
+#define	MAX_MAP_LIGHTING_QBSP     13631488
+#define	MAX_MAP_VISIBILITY_QBSP  0x8000000
 
 // key / value pair sizes
 
@@ -288,7 +291,7 @@ typedef struct miptex_s
 
 typedef struct
 {
-	int		fileofs, filelen;
+	int32_t		fileofs, filelen;
 } lump_t;
 
 #define	LUMP_ENTITIES		0
@@ -314,8 +317,8 @@ typedef struct
 
 typedef struct
 {
-	int			ident;
-	int			version;
+	int32_t			ident;
+	int32_t			version;
 	lump_t		lumps[HEADER_LUMPS];
 } dheader_t;
 
@@ -323,8 +326,8 @@ typedef struct
 {
 	float		mins[3], maxs[3];
 	float		origin[3];		// for sounds or lights
-	int			headnode;
-	int			firstface, numfaces;	// submodels just draw faces
+	int32_t			headnode;
+	int32_t			firstface, numfaces;	// submodels just draw faces
 										// without walking the bsp tree
 } dmodel_t;
 
@@ -351,7 +354,7 @@ typedef struct
 {
 	float	normal[3];
 	float	dist;
-	int		type;		// PLANE_X - PLANE_ANYZ ?remove? trivial to regenerate
+	int32_t		type;		// PLANE_X - PLANE_ANYZ ?remove? trivial to regenerate
 } dplane_t;
 
 
@@ -415,31 +418,31 @@ typedef struct
 
 typedef struct
 {
-	int			planenum;
-	int			children[2];	// negative numbers are -(leafs+1), not nodes
+	int32_t			planenum;
+	int32_t			children[2];	// negative numbers are -(leafs+1), not nodes
 	short		mins[3];		// for frustom culling
 	short		maxs[3];
-	unsigned short	firstface;
-	unsigned short	numfaces;	// counting both sides
+	uint16_t	firstface;
+	uint16_t	numfaces;	// counting both sides
 } dnode_t;
 
 typedef struct
 {
-	int			planenum;
-	int			children[2];	// negative numbers are -(leafs+1), not nodes
+	int32_t			planenum;
+	int32_t			children[2];	// negative numbers are -(leafs+1), not nodes
 	float		    mins[3];		// for frustom culling
 	float		    maxs[3];
-	unsigned int	firstface;
-	unsigned int	numfaces;	// counting both sides
+	uint32_t	firstface;
+	uint32_t	numfaces;	// counting both sides
 } dnode_tx; //qb: qbsp
 
 typedef struct texinfo_s
 {
 	float		vecs[2][4];		// [s/t][xyz offset]
-	int			flags;			// miptex flags + overrides
-	int			value;			// light emission, etc
+	int32_t			flags;			// miptex flags + overrides
+	int32_t			value;			// light emission, etc
 	char		texture[32];	// texture name (textures/*.wal)
-	int			nexttexinfo;	// for animations, -1 = end of chain
+	int32_t			nexttexinfo;	// for animations, -1 = end of chain
 } texinfo_t;
 
 
@@ -447,47 +450,47 @@ typedef struct texinfo_s
 // counterclockwise use of the edge in a face
 typedef struct
 {
-	unsigned short	v[2];		// vertex numbers
+	uint16_t	v[2];		// vertex numbers
 } dedge_t;
 
 typedef struct
 {
-	unsigned int	v[2];		// vertex numbers
+	uint32_t	v[2];		// vertex numbers
 } dedge_tx; //qb: qbsp
 
 
 #define	MAXLIGHTMAPS	4
 typedef struct
 {
-	unsigned short	planenum;
+	uint16_t	planenum;
 	short		side;
 
-	int			firstedge;		// we must support > 64k edges
+	int32_t			firstedge;		// we must support > 64k edges
 	short		numedges;
 	short		texinfo;
 
 // lighting info
 	byte		styles[MAXLIGHTMAPS];
-	int			lightofs;		// start of [numstyles*surfsize] samples
+	int32_t			lightofs;		// start of [numstyles*surfsize] samples
 } dface_t;
 
 typedef struct
 {
-	unsigned int	planenum;
-	int		side;
+	uint32_t	planenum;
+	int32_t		side;
 
-	int			firstedge;		// we must support > 64k edges
-	int		    numedges;
-	int		    texinfo;
+	int32_t			firstedge;		// we must support > 64k edges
+	int32_t		    numedges;
+	int32_t		    texinfo;
 
 // lighting info
 	byte		styles[MAXLIGHTMAPS];
-	int			lightofs;		// start of [numstyles*surfsize] samples
+	int32_t			lightofs;		// start of [numstyles*surfsize] samples
 } dface_tx; //qb: qbsp
 
 typedef struct
 {
-	int				contents;			// OR of all brushes (not needed?)
+	int32_t				contents;			// OR of all brushes (not needed?)
 
 	short			cluster;
 	short			area;
@@ -495,41 +498,41 @@ typedef struct
 	short			mins[3];			// for frustum culling
 	short			maxs[3];
 
-	unsigned short	firstleafface;
-	unsigned short	numleaffaces;
+	uint16_t	firstleafface;
+	uint16_t	numleaffaces;
 
-	unsigned short	firstleafbrush;
-	unsigned short	numleafbrushes;
+	uint16_t	firstleafbrush;
+	uint16_t	numleafbrushes;
 } dleaf_t;
 
 typedef struct
 {
-	int			contents;			// OR of all brushes (not needed?)
+	int32_t			contents;			// OR of all brushes (not needed?)
 
-	int			cluster;
-	int			area;
+	int32_t			cluster;
+	int32_t			area;
 
 	float			mins[3];			// for frustum culling
 	float			maxs[3];
 
-	unsigned int	firstleafface;
-	unsigned int	numleaffaces;
+	uint32_t	firstleafface;
+	uint32_t	numleaffaces;
 
-	unsigned int	firstleafbrush;
-	unsigned int	numleafbrushes;
+	uint32_t	firstleafbrush;
+	uint32_t	numleafbrushes;
 } dleaf_tx; //qb: qbsp
 
 
 typedef struct
 {
-	unsigned short	planenum;		// facing out of the leaf
+	uint16_t	planenum;		// facing out of the leaf
 	short	texinfo;
 } dbrushside_t;
 
 typedef struct
 {
-	unsigned int	planenum;		// facing out of the leaf
-	int	texinfo;
+	uint32_t	planenum;		// facing out of the leaf
+	int32_t	texinfo;
 } dbrushside_tx; //qb: qbsp
 
 // qbsp /////////////////////////
@@ -537,9 +540,9 @@ typedef struct
 
 typedef struct
 {
-	int			firstside;
-	int			numsides;
-	int			contents;
+	int32_t			firstside;
+	int32_t			numsides;
+	int32_t			contents;
 } dbrush_t;
 
 #define	ANGLE_UP	-1
@@ -553,8 +556,8 @@ typedef struct
 #define	DVIS_PHS	1
 typedef struct
 {
-	int			numclusters;
-	int			bitofs[8][2];	// bitofs[numclusters][2]
+	int32_t			numclusters;
+	int32_t			bitofs[8][2];	// bitofs[numclusters][2]
 } dvis_t;
 
 // each area has a list of portals that lead into other areas
@@ -562,12 +565,12 @@ typedef struct
 // hearable even if the vis info says that it should be
 typedef struct
 {
-	int		portalnum;
-	int		otherarea;
+	int32_t		portalnum;
+	int32_t		otherarea;
 } dareaportal_t;
 
 typedef struct
 {
-	int		numareaportals;
-	int		firstareaportal;
+	int32_t		numareaportals;
+	int32_t		firstareaportal;
 } darea_t;

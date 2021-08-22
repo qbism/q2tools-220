@@ -24,12 +24,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 typedef struct tnode_s
 {
-    int		type;
+    int32_t		type;
     vec3_t	normal;
     float	dist;
-    int		children[2];
-    int		children_leaf[2]; //valid if the corresponding child is a leaf
-    int		pad;
+    int32_t		children[2];
+    int32_t		children_leaf[2]; //valid if the corresponding child is a leaf
+    int32_t		pad;
 } tnode_t;
 
 tnode_t		*tnodes, *tnode_p;
@@ -41,12 +41,12 @@ MakeTnode
 Converts the disk node structure into the efficient tracing structure
 ==============
 */
-static int tnode_mask;
-void MakeTnode (int nodenum)
+static int32_t tnode_mask;
+void MakeTnode (int32_t nodenum)
 {
     tnode_t			*t;
     dplane_t		*plane;
-    int				i;
+    int32_t				i;
 
     t = tnode_p++;
 
@@ -133,9 +133,9 @@ vertex of each polygon. Skip non-translucent surfaces for now.
 */
 
 
-int	PointInNodenum (vec3_t point)
+int32_t	PointInNodenum (vec3_t point)
 {
-    int		nodenum, oldnodenum;
+    int32_t		nodenum, oldnodenum;
     vec_t	dist;
     dplane_t	*plane;
 
@@ -174,15 +174,15 @@ int	PointInNodenum (vec3_t point)
     return oldnodenum;
 }
 
-int TestLine_r (int node, vec3_t set_start, vec3_t stop)
+int32_t TestLine_r (int32_t node, vec3_t set_start, vec3_t stop)
 {
     tnode_t	*tnode;
     float	front, back;
     vec3_t	mid, _start;
     vec_t *start;
     float	frac;
-    int		side;
-    int		r;
+    int32_t		side;
+    int32_t		r;
 
     start = set_start;
 
@@ -251,14 +251,14 @@ re_test:
     goto re_test;
 }
 
-int TestLine (vec3_t start, vec3_t stop)
+int32_t TestLine (vec3_t start, vec3_t stop)
 {
     vec3_t occluded;
     occluded[0] = occluded[1] = occluded[2] = 1.0;
     return TestLine_r (0, start, stop);
 }
 
-int TestLine_color (int node, vec3_t start, vec3_t stop, vec3_t occluded)
+int32_t TestLine_color (int32_t node, vec3_t start, vec3_t stop, vec3_t occluded)
 {
     occluded[0] = occluded[1] = occluded[2] = 1.0;
     return TestLine_r (node, start, stop);
@@ -277,8 +277,8 @@ by recursive subdivision of the line by the BSP tree.
 typedef struct
 {
     vec3_t	backpt;
-    int		side;
-    int		node;
+    int32_t		side;
+    int32_t		node;
 } tracestack_t;
 
 
@@ -289,10 +289,10 @@ TestLine
 */
 qboolean _TestLine (vec3_t start, vec3_t stop)
 {
-    int				node;
+    int32_t				node;
     float			front, back;
     tracestack_t	*tstack_p;
-    int				side;
+    int32_t				side;
     float 			frontx,fronty, frontz, backx, backy, backz;
     tracestack_t	tracestack[64];
     tnode_t			*tnode;

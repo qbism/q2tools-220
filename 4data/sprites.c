@@ -26,7 +26,7 @@ dsprite_t		sprite;
 dsprframe_t		frames[MAX_SPRFRAMES];
 
 byte			*byteimage, *lbmpalette;
-int				byteimagewidth, byteimageheight;
+int32_t				byteimagewidth, byteimageheight;
 
 char			spritename[1024];
 
@@ -44,7 +44,7 @@ FinishSprite
 void FinishSprite (void)
 {
 	FILE	*spriteouthandle;
-	int			i;
+	int32_t			i;
 	dsprite_t	spritetemp;
 	char		savename[2100];
 
@@ -134,9 +134,9 @@ Cmd_SpriteFrame
 */
 void Cmd_SpriteFrame (void)
 {
-	int             y,xl,yl,w,h;
+	int32_t             y,xl,yl,w,h;
 	dsprframe_t		*pframe;
-	int				ox, oy;
+	int32_t				ox, oy;
 	byte			*cropped;
 	char			savename[2100];
 

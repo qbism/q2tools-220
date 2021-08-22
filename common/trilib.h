@@ -27,5 +27,5 @@ typedef struct {
 	vec3_t	verts[3], u,v;
 } triangle_t;
 
-void LoadTriangleList (char *filename, triangle_t **pptri, int *numtriangles);
+void LoadTriangleList (char *filename, triangle_t **pptri, int32_t *numtriangles);
 

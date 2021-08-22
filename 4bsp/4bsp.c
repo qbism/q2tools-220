@@ -22,7 +22,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 extern	float subdivide_size;
 extern	float sublight_size;
-extern qboolean use_qbsp;
 
 char		source[1024];
 char		name[1024];
@@ -44,13 +43,13 @@ qboolean	leaktest = false;
 qboolean	badnormal_check = false;
 qboolean	origfix = true; //default to true
 
-int			block_xl = -8, block_xh = 7, block_yl = -8, block_yh = 7;
+int32_t			block_xl = -8, block_xh = 7, block_yl = -8, block_yh = 7;
 
-int			entity_num;
+int32_t			entity_num;
 
-int			max_entities = OLD_MAX_MAP_ENTITIES;	//qb: from kmqbsp3- Knightmare- adjustable entity limit
-int			max_bounds = OLD_MAX_BOUNDS;			// Knightmare- adjustable max bounds
-int			block_size = 1024;						// Knightmare- adjustable block size
+int32_t			max_entities = MAX_MAP_ENTITIES;	    //qb: from kmqbsp3- Knightmare- adjustable entity limit
+int32_t			max_bounds = OLD_MAX_BOUNDS;			// Knightmare- adjustable max bounds
+int32_t			block_size = 1024;						// Knightmare- adjustable block size
 
 node_t		*block_nodes[10][10];
 
@@ -60,12 +59,12 @@ BlockTree
 
 ============
 */
-node_t	*BlockTree (int xl, int yl, int xh, int yh)
+node_t	*BlockTree (int32_t xl, int32_t yl, int32_t xh, int32_t yh)
 {
     node_t	*node;
     vec3_t	normal;
     vec_t	dist;
-    int		mid;
+    int32_t		mid;
 
     if (xl == xh && yl == yh)
     {
@@ -117,10 +116,10 @@ ProcessBlock_Thread
 
 ============
 */
-int			brush_start, brush_end;
-void ProcessBlock_Thread (int blocknum)
+int32_t			brush_start, brush_end;
+void ProcessBlock_Thread (int32_t blocknum)
 {
-    int		xblock, yblock;
+    int32_t		xblock, yblock;
     vec3_t		mins, maxs;
     bspbrush_t	*brushes;
     tree_t		*tree;
@@ -275,7 +274,7 @@ ProcessSubModel
 void ProcessSubModel (void)
 {
     entity_t	*e;
-    int			start, end;
+    int32_t			start, end;
     tree_t		*tree;
     bspbrush_t	*list;
     vec3_t		mins, maxs;
@@ -331,9 +330,9 @@ void ProcessModels (void)
 main
 ============
 */
-int main (int argc, char **argv)
+int32_t main (int32_t argc, char **argv)
 {
-    int		i;
+    int32_t		i;
     char		path[2053] = "";
 
 
@@ -377,8 +376,8 @@ int main (int argc, char **argv)
                     "    -noprune: Disable node pruning.\n"
                     "    -noorigfix: Disable texture fix for origin offsets.\n"
                     "    -largebounds: Increase max map size for supporting engines.\n"
-                    "    -moreents: Increase max number of entities for supporting engines.\n"
                     "    -qbsp: Greatly expanded map and entity limits for supporting engines.\n"
+                    "    -noskipfix: Do not automatically set skip contents to zero.\n"
                     "    -v: Display more verbose output.\n"
                     "<<<<<<<<<<<<<<<<<<<<< 4bsp HELP >>>>>>>>>>>>>>>>>>>>>\n\n");
 
@@ -457,6 +456,14 @@ int main (int argc, char **argv)
             printf ("use_qbsp = true\n");
             use_qbsp = true;
             max_entities = MAX_MAP_ENTITIES_QBSP;
+            max_bounds = MAX_HALF_SIZE;
+            block_size = MAX_BLOCK_SIZE;
+        }
+        else if (!strcmp(argv[i], "-noskipfix"))
+        {
+            printf ("noskipfix = true\n");
+            noskipfix = true;
+
         }
 
         //qb: from kmqbsp3- Knightmare added
@@ -473,20 +480,6 @@ int main (int argc, char **argv)
                 printf ("using max bound size of %i\n", MAX_HALF_SIZE);
             }
         }
-        else if (!strcmp(argv[i], "-moreents"))
-        {
-            if (use_qbsp)
-            {
-                printf ("[-moreents is not required with -qbsp]\n");
-            }
-            else
-            {
-                max_entities = MAX_MAP_ENTITIES;
-                printf ("using entity limit of %i\n", MAX_MAP_ENTITIES);
-            }
-        }
-        // end Knightmare
-
 
         else if ((!strcmp(argv[i], "-chop")) || (!strcmp(argv[i], "-subdiv")))
         {
@@ -551,8 +544,8 @@ int main (int argc, char **argv)
                 "    -blocks # # # #       -nocsg             -nowater\n"
                 "    -leaktest             -nodetail          -onlyents\n"
                 "    -fulldetail           -noshare           -noprune\n"
-                "    -noorigfix            -largebounds       -moreents\n"
-                "    -qbsp                 -v (verbose)\n\n");
+                "    -noorigfix            -largebounds       -noskipfix\n"
+                "    -v (verbose)\n\n");
 
         exit(1);
     }

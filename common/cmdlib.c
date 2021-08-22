@@ -38,7 +38,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define PATHSEPERATOR   '/'
 
 // set these before calling CheckParm
-int myargc;
+int32_t myargc;
 char **myargv;
 
 char		com_token[1024];
@@ -55,15 +55,15 @@ Mimic unix command line expansion
 ===================
 */
 #define	MAX_EX_ARGC	1024
-int		ex_argc;
+int32_t		ex_argc;
 char	*ex_argv[MAX_EX_ARGC];
 #ifdef _WIN32
 #include "io.h"
-void ExpandWildcards(int *argc, char ***argv)
+void ExpandWildcards(int32_t *argc, char ***argv)
 {
 	struct _finddata_t fileinfo;
-	int		handle;
-	int		i;
+	int32_t		handle;
+	int32_t		i;
 	char	filename[1024];
 	char	filebase[1024];
 	char	*path;
@@ -98,7 +98,7 @@ void ExpandWildcards(int *argc, char ***argv)
 	*argv = ex_argv;
 }
 #else
-void ExpandWildcards(int *argc, char ***argv)
+void ExpandWildcards(int32_t *argc, char ***argv)
 {
 }
 #endif
@@ -117,7 +117,7 @@ void Error(char *error, ...)
 	va_list argptr;
 	char	text[1024];
 	char	text2[1024];
-	int		err;
+	int32_t		err;
 
 	err = GetLastError();
 
@@ -301,7 +301,7 @@ double I_FloatTime(void)
 	// more precise, less portable
 	struct timeval tp;
 	struct timezone tzp;
-	static int		secbase;
+	static int32_t		secbase;
 
 	gettimeofday(&tp, &tzp);
 
@@ -349,7 +349,7 @@ FileTime
 returns -1 if not present
 ============
 */
-int	FileTime(char *path)
+int32_t	FileTime(char *path)
 {
 	struct	stat	buf;
 
@@ -370,8 +370,8 @@ Parse a token out of a string
 */
 char *COM_Parse(char *data)
 {
-	int		c;
-	int		len;
+	int32_t		c;
+	int32_t		len;
 
 	len = 0;
 	com_token[0] = 0;
@@ -442,9 +442,9 @@ skipwhite:
 }
 
 
-int Q_strncasecmp(char *s1, char *s2, int n)
+int32_t Q_strncasecmp(char *s1, char *s2, int32_t n)
 {
-	int		c1, c2;
+	int32_t		c1, c2;
 
 	do
 	{
@@ -468,7 +468,7 @@ int Q_strncasecmp(char *s1, char *s2, int n)
 	return 0;		// strings are equal
 }
 
-int Q_strcasecmp(char *s1, char *s2)
+int32_t Q_strcasecmp(char *s1, char *s2)
 {
 	return Q_strncasecmp(s1, s2, 99999);
 }
@@ -516,9 +516,9 @@ Checks for the given parameter in the program's command line arguments
 Returns the argument number (1 to argc-1) or 0 if not present
 =================
 */
-int CheckParm(char *check)
+int32_t CheckParm(char *check)
 {
-	int             i;
+	int32_t             i;
 
 	for (i = 1; i<myargc; i++)
 	{
@@ -536,10 +536,10 @@ int CheckParm(char *check)
 Q_filelength
 ================
 */
-int Q_filelength(FILE *f)
+int32_t Q_filelength(FILE *f)
 {
-	int		pos;
-	int		end;
+	int32_t		pos;
+	int32_t		end;
 
 	pos = ftell(f);
 	fseek(f, 0, SEEK_END);
@@ -575,14 +575,14 @@ FILE *SafeOpenRead(char *filename)
 }
 
 
-void SafeRead(FILE *f, void *buffer, int count)
+void SafeRead(FILE *f, void *buffer, int32_t count)
 {
 	if (fread(buffer, 1, count, f) != (size_t)count)
 		Error("File read failure");
 }
 
 
-void SafeWrite(FILE *f, void *buffer, int count)
+void SafeWrite(FILE *f, void *buffer, int32_t count)
 {
 	if (fwrite(buffer, 1, count, f) != (size_t)count)
 		Error("File write failure");
@@ -610,10 +610,10 @@ qboolean	FileExists(char *filename)
 LoadFile
 ==============
 */
-int    LoadFile(char *filename, void **bufferptr)
+int32_t    LoadFile(char *filename, void **bufferptr)
 {
 	FILE	*f;
-	int    length;
+	int32_t    length;
 	void    *buffer;
 
 	f = SafeOpenRead(filename);
@@ -635,10 +635,10 @@ TryLoadFile
 Allows failure
 ==============
 */
-int    TryLoadFile(char *filename, void **bufferptr, int print_error)
+int32_t    TryLoadFile(char *filename, void **bufferptr, int32_t print_error)
 {
 	FILE	*f;
-	int    length;
+	int32_t    length;
 	void    *buffer;
 
 	*bufferptr = NULL;
@@ -674,25 +674,25 @@ Allows failure
 */
 typedef struct
 {
-	unsigned char magic[4];      // Name of the new WAD format
+	uint8_t magic[4];      // Name of the new WAD format
 	long diroffset;               // Position of WAD directory from start of file
 	long dirsize;                 // Number of entries * 0x40 (64 char)
 
-	unsigned char bogus[50];
+	uint8_t bogus[50];
 } pakheader_t;
 
 typedef struct
 {
-	unsigned char filename[0x38];        // Name of the file, Unix style, with extension,
+	uint8_t filename[0x38];        // Name of the file, Unix style, with extension,
 	// 56 chars, padded with '\0'.
 	long offset;                  // Position of the entry in PACK file
 	long size;                    // Size of the entry in PACK file
 } pakentry_t;
 
-int    TryLoadFileFromPak(char *filename, void **bufferptr, char *gd)
+int32_t    TryLoadFileFromPak(char *filename, void **bufferptr, char *gd)
 {
 	FILE	*f;
-	int     n, i, ret_len;
+	int32_t     n, i, ret_len;
 	long    dir_ents;
 	void    *buffer;
 	pakheader_t pak_header;
@@ -781,7 +781,7 @@ int    TryLoadFileFromPak(char *filename, void **bufferptr, char *gd)
 SaveFile
 ==============
 */
-void    SaveFile(char *filename, void *buffer, int count)
+void    SaveFile(char *filename, void *buffer, int32_t count)
 {
 	FILE	*f;
 
@@ -826,7 +826,7 @@ void DefaultPath(char *path, char *basepath)
 
 void    StripFilename(char *path)
 {
-	int             length;
+	int32_t             length;
 
 	length = strlen(path) - 1;
 	while (length > 0 && path[length] != PATHSEPERATOR)
@@ -836,7 +836,7 @@ void    StripFilename(char *path)
 
 void    StripExtension(char *path)
 {
-	int             length;
+	int32_t             length;
 
 	length = strlen(path) - 1;
 	while (length > 0 && path[length] != '.')
@@ -918,10 +918,10 @@ void ExtractFileExtension(char *path, char *dest)
 ParseNum / ParseHex
 ==============
 */
-int ParseHex(char *hex)
+int32_t ParseHex(char *hex)
 {
 	char    *str;
-	int    num;
+	int32_t    num;
 
 	num = 0;
 	str = hex;
@@ -944,7 +944,7 @@ int ParseHex(char *hex)
 }
 
 
-int ParseNum(char *str)
+int32_t ParseNum(char *str)
 {
 	if (str[0] == '$')
 		return ParseHex(str + 1);
@@ -985,7 +985,7 @@ short   BigShort(short l)
 }
 
 
-int    LittleLong(int l)
+int32_t    LittleLong(int32_t l)
 {
 	byte    b1, b2, b3, b4;
 
@@ -994,10 +994,10 @@ int    LittleLong(int l)
 	b3 = (l >> 16) & 255;
 	b4 = (l >> 24) & 255;
 
-	return ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
+	return ((int32_t)b1 << 24) + ((int32_t)b2 << 16) + ((int32_t)b3 << 8) + b4;
 }
 
-int    BigLong(int l)
+int32_t    BigLong(int32_t l)
 {
 	return l;
 }
@@ -1041,7 +1041,7 @@ short   LittleShort(short l)
 }
 
 
-int    BigLong(int l)
+int32_t    BigLong(int32_t l)
 {
 	byte    b1, b2, b3, b4;
 
@@ -1050,10 +1050,10 @@ int    BigLong(int l)
 	b3 = (l >> 16) & 255;
 	b4 = (l >> 24) & 255;
 
-	return ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
+	return ((int32_t)b1 << 24) + ((int32_t)b2 << 16) + ((int32_t)b3 << 8) + b4;
 }
 
-int    LittleLong(int l)
+int32_t    LittleLong(int32_t l)
 {
 	return l;
 }
@@ -1092,7 +1092,7 @@ float	LittleFloat(float l)
 #define CRC_INIT_VALUE	0xffff
 #define CRC_XOR_VALUE	0x0000
 
-static unsigned short crctable[256] =
+static uint16_t crctable[256] =
 {
 	0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
 	0x8108, 0x9129, 0xa14a, 0xb16b, 0xc18c, 0xd1ad, 0xe1ce, 0xf1ef,
@@ -1128,17 +1128,17 @@ static unsigned short crctable[256] =
 	0x6e17, 0x7e36, 0x4e55, 0x5e74, 0x2e93, 0x3eb2, 0x0ed1, 0x1ef0
 };
 
-void CRC_Init(unsigned short *crcvalue)
+void CRC_Init(uint16_t *crcvalue)
 {
 	*crcvalue = CRC_INIT_VALUE;
 }
 
-void CRC_ProcessByte(unsigned short *crcvalue, byte data)
+void CRC_ProcessByte(uint16_t *crcvalue, byte data)
 {
 	*crcvalue = (*crcvalue << 8) ^ crctable[(*crcvalue >> 8) ^ data];
 }
 
-unsigned short CRC_Value(unsigned short crcvalue)
+uint16_t CRC_Value(uint16_t crcvalue)
 {
 	return crcvalue ^ CRC_XOR_VALUE;
 }
@@ -1179,7 +1179,7 @@ Used to archive source files
 void QCopyFile(char *from, char *to)
 {
 	void	*buffer;
-	int		length;
+	int32_t		length;
 
 	length = LoadFile(from, &buffer);
 	CreatePath(to);

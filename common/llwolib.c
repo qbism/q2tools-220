@@ -82,9 +82,9 @@ void getpolys(){
 	}
 }
 
-void LoadLWOTriangleList (char *filename, triangle_t **pptri, int *numtriangles)
+void LoadLWOTriangleList (char *filename, triangle_t **pptri, int32_t *numtriangles)
 {
-	int		i, j;
+	int32_t		i, j;
 	triangle_t	*ptri;
 
 	if ((lwo = fopen(filename, "rb")) == 0) {

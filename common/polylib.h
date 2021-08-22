@@ -20,7 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 typedef struct
 {
-	int		numpoints;
+	int32_t		numpoints;
 	vec3_t	p[4];		// variable sized
 } winding_t;
 
@@ -31,7 +31,7 @@ typedef struct
 #define	ON_EPSILON	0.1
 #endif
 
-winding_t	*AllocWinding (int points);
+winding_t	*AllocWinding (int32_t points);
 vec_t	WindingArea (winding_t *w);
 void	WindingCenter (winding_t *w, vec3_t center);
 void	ClipWindingEpsilon (
@@ -44,7 +44,7 @@ winding_t	*BaseWindingForPlane (vec3_t normal, vec_t dist);
 void	CheckWinding (winding_t *w);
 void	WindingPlane (winding_t *w, vec3_t normal, vec_t *dist);
 void	RemoveColinearPoints (winding_t *w);
-int		WindingOnPlaneSide (winding_t *w, vec3_t normal, vec_t dist);
+int32_t		WindingOnPlaneSide (winding_t *w, vec3_t normal, vec_t dist);
 void	FreeWinding (winding_t *w);
 void	WindingBounds (winding_t *w, vec3_t mins, vec3_t maxs);
 

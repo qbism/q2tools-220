@@ -28,7 +28,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <math.h>
 
 // big enough without being so big we get major floating point errors.
-#define	BOGUS_RANGE	((1<<14)<<1)
+#define	BOGUS_RANGE ((1<<14)<<1)
 
 #ifdef BSP // only do this for qbsp, leads to stack overflows on qrad3.
 #define DOUBLEVEC_T // jit - might as well be more accurate, and sometimes doubles are even faster on modern hardware, anyway...
@@ -110,7 +110,7 @@ static inline double VectorLengthSq (vec3_t v) // jit
 
 static inline qboolean VectorCompare (vec3_t v1, vec3_t v2)
 {
-	int		i;
+	int32_t		i;
 
 	for (i=0 ; i<3 ; i++)
 		if (fabs(v1[i]-v2[i]) > EQUAL_EPSILON)
@@ -199,7 +199,7 @@ static inline void ClearBounds (vec3_t mins, vec3_t maxs)
 
 static inline void AddPointToBounds (vec3_t v, vec3_t mins, vec3_t maxs)
 {
-	int		i;
+	int32_t		i;
 	vec_t	val;
 
 	for (i=0 ; i<3 ; i++)

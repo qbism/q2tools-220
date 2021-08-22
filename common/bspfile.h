@@ -34,72 +34,72 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define	ON_EPSILON	0.1 //qb: was 0.1
 #endif
 
-extern	int			nummodels;
+extern	int32_t			nummodels;
 extern	dmodel_t	dmodels[MAX_MAP_MODELS_QBSP];
 
-extern	int			visdatasize;
+extern	int32_t			visdatasize;
 extern	byte		dvisdata[MAX_MAP_VISIBILITY_QBSP];
 extern	dvis_t		*dvis;
 
-extern	int			lightdatasize;
+extern	int32_t			lightdatasize;
 extern	byte		dlightdata[MAX_MAP_LIGHTING_QBSP];
 
-extern	int			entdatasize;
+extern	int32_t			entdatasize;
 extern	char		dentdata[MAX_MAP_ENTSTRING_QBSP];
 
-extern	int			numleafs;
+extern	int32_t			numleafs;
 extern	dleaf_t	    dleafs[MAX_MAP_LEAFS];
 extern	dleaf_tx	dleafsX[MAX_MAP_LEAFS_QBSP];
 
-extern	int			numplanes;
+extern	int32_t			numplanes;
 extern	dplane_t	dplanes[MAX_MAP_PLANES_QBSP];
 
-extern	int			numvertexes;
+extern	int32_t			numvertexes;
 extern	dvertex_t	dvertexes[MAX_MAP_VERTS_QBSP];
 
-extern	int			numnodes;
+extern	int32_t			numnodes;
 extern	dnode_t	    dnodes[MAX_MAP_NODES];
 extern	dnode_tx	dnodesX[MAX_MAP_NODES_QBSP];
 
-extern	int			numtexinfo;
+extern	int32_t			numtexinfo;
 extern	texinfo_t	texinfo[MAX_MAP_TEXINFO_QBSP];
 
-extern	int			numfaces;
+extern	int32_t			numfaces;
 extern	dface_t	    dfaces[MAX_MAP_FACES];
 extern	dface_tx	dfacesX[MAX_MAP_FACES_QBSP];
 
-extern	int			numedges;
+extern	int32_t			numedges;
 extern	dedge_t	    dedges[MAX_MAP_EDGES];
 extern	dedge_tx	dedgesX[MAX_MAP_EDGES_QBSP];
 
-extern	int			    numleaffaces;
-extern	unsigned short	dleaffaces[MAX_MAP_LEAFFACES];
-extern	unsigned int	dleaffacesX[MAX_MAP_LEAFFACES_QBSP];
+extern	int32_t			    numleaffaces;
+extern	uint16_t	dleaffaces[MAX_MAP_LEAFFACES];
+extern	uint32_t	dleaffacesX[MAX_MAP_LEAFFACES_QBSP];
 
-extern	int			    numleafbrushes;
-extern	unsigned short	dleafbrushes[MAX_MAP_LEAFBRUSHES];
-extern	unsigned int	dleafbrushesX[MAX_MAP_LEAFBRUSHES_QBSP];
+extern	int32_t			    numleafbrushes;
+extern	uint16_t	dleafbrushes[MAX_MAP_LEAFBRUSHES];
+extern	uint32_t	dleafbrushesX[MAX_MAP_LEAFBRUSHES_QBSP];
 
-extern	int			numsurfedges;
-extern	int			dsurfedges[MAX_MAP_SURFEDGES_QBSP];
+extern	int32_t			numsurfedges;
+extern	int32_t			dsurfedges[MAX_MAP_SURFEDGES_QBSP];
 
-extern	int			numareas;
+extern	int32_t			numareas;
 extern	darea_t		dareas[MAX_MAP_AREAS];
 
-extern	int			    numareaportals;
+extern	int32_t			    numareaportals;
 extern	dareaportal_t	dareaportals[MAX_MAP_AREAPORTALS];
 
-extern	int			numbrushes;
+extern	int32_t			numbrushes;
 extern	dbrush_t	dbrushes[MAX_MAP_BRUSHES_QBSP];
 
-extern	int			    numbrushsides;
+extern	int32_t			    numbrushsides;
 extern	dbrushside_t	dbrushsides[MAX_MAP_BRUSHSIDES];
 extern	dbrushside_tx	dbrushsidesX[MAX_MAP_BRUSHSIDES_QBSP];
 
 extern	byte		dpop[256];
 
 void DecompressVis (byte *in, byte *decompressed);
-int CompressVis (byte *vis, byte *dest);
+int32_t CompressVis (byte *vis, byte *dest);
 
 void	LoadBSPFile (char *filename);
 void	LoadBSPFileTexinfo (char *filename);	// just for 4data
@@ -118,16 +118,16 @@ typedef struct epair_s
 typedef struct
 {
 	vec3_t		origin;
-	int			firstbrush;
-	int			numbrushes;
+	int32_t			firstbrush;
+	int32_t			numbrushes;
 	epair_t		*epairs;
 
 // only valid for func_areaportals
-	int			areaportalnum;
-	int			portalareas[2];
+	int32_t			areaportalnum;
+	int32_t			portalareas[2];
 } entity_t;
 
-extern	int			num_entities;
+extern	int32_t			num_entities;
 extern	entity_t	entities[MAX_MAP_ENTITIES_QBSP];
 
 void	ParseEntities (void);

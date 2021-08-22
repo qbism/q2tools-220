@@ -23,9 +23,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #define	MAX_THREADS	64
 
-int		dispatch;
-int		workcount;
-int		oldf;
+int32_t		dispatch;
+int32_t		workcount;
+int32_t		oldf;
 qboolean		pacifier;
 
 qboolean	threaded;
@@ -36,10 +36,10 @@ GetThreadWork
 
 =============
 */
-int	GetThreadWork (void)
+int32_t	GetThreadWork (void)
 {
-	int	r;
-	int	f;
+	int32_t	r;
+	int32_t	f;
 
 	ThreadLock ();
 
@@ -65,11 +65,11 @@ int	GetThreadWork (void)
 }
 
 
-void (*workfunction) (int);
+void (*workfunction) (int32_t);
 
-void ThreadWorkerFunction (int threadnum)
+void ThreadWorkerFunction (int32_t threadnum)
 {
-	int		work;
+	int32_t		work;
 
 	while (1)
 	{
@@ -81,7 +81,7 @@ void ThreadWorkerFunction (int threadnum)
 	}
 }
 
-void RunThreadsOnIndividual (int workcnt, qboolean showpacifier, void(*func)(int))
+void RunThreadsOnIndividual (int32_t workcnt, qboolean showpacifier, void(*func)(int32_t))
 {
 	if (numthreads == -1)
 		ThreadSetDefault ();
@@ -98,9 +98,9 @@ void RunThreadsOnIndividual (int workcnt, qboolean showpacifier, void(*func)(int
 
 #include <windows.h>
 
-int		numthreads = -1;
+int32_t		numthreads = -1;
 CRITICAL_SECTION		crit;
-static int enter;
+static int32_t enter;
 
 void ThreadSetDefault (void)
 {
@@ -143,12 +143,12 @@ void ThreadUnlock (void)
 RunThreadsOn
 =============
 */
-void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int))
+void RunThreadsOn (int32_t workcnt, qboolean showpacifier, void(*func)(int32_t))
 {
-	int		threadid[MAX_THREADS];
+	int32_t		threadid[MAX_THREADS];
 	HANDLE	threadhandle[MAX_THREADS];
-	int		i;
-	int		start, end;
+	int32_t		i;
+	int32_t		start, end;
 
 	start = I_FloatTime ();
 	dispatch = 0;
@@ -194,7 +194,7 @@ void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int))
 #else
 #define	USED
 
-int		numthreads = 4;
+int32_t		numthreads = 4;
 
 void ThreadSetDefault (void)
 {
@@ -227,14 +227,14 @@ void ThreadUnlock (void)
 RunThreadsOn
 =============
 */
-void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int))
+void RunThreadsOn (int32_t workcnt, qboolean showpacifier, void(*func)(int32_t))
 {
-	int		i;
+	int32_t		i;
 	pthread_t	work_threads[MAX_THREADS];
 	void		*status;
 	pthread_attr_t	attrib;
 	pthread_mutexattr_t	mattrib;
-	int		start, end;
+	int32_t		start, end;
 
 	start = I_FloatTime ();
 	dispatch = 0;
@@ -295,7 +295,7 @@ void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int))
 
 #ifndef USED
 
-int		numthreads = 1;
+int32_t		numthreads = 1;
 
 void ThreadSetDefault (void)
 {
@@ -315,9 +315,9 @@ void ThreadUnlock (void)
 RunThreadsOn
 =============
 */
-void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int))
+void RunThreadsOn (int32_t workcnt, qboolean showpacifier, void(*func)(int32_t))
 {
-	int		start, end;
+	int32_t		start, end;
 
 	dispatch = 0;
 	workcount = workcnt;

@@ -28,19 +28,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define	MAX_BRUSH_SIDES	128
 #define	TEXINFO_NODE		-1		// side is already on a node
 
-//qb: from kmqbsp3- Typhontaur's large bounds
-#define USE_OUT_DIMENSIONS
-
-#define MAX_MAP_SIZE 32768
-#define MAX_HALF_SIZE (MAX_MAP_SIZE/2)
-#define MAX_BLOCK_SIZE (MAX_MAP_SIZE/8)
-#define MAX_POINTS_HASH (MAX_MAP_SIZE/128)
-
 typedef struct plane_s
 {
 	vec3_t	normal;
 	vec_t	dist;
-	int		type;
+	int32_t		type;
 	struct plane_s	*hash_chain;
 } plane_t;
 
@@ -50,18 +42,18 @@ typedef struct
 	vec_t	rotate;
 	vec_t	scale[2];
 	char	name[32];
-	int		flags;
-	int		value;
+	int32_t		flags;
+	int32_t		value;
 } brush_texture_t;
 
 typedef struct side_s
 {
-	int			planenum;
-	int			texinfo;
+	int32_t			planenum;
+	int32_t			texinfo;
 	winding_t	*winding;
 	struct side_s	*original;	// bspbrush_t sides will reference the mapbrush_t sides
-	int			contents;		// from miptex
-	int			surf;			// from miptex
+	int32_t			contents;		// from miptex
+	int32_t			surf;			// from miptex
 	qboolean	visible;		// choose visble planes first
 	qboolean	tested;			// this plane allready checked as a split
 	qboolean	bevel;			// don't ever use for bsp splitting
@@ -69,14 +61,14 @@ typedef struct side_s
 
 typedef struct brush_s
 {
-	int		entitynum;
-	int		brushnum;
+	int32_t		entitynum;
+	int32_t		brushnum;
 
-	int		contents;
+	int32_t		contents;
 
 	vec3_t	mins, maxs;
 
-	int		numsides;
+	int32_t		numsides;
 	side_t	*original_sides;
 } mapbrush_t;
 
@@ -95,14 +87,14 @@ typedef struct face_s
 	struct face_s	*split[2];	// if set, this face isn't valid anymore
 
 	struct portal_s	*portal;
-	int				texinfo;
-	int				planenum;
-	int				contents;	// faces in different contents can't merge
-	int				outputnumber;
+	int32_t				texinfo;
+	int32_t				planenum;
+	int32_t				contents;	// faces in different contents can't merge
+	int32_t				outputnumber;
 	winding_t		*w;
-	int				numpoints;
+	int32_t				numpoints;
 	qboolean		badstartvert;	// tjunctions cannot be fixed without a midpoint vertex
-	int				vertexnums[MAXEDGES];
+	int32_t				vertexnums[MAXEDGES];
 } face_t;
 
 
@@ -111,9 +103,9 @@ typedef struct bspbrush_s
 {
 	struct bspbrush_s	*next;
 	vec3_t	mins, maxs;
-	int		side, testside;		// side of node during construction
+	int32_t		side, testside;		// side of node during construction
 	mapbrush_t	*original;
-	int		numsides;
+	int32_t		numsides;
 	side_t	sides[6];			// variably sized
 } bspbrush_t;
 
@@ -123,7 +115,7 @@ typedef struct bspbrush_s
 typedef struct node_s
 {
 	// both leafs and nodes
-	int				planenum;	// -1 = leaf node
+	int32_t				planenum;	// -1 = leaf node
 	struct node_s	*parent;
 	vec3_t			mins, maxs;	// valid after portalization
 	bspbrush_t		*volume;	// one for each leaf/node
@@ -136,11 +128,11 @@ typedef struct node_s
 
 	// leafs only
 	bspbrush_t		*brushlist;	// fragments of all brushes in this leaf
-	int				contents;	// OR of all brush contents
-	int				occupied;	// 1 or greater can reach entity
+	int32_t				contents;	// OR of all brush contents
+	int32_t				occupied;	// 1 or greater can reach entity
 	entity_t		*occupant;	// for leak file testing
-	int				cluster;	// for portalfile writing
-	int				area;		// for areaportals
+	int32_t				cluster;	// for portalfile writing
+	int32_t				area;		// for areaportals
 	struct portal_s	*portals;	// also on nodes during construction
 } node_t;
 
@@ -164,19 +156,19 @@ typedef struct
 	vec3_t		mins, maxs;
 } tree_t;
 
-extern	int			entity_num;
+extern	int32_t			entity_num;
 
 extern	plane_t		mapplanes[MAX_MAP_PLANES_QBSP];
-extern	int			nummapplanes;
+extern	int32_t			nummapplanes;
 
-extern	int			nummapbrushes;
+extern	int32_t			nummapbrushes;
 extern	mapbrush_t	mapbrushes[MAX_MAP_BRUSHES_QBSP];
 
 extern	vec3_t		map_mins, map_maxs;
 
 #define	MAX_MAP_SIDES		(MAX_MAP_BRUSHSIDES_QBSP)
 
-extern	int			nummapbrushsides;
+extern	int32_t			nummapbrushsides;
 extern	side_t		brushsides[MAX_MAP_SIDES];
 
 extern	qboolean	noprune;
@@ -189,8 +181,9 @@ extern	qboolean	noweld;
 extern	qboolean	noshare;
 extern	qboolean	notjunc;
 extern	qboolean	badnormal_check;
-extern float        badnormal;
-extern	qboolean	use_qbsp; //qb: qbsp
+extern  float       badnormal;
+extern	qboolean	use_qbsp;
+extern  qboolean    noskipfix;
 
 extern	vec_t		microvolume;
 
@@ -198,11 +191,11 @@ extern	char		outbase[32];
 
 extern	char		source[1024];
 
-extern	int		max_entities;	//qb: from kmqbsp3-  Knightmare- adjustable entity limit
-extern	int		max_bounds;		// Knightmare- adjustable max bounds
+extern	int32_t		max_entities;	//qb: from kmqbsp3-  Knightmare- adjustable entity limit
+extern	int32_t		max_bounds;		// Knightmare- adjustable max bounds
 
 void 	LoadMapFile (char *filename);
-int		FindFloatPlane (vec3_t normal, vec_t dist, int bnum);
+int32_t		FindFloatPlane (vec3_t normal, vec_t dist, int32_t bnum);
 
 //=============================================================================
 
@@ -211,9 +204,9 @@ int		FindFloatPlane (vec3_t normal, vec_t dist, int bnum);
 typedef struct
 {
 	char	name[64];
-	int		flags;
-	int		value;
-	int		contents;
+	int32_t		flags;
+	int32_t		value;
+	int32_t		contents;
 	char	animname[64];
 } textureref_t;
 
@@ -221,23 +214,23 @@ typedef struct
 
 extern	textureref_t	textureref[MAX_MAP_TEXTURES];
 
-int	FindMiptex (char *name);
+int32_t	FindMiptex (char *name);
 
-int TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin);
+int32_t TexinfoForBrushTexture (plane_t *plane, brush_texture_t *bt, vec3_t origin);
 //DarkEssence: function TexinfoForBrushTexture_UV for #mapversion 220
-int TexinfoForBrushTexture_UV (brush_texture_t *bt, vec_t *UVaxis);
+int32_t TexinfoForBrushTexture_UV (brush_texture_t *bt, vec_t *UVaxis);
 //mxd: Applies origin brush offset to existing #mapversion 220 texinfo
-int ApplyTexinfoOffset_UV(int texinfoindex, const brush_texture_t *bt, const vec3_t origin);
+int32_t ApplyTexinfoOffset_UV(int32_t texinfoindex, const brush_texture_t *bt, const vec3_t origin);
 
 //=============================================================================
 
-void FindGCD (int *v);
+void FindGCD (int32_t *v);
 
 mapbrush_t *Brush_LoadEntity (entity_t *ent);
-int	PlaneTypeForNormal (vec3_t normal);
+int32_t	PlaneTypeForNormal (vec3_t normal);
 qboolean MakeBrushPlanes (mapbrush_t *b);
-int		FindIntPlane (int *inormal, int *iorigin);
-void	CreateBrush (int brushnum);
+int32_t		FindIntPlane (int32_t *inormal, int32_t *iorigin);
+void	CreateBrush (int32_t brushnum);
 
 
 //=============================================================================
@@ -254,7 +247,7 @@ void DrawWinding (winding_t *w);
 
 // csg
 
-bspbrush_t *MakeBspBrushList (int startbrush, int endbrush,
+bspbrush_t *MakeBspBrushList (int32_t startbrush, int32_t endbrush,
 		vec3_t clipmins, vec3_t clipmaxs);
 bspbrush_t *ChopBrushes (bspbrush_t *head);
 bspbrush_t *InitialBrushList (bspbrush_t *list);
@@ -268,13 +261,13 @@ void WriteBrushMap (char *name, bspbrush_t *list);
 
 bspbrush_t *CopyBrush (bspbrush_t *brush);
 
-void SplitBrush (bspbrush_t *brush, int planenum,
+void SplitBrush (bspbrush_t *brush, int32_t planenum,
 	bspbrush_t **front, bspbrush_t **back);
 
 tree_t *AllocTree (void);
 node_t *AllocNode (void);
-bspbrush_t *AllocBrush (int numsides);
-int	CountBrushList (bspbrush_t *brushes);
+bspbrush_t *AllocBrush (int32_t numsides);
+int32_t	CountBrushList (bspbrush_t *brushes);
 void FreeBrush (bspbrush_t *brushes);
 vec_t BrushVolume (bspbrush_t *brush);
 
@@ -287,7 +280,7 @@ tree_t *BrushBSP (bspbrush_t *brushlist, vec3_t mins, vec3_t maxs);
 
 // portals.c
 
-int VisibleContents (int contents);
+int32_t VisibleContents (int32_t contents);
 
 void MakeHeadnodePortals (tree_t *tree);
 void MakeNodePortal (node_t *node);
@@ -298,7 +291,7 @@ qboolean	Portal_VisFlood (portal_t *p);
 qboolean FloodEntities (tree_t *tree);
 void FillOutside (node_t *headnode);
 void FloodAreas (tree_t *tree);
-void MarkVisibleSides (tree_t *tree, int start, int end);
+void MarkVisibleSides (tree_t *tree, int32_t start, int32_t end);
 void FreePortal (portal_t *p);
 void EmitAreaPortals (node_t *headnode);
 
@@ -335,7 +328,7 @@ void EndModel (void);
 
 void MakeFaces (node_t *headnode);
 void FixTjuncs (node_t *headnode);
-int GetEdge (int v1, int v2,  face_t *f);
+int32_t GetEdge (int32_t v1, int32_t v2,  face_t *f);
 
 face_t	*AllocFace (void);
 void FreeFace (face_t *f);
@@ -348,7 +341,7 @@ void MergeNodeFaces (node_t *node);
 
 void FreeTree (tree_t *tree);
 void FreeTree_r (node_t *node);
-void PrintTree_r (node_t *node, int depth);
+void PrintTree_r (node_t *node, int32_t depth);
 void FreeTreePortals_r (node_t *node);
 void PruneNodes_r (node_t *node);
 void PruneNodes (node_t *node);

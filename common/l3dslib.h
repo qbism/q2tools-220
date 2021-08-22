@@ -21,5 +21,5 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 //
 // l3dslib.h: header file for loading triangles from a 3DS triangle file
 //
-void Load3DSTriangleList (char *filename, triangle_t **pptri, int *numtriangles);
+void Load3DSTriangleList (char *filename, triangle_t **pptri, int32_t *numtriangles);
 

@@ -34,9 +34,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-typedef unsigned char	UBYTE;
+typedef uint8_t	UBYTE;
 //conflicts with windows typedef short			WORD;
-typedef unsigned short	UWORD;
+typedef uint16_t	UWORD;
 typedef long			LONG;
 
 typedef enum
@@ -70,17 +70,17 @@ extern	bmhd_t	bmhd;						// will be in native byte order
 
 
 
-#define FORMID ('F'+('O'<<8)+((int)'R'<<16)+((int)'M'<<24))
-#define ILBMID ('I'+('L'<<8)+((int)'B'<<16)+((int)'M'<<24))
-#define PBMID  ('P'+('B'<<8)+((int)'M'<<16)+((int)' '<<24))
-#define BMHDID ('B'+('M'<<8)+((int)'H'<<16)+((int)'D'<<24))
-#define BODYID ('B'+('O'<<8)+((int)'D'<<16)+((int)'Y'<<24))
-#define CMAPID ('C'+('M'<<8)+((int)'A'<<16)+((int)'P'<<24))
+#define FORMID ('F'+('O'<<8)+((int32_t)'R'<<16)+((int32_t)'M'<<24))
+#define ILBMID ('I'+('L'<<8)+((int32_t)'B'<<16)+((int32_t)'M'<<24))
+#define PBMID  ('P'+('B'<<8)+((int32_t)'M'<<16)+((int32_t)' '<<24))
+#define BMHDID ('B'+('M'<<8)+((int32_t)'H'<<16)+((int32_t)'D'<<24))
+#define BODYID ('B'+('O'<<8)+((int32_t)'D'<<16)+((int32_t)'Y'<<24))
+#define CMAPID ('C'+('M'<<8)+((int32_t)'A'<<16)+((int32_t)'P'<<24))
 
 
 bmhd_t  bmhd;
 
-int    Align (int l)
+int32_t    Align (int32_t l)
 {
 	if (l&1)
 		return l+1;
@@ -96,9 +96,9 @@ LBMRLEdecompress
 Source must be evenly aligned!
 ================
 */
-byte  *LBMRLEDecompress (byte *source,byte *unpacked, int bpwidth)
+byte  *LBMRLEDecompress (byte *source,byte *unpacked, int32_t bpwidth)
 {
-	int     count;
+	int32_t     count;
 	byte    b,rept;
 
 	count = 0;
@@ -144,13 +144,13 @@ LoadLBM
 void LoadLBM (char *filename, byte **picture, byte **palette)
 {
 	byte    *LBMbuffer, *picbuffer, *cmapbuffer;
-	int             y;
+	int32_t             y;
 	byte    *LBM_P, *LBMEND_P;
 	byte    *pic_p;
 	byte    *body_p;
 
-	int    formtype,formlength;
-	int    chunktype,chunklength;
+	int32_t    formtype,formlength;
+	int32_t    chunktype,chunklength;
 
 // qiet compiler warnings
 	picbuffer = NULL;
@@ -165,15 +165,15 @@ void LoadLBM (char *filename, byte **picture, byte **palette)
 // parse the LBM header
 //
 	LBM_P = LBMbuffer;
-	if ( *(int *)LBMbuffer != LittleLong(FORMID) )
+	if ( *(int32_t *)LBMbuffer != LittleLong(FORMID) )
 	   Error ("No FORM ID at start of file!\n");
 
 	LBM_P += 4;
-	formlength = BigLong( *(int *)LBM_P );
+	formlength = BigLong( *(int32_t *)LBM_P );
 	LBM_P += 4;
 	LBMEND_P = LBM_P + Align(formlength);
 
-	formtype = LittleLong(*(int *)LBM_P);
+	formtype = LittleLong(*(int32_t *)LBM_P);
 
 	if (formtype != ILBMID && formtype != PBMID)
 		Error ("Unrecognized form type: %c%c%c%c\n", formtype&0xff
@@ -268,11 +268,11 @@ WriteLBMfile
 ==============
 */
 void WriteLBMfile (char *filename, byte *data,
-				   int width, int height, byte *palette)
+				   int32_t width, int32_t height, byte *palette)
 {
 	byte    *lbm, *lbmptr;
-	int    *formlength, *bmhdlength, *cmaplength, *bodylength;
-	int    length;
+	int32_t    *formlength, *bmhdlength, *cmaplength, *bodylength;
+	int32_t    length;
 	bmhd_t  basebmhd;
 
 	lbm = lbmptr = malloc (width*height+1000);
@@ -286,7 +286,7 @@ void WriteLBMfile (char *filename, byte *data,
 	*lbmptr++ = 'R';
 	*lbmptr++ = 'M';
 
-	formlength = (int*)lbmptr;
+	formlength = (int32_t*)lbmptr;
 	lbmptr+=4;                      // leave space for length
 
 	*lbmptr++ = 'P';
@@ -302,7 +302,7 @@ void WriteLBMfile (char *filename, byte *data,
 	*lbmptr++ = 'H';
 	*lbmptr++ = 'D';
 
-	bmhdlength = (int *)lbmptr;
+	bmhdlength = (int32_t *)lbmptr;
 	lbmptr+=4;                      // leave space for length
 
 	memset (&basebmhd,0,sizeof(basebmhd));
@@ -330,7 +330,7 @@ void WriteLBMfile (char *filename, byte *data,
 	*lbmptr++ = 'A';
 	*lbmptr++ = 'P';
 
-	cmaplength = (int *)lbmptr;
+	cmaplength = (int32_t *)lbmptr;
 	lbmptr+=4;                      // leave space for length
 
 	memcpy (lbmptr,palette,768);
@@ -349,7 +349,7 @@ void WriteLBMfile (char *filename, byte *data,
 	*lbmptr++ = 'D';
 	*lbmptr++ = 'Y';
 
-	bodylength = (int *)lbmptr;
+	bodylength = (int32_t *)lbmptr;
 	lbmptr+=4;                      // leave space for length
 
 	memcpy (lbmptr,data,width*height);
@@ -390,15 +390,15 @@ typedef struct
     char	version;
     char	encoding;
     char	bits_per_pixel;
-    unsigned short	xmin,ymin,xmax,ymax;
-    unsigned short	hres,vres;
-    unsigned char	palette[48];
+    uint16_t	xmin,ymin,xmax,ymax;
+    uint16_t	hres,vres;
+    uint8_t	palette[48];
     char	reserved;
     char	color_planes;
-    unsigned short	bytes_per_line;
-    unsigned short	palette_type;
+    uint16_t	bytes_per_line;
+    uint16_t	palette_type;
     char	filler[58];
-    unsigned char	data;			// unbounded
+    uint8_t	data;			// unbounded
 } pcx_t;
 
 
@@ -407,13 +407,13 @@ typedef struct
 LoadPCX
 ==============
 */
-void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height)
+void LoadPCX (char *filename, byte **pic, byte **palette, int32_t *width, int32_t *height)
 {
 	byte	*raw;
 	pcx_t	*pcx;
-	int		x, y;
-	int		len;
-	int		dataByte, runLength;
+	int32_t		x, y;
+	int32_t		len;
+	int32_t		dataByte, runLength;
 	byte	*out, *pix;
 
 	//
@@ -498,9 +498,9 @@ WritePCXfile
 ==============
 */
 void WritePCXfile (char *filename, byte *data,
-				   int width, int height, byte *palette)
+				   int32_t width, int32_t height, byte *palette)
 {
-	int		i, j, length;
+	int32_t		i, j, length;
 	pcx_t	*pcx;
 	byte		*pack;
 
@@ -568,7 +568,7 @@ Any of the return pointers can be NULL if you don't want them.
 ==============
 */
 void Load256Image (char *name, byte **pixels, byte **palette,
-				   int *width, int *height)
+				   int32_t *width, int32_t *height)
 {
 	char	ext[128];
 
@@ -598,7 +598,7 @@ Will save either an lbm or pcx, depending on extension.
 ==============
 */
 void Save256Image (char *name, byte *pixels, byte *palette,
-				   int width, int height)
+				   int32_t width, int32_t height)
 {
 	char	ext[128];
 
@@ -627,14 +627,14 @@ TARGA IMAGE
 */
 
 typedef struct _TargaHeader {
-	unsigned char 	id_length, colormap_type, image_type;
-	unsigned short	colormap_index, colormap_length;
-	unsigned char	colormap_size;
-	unsigned short	x_origin, y_origin, width, height;
-	unsigned char	pixel_size, attributes;
+	uint8_t 	id_length, colormap_type, image_type;
+	uint16_t	colormap_index, colormap_length;
+	uint8_t	colormap_size;
+	uint16_t	x_origin, y_origin, width, height;
+	uint8_t	pixel_size, attributes;
 } TargaHeader;
 
-int fgetLittleShort (FILE *f)
+int32_t fgetLittleShort (FILE *f)
 {
 	byte	b1, b2;
 
@@ -644,7 +644,7 @@ int fgetLittleShort (FILE *f)
 	return (short)(b1 + b2*256);
 }
 
-int fgetLittleLong (FILE *f)
+int32_t fgetLittleLong (FILE *f)
 {
 	byte	b1, b2, b3, b4;
 
@@ -662,11 +662,11 @@ int fgetLittleLong (FILE *f)
 LoadTGA
 =============
 */
-void LoadTGA (char *name, byte **pixels, int *width, int *height)
+void LoadTGA (char *name, byte **pixels, int32_t *width, int32_t *height)
 {
-	int				columns, rows, numPixels;
+	int32_t				columns, rows, numPixels;
 	byte			*pixbuf;
-	int				row, column;
+	int32_t				row, column;
 	FILE			*fin;
 	byte			*targa_rgba;
 	TargaHeader		targa_header;
@@ -715,7 +715,7 @@ void LoadTGA (char *name, byte **pixels, int *width, int *height)
 		for(row=rows-1; row>=0; row--) {
 			pixbuf = targa_rgba + row*columns*4;
 			for(column=0; column<columns; column++) {
-				unsigned char red,green,blue,alphabyte;
+				uint8_t red,green,blue,alphabyte;
 				switch (targa_header.pixel_size) {
 					case 24:
 
@@ -743,7 +743,7 @@ void LoadTGA (char *name, byte **pixels, int *width, int *height)
 	}
 	else if (targa_header.image_type==10) {   // Runlength encoded RGB images
 	//qb: set defaults. from AAtools
-		unsigned char red=255,green=255,blue=255,alphabyte=255,packetHeader,packetSize,j;
+		uint8_t red=255,green=255,blue=255,alphabyte=255,packetHeader,packetSize,j;
 		for(row=rows-1; row>=0; row--) {
 			pixbuf = targa_rgba + row*columns*4;
 			for(column=0; column<columns; ) {

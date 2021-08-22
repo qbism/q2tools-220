@@ -45,7 +45,7 @@ void LeakFile (tree_t *tree)
 	FILE	*linefile;
 	char	filename[1030];
 	node_t	*node;
-	int		count;
+	int32_t		count;
 
 	if (!tree->outside_node.occupied)
 		return;
@@ -64,10 +64,10 @@ void LeakFile (tree_t *tree)
 	node = &tree->outside_node;
 	while (node->occupied > 1)
 	{
-		int			next;
+		int32_t			next;
 		portal_t	*p, *nextportal = NULL;
 		node_t		*nextnode = NULL;
-		int			s;
+		int32_t			s;
 
 		// find the best portal exit
 		next = node->occupied;

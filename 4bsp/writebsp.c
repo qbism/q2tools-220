@@ -19,8 +19,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 #include "qbsp.h"
 
-int		c_nofaces;
-int		c_facenodes;
+int32_t		c_nofaces;
+int32_t		c_facenodes;
 
 
 /*
@@ -31,7 +31,7 @@ ONLY SAVE OUT PLANES THAT ARE ACTUALLY USED AS NODES
 =========================================================
 */
 
-int		planeused[MAX_MAP_PLANES_QBSP];
+int32_t		planeused[MAX_MAP_PLANES_QBSP];
 
 /*
 ============
@@ -43,7 +43,7 @@ brushes will be saved in the map.
 */
 void EmitPlanes (void)
 {
-    int			i;
+    int32_t			i;
     dplane_t	*dp;
     plane_t		*mp;
 
@@ -63,8 +63,8 @@ void EmitPlanes (void)
 
 void EmitMarkFace (dleaf_t *leaf_p, face_t *f)
 {
-    int			i;
-    int			facenum;
+    int32_t			i;
+    int32_t			facenum;
 
     while (f->merged)
         f = f->merged;
@@ -98,8 +98,8 @@ void EmitMarkFace (dleaf_t *leaf_p, face_t *f)
 
 void EmitMarkFaceX (dleaf_tx *leaf_p, face_t *f)
 {
-    int			i;
-    int			facenum;
+    int32_t			i;
+    int32_t			facenum;
 
     while (f->merged)
         f = f->merged;
@@ -140,11 +140,11 @@ EmitLeaf
 void EmitLeaf (node_t *node)
 {
     portal_t	*p;
-    int			s;
+    int32_t			s;
     face_t		*f;
     bspbrush_t	*b;
-    int			i;
-    int			brushnum;
+    int32_t			i;
+    int32_t			brushnum;
 
     // emit a leaf
     if (use_qbsp) //qb: qbsp
@@ -277,8 +277,8 @@ EmitFace
 */
 void EmitFace (face_t *f)
 {
-    int		i;
-    int		e;
+    int32_t		i;
+    int32_t		e;
 
     f->outputnumber = -1;
 
@@ -350,10 +350,10 @@ void EmitFace (face_t *f)
 EmitDrawingNode_r
 ============
 */
-int EmitDrawNode_r (node_t *node)
+int32_t EmitDrawNode_r (node_t *node)
 {
     face_t	*f;
-    int		i;
+    int32_t		i;
 
     if (node->planenum == PLANENUM_LEAF)
     {
@@ -467,7 +467,7 @@ WriteBSP
 */
 void WriteBSP (node_t *headnode)
 {
-    int		oldfaces;
+    int32_t		oldfaces;
 
     c_nofaces = 0;
     c_facenodes = 0;
@@ -491,8 +491,8 @@ SetModelNumbers
 */
 void SetModelNumbers (void)
 {
-    int		i;
-    int		models;
+    int32_t		i;
+    int32_t		models;
     char	value[12];
 
     models = 1;
@@ -516,10 +516,10 @@ SetLightStyles
 #define	MAX_SWITCHED_LIGHTS	32
 void SetLightStyles (void)
 {
-    int		stylenum;
+    int32_t		stylenum;
     char	*t;
     entity_t	*e;
-    int		i, j;
+    int32_t		i, j;
     char	value[11];
     char	lighttargets[MAX_SWITCHED_LIGHTS][64];
 
@@ -565,12 +565,12 @@ EmitBrushes
 */
 void EmitBrushes (void)
 {
-    int			i, j, bnum, s, x;
+    int32_t			i, j, bnum, s, x;
     dbrush_t	*db;
     mapbrush_t		*b;
     vec3_t		normal;
     vec_t		dist;
-    int			planenum;
+    int32_t			planenum;
 
     numbrushsides = 0;
     numbrushes = nummapbrushes;
@@ -693,7 +693,7 @@ void EndBSPFile (void)
 {
     char	path[1030];
 #if 0					// DarkEssence: warning fix - 'len', 'buf' unreferenced local variable
-    int		len;
+    int32_t		len;
     byte	*buf;
 #endif
 
@@ -720,25 +720,28 @@ void EndBSPFile (void)
 BeginModel
 ==================
 */
-int	firstmodleaf;
-extern	int firstmodeledge;
-extern	int	firstmodelface;
+int32_t	firstmodleaf;
+extern	int32_t firstmodeledge;
+extern	int32_t	firstmodelface;
 void BeginModel (void)
 {
     dmodel_t	*mod;
-    int			start, end;
+    int32_t			start, end;
     mapbrush_t	*b;
-    int			j;
+    int32_t			j;
     entity_t	*e;
     vec3_t		mins, maxs;
 
     if (use_qbsp)
     {
+        if (nummodels == WARN_MAP_MODELS_QBSP)
+            printf ("WARNING: nummodels may exceed protocol limit (%i)\n", WARN_MAP_MODELS_QBSP);
         if (nummodels == MAX_MAP_MODELS_QBSP)
-            Error ("MAX_MAP_MODELS_QBSP");
+            Error ("nummodels exceeds MAX_MAP_MODELS_QBSP");
     }
     else if (nummodels == MAX_MAP_MODELS)
-        Error ("MAX_MAP_MODELS");
+        Error ("nummodels exceeds MAX_MAP_MODELS");
+
     mod = &dmodels[nummodels];
 
     mod->firstface = numfaces;

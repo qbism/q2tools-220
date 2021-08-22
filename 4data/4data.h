@@ -73,12 +73,12 @@ void Cmd_Alphalight (void);
 
 void Cmd_Video (void);
 
-void RemapZero (byte *pixels, byte *palette, int width, int height);
+void RemapZero (byte *pixels, byte *palette, int32_t width, int32_t height);
 
 void ReleaseFile (char *filename);
 
 extern	byte		*byteimage, *lbmpalette;
-extern	int			byteimagewidth, byteimageheight;
+extern	int32_t			byteimagewidth, byteimageheight;
 
 extern	qboolean	g_release;			// don't grab, copy output data to new tree
 extern	char		g_releasedir[1024];	// c:\game\base, etc

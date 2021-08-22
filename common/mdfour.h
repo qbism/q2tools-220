@@ -41,14 +41,14 @@
 #endif
 
 struct mdfour {
-	uint32 A, B, C, D;
-	uint32 totalN;
+	uint32_t A, B, C, D;
+	uint32_t totalN;
 };
 
 void mdfour_begin(struct mdfour *md); // old: MD4Init
-void mdfour_update(struct mdfour *md, unsigned char *in, int n); //old: MD4Update
-void mdfour_result(struct mdfour *md, unsigned char *out); // old: MD4Final
-void mdfour(unsigned char *out, unsigned char *in, int n);
+void mdfour_update(struct mdfour *md, uint8_t *in, int32_t n); //old: MD4Update
+void mdfour_result(struct mdfour *md, uint8_t *out); // old: MD4Final
+void mdfour(uint8_t *out, uint8_t *in, int32_t n);
 
 #endif	// _MDFOUR_H
 

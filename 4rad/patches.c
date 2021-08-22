@@ -22,9 +22,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 vec3_t	texture_reflectivity[MAX_MAP_TEXINFO_QBSP];
 
-int cluster_neg_one = 0;
+int32_t cluster_neg_one = 0;
 float			*texture_data[MAX_MAP_TEXINFO_QBSP];
-int				texture_sizes[MAX_MAP_TEXINFO_QBSP][2];
+int32_t				texture_sizes[MAX_MAP_TEXINFO_QBSP][2];
 /*
 ===================================================================
 
@@ -40,8 +40,8 @@ CalcTextureReflectivity
 */
 void CalcTextureReflectivity(void)
 {
-    int i, j, k, count;
-    int texels, texel;
+    int32_t i, j, k, count;
+    int32_t texels, texel;
     qboolean wal_tex;
     float color[3], cur_color[3], tex_a, a;
     char path[1200];
@@ -53,7 +53,7 @@ void CalcTextureReflectivity(void)
     byte			*palette;
     miptex_t		*mt = NULL; //mxd. "potentially uninitialized local pointer variable" in VS2017 if uninitialized
     float *fbuffer, *ftexel;
-    int width, height;
+    int32_t width, height;
 
     // for TGA RGBA texture images
 
@@ -273,10 +273,10 @@ WindingFromFace
 */
 winding_t	*WindingFromFaceX (dface_tx *f)
 {
-    int			i;
-    int			se;
+    int32_t			i;
+    int32_t			se;
     dvertex_t	*dv;
-    int			v;
+    int32_t			v;
     winding_t	*w;
 
     w = AllocWinding (f->numedges);
@@ -302,10 +302,10 @@ winding_t	*WindingFromFaceX (dface_tx *f)
 
 winding_t	*WindingFromFace (dface_t *f)
 {
-    int			i;
-    int			se;
+    int32_t			i;
+    int32_t			se;
     dvertex_t	*dv;
-    int			v;
+    int32_t			v;
     winding_t	*w;
 
     w = AllocWinding (f->numedges);
@@ -402,12 +402,12 @@ MakePatchForFace
 =============
 */
 float	totalarea;
-void MakePatchForFace (int fn, winding_t *w)
+void MakePatchForFace (int32_t fn, winding_t *w)
 {
     float	area;
     patch_t		*patch;
     dplane_t	*pl;
-    int			i;
+    int32_t			i;
     vec3_t		color = {1.0f,1.0f,1.0f};
 
     area = WindingArea (w);
@@ -552,9 +552,9 @@ void MakePatchForFace (int fn, winding_t *w)
 }
 
 
-entity_t *EntityForModel (int modnum)
+entity_t *EntityForModel (int32_t modnum)
 {
-    int		i;
+    int32_t		i;
     char	*s;
     char	name[16];
 
@@ -577,8 +577,8 @@ MakePatches
 */
 void MakePatches (void)
 {
-    int		i, j, k;
-    int		fn;
+    int32_t		i, j, k;
+    int32_t		fn;
     winding_t	*w;
     dmodel_t	*mod;
     vec3_t		origin;
@@ -621,7 +621,7 @@ void MakePatches (void)
         }
     }
 
-    qprintf ("%i sqaure feet\n", (int)(totalarea/64));
+    qprintf ("%i sqaure feet\n", (int32_t)(totalarea/64));
 }
 
 /*
@@ -699,7 +699,7 @@ void	SubdividePatch (patch_t *patch)
     vec3_t	mins, maxs, total;
     vec3_t	split;
     vec_t	dist;
-    int		i, j;
+    int32_t		i, j;
     vec_t	v;
     patch_t	*newp;
 
@@ -775,7 +775,7 @@ void	DicePatch (patch_t *patch)
     vec3_t	mins, maxs;
     vec3_t	split;
     vec_t	dist;
-    int		i;
+    int32_t		i;
     patch_t	*newp;
 
     w = patch->winding;
@@ -830,7 +830,7 @@ SubdividePatches
 */
 void SubdividePatches (void)
 {
-    int		i, num;
+    int32_t		i, num;
 
     if (subdiv < 1)
         return;

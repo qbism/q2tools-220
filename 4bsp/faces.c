@@ -34,33 +34,33 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define	OFF_EPSILON		0.5
 
 extern brush_texture_t    side_brushtextures[MAX_MAP_SIDES];  //qb: kmbsp3: caulk
-int	c_merge;
-int	c_subdivide;
+int32_t	c_merge;
+int32_t	c_subdivide;
 
-int	c_totalverts;
-int	c_uniqueverts;
-int	c_degenerate;
-int	c_tjunctions;
-int	c_faceoverflows;
-int	c_facecollapse;
-int	c_badstartverts;
+int32_t	c_totalverts;
+int32_t	c_uniqueverts;
+int32_t	c_degenerate;
+int32_t	c_tjunctions;
+int32_t	c_faceoverflows;
+int32_t	c_facecollapse;
+int32_t	c_badstartverts;
 
 #define	MAX_SUPERVERTS	512
-int	superverts[MAX_SUPERVERTS];
-int	numsuperverts;
+int32_t	superverts[MAX_SUPERVERTS];
+int32_t	numsuperverts;
 
 face_t	*edgefaces[MAX_MAP_EDGES_QBSP][2];
-int		firstmodeledge = 1;
-int		firstmodelface;
+int32_t		firstmodeledge = 1;
+int32_t		firstmodelface;
 
-int	c_tryedges;
+int32_t	c_tryedges;
 
 vec3_t	edge_dir;
 vec3_t	edge_start;
 vec_t	edge_len;
 
-int		num_edge_verts;
-int		edge_verts[MAX_MAP_VERTS_QBSP];
+int32_t		num_edge_verts;
+int32_t		edge_verts[MAX_MAP_VERTS_QBSP];
 
 
 float	subdivide_size = 240;
@@ -73,25 +73,25 @@ face_t *NewFaceFromFace (face_t *f);
 typedef struct hashvert_s
 {
     struct hashvert_s	*next;
-    int		num;
+    int32_t		num;
 } hashvert_t;
 
 
 #define	HASH_SIZE	MAX_POINTS_HASH //qb: per kmbsp3. Was 64
 
 
-int	vertexchain[MAX_MAP_VERTS_QBSP];		// the next vertex in a hash chain
-int	hashverts[HASH_SIZE*HASH_SIZE];	// a vertex number, or 0 for no verts
+int32_t	vertexchain[MAX_MAP_VERTS_QBSP];		// the next vertex in a hash chain
+int32_t	hashverts[HASH_SIZE*HASH_SIZE];	// a vertex number, or 0 for no verts
 
 //============================================================================
 
 
 unsigned HashVec (vec3_t vec)
 {
-    int			x, y;
+    int32_t			x, y;
 
-    x = (max_bounds + (int)(vec[0]+0.5)) >> 7;
-    y = (max_bounds + (int)(vec[1]+0.5)) >> 7;
+    x = (max_bounds + (int32_t)(vec[0]+0.5)) >> 7;
+    y = (max_bounds + (int32_t)(vec[1]+0.5)) >> 7;
     if ( x < 0 || x >= HASH_SIZE || y < 0 || y >= HASH_SIZE )
         Error ("HashVec: point outside valid range");
 
@@ -108,13 +108,13 @@ GetVertex
 Uses hashing
 =============
 */
-int	GetVertexnum (vec3_t in)
+int32_t	GetVertexnum (vec3_t in)
 {
-    int			h;
-    int			i;
+    int32_t			h;
+    int32_t			i;
     float		*p;
     vec3_t		vert;
-    int			vnum;
+    int32_t			vnum;
 
     c_totalverts++;
 
@@ -184,11 +184,11 @@ superverts[base] will become face->vertexnums[0], and the others
 will be circularly filled in.
 ==================
 */
-void FaceFromSuperverts (node_t *node, face_t *f, int base)
+void FaceFromSuperverts (node_t *node, face_t *f, int32_t base)
 {
     face_t	*newf;
-    int		remaining;
-    int		i;
+    int32_t		remaining;
+    int32_t		i;
 
     remaining = numsuperverts;
     while (remaining > MAXEDGES)
@@ -228,7 +228,7 @@ EmitFaceVertexes
 void EmitFaceVertexes (node_t *node, face_t *f)
 {
     winding_t	*w;
-    int			i;
+    int32_t			i;
 
     if (f->merged || f->split[0] || f->split[1])
         return;
@@ -268,7 +268,7 @@ EmitVertexes_r
 */
 void EmitVertexes_r (node_t *node)
 {
-    int		i;
+    int32_t		i;
     face_t	*f;
 
     if (node->planenum == PLANENUM_LEAF)
@@ -293,14 +293,14 @@ Uses the hash tables to cut down to a small number
 */
 void FindEdgeVerts (vec3_t v1, vec3_t v2)
 {
-    int		x1, x2, y1, y2, t;
-    int		x, y;
-    int		vnum;
+    int32_t		x1, x2, y1, y2, t;
+    int32_t		x, y;
+    int32_t		vnum;
 
-    x1 = (max_bounds + (int)(v1[0]+0.5)) >> 7;
-    y1 = (max_bounds + (int)(v1[1]+0.5)) >> 7;
-    x2 = (max_bounds + (int)(v2[0]+0.5)) >> 7;
-    y2 = (max_bounds + (int)(v2[1]+0.5)) >> 7;
+    x1 = (max_bounds + (int32_t)(v1[0]+0.5)) >> 7;
+    y1 = (max_bounds + (int32_t)(v1[1]+0.5)) >> 7;
+    x2 = (max_bounds + (int32_t)(v2[0]+0.5)) >> 7;
+    y2 = (max_bounds + (int32_t)(v2[1]+0.5)) >> 7;
 
     if (x1 > x2)
     {
@@ -336,9 +336,9 @@ TestEdge
 Can be recursively reentered
 ==========
 */
-void TestEdge (vec_t start, vec_t end, int p1, int p2, int startvert)
+void TestEdge (vec_t start, vec_t end, int32_t p1, int32_t p2, int32_t startvert)
 {
-    int		j, k;
+    int32_t		j, k;
     vec_t	dist;
     vec3_t	delta;
     vec3_t	exact;
@@ -393,12 +393,12 @@ FixFaceEdges
 */
 void FixFaceEdges (node_t *node, face_t *f)
 {
-    int		p1, p2;
-    int		i;
+    int32_t		p1, p2;
+    int32_t		i;
     vec3_t	e2;
     vec_t	len;
-    int		count[MAX_SUPERVERTS], start[MAX_SUPERVERTS];
-    int		base;
+    int32_t		count[MAX_SUPERVERTS], start[MAX_SUPERVERTS];
+    int32_t		base;
 
     if (f->merged || f->split[0] || f->split[1])
         return;
@@ -463,7 +463,7 @@ FixEdges_r
 */
 void FixEdges_r (node_t *node)
 {
-    int		i;
+    int32_t		i;
     face_t	*f;
 
     if (node->planenum == PLANENUM_LEAF)
@@ -511,7 +511,7 @@ void FixTjuncs (node_t *headnode)
 
 //========================================================
 
-int		c_faces;
+int32_t		c_faces;
 
 face_t	*AllocFace (void)
 {
@@ -554,9 +554,9 @@ Called by writebsp.
 Don't allow four way edges
 ==================
 */
-int GetEdge (int v1, int v2,  face_t *f)
+int32_t GetEdge (int32_t v1, int32_t v2,  face_t *f)
 {
-    int		i;
+    int32_t		i;
 
     c_tryedges++;
 
@@ -641,7 +641,7 @@ winding_t *TryMergeWinding (winding_t *f1, winding_t *f2, vec3_t planenormal)
 {
     vec_t		*p1, *p2, *p3, *p4, *back;
     winding_t	*newf;
-    int			i, j, k, l;
+    int32_t			i, j, k, l;
     vec3_t		normal, delta;
     vec_t		dot;
     qboolean	keep1, keep2;
@@ -823,7 +823,7 @@ void SubdivideFace (node_t *node, face_t *f)
 {
     vec_t		mins, maxs;
     vec_t		v;
-    int			axis, i;
+    int32_t			axis, i;
     texinfo_t	*tex;
     vec3_t		temp;
     vec_t		dist;
@@ -912,7 +912,7 @@ void SubdivideNodeFaces (node_t *node)
 
 //===========================================================================
 
-int	c_nodefaces;
+int32_t	c_nodefaces;
 
 
 /*
@@ -921,7 +921,7 @@ FaceFromPortal
 
 ============
 */
-face_t *FaceFromPortal (portal_t *p, int pside)
+face_t *FaceFromPortal (portal_t *p, int32_t pside)
 {
     face_t	*f;
     side_t	*side;
@@ -974,7 +974,7 @@ mark the side that originally created it
 void MakeFaces_r (node_t *node)
 {
     portal_t	*p;
-    int			s;
+    int32_t			s;
 
     // recurse down to leafs
     if (node->planenum != PLANENUM_LEAF)
