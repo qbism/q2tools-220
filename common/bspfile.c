@@ -632,7 +632,7 @@ void	WriteBSPFile (char *filename)
     {
         AddLump (LUMP_BRUSHSIDES, dbrushsidesX, numbrushsides*sizeof(dbrushside_tx));
         AddLump (LUMP_LEAFFACES, dleaffacesX, numleaffaces*sizeof(dleaffacesX[0]));
-        AddLump (LUMP_LEAFBRUSHES, dleafbrushes, numleafbrushes*sizeof(dleafbrushesX[0]));
+        AddLump (LUMP_LEAFBRUSHES, dleafbrushesX, numleafbrushes*sizeof(dleafbrushesX[0]));
     }
     else
     {

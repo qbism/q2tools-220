@@ -177,11 +177,11 @@ void EmitLeaf (node_t *node)
 
             brushnum = b->original - mapbrushes;
             for (i=leaf_p->firstleafbrush ; i<numleafbrushes ; i++)
-                if (dleafbrushes[i] == brushnum)
+                if (dleafbrushesX[i] == brushnum)
                     break;
             if (i == numleafbrushes)
             {
-                dleafbrushes[numleafbrushes] = brushnum;
+                dleafbrushesX[numleafbrushes] = brushnum;
                 numleafbrushes++;
             }
         }
