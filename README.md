@@ -22,7 +22,8 @@ bsp
 *   Texinfo overflow check (MaxEd)
 *   Set chop size for surface lights (qbism - idea from JDolan)
 *   Increased limits within standard file format.  Requires a supporting engine. (kmqbsp3)
-*   Extreme limits with extended file format. Future supporting engine. (ideas from motorsep, paril, Knightmare)
+*   Fix so SURF_NODRAW flagged faces are not included in texture processing. (Paril)
+*   Extreme limits with extended file format. Future supporting engine. (ideas from motorsep, Paril, Knightmare)
 		
 vis
 *   Increase vis data size max. Issue warning for > vanilla limit. (qbism)
@@ -101,7 +102,7 @@ Linux-  Makefiles for 32-bit and 64-bit builds of Linux and Windows are included
 
 Cross-compile- Required packages: mingw-w64, mingw-w64-i686-dev, gcc-multilib.  Pre-compiled Windows dependency libraries are included in /mgw-sdk (borrowed from Q2PRO SDK), or download and build them from scratch.
 
-Windows- Visual Studio sln is included. VS compiler fixes (MaxEd)
+Windows- Visual Studio sln is included. VS compiler fixes (Paril, MaxEd)
 
 
 
