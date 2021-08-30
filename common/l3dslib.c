@@ -161,8 +161,8 @@ int32_t ParseFaceL1 (FILE *input)
 
 int32_t ParseChunk (FILE *input)
 {
-#define BLOCK_SIZE	4096
-	char			temp[BLOCK_SIZE];
+#define CHUNK_SIZE	4096
+	char			temp[CHUNK_SIZE];
 	uint16_t	type;
 	int32_t				i, length, w, t, retval;
 
@@ -229,8 +229,8 @@ ParseSubchunk:
 		{
 			t = w;
 
-			if (t > BLOCK_SIZE)
-				t = BLOCK_SIZE;
+			if (t > CHUNK_SIZE)
+				t = CHUNK_SIZE;
 
 			if (feof(input))
 				Error ("Error: unexpected end of file");

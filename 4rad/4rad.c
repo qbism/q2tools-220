@@ -33,12 +33,12 @@ every surface must be divided into at least two patches each axis
 
 patch_t		*face_patches[MAX_MAP_FACES_QBSP];
 entity_t	*face_entity[MAX_MAP_FACES_QBSP];
-patch_t		patches[MAX_PATCHES];
+patch_t		patches[MAX_PATCHES_QBSP];
 unsigned	num_patches;
 int32_t    num_smoothing;  //qb: number of phong hits
 
-vec3_t		radiosity[MAX_PATCHES];		// light leaving a patch
-vec3_t		illumination[MAX_PATCHES];	// light arriving at a patch
+vec3_t		radiosity[MAX_PATCHES_QBSP];		// light leaving a patch
+vec3_t		illumination[MAX_PATCHES_QBSP];	// light arriving at a patch
 
 vec3_t		face_offset[MAX_MAP_FACES_QBSP];		// for rotating bmodels
 dplane_t	backplanes[MAX_MAP_PLANES_QBSP];
@@ -319,7 +319,7 @@ static long total_mem;
 
 static int32_t first_transfer = 1;
 
-#define MAX_TRACE_BUF ((MAX_PATCHES + 7) / 8)
+#define MAX_TRACE_BUF ((MAX_PATCHES_QBSP + 7) / 8)
 
 #define TRACE_BYTE(x) (((x)+7) >> 3)
 #define TRACE_BIT(x) ((x) & 0x1F)
@@ -486,7 +486,7 @@ void MakeTransfers (int32_t i)
     float		total, inv_total;
     dplane_t	plane;
     vec3_t		origin;
-    float		transfers[MAX_PATCHES];
+    float		transfers[MAX_PATCHES_QBSP];
     int32_t			s;
     int32_t			itotal;
     byte		pvs[(MAX_MAP_LEAFS_QBSP+7)/8];
@@ -591,7 +591,7 @@ void MakeTransfers (int32_t i)
     {
         transfer_t	*t;
 
-        if (patch->numtransfers < 0 || patch->numtransfers > MAX_PATCHES)
+        if (patch->numtransfers < 0 || patch->numtransfers > MAX_PATCHES_QBSP)
             Error ("Weird numtransfers");
         s = patch->numtransfers * sizeof(transfer_t);
         patch->transfers = malloc (s);
@@ -1170,6 +1170,7 @@ int32_t main (int32_t argc, char **argv)
         maxdata = MAX_MAP_LIGHTING_QBSP;
     ParseEntities ();
     CalcTextureReflectivity ();
+printf ("here\n");
 
     if (!visdatasize)
     {
@@ -1177,6 +1178,7 @@ int32_t main (int32_t argc, char **argv)
         numbounce = 0;
         ambient = 0.1;
     }
+printf ("here\n");
 
     RadWorld ();
 

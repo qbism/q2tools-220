@@ -360,9 +360,12 @@ int32_t main (int32_t argc, char **argv)
                     "    -choplight #: Subdivide size for surface lights.\n"
                     "        Default: 240  Range: 32-1024\n"
                     "    -nosubdiv: Disable subdivision.\n"
+                    "    -largebounds: Increase max map size for supporting engines.\n"
+                    "    -qbsp: Greatly expanded map and entity limits for supporting engines.\n"
                     "    -micro #: Minimum microbrush size. Default: 0.02\n"
                     "        Suggested range: 0.02 - 1.0\n"
                     "    -nomerge: Don't merge visible faces per node.\n"
+                    "    -blocksize: map cube size for multi-threaded processing. Default: 1024\n"
                     "    -block # #: Division tree block size, square\n"
                     "    -block # # # #: Div tree block size, rectangular\n"
                     "    -noweld: Disable vertex welding.\n"
@@ -375,8 +378,6 @@ int32_t main (int32_t argc, char **argv)
                     "    -noshare: Don't look for shared edges on save.\n"
                     "    -noprune: Disable node pruning.\n"
                     "    -noorigfix: Disable texture fix for origin offsets.\n"
-                    "    -largebounds: Increase max map size for supporting engines.\n"
-                    "    -qbsp: Greatly expanded map and entity limits for supporting engines.\n"
                     "    -noskipfix: Do not automatically set skip contents to zero.\n"
                     "    -v: Display more verbose output.\n"
                     "<<<<<<<<<<<<<<<<<<<<< 4bsp HELP >>>>>>>>>>>>>>>>>>>>>\n\n");
@@ -457,7 +458,7 @@ int32_t main (int32_t argc, char **argv)
             use_qbsp = true;
             max_entities = MAX_MAP_ENTITIES_QBSP;
             max_bounds = MAX_MAP_SIZE;
-            block_size = MAX_BLOCK_SIZE;
+            //block_size = MAX_BLOCK_SIZE;  //qb: set manually
         }
         else if (!strcmp(argv[i], "-noskipfix"))
         {
@@ -476,7 +477,7 @@ int32_t main (int32_t argc, char **argv)
             else
             {
                 max_bounds = MAX_MAP_SIZE;
-                block_size = MAX_BLOCK_SIZE;
+                // block_size = MAX_BLOCK_SIZE;  //qb: set manually
                 printf ("largebounds: using max bound size of %i\n", MAX_MAP_SIZE);
             }
         }
@@ -513,6 +514,22 @@ int32_t main (int32_t argc, char **argv)
             printf ("sublight_size = %f\n", sublight_size);
             i++;
         }
+        else if (!strcmp(argv[i], "-blocksize"))
+        {
+            block_size = atof(argv[i+1]);
+            if (block_size < 128)
+            {
+                block_size = 128;
+                printf ("block_size set to minimum size: 128\n");
+            }
+            if (block_size > MAX_BLOCK_SIZE)
+            {
+                block_size = MAX_BLOCK_SIZE;
+                printf ("block_size set to minimum size: MAX_BLOCK_SIZE\n");
+            }
+            printf ("blocksize: %i\n", block_size);
+            i++;
+        }
         else if (!strcmp(argv[i], "-block"))
         {
             block_xl = block_xh = atoi(argv[i+1]);
@@ -538,14 +555,14 @@ int32_t main (int32_t argc, char **argv)
     {
         printf ("4bsp supporting v38 and v220 map formats.\n"
                 "usage: 4bsp [options] mapfile\n\n"
-                "    -help                 -chop #            -choplight\n"
-                "    -nosubdiv             -micro #           -nomerge\n"
-                "    -block # #            -noweld            -notjunc\n"
-                "    -blocks # # # #       -nocsg             -nowater\n"
-                "    -leaktest             -nodetail          -onlyents\n"
-                "    -fulldetail           -noshare           -noprune\n"
-                "    -noorigfix            -largebounds       -noskipfix\n"
-                "    -v (verbose)\n\n");
+                "    -help                -chop #           -choplight\n"
+                "    -nosubdiv            -micro #          -nomerge\n"
+                "    -blocksize           -largebounds      -qbsp\n"
+                "    -block # #           -noweld           -notjunc\n"
+                "    -blocks # # # #      -nocsg            -nowater\n"
+                "    -leaktest            -nodetail         -onlyents\n"
+                "    -fulldetail          -noshare          -noprune\n"
+                "    -noorigfix           -noskipfix        -v (verbose)\n\n");
 
         exit(1);
     }

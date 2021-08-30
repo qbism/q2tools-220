@@ -208,7 +208,7 @@ void CalcTextureReflectivity(void)
 
             //never freed but we'll need it up until the end
             texture_data[i] = fbuffer;
-            free(pbuffer);
+            //qb: freed in LoadTGA now.  free(pbuffer);
         }
 
         for (j = 0; j < 3; j++)
@@ -416,8 +416,8 @@ void MakePatchForFace (int32_t fn, winding_t *w)
     patch = &patches[num_patches];
     if (use_qbsp)
     {
-        if (num_patches == MAX_PATCHES)
-            Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
+        if (num_patches == MAX_PATCHES_QBSP)
+            Error ("Exceeded MAX_PATCHES_QBSP %i", MAX_PATCHES_QBSP);
     }
     else if (num_patches == MAX_PATCHES)
         Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
@@ -740,8 +740,8 @@ void	SubdividePatch (patch_t *patch)
     //
     if (use_qbsp)
     {
-        if (num_patches == MAX_PATCHES)
-            Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
+        if (num_patches == MAX_PATCHES_QBSP)
+            Error ("Exceeded MAX_PATCHES_QBSP %i", MAX_PATCHES_QBSP);
     }
     else if (num_patches == MAX_PATCHES)
         Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
@@ -802,8 +802,8 @@ void	DicePatch (patch_t *patch)
     //
     if (use_qbsp)
     {
-        if (num_patches == MAX_PATCHES)
-            Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);
+        if (num_patches == MAX_PATCHES_QBSP)
+            Error ("Exceeded MAX_PATCHES_QBSP %i", MAX_PATCHES_QBSP);
     }
     else if (num_patches == MAX_PATCHES)
         Error ("Exceeded MAX_PATCHES %i", MAX_PATCHES);

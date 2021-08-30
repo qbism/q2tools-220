@@ -70,7 +70,8 @@ typedef struct
 } transfer_t;
 
 
-#define	MAX_PATCHES	          524288 //qb: was 65535
+#define	MAX_PATCHES	          65535
+#define	MAX_PATCHES_QBSP     524288 //qb: extended limit
 
 #define DEFAULT_SMOOTHING_VALUE     44.0
 #define DEFAULT_NUDGE_VALUE     0.25
@@ -110,7 +111,7 @@ typedef struct patch_s
 extern	patch_t		*face_patches[MAX_MAP_FACES_QBSP];
 extern	entity_t	*face_entity[MAX_MAP_FACES_QBSP];
 extern	vec3_t		face_offset[MAX_MAP_FACES_QBSP];		// for rotating bmodels
-extern	patch_t		patches[MAX_PATCHES];
+extern	patch_t		patches[MAX_PATCHES_QBSP];
 extern	unsigned	num_patches;
 
 extern	int32_t		leafparents[MAX_MAP_LEAFS_QBSP];
