@@ -1170,7 +1170,6 @@ int32_t main (int32_t argc, char **argv)
         maxdata = MAX_MAP_LIGHTING_QBSP;
     ParseEntities ();
     CalcTextureReflectivity ();
-printf ("here\n");
 
     if (!visdatasize)
     {
@@ -1178,7 +1177,6 @@ printf ("here\n");
         numbounce = 0;
         ambient = 0.1;
     }
-printf ("here\n");
 
     RadWorld ();
 

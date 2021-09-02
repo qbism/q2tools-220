@@ -944,6 +944,10 @@ face_t *FaceFromPortal (portal_t *p, int32_t pside)
             && VisibleContents(p->nodes[!pside]->contents^p->nodes[pside]->contents) == CONTENTS_WINDOW )
         return NULL;	// don't show insides of windows
 
+    if ( (p->nodes[pside]->contents & CONTENTS_AUX)
+            && VisibleContents(p->nodes[!pside]->contents^p->nodes[pside]->contents) == CONTENTS_AUX )
+        return NULL;	//qb: don't show insides of CONTENTS_AUX
+
     if (pside)
     {
         f->w = ReverseWinding(p->winding);

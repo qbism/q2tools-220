@@ -195,7 +195,7 @@ re_test:
         {
             return r;
         }
-        return 0;
+            return 0;
     }
 
     tnode = &tnodes[node];
