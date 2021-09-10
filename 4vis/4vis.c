@@ -89,14 +89,6 @@ winding_t *NewWinding (int32_t points)
 }
 
 
-
-void pw(winding_t *w)
-{
-    int32_t		i;
-    for (i=0 ; i<w->numpoints ; i++)
-        printf ("(%5.1f, %5.1f, %5.1f)\n",w->points[i][0], w->points[i][1],w->points[i][2]);
-}
-
 void prl(leaf_t *l)
 {
     int32_t			i;

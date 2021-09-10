@@ -36,8 +36,6 @@ typedef struct
 	float		dist;
 } plane_t;
 
-#define MAX_POINTS_ON_WINDING	64
-#define	MAX_POINTS_ON_FIXED_WINDING	12
 
 typedef struct
 {

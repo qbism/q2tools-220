@@ -18,13 +18,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 ===========================================================================
 */
 
+#define MAX_POINTS_ON_WINDING	64
+#define	MAX_POINTS_ON_FIXED_WINDING	12
+
 typedef struct
 {
 	int32_t		numpoints;
 	vec3_t	p[4];		// variable sized
 } winding_t;
-
-#define	MAX_POINTS_ON_WINDING	64
 
 // you can define on_epsilon in the makefile as tighter
 #ifndef	ON_EPSILON
