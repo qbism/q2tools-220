@@ -736,7 +736,7 @@ void RecursiveLeafBitFlow (int32_t leafnum, byte *mightsee, byte *cansee)
 	int32_t			i, j;
 	long		more;
 	int32_t			pnum;
-	byte		newmight[MAX_PORTALS/8];
+	byte		newmight[MAX_MAP_PORTALS_QBSP/8];
 
 	leaf = &leafs[leafnum];
 

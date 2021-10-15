@@ -458,7 +458,7 @@ int32_t main (int32_t argc, char **argv)
             use_qbsp = true;
             max_entities = MAX_MAP_ENTITIES_QBSP;
             max_bounds = MAX_MAP_SIZE;
-            //block_size = MAX_BLOCK_SIZE;  //qb: set manually
+            block_size = MAX_BLOCK_SIZE;  //qb: otherwise limits map range
         }
         else if (!strcmp(argv[i], "-noskipfix"))
         {
@@ -477,7 +477,7 @@ int32_t main (int32_t argc, char **argv)
             else
             {
                 max_bounds = MAX_MAP_SIZE;
-                // block_size = MAX_BLOCK_SIZE;  //qb: set manually
+                block_size = MAX_BLOCK_SIZE;  //qb: otherwise limits map range
                 printf ("largebounds: using max bound size of %i\n", MAX_MAP_SIZE);
             }
         }
@@ -532,9 +532,9 @@ int32_t main (int32_t argc, char **argv)
         }
         else if (!strcmp(argv[i], "-block"))
         {
-            block_xl = block_xh = atoi(argv[i+1]);
-            block_yl = block_yh = atoi(argv[i+2]);
-            printf ("block: %i,%i\n", block_xl, block_yl);
+            block_xl = block_yl = atoi(argv[i+1]);  //qb: fixed... has it always been wrong? was xl = xh and yl = yh
+            block_xh = block_yh = atoi(argv[i+2]);
+            printf ("block: %i,%i\n", block_xl, block_xh);
             i+=2;
         }
         else if (!strcmp(argv[i], "-blocks"))

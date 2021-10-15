@@ -22,7 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "mathlib.h"
 #include "bspfile.h"
 
-#define	MAX_PORTALS	32767
+//#define	MAX_PORTALS	32767
 
 #define	MAX_PORTALS_QBSP MAX_MAP_PORTALS_QBSP / 2  //qb: half
 
