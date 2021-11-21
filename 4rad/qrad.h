@@ -71,7 +71,7 @@ typedef struct
 
 
 #define	MAX_PATCHES	          65535
-#define	MAX_PATCHES_QBSP     524288 //qb: extended limit
+#define	MAX_PATCHES_QBSP     4000000 //qb: extended limit
 
 #define DEFAULT_SMOOTHING_VALUE     44.0
 #define DEFAULT_NUDGE_VALUE     0.25
