@@ -2044,8 +2044,10 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int32_t nod
 
         case emit_sky: //qb: sky radiosity
             dot2 = -DotProduct (delta, l->normal);
-            if (dot2 <= EQUAL_EPSILON)
-                return;	// behind light surface
+         
+         //qb: disable below, nothing is behind light surface of sky
+         //   if (dot2 <= EQUAL_EPSILON)
+         //       return;	// behind light surface
 
             if (dist > 36) //qb: edge lighting fix- don't drop off right away
                 scale = (l->intensity / ((dist-30)*(dist-30))) * dot * dot2;
