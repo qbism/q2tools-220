@@ -1019,16 +1019,20 @@ int32_t main (int32_t argc, char **argv)
             strcpy(basedir, (argv[i+1]));
             i++;
         }
-        else if (!strcmp(argv[i],"-chop"))
+        else if ((!strcmp(argv[i],"-chop")) || (!strcmp(argv[i],"-subdiv")))
         {
             subdiv = atoi (argv[i+1]);
+            if (subdiv < 16) {
+                subdiv = 16;
+                 printf ("subdiv set to minimum: 16\n");
+            }
+           else if (subdiv > 1024) {
+                subdiv = 1024;
+                 printf ("subdiv set to maximum: 1024\n");
+            }
             i++;
         }
-        else if (!strcmp(argv[i],"-subdiv"))
-        {
-            subdiv = atoi (argv[i+1]);
-            i++;
-        }
+
         else if (!strcmp(argv[i],"-scale"))
         {
             lightscale = atof (argv[i+1]);
@@ -1140,7 +1144,7 @@ int32_t main (int32_t argc, char **argv)
     {
         printf ("usage: 4rad [options] mapfile\n\n"
                 "    -help                -extra               -maxdata\n"
-                "    -subdiv #            -scale               -direct\n"
+                "    -subdiv or -chop #   -scale               -direct\n"
                 "    -entity              -nopvs               -noblock\n"
                 "    -basedir             -ambient             -savetrace\n"
                 "    -maxlight            -tmpin               -tmpout\n"

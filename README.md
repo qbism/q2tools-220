@@ -30,6 +30,7 @@ vis
 *   Increase vis data size max. Issue warning for > vanilla limit. (qbism)
 		
 radiosity
+*   Reduce dark banding at sky: Faces are never behind the sky.  (idea from ericw-tools)
 *   Keep emit_surface active for sky planes when sun is active. Adjust with -sunradscale. (qbism)
 *   Use any existing TGA replacement textures for radiosity (AA tools)
 *   Spotlight center to surface point attenuation (AA tools)

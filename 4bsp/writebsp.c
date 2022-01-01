@@ -692,10 +692,6 @@ EndBSPFile
 void EndBSPFile (void)
 {
     char	path[1030];
-#if 0					// DarkEssence: warning fix - 'len', 'buf' unreferenced local variable
-    int32_t		len;
-    byte	*buf;
-#endif
 
     EmitBrushes ();
     EmitPlanes ();
