@@ -929,9 +929,13 @@ face_t *FaceFromPortal (portal_t *p, int32_t pside)
     side = p->side;
     if (!side)
         return NULL;	// portal does not bridge different visible contents
-    if (   !strcmp(side_brushtextures[side-brushsides].name, "common/caulk") ||
-            (side_brushtextures[side-brushsides].flags & SURF_NODRAW)
-        )
+
+    //qb:  Paril noted SURF_NODRAW was not processed anywhere, pulled here.
+    //Turns out it was not implemented in original compiler tools or engine.
+    //SURF_SKY textures are often also flagged nodraw but need to keep those.
+    if ( !strcmp(side_brushtextures[side-brushsides].name, "common/caulk") ||
+        ((side_brushtextures[side-brushsides].flags & SURF_NODRAW) && !(side_brushtextures[side-brushsides].flags & SURF_SKY))
+       )
         return NULL;
 
     f = AllocFace ();

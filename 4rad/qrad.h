@@ -73,6 +73,9 @@ typedef struct
 #define	MAX_PATCHES	          65535
 #define	MAX_PATCHES_QBSP     4000000 //qb: extended limit
 
+#define LMSTEP 16 //qb: lightmap step.  Default generates 1/16 of texture scale.
+#define QBSP_LMSTEP 4 //qb: higher res lightmap
+
 #define DEFAULT_SMOOTHING_VALUE     44.0
 #define DEFAULT_NUDGE_VALUE     0.25
 
@@ -142,6 +145,7 @@ extern	qboolean	extrasamples;
 extern	qboolean	dicepatches;
 extern int32_t numbounce;
 extern qboolean noblock;
+extern qboolean lightwarp;
 
 extern	directlight_t	*directlights[MAX_MAP_LEAFS_QBSP];
 
@@ -167,7 +171,7 @@ dleaf_tx		*PointInLeafX (vec3_t point);
 
 extern	dplane_t	backplanes[MAX_MAP_PLANES_QBSP];
 extern	int32_t			fakeplanes;					// created planes for origin offset
-extern  int32_t		maxdata;
+extern  int32_t		maxdata, step;
 
 extern	float	subdiv;
 

@@ -52,6 +52,7 @@ int32_t		numbounce = 4; //default was 8
 qboolean noblock = false; // when true, disables occlusion testing on light rays
 qboolean	extrasamples = false;
 qboolean	dicepatches = false;
+qboolean	lightwarp = false;
 int32_t memory = false;
 float patch_cutoff = 0.0f; // set with -radmin 0.0..1.0, see MakeTransfers()
 
@@ -943,6 +944,7 @@ int32_t main (int32_t argc, char **argv)
     verbose = false;
     numthreads = -1;
     maxdata = DEFAULT_MAP_LIGHTING;
+    step = LMSTEP;
     dlightdata_ptr = dlightdata;
 
     for (i=1 ; i<argc ; i++)
@@ -964,6 +966,7 @@ int32_t main (int32_t argc, char **argv)
                     "usage: 4rad [options] mapfile\n\n"
                     "-smooth #: Threshold angle (# and 180deg - #) for phong smoothing.\n"
                     "-extra: Use extra samples to smooth lighting.\n"
+                    "-warp: Light warp surfaces such as water.\n"
                     "-nudge: Nudge factor for samples. Fraction of distance from center.\n"
                     "-subdiv #: Maximum patch size.  Default: 64\n"
                     "-dice: Subdivide patches with a global grid rather than per patch.\n"
@@ -994,6 +997,11 @@ int32_t main (int32_t argc, char **argv)
         {
             extrasamples = true;
             printf ("extrasamples = true\n");
+        }
+        else if (!strcmp(argv[i],"-warp")) //qb: light warp surfaces
+        {
+            lightwarp = true;
+            printf ("light warp = true\n");
         }
         else if (!strcmp(argv[i],"-dice"))
         {
@@ -1150,7 +1158,7 @@ int32_t main (int32_t argc, char **argv)
                 "    -maxlight            -tmpin               -tmpout\n"
                 "    -dump                -bounce              -threads\n"
                 "    -smooth              -sunradscale #       -dice\n"
-                "    -nudge               -v (verbose output)\n\n");
+                "    -nudge               -warp       -v (verbose output)\n\n");
         exit(1);
     }
     start = I_FloatTime ();
@@ -1171,7 +1179,10 @@ int32_t main (int32_t argc, char **argv)
     printf ("reading %s\n", name);
     LoadBSPFile (name);
     if (use_qbsp)
+    {
         maxdata = MAX_MAP_LIGHTING_QBSP;
+        step = QBSP_LMSTEP;
+    }
     ParseEntities ();
     CalcTextureReflectivity ();
 

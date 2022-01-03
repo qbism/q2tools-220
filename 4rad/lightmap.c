@@ -24,6 +24,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #define	MAX_LSTYLES	256
 
+#define	SINGLEMAP	    (64*64*4)
+#define	QBSP_SINGLEMAP	(256*256*4)  //qb: higher res lightmaps
 typedef struct
 {
     dface_t		*faces[2];
@@ -39,7 +41,7 @@ edgeshare_t	edgeshare[MAX_MAP_EDGES_QBSP];
 
 int32_t			facelinks[MAX_MAP_FACES_QBSP];
 int32_t			planelinks[2][MAX_MAP_PLANES_QBSP];
-int32_t			maxdata;
+int32_t			maxdata, step;
 vec3_t      face_texnormals[MAX_MAP_FACES_QBSP];
 float       sunradscale = 0.5;
 byte	*dlightdata_ptr;
@@ -1228,16 +1230,13 @@ void SampleTriangulation (vec3_t point, triangulation_t *trian, triangle_t **las
 =================================================================
 */
 
-
-#define	SINGLEMAP	(64*64*4)
-
 typedef struct
 {
     vec_t	facedist;
     vec3_t	facenormal;
 
     int32_t		numsurfpt;
-    vec3_t	surfpt[SINGLEMAP];
+    vec3_t	surfpt[QBSP_SINGLEMAP];
 
     vec3_t	modelorg;		// for origined bmodels
 
@@ -1265,13 +1264,14 @@ also sets exactmins[] and exactmaxs[]
 void CalcFaceExtents (lightinfo_t *l)
 {
     vec_t	mins[2], maxs[2], val;
-    int32_t		i,j, e;
+    int32_t		i,j,e, map = SINGLEMAP;
     dvertex_t	*v;
     texinfo_t	*tex;
     vec3_t		vt;
 
     if (use_qbsp)
     {
+        map = QBSP_SINGLEMAP;
         dface_tx *s;
         s = l->faceX;
 
@@ -1340,14 +1340,14 @@ void CalcFaceExtents (lightinfo_t *l)
         l->exactmins[i] = mins[i];
         l->exactmaxs[i] = maxs[i];
 
-        mins[i] = floor(mins[i]/16);
-        maxs[i] = ceil(maxs[i]/16);
+        mins[i] = floor(mins[i]/step);
+        maxs[i] = ceil(maxs[i]/step);
 
         l->texmins[i] = mins[i];
         l->texsize[i] = maxs[i] - mins[i];
     }
 
-    if (l->texsize[0] * l->texsize[1] > SINGLEMAP/4)	// div 4 for extrasamples
+    if (l->texsize[0] * l->texsize[1] > map/4)	// div 4 for extrasamples
     {
         char s[3] = {'X', 'Y', 'Z'};
 
@@ -1358,8 +1358,8 @@ void CalcFaceExtents (lightinfo_t *l)
             l->exactmins[i] = mins[i];
             l->exactmaxs[i] = maxs[i];
 
-            mins[i] = floor(mins[i]/16);
-            maxs[i] = ceil(maxs[i]/16);
+            mins[i] = floor(mins[i]/step);
+            maxs[i] = ceil(maxs[i]/step);
 
             l->texmins[i] = mins[i];
             l->texsize[i] = maxs[i] - mins[i];
@@ -1465,7 +1465,7 @@ void CalcPoints (lightinfo_t *l, float sofs, float tofs)
 {
     int32_t		i;
     int32_t		s, t, j;
-    int32_t		w, h; //qb: remove step - always 16.
+    int32_t		w, h;
     vec_t	starts, startt, us, ut;
     vec_t	*surf;
     vec_t	mids, midt;
@@ -1482,15 +1482,15 @@ void CalcPoints (lightinfo_t *l, float sofs, float tofs)
     w = l->texsize[0]+1;
     l->numsurfpt = w * h;
 
-    starts = l->texmins[0]*16;
-    startt = l->texmins[1]*16;
+    starts = l->texmins[0]*step;
+    startt = l->texmins[1]*step;
 
     for (t=0 ; t<h ; t++)
     {
         for (s=0 ; s<w ; s++, surf+=3)
         {
-            us = starts + (s+sofs)*16;
-            ut = startt + (t+tofs)*16;
+            us = starts + (s+sofs)*step;
+            ut = startt + (t+tofs)*step;
 
 
             // if a line can be traced from surf to facemid, the point is good
@@ -1966,7 +1966,8 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int32_t nod
     VectorSubtract (l->origin, pos, delta);
     dist = VectorNormalize (delta, delta);
     dot = DotProduct (delta, normal);
-    if (dot <= EQUAL_EPSILON)
+
+    if (( l->type != emit_sky ) && (dot <= EQUAL_EPSILON))  //qb: nothing is behind light surface of sky
         return;	// behind sample surface
 
     lcn = lowestCommonNode(nodenum, l->nodenum);
@@ -2046,11 +2047,11 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int32_t nod
             dot2 = -DotProduct (delta, l->normal);
          
          //qb: disable below, nothing is behind light surface of sky
-         //   if (dot2 <= EQUAL_EPSILON)
-         //       return;	// behind light surface
+            if (dot2 <= EQUAL_EPSILON)
+                return;	// behind light surface
 
             if (dist > 36) //qb: edge lighting fix- don't drop off right away
-                scale = (l->intensity / ((dist-30)*(dist-30))) * dot * dot2;
+                scale = (l->intensity / (dist-30)) * dot * dot2;
             else if (dist > 16)
                 scale = (l->intensity / (dist-15)) * dot * dot2;
             else
@@ -2178,6 +2179,8 @@ void AddSampleToPatch (vec3_t pos, vec3_t color, int32_t facenum)
     vec3_t	mins, maxs;
     int32_t		i;
 
+
+
     if (numbounce == 0)
         return;
     if (color[0] + color[1] + color[2] < 1.0) //qb: was 3
@@ -2189,9 +2192,9 @@ void AddSampleToPatch (vec3_t pos, vec3_t color, int32_t facenum)
         WindingBounds (patch->winding, mins, maxs);
         for (i=0 ; i<3 ; i++)
         {
-            if (mins[i] > pos[i] + 16)
+            if (mins[i] > pos[i] + step)
                 goto nextpatch;
-            if (maxs[i] < pos[i] - 16)
+            if (maxs[i] < pos[i] - step)
                 goto nextpatch;
         }
 
@@ -2814,7 +2817,11 @@ void FinalLightFace (int32_t facenum)
         dface_t		*f;
         f = &dfaces[facenum];
 
+        //qb: light warp
         if ( texinfo[f->texinfo].flags & (SURF_WARP|SURF_SKY) )
+         return;
+       
+        if ( !lightwarp && texinfo[f->texinfo].flags & SURF_WARP)
             return;		// non-lit texture
 
         f->lightofs = i;
