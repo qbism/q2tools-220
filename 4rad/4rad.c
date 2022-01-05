@@ -52,7 +52,7 @@ int32_t		numbounce = 4; //default was 8
 qboolean noblock = false; // when true, disables occlusion testing on light rays
 qboolean	extrasamples = false;
 qboolean	dicepatches = false;
-qboolean	lightwarp = false;
+qboolean	noedgefix = false;
 int32_t memory = false;
 float patch_cutoff = 0.0f; // set with -radmin 0.0..1.0, see MakeTransfers()
 
@@ -964,29 +964,29 @@ int32_t main (int32_t argc, char **argv)
         {
             printf ("4rad with automatic phong.\n"
                     "usage: 4rad [options] mapfile\n\n"
-                    "-smooth #: Threshold angle (# and 180deg - #) for phong smoothing.\n"
-                    "-extra: Use extra samples to smooth lighting.\n"
-                    "-warp: Light warp surfaces such as water.\n"
-                    "-nudge: Nudge factor for samples. Fraction of distance from center.\n"
-                    "-subdiv #: Maximum patch size.  Default: 64\n"
-                    "-dice: Subdivide patches with a global grid rather than per patch.\n"
-                    "-bounce #: Max number of light bounces for radiosity.\n"
-                    "-maxdata #: Value above 2097152 requires a modded engine.\n"
-                    "-scale #: Light intensity multiplier.\n"
-                    "-sunradscale #: Sky light intensity scale when sun is active.\n"
-                    "-direct #: Direct light scaling.\n"
-                    "-entity #: Entity light scaling.\n"
                     "-ambient: Minimum light level.\n"
-                    "-maxlight: Maximium light level.\n"
                     "-basedir <dir> :The base (mod) directory for textures.\n"
-                    "-v: Verbose output for debugging.\n"
+                    "-bounce #: Max number of light bounces for radiosity.\n"
+                    "-dice: Subdivide patches with a global grid rather than per patch.\n"
+                    "-direct #: Direct light scaling.\n"
+                    "-dump: Dump patches to a text file.\n"
+                    "-entity #: Entity light scaling.\n"
+                    "-extra: Use extra samples to smooth lighting.\n"
+                    "-maxdata #: Value above 2097152 requires a modded engine.\n"
+                    "-maxlight: Maximium light level.\n"
+                    "-noblock: Brushes don't block lighting path.\n"
+                    "-noedgefix: disable dark edges at sky fix.\n"
+                    "-nopvs:  Don't do potential visibility set check.\n"
+                    "-nudge: Nudge factor for samples. Fraction of distance from center.\n"
+                    "-savetrace: Test traces and report errors.\n"
+                    "-scale #: Light intensity multiplier.\n"
+                    "-smooth #: Threshold angle (# and 180deg - #) for phong smoothing.\n"
+                    "-subdiv (or -chop) #: Maximum patch size.  Default: 64\n"
+                    "-sunradscale #: Sky light intensity scale when sun is active.\n"
+                    "-threads #:  Number of CPU cores to use.\n"
                     "-tmpin: Read from tmp directory.\n"
                     "-tmpout: Write to tmp directory.\n"
-                    "-savetrace: Test traces and report errors.\n"
-                    "-dump: Dump patches to a text file.\n"
-                    "-nopvs:  Don't do potential visibility set check.\n"
-                    "-noblock: Brushes don't block lighting path.\n"
-                    "-threads #:  Number of CPU cores to use.\n\n"
+                    "-v: Verbose output for debugging.\n\n"
                    );
             printf( "<<<<<<<<<<<<<<<<<<<<< 4rad HELP >>>>>>>>>>>>>>>>>>>>>\n\n" );
 
@@ -998,10 +998,10 @@ int32_t main (int32_t argc, char **argv)
             extrasamples = true;
             printf ("extrasamples = true\n");
         }
-        else if (!strcmp(argv[i],"-warp")) //qb: light warp surfaces
+        else if (!strcmp(argv[i],"-noedgefix")) //qb: light warp surfaces
         {
-            lightwarp = true;
-            printf ("light warp = true\n");
+            noedgefix = true;
+            printf ("no edge fix = true\n");
         }
         else if (!strcmp(argv[i],"-dice"))
         {
@@ -1105,7 +1105,7 @@ int32_t main (int32_t argc, char **argv)
         else if (!strcmp(argv[i],"-nudge"))
         {
             sample_nudge = atof (argv[i+1]);
-            sample_nudge = BOUND(0, sample_nudge, 1.0);
+            //qb: nah, go crazy.  sample_nudge = BOUND(0, sample_nudge, 1.0);
             i++;
         }
         else if (!strcmp(argv[i],"-ambient"))
@@ -1151,14 +1151,14 @@ int32_t main (int32_t argc, char **argv)
     if (i != argc - 1)
     {
         printf ("usage: 4rad [options] mapfile\n\n"
-                "    -help                -extra               -maxdata\n"
-                "    -subdiv or -chop #   -scale               -direct\n"
-                "    -entity              -nopvs               -noblock\n"
-                "    -basedir             -ambient             -savetrace\n"
-                "    -maxlight            -tmpin               -tmpout\n"
-                "    -dump                -bounce              -threads\n"
-                "    -smooth              -sunradscale #       -dice\n"
-                "    -nudge               -warp       -v (verbose output)\n\n");
+                "    -ambient                -basedir               -bounce\n"
+                "    -dice                   -direct                -dump\n"
+                "    -entity                 -extra                 -help\n"
+                "    -maxdata                -maxlight              -noblock\n"
+                "    -noedgefix              -nopvs                 -nudge\n"
+                "    -savetrace              -scale                 -smooth\n"
+                "    -subdiv or -chop        -sunradscale           -threads\n"
+                "    -tmpin                  -tmpout                -v (verbose)\n\n");
         exit(1);
     }
     start = I_FloatTime ();

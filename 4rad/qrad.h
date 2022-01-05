@@ -145,7 +145,7 @@ extern	qboolean	extrasamples;
 extern	qboolean	dicepatches;
 extern int32_t numbounce;
 extern qboolean noblock;
-extern qboolean lightwarp;
+extern qboolean noedgefix;
 
 extern	directlight_t	*directlights[MAX_MAP_LEAFS_QBSP];
 

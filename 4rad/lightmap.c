@@ -2047,15 +2047,20 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int32_t nod
             dot2 = -DotProduct (delta, l->normal);
          
          //qb: disable below, nothing is behind light surface of sky
-            if (dot2 <= EQUAL_EPSILON)
-                return;	// behind light surface
-
-            if (dist > 36) //qb: edge lighting fix- don't drop off right away
-                scale = (l->intensity / (dist-30)) * dot * dot2;
-            else if (dist > 16)
-                scale = (l->intensity / (dist-15)) * dot * dot2;
+         //   if (dot2 <= EQUAL_EPSILON)
+         //       return;	// behind light surface
+            if ( !noedgefix)
+            {
+                if (dist > 36) //qb: edge lighting fix- don't drop off right away
+                    scale = (l->intensity / ((dist-30)*(dist-30))) * dot * dot2;
+                else if (dist > 16)
+                    scale = (l->intensity / (dist-15)) * dot * dot2;
+                else
+                    scale = l->intensity * dot * dot2;
+            }
             else
-                scale = l->intensity * dot * dot2;
+                scale = (l->intensity / (dist*dist)) * dot * dot2;
+
             scale *= sunradscale; //qb: adjust scale when sun is active
             break;
 
@@ -2064,12 +2069,17 @@ static void LightContributionToPoint	(	directlight_t *l, vec3_t pos, int32_t nod
             if (dot2 <= EQUAL_EPSILON)
                 return;	// behind light surface
 
-            if (dist > 36) //qb: edge lighting fix- don't drop off right away
-                scale = (l->intensity / ((dist-30)*(dist-30))) * dot * dot2;
-            else if (dist > 16)
-                scale = (l->intensity / (dist-15)) * dot * dot2;
+            if ( !noedgefix)
+            {
+                if (dist > 18) //qb: edge lighting fix- don't drop off right away
+                    scale = (l->intensity / ((dist-15)*(dist-15))) * dot * dot2;
+                else if (dist > 8)
+                    scale = (l->intensity / (dist-7)) * dot * dot2;
+                else
+                    scale = l->intensity * dot * dot2;
+            }
             else
-                scale = l->intensity * dot * dot2;
+                scale = (l->intensity / (dist*dist)) * dot * dot2;
             break;
 
         case emit_spotlight:
@@ -2485,9 +2495,8 @@ void BuildFacelights (int32_t facenum)
         dface_tx	*this_face;
         this_face = &dfacesX[facenum];
 
-        if ( texinfo[this_face->texinfo].flags & (SURF_WARP|SURF_SKY) )
-            return;		// non-lit texture
-
+        if ( texinfo[this_face->texinfo].flags & (SURF_WARP | SURF_SKY))
+         return; // non-lit texture	
 
         memset (styletable,0, sizeof(styletable));
 
@@ -2521,9 +2530,8 @@ void BuildFacelights (int32_t facenum)
         dface_t	*this_face;
         this_face = &dfaces[facenum];
 
-        if ( texinfo[this_face->texinfo].flags & (SURF_WARP|SURF_SKY) )
-            return;		// non-lit texture
-
+        if ( texinfo[this_face->texinfo].flags & (SURF_WARP | SURF_SKY))
+         return; // non-lit texture	
 
         memset (styletable,0, sizeof(styletable));
 
@@ -2675,8 +2683,8 @@ void FinalLightFace (int32_t facenum)
         dface_tx		*f;
         f = &dfacesX[facenum];
 
-        if ( texinfo[f->texinfo].flags & (SURF_WARP|SURF_SKY) )
-            return;		// non-lit texture
+        if ( texinfo[f->texinfo].flags & (SURF_WARP | SURF_SKY))
+         return;  // non-lit texture
 
         f->lightofs = i;
         f->styles[0] = 0;
@@ -2817,12 +2825,8 @@ void FinalLightFace (int32_t facenum)
         dface_t		*f;
         f = &dfaces[facenum];
 
-        //qb: light warp
-        if ( texinfo[f->texinfo].flags & (SURF_WARP|SURF_SKY) )
-         return;
-       
-        if ( !lightwarp && texinfo[f->texinfo].flags & SURF_WARP)
-            return;		// non-lit texture
+        if ( texinfo[f->texinfo].flags & (SURF_WARP | SURF_SKY))
+         return; // non-lit texture	
 
         f->lightofs = i;
         f->styles[0] = 0;
