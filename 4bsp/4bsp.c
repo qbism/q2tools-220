@@ -336,7 +336,7 @@ int32_t main (int32_t argc, char **argv)
     char		path[2053] = "";
 
 
-    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<< 4bsp >>>>>>>>>>>>>>>>>>>>>>>>\n" );
+    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 4bsp >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n" );
     printf( "BSP compiler build " __DATE__ "\n" );
 
     for (i=1 ; i<argc ; i++)
@@ -353,34 +353,36 @@ int32_t main (int32_t argc, char **argv)
         }
         else if (!strcmp(argv[i], "-help"))
         {
-            printf ("4bsp supporting v38 and v220 map formats.\n"
-                    "usage: 4bsp [options] mapfile\n\n"
+            printf ("4bsp supporting v38 and v220 map formats plus QBSP extended limits.\n"
+                    "Usage: 4bsp [options] [mapname]\n\n"
                     "    -chop #: Subdivide size.\n"
                     "        Default: 240  Range: 32-1024\n"
                     "    -choplight #: Subdivide size for surface lights.\n"
                     "        Default: 240  Range: 32-1024\n"
-                    "    -nosubdiv: Disable subdivision.\n"
                     "    -largebounds: Increase max map size for supporting engines.\n"
-                    "    -qbsp: Greatly expanded map and entity limits for supporting engines.\n"
                     "    -micro #: Minimum microbrush size. Default: 0.02\n"
                     "        Suggested range: 0.02 - 1.0\n"
-                    "    -nomerge: Don't merge visible faces per node.\n"
-                    "    -blocksize: map cube size for multi-threaded processing. Default: 1024\n"
+                    "    -nosubdiv: Disable subdivision.\n"
+                    "    -qbsp: Greatly expanded map and entity limits for supporting engines.\n"
+                    "Debugging tools:\n"
                     "    -block # #: Division tree block size, square\n"
-                    "    -block # # # #: Div tree block size, rectangular\n"
-                    "    -noweld: Disable vertex welding.\n"
-                    "    -notjunc: Disable edge cleanup.\n"
-                    "    -nocsg: Disable brush chopping.\n"
-                    "    -nowater: Ignore water.\n"
-                    "    -leaktest: Perform leak test only.\n"
-                    "    -onlyents: Grab the entites and resave.\n"
+                    "    -blocks # # # #: Div tree block size, rectangular\n"
+                    "    -blocksize: map cube size for multi-threaded processing. Default: 1024\n"
                     "    -fulldetail: Change most brushes to detail.\n"
-                    "    -noshare: Don't look for shared edges on save.\n"
-                    "    -noprune: Disable node pruning.\n"
+                    "    -leaktest: Perform leak test only.\n"
+                    "    -nocsg: No constructive solid geometry.\n"
+                    "    -nodetail: No detail brushes.\n"
+                    "    -nomerge: Don't merge visible faces per node.\n"
                     "    -noorigfix: Disable texture fix for origin offsets.\n"
+                    "    -noprune: Disable node pruning.\n"
+                    "    -noshare: Don't look for shared edges on save.\n"
                     "    -noskipfix: Do not automatically set skip contents to zero.\n"
+                    "    -notjunc: Disable edge cleanup.\n"
+                    "    -nowater: Ignore warp surfaces.\n"
+                    "    -noweld: Disable vertex welding.\n"
+                    "    -onlyents: Grab the entites and resave.\n"
                     "    -v: Display more verbose output.\n"
-                    "<<<<<<<<<<<<<<<<<<<<< 4bsp HELP >>>>>>>>>>>>>>>>>>>>>\n\n");
+                    "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 4bsp HELP >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 
             exit(1);
         }
@@ -553,16 +555,17 @@ int32_t main (int32_t argc, char **argv)
 
     if (i != argc - 1)
     {
-        printf ("4bsp supporting v38 and v220 map formats.\n"
-                "usage: 4bsp [options] mapfile\n\n"
-                "    -help                -chop #           -choplight\n"
-                "    -nosubdiv            -micro #          -nomerge\n"
-                "    -blocksize           -largebounds      -qbsp\n"
-                "    -block # #           -noweld           -notjunc\n"
-                "    -blocks # # # #      -nocsg            -nowater\n"
-                "    -leaktest            -nodetail         -onlyents\n"
-                "    -fulldetail          -noshare          -noprune\n"
-                "    -noorigfix           -noskipfix        -v (verbose)\n\n");
+        printf ("Supporting v38 and v220 map formats plus QBSP extended limits.\n"
+                "Usage: 4bsp [options] [mapname]\n"
+                "    -chop #                  -choplight #         -help\n"
+                "    -largebounds             -micro #             -nosubdiv\n"
+                "    -qbsp\n"
+                "Debugging tools:             -block # #           -blocks # # # #\n"
+                "    -blocksize #             -fulldetail          -leaktest\n"
+                "    -nocsg                   -nodetail            -nomerge\n"
+                "    -noorigfix               -noprune             -noshare\n"
+                "    -noskipfix               -notjunc             -nowater\n"
+                "    -noweld                  -onlyents            -v (verbose)\n\n");
 
         exit(1);
     }
@@ -619,7 +622,8 @@ int32_t main (int32_t argc, char **argv)
     }
 
     PrintBSPFileSizes();
-    printf( "<<<<<<<<<<<<<<<<<< END 4bsp >>>>>>>>>>>>>>>>>>\n\n" );
+    printf( "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END 4bsp >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" );
+             
 
     return 0;
 }

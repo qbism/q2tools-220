@@ -938,7 +938,7 @@ int32_t main (int32_t argc, char **argv)
     double		start, end;
     char		name[1060];
 
-    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<< 4rad >>>>>>>>>>>>>>>>>>>>>>>>\n" );
+    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 4rad >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n" );
     printf( "radiosity compiler build " __DATE__ "\n" );
 
     verbose = false;
@@ -962,33 +962,37 @@ int32_t main (int32_t argc, char **argv)
         }
         else if (!strcmp(argv[i], "-help"))
         {
-            printf ("4rad with automatic phong.\n"
-                    "usage: 4rad [options] mapfile\n\n"
-                    "-ambient: Minimum light level.\n"
-                    "-basedir <dir> :The base (mod) directory for textures.\n"
-                    "-bounce #: Max number of light bounces for radiosity.\n"
-                    "-dice: Subdivide patches with a global grid rather than per patch.\n"
-                    "-direct #: Direct light scaling.\n"
-                    "-dump: Dump patches to a text file.\n"
-                    "-entity #: Entity light scaling.\n"
-                    "-extra: Use extra samples to smooth lighting.\n"
-                    "-maxdata #: Value above 2097152 requires a modded engine.\n"
-                    "-maxlight: Maximium light level.\n"
-                    "-noblock: Brushes don't block lighting path.\n"
-                    "-noedgefix: disable dark edges at sky fix.\n"
-                    "-nopvs:  Don't do potential visibility set check.\n"
-                    "-nudge: Nudge factor for samples. Fraction of distance from center.\n"
-                    "-savetrace: Test traces and report errors.\n"
-                    "-scale #: Light intensity multiplier.\n"
-                    "-smooth #: Threshold angle (# and 180deg - #) for phong smoothing.\n"
-                    "-subdiv (or -chop) #: Maximum patch size.  Default: 64\n"
-                    "-sunradscale #: Sky light intensity scale when sun is active.\n"
-                    "-threads #:  Number of CPU cores to use.\n"
-                    "-tmpin: Read from tmp directory.\n"
-                    "-tmpout: Write to tmp directory.\n"
-                    "-v: Verbose output for debugging.\n\n"
+            printf ("4rad with automatic phong and QBSP extended limit support.\n"
+                    "Usage: 4rad [options] [mapname]\n\n"
+                    "    -ambient #: Minimum light level.\n"
+                    "         range:  0 to 255.\n"
+                    "    -basedir [directory] :The base (mod) directory for textures.\n"
+                    "    -bounce #: Max number of light bounces for radiosity.\n"
+                    "    -dice: Subdivide patches with a global grid rather than per patch.\n"
+                    "    -direct #: Direct light scale factor.\n"
+                    "    -entity #: Entity light scale factor.\n"
+                    "    -extra: Use extra samples to smooth lighting.\n"
+                    "    -maxdata #: 2097152 is default max. Not needed for QBSP format.\n"
+                    "         Increase requires a supporting engine.\n"
+                    "    -maxlight #: Maximium light level.\n"
+                    "         range:  0 to 255.\n"
+                    "    -noedgefix: disable dark edges at sky fix. More of a hack, really.\n"
+                    "    -nudge #: Nudge factor for samples. Distance fraction from center.\n"
+                    "    -scale #: Light intensity multiplier.\n"
+                    "    -smooth #: Threshold angle (# and 180deg - #) for phong smoothing.\n"
+                    "    -subdiv (or -chop) #: Maximum patch size.  Default: 64\n"
+                    "    -sunradscale #: Sky light intensity scale when sun is active.\n"
+                    "    -threads #:  Number of CPU cores to use.\n"
+                    "Debugging tools:\n"
+                    "    -dump: Dump patches to a text file.\n"
+                    "    -noblock: Brushes don't block lighting path.\n"
+                    "    -nopvs:  Don't do potential visibility set check.\n"
+                    "    -savetrace: Test traces and report errors.\n"
+                    "    -tmpin: Read from 'tmp' directory.\n"
+                    "    -tmpout: Write to 'tmp' directory.\n"
+                    "    -v: Verbose output for debugging.\n\n"
                    );
-            printf( "<<<<<<<<<<<<<<<<<<<<< 4rad HELP >>>>>>>>>>>>>>>>>>>>>\n\n" );
+            printf( "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 4rad HELP >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" );
 
             exit(1);
         }
@@ -1150,15 +1154,15 @@ int32_t main (int32_t argc, char **argv)
 
     if (i != argc - 1)
     {
-        printf ("usage: 4rad [options] mapfile\n\n"
-                "    -ambient                -basedir               -bounce\n"
-                "    -dice                   -direct                -dump\n"
-                "    -entity                 -extra                 -help\n"
-                "    -maxdata                -maxlight              -noblock\n"
-                "    -noedgefix              -nopvs                 -nudge\n"
-                "    -savetrace              -scale                 -smooth\n"
-                "    -subdiv or -chop        -sunradscale           -threads\n"
-                "    -tmpin                  -tmpout                -v (verbose)\n\n");
+        printf ("Usage: 4rad [options] [mapname]\n"
+                "    -ambient #            -basedir            -bounce #\n"
+                "    -dice                 -direct             -dump\n"
+                "    -entity #             -extra              -help\n"
+                "    -maxdata #            -maxlight #         -noblock\n"
+                "    -noedgefix            -nopvs              -nudge #\n"
+                "    -savetrace            -scale #            -smooth #\n"
+                "    -subdiv or -chop #    -sunradscale #      -threads #\n"
+                "    -tmpin                -tmpout             -v (verbose)\n\n");
         exit(1);
     }
     start = I_FloatTime ();
@@ -1209,7 +1213,7 @@ int32_t main (int32_t argc, char **argv)
     printf ("%i bytes light data used of %i max.\n", lightdatasize, maxdata);
 
     PrintBSPFileSizes();
-    printf( "<<<<<<<<<<<<<<<<<< END 4rad >>>>>>>>>>>>>>>>>>\n\n" );
+    printf( "<<<<<<<<<<<<<<<<<<<<<<<<<<<< END 4rad >>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" );
     return 0;
 }
 

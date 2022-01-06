@@ -519,7 +519,7 @@ int32_t main (int32_t argc, char **argv)
     char		name[1060];
     int32_t		i;
 
-    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<< 4vis >>>>>>>>>>>>>>>>>>>>>>>>\n" );
+    printf( "\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 4vis >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n" );
     printf( "visibility compiler build " __DATE__ "\n" );
 
     verbose = false;
@@ -532,13 +532,13 @@ int32_t main (int32_t argc, char **argv)
         }
         else if (!strcmp(argv[i], "-help"))
         {
-            printf ("usage: 4vis [options] mapfile\n\n"
+            printf ("usage: 4vis [options] [mapname]\n\n"
                     "    -fast: uses 'might see' for a quick loose bound\n"
-                    "    -threads: number of CPU threads to use\n"
+                    "    -threads #: number of CPU threads to use\n"
                     "    -tmpin: read map from 'tmp' folder\n"
                     "    -tmpout: write map to 'tmp' folder\n"
                     "    -v: extra verbose console output\n\n");
-            printf( "<<<<<<<<<<<<<<<<<<<<< 4vis HELP >>>>>>>>>>>>>>>>>>>>>\n\n" );
+            printf( "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 4vis HELP >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" );
             exit(1);
         }
         else if (!strcmp(argv[i], "-fast"))
@@ -568,9 +568,9 @@ int32_t main (int32_t argc, char **argv)
 
     if (i != argc - 1)
     {
-        printf ("usage: 4vis [options] mapfile\n\n"
-                "    -help             -fast          -threads\n"
-                "    -tmpin            -tmpout        -v (verbose)\n\n");
+        printf ("usage: 4vis [options] mapfile\n"
+                "    -fast                   -help                 -threads #\n"
+                "    -tmpin                  -tmpout               -v (verbose)\n\n");
         exit(1);
     }
 
@@ -610,7 +610,7 @@ int32_t main (int32_t argc, char **argv)
 
     PrintBSPFileSizes();
 
-    printf( "<<<<<<<<<<<<<<<<<< END 4vis >>>>>>>>>>>>>>>>>>\n\n" );
+    printf( "<<<<<<<<<<<<<<<<<<<<<<<<<<<< END 4vis >>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" );
     return 0;
 }
 
