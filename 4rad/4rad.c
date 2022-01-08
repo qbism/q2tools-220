@@ -978,6 +978,7 @@ int32_t main (int32_t argc, char **argv)
                     "         range:  0 to 255.\n"
                     "    -noedgefix: disable dark edges at sky fix. More of a hack, really.\n"
                     "    -nudge #: Nudge factor for samples. Distance fraction from center.\n"
+                    "    -saturate #: Saturation factor of light bounced off surfaces.\n"
                     "    -scale #: Light intensity multiplier.\n"
                     "    -smooth #: Threshold angle (# and 180deg - #) for phong smoothing.\n"
                     "    -subdiv (or -chop) #: Maximum patch size.  Default: 64\n"
@@ -1102,8 +1103,7 @@ int32_t main (int32_t argc, char **argv)
         {
 
             //qb: limit range
-            smoothing_value = atof (argv[i+1]);
-            smoothing_value = BOUND(0, smoothing_value, 90);
+            smoothing_value = BOUND(0, atof (argv[i+1]), 90);
             i++;
         }
         else if (!strcmp(argv[i],"-nudge"))
@@ -1114,7 +1114,7 @@ int32_t main (int32_t argc, char **argv)
         }
         else if (!strcmp(argv[i],"-ambient"))
         {
-            ambient = atof (argv[i+1]) * 128;
+            ambient = BOUND(0, atof (argv[i+1]), 255);
             i++;
         }
         else if (!strcmp(argv[i],"-savetrace"))
@@ -1124,7 +1124,7 @@ int32_t main (int32_t argc, char **argv)
         }
         else if (!strcmp(argv[i],"-maxlight"))
         {
-            maxlight = atof (argv[i+1]) * 128;
+            maxlight = BOUND(0, atof (argv[i+1]), 255);
             i++;
         }
         else if (!strcmp (argv[i],"-tmpin"))
@@ -1134,6 +1134,23 @@ int32_t main (int32_t argc, char **argv)
         else
             break;
     }
+
+        if (i != argc - 1)
+    {
+        printf ("Usage: 4rad [options] [mapname]\n"
+                "    -ambient #            -basedir            -bounce #\n"
+                "    -dice                 -direct #           -entity #\n"
+                "    -extra                -help               -maxdata #\n"
+                "    -maxlight #           -noedgefix          -nudge #\n"
+                "    -saturate #           -scale #            -smooth #\n"
+                "    -subdiv               -sunradscale #      -threads #\n"
+                "Debugging tools:\n"
+                "    -dump                 -noblock            -nopvs\n"
+                "    -savetrace            -tmpin              -tmpout\n"
+                "    -v (verbose)\n\n");
+        exit(1);
+    }
+
     printf("sample nudge: %f\n", sample_nudge );
     printf("ambient     : %f\n", ambient );
     printf("scale       : %f\n", lightscale );
@@ -1147,24 +1164,8 @@ int32_t main (int32_t argc, char **argv)
     printf("smooth angle: %f\n", smoothing_value );
     printf("threads     : %d\n", numthreads );
 
-    // ThreadSetDefault ();
+     ThreadSetDefault ();
 
-    if (maxlight > 255.0)
-        maxlight = 255.0;
-
-    if (i != argc - 1)
-    {
-        printf ("Usage: 4rad [options] [mapname]\n"
-                "    -ambient #            -basedir            -bounce #\n"
-                "    -dice                 -direct             -dump\n"
-                "    -entity #             -extra              -help\n"
-                "    -maxdata #            -maxlight #         -noblock\n"
-                "    -noedgefix            -nopvs              -nudge #\n"
-                "    -savetrace            -scale #            -smooth #\n"
-                "    -subdiv or -chop #    -sunradscale #      -threads #\n"
-                "    -tmpin                -tmpout             -v (verbose)\n\n");
-        exit(1);
-    }
     start = I_FloatTime ();
 
     smoothing_threshold = (float)cos(smoothing_value * (Q_PI / 180.0));

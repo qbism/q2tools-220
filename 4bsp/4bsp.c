@@ -364,6 +364,7 @@ int32_t main (int32_t argc, char **argv)
                     "        Suggested range: 0.02 - 1.0\n"
                     "    -nosubdiv: Disable subdivision.\n"
                     "    -qbsp: Greatly expanded map and entity limits for supporting engines.\n"
+                    "    -threads #: number of CPU threads to use\n"
                     "Debugging tools:\n"
                     "    -block # #: Division tree block size, square\n"
                     "    -blocks # # # #: Div tree block size, rectangular\n"
@@ -385,6 +386,11 @@ int32_t main (int32_t argc, char **argv)
                     "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 4bsp HELP >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 
             exit(1);
+        }
+         if (!strcmp(argv[i],"-threads"))
+        {
+            numthreads = atoi (argv[i+1]);
+            i++;
         }
         else if (!strcmp(argv[i], "-noweld"))
         {
@@ -559,7 +565,7 @@ int32_t main (int32_t argc, char **argv)
                 "Usage: 4bsp [options] [mapname]\n"
                 "    -chop #                  -choplight #         -help\n"
                 "    -largebounds             -micro #             -nosubdiv\n"
-                "    -qbsp\n"
+                "    -qbsp                    -threads\n"
                 "Debugging tools:             -block # #           -blocks # # # #\n"
                 "    -blocksize #             -fulldetail          -leaktest\n"
                 "    -nocsg                   -nodetail            -nomerge\n"
@@ -571,7 +577,7 @@ int32_t main (int32_t argc, char **argv)
     }
 
     ThreadSetDefault ();
-    numthreads = 1;		// multiple threads aren't helping...
+    //numthreads = 1;		// multiple threads aren't helping...
 
     SetQdirFromPath(argv[i]);
 

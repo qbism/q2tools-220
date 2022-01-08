@@ -51,15 +51,15 @@ radiosity
 *	LWO support (KDT)
 
 
-# Instructions:
+# Notes:
 
 4bsp
-*   v220 support- for Trenchbroom, duplicate or modify the Q2 gametype and change the format to valve and add "mapversion" "220" to worldspawn.  JACK does this automatically when saving to v220.  Note that JACK saves a hybrid map format that includes texture flags whereas standard v220 format does not. Current Trenchbroom source adds this hybrid format load/save.
-*   -choplight sets the chop size for surface lights.  Lower settings may improve quality of large surface lights, especially when chop is high. Try "-chop 512 -choplight 32" as an example.
-*   -noorigfix disables 'origin fix'.
-*   -largebounds: Increase max map size for supporting engines.
+*   v220 (Valve) support: Trenchbroom and JACK editors can open and save a hybrid format that preserves texture flags.
+*   chop:  Usually, higher is better and faster.  Start at 1024 and work down if any issues.  
+*   choplight: Set the chop size independetly for surface lights.  Lower settings may improve quality of large surface lights when chop is high. Try "choplight 32".
+*   -largebounds: Increase max map size for supporting engines.  Maybe only kmquake2?
 *   -moreents: Increase max number of entities for supporting engines.
-
+*   -qbsp: big increase to most map limits, similar to Quake's BSP2 format.  No released engine supports this yet.  I am working on a prototype called 'qb2'.  Source is on github.
 
 4vis
 *   It works the same as always. -fast for a quick single pass.
