@@ -676,9 +676,7 @@ void PrintBSPFileSizes (void)
 {
     if (!num_entities)
         ParseEntities ();
-
-             printf( "\n<<<<<<<<<<<<<<<<<< FILE STATS >>>>>>>>>>>>>>>>>>\n" );
-
+    printf( "\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< FILE STATS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n" );
     printf ("models:      %7i        size: %7i\n", nummodels, (int32_t)(nummodels*sizeof(dmodel_t)));
     printf ("brushes:     %7i        size: %7i\n", numbrushes, (int32_t)(numbrushes*sizeof(dbrush_t)));
 

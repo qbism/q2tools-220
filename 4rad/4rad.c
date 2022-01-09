@@ -1214,7 +1214,7 @@ int32_t main (int32_t argc, char **argv)
     printf ("%i bytes light data used of %i max.\n", lightdatasize, maxdata);
 
     PrintBSPFileSizes();
-    printf( "<<<<<<<<<<<<<<<<<<<<<<<<<<<< END 4rad >>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" );
+    printf( "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END 4rad >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" );
     return 0;
 }
 

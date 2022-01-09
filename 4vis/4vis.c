@@ -610,7 +610,7 @@ int32_t main (int32_t argc, char **argv)
 
     PrintBSPFileSizes();
 
-    printf( "<<<<<<<<<<<<<<<<<<<<<<<<<<<< END 4vis >>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" );
-    return 0;
+    printf( "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END 4vis >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" );
+     return 0;
 }
 
