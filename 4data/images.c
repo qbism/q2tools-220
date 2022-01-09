@@ -20,10 +20,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "4data.h"
 
-char		mip_prefix[64];		// directory to dump the textures in
+char mip_prefix[64]; // directory to dump the textures in
 
-qboolean	colormap_issued;
-byte		colormap_palette[768];
+qboolean colormap_issued;
+byte colormap_palette[768];
 
 /*
 ==============
@@ -34,28 +34,25 @@ This is because NT won't let us change index 0, so any palette
 animation leaves those pixels untouched.
 ==============
 */
-void RemapZero (byte *pixels, byte *palette, int32_t width, int32_t height)
-{
-	int32_t		i, c;
-	int32_t		alt_zero;
-	int32_t		value, best;
+void RemapZero(byte *pixels, byte *palette, int32_t width, int32_t height) {
+    int32_t i, c;
+    int32_t alt_zero;
+    int32_t value, best;
 
-	alt_zero = 0;
-	best = 9999999;
-	for (i=1 ; i<255 ; i++)
-	{
-		value = palette[i*3+0]+palette[i*3+1]+palette[i*3+2];
-		if (value < best)
-		{
-			best = value;
-			alt_zero = i;
-		}
-	}
+    alt_zero = 0;
+    best     = 9999999;
+    for (i = 1; i < 255; i++) {
+        value = palette[i * 3 + 0] + palette[i * 3 + 1] + palette[i * 3 + 2];
+        if (value < best) {
+            best     = value;
+            alt_zero = i;
+        }
+    }
 
-	c = width*height;
-	for (i=0 ; i<c ; i++)
-		if (pixels[i] == 0)
-			pixels[i] = alt_zero;
+    c = width * height;
+    for (i = 0; i < c; i++)
+        if (pixels[i] == 0)
+            pixels[i] = alt_zero;
 }
 
 /*
@@ -65,56 +62,53 @@ Cmd_Grab
 $grab filename x y width height
 ==============
 */
-void Cmd_Grab (void)
-{
-	int32_t             xl,yl,w,h,y;
-	byte			*cropped;
-	char			savename[2400];
-	char			dest[1200];
+void Cmd_Grab(void) {
+    int32_t xl, yl, w, h, y;
+    byte *cropped;
+    char savename[2400];
+    char dest[1200];
 
-	GetToken (false);
+    GetToken(false);
 
-	if (token[0] == '/' || token[0] == '\\')
-		sprintf (savename, "%s%s.pcx", gamedir, token+1);
-	else
-		sprintf (savename, "%spics/%s.pcx", gamedir, token);
+    if (token[0] == '/' || token[0] == '\\')
+        sprintf(savename, "%s%s.pcx", gamedir, token + 1);
+    else
+        sprintf(savename, "%spics/%s.pcx", gamedir, token);
 
-	if (g_release)
-	{
-		if (token[0] == '/' || token[0] == '\\')
-			sprintf (dest, "%s.pcx", token+1);
-		else
-			sprintf (dest, "pics/%s.pcx", token);
+    if (g_release) {
+        if (token[0] == '/' || token[0] == '\\')
+            sprintf(dest, "%s.pcx", token + 1);
+        else
+            sprintf(dest, "pics/%s.pcx", token);
 
-		ReleaseFile (dest);
-		return;
-	}
+        ReleaseFile(dest);
+        return;
+    }
 
-	GetToken (false);
-	xl = atoi (token);
-	GetToken (false);
-	yl = atoi (token);
-	GetToken (false);
-	w = atoi (token);
-	GetToken (false);
-	h = atoi (token);
+    GetToken(false);
+    xl = atoi(token);
+    GetToken(false);
+    yl = atoi(token);
+    GetToken(false);
+    w = atoi(token);
+    GetToken(false);
+    h = atoi(token);
 
-	if (xl<0 || yl<0 || w<0 || h<0 || xl+w>byteimagewidth || yl+h>byteimageheight)
-		Error ("GrabPic: Bad size: %i, %i, %i, %i",xl,yl,w,h);
+    if (xl < 0 || yl < 0 || w < 0 || h < 0 || xl + w > byteimagewidth || yl + h > byteimageheight)
+        Error("GrabPic: Bad size: %i, %i, %i, %i", xl, yl, w, h);
 
-	// crop it to the proper size
-	cropped = malloc (w*h);
-	for (y=0 ; y<h ; y++)
-	{
-		memcpy (cropped+y*w, byteimage+(y+yl)*byteimagewidth+xl, w);
-	}
+    // crop it to the proper size
+    cropped = malloc(w * h);
+    for (y = 0; y < h; y++) {
+        memcpy(cropped + y * w, byteimage + (y + yl) * byteimagewidth + xl, w);
+    }
 
-	// save off the new image
-	printf ("saving %s\n", savename);
-	CreatePath (savename);
-	WritePCXfile (savename, cropped, w,	h, lbmpalette);
+    // save off the new image
+    printf("saving %s\n", savename);
+    CreatePath(savename);
+    WritePCXfile(savename, cropped, w, h, lbmpalette);
 
-	free (cropped);
+    free(cropped);
 }
 
 /*
@@ -124,50 +118,47 @@ Cmd_Raw
 $grab filename x y width height
 ==============
 */
-void Cmd_Raw (void)
-{
-	int32_t             xl,yl,w,h,y;
-	byte			*cropped;
-	char			savename[2100];
-	char			dest[1200];
+void Cmd_Raw(void) {
+    int32_t xl, yl, w, h, y;
+    byte *cropped;
+    char savename[2100];
+    char dest[1200];
 
-	GetToken (false);
+    GetToken(false);
 
-	sprintf (savename, "%s%s.lmp", gamedir, token);
+    sprintf(savename, "%s%s.lmp", gamedir, token);
 
-	if (g_release)
-	{
-		sprintf (dest, "%s.lmp", token);
-		ReleaseFile (dest);
-		return;
-	}
+    if (g_release) {
+        sprintf(dest, "%s.lmp", token);
+        ReleaseFile(dest);
+        return;
+    }
 
-	GetToken (false);
-	xl = atoi (token);
-	GetToken (false);
-	yl = atoi (token);
-	GetToken (false);
-	w = atoi (token);
-	GetToken (false);
-	h = atoi (token);
+    GetToken(false);
+    xl = atoi(token);
+    GetToken(false);
+    yl = atoi(token);
+    GetToken(false);
+    w = atoi(token);
+    GetToken(false);
+    h = atoi(token);
 
-	if (xl<0 || yl<0 || w<0 || h<0 || xl+w>byteimagewidth || yl+h>byteimageheight)
-		Error ("GrabPic: Bad size: %i, %i, %i, %i",xl,yl,w,h);
+    if (xl < 0 || yl < 0 || w < 0 || h < 0 || xl + w > byteimagewidth || yl + h > byteimageheight)
+        Error("GrabPic: Bad size: %i, %i, %i, %i", xl, yl, w, h);
 
-	// crop it to the proper size
-	cropped = malloc (w*h);
-	for (y=0 ; y<h ; y++)
-	{
-		memcpy (cropped+y*w, byteimage+(y+yl)*byteimagewidth+xl, w);
-	}
+    // crop it to the proper size
+    cropped = malloc(w * h);
+    for (y = 0; y < h; y++) {
+        memcpy(cropped + y * w, byteimage + (y + yl) * byteimagewidth + xl, w);
+    }
 
-	// save off the new image
-	printf ("saving %s\n", savename);
-	CreatePath (savename);
+    // save off the new image
+    printf("saving %s\n", savename);
+    CreatePath(savename);
 
-	SaveFile (savename, cropped, w*h);
+    SaveFile(savename, cropped, w * h);
 
-	free (cropped);
+    free(cropped);
 }
 
 /*
@@ -183,41 +174,37 @@ COLORMAP GRABBING
 BestColor
 ===============
 */
-byte BestColor (int32_t r, int32_t g, int32_t b, int32_t start, int32_t stop)
-{
-	int32_t	i;
-	int32_t	dr, dg, db;
-	int32_t	bestdistortion, distortion;
-	int32_t	bestcolor;
-	byte	*pal;
+byte BestColor(int32_t r, int32_t g, int32_t b, int32_t start, int32_t stop) {
+    int32_t i;
+    int32_t dr, dg, db;
+    int32_t bestdistortion, distortion;
+    int32_t bestcolor;
+    byte *pal;
 
-//
-// let any color go to 0 as a last resort
-//
-	bestdistortion = 256*256*4;
-	bestcolor = 0;
+    //
+    // let any color go to 0 as a last resort
+    //
+    bestdistortion = 256 * 256 * 4;
+    bestcolor      = 0;
 
-	pal = colormap_palette + start*3;
-	for (i=start ; i<= stop ; i++)
-	{
-		dr = r - (int32_t)pal[0];
-		dg = g - (int32_t)pal[1];
-		db = b - (int32_t)pal[2];
-		pal += 3;
-		distortion = dr*dr + dg*dg + db*db;
-		if (distortion < bestdistortion)
-		{
-			if (!distortion)
-				return i;		// perfect match
+    pal            = colormap_palette + start * 3;
+    for (i = start; i <= stop; i++) {
+        dr = r - (int32_t)pal[0];
+        dg = g - (int32_t)pal[1];
+        db = b - (int32_t)pal[2];
+        pal += 3;
+        distortion = dr * dr + dg * dg + db * db;
+        if (distortion < bestdistortion) {
+            if (!distortion)
+                return i; // perfect match
 
-			bestdistortion = distortion;
-			bestcolor = i;
-		}
-	}
+            bestdistortion = distortion;
+            bestcolor      = i;
+        }
+    }
 
-	return bestcolor;
+    return bestcolor;
 }
-
 
 /*
 ==============
@@ -231,93 +218,86 @@ $colormap filename
   256 rows of 256 : translucency table
 ==============
 */
-void Cmd_Colormap (void)
-{
-	int32_t		levels, brights;
-	int32_t		l, c;
-	float	frac, red, green, blue;
-	float	range;
-	byte	*cropped, *lump_p;
-	char	savename[2060];
-	char	dest[1060];
+void Cmd_Colormap(void) {
+    int32_t levels, brights;
+    int32_t l, c;
+    float frac, red, green, blue;
+    float range;
+    byte *cropped, *lump_p;
+    char savename[2060];
+    char dest[1060];
 
-	colormap_issued = true;
-	if (!g_release)
-		memcpy (colormap_palette, lbmpalette, 768);
+    colormap_issued = true;
+    if (!g_release)
+        memcpy(colormap_palette, lbmpalette, 768);
 
-	if (!TokenAvailable ())
-	{	// just setting colormap_issued
-		printf("colormap set, no token. \n");
-		return;
-	}
+    if (!TokenAvailable()) { // just setting colormap_issued
+        printf("colormap set, no token. \n");
+        return;
+    }
 
-	GetToken (false);
-	sprintf (savename, "%spics/%s.pcx", gamedir, token);
-	printf("got palette %s\n", savename);
+    GetToken(false);
+    sprintf(savename, "%spics/%s.pcx", gamedir, token);
+    printf("got palette %s\n", savename);
 
-	if (g_release)
-	{
-		sprintf (dest, "pics/%s.pcx", token);
-		ReleaseFile (dest);
-		return;
-	}
+    if (g_release) {
+        sprintf(dest, "pics/%s.pcx", token);
+        ReleaseFile(dest);
+        return;
+    }
 
-	range = 2;
-	levels = 64;
-	brights = 1;	// ignore 255 (transparent)
+    range   = 2;
+    levels  = 64;
+    brights = 1; // ignore 255 (transparent)
 
-	cropped = malloc((levels+256)*256);
-	lump_p = cropped;
+    cropped = malloc((levels + 256) * 256);
+    lump_p  = cropped;
 
-// shaded levels
-	for (l=0;l<levels;l++)
-	{
-		frac = range - range*(float)l/(levels-1);
-		for (c=0 ; c<256-brights ; c++)
-		{
-			red = lbmpalette[c*3];
-			green = lbmpalette[c*3+1];
-			blue = lbmpalette[c*3+2];
+    // shaded levels
+    for (l = 0; l < levels; l++) {
+        frac = range - range * (float)l / (levels - 1);
+        for (c = 0; c < 256 - brights; c++) {
+            red       = lbmpalette[c * 3];
+            green     = lbmpalette[c * 3 + 1];
+            blue      = lbmpalette[c * 3 + 2];
 
-			red = (int32_t)(red*frac+0.5);
-			green = (int32_t)(green*frac+0.5);
-			blue = (int32_t)(blue*frac+0.5);
+            red       = (int32_t)(red * frac + 0.5);
+            green     = (int32_t)(green * frac + 0.5);
+            blue      = (int32_t)(blue * frac + 0.5);
 
-//
-// note: 254 instead of 255 because 255 is the transparent color, and we
-// don't want anything remapping to that
-// don't use color 0, because NT can't remap that (or 255)
-//
-			*lump_p++ = BestColor(red,green,blue, 1, 254);
-		}
+            //
+            // note: 254 instead of 255 because 255 is the transparent color, and we
+            // don't want anything remapping to that
+            // don't use color 0, because NT can't remap that (or 255)
+            //
+            *lump_p++ = BestColor(red, green, blue, 1, 254);
+        }
 
-		// fullbrights allways stay the same
-		for ( ; c<256 ; c++)
-			*lump_p++ = c;
-	}
+        // fullbrights allways stay the same
+        for (; c < 256; c++)
+            *lump_p++ = c;
+    }
 
-// 66% transparancy table
-	for (l=0;l<255;l++)
-	{
-		for (c=0 ; c<255 ; c++)
-		{
-			red = lbmpalette[c*3]*0.33 + lbmpalette[l*3]*0.66;
-			green = lbmpalette[c*3+1]*0.33 + lbmpalette[l*3+1]*0.66;
-			blue = lbmpalette[c*3+2]*0.33 + lbmpalette[l*3+2]*0.66;
+    // 66% transparancy table
+    for (l = 0; l < 255; l++) {
+        for (c = 0; c < 255; c++) {
+            red       = lbmpalette[c * 3] * 0.33 + lbmpalette[l * 3] * 0.66;
+            green     = lbmpalette[c * 3 + 1] * 0.33 + lbmpalette[l * 3 + 1] * 0.66;
+            blue      = lbmpalette[c * 3 + 2] * 0.33 + lbmpalette[l * 3 + 2] * 0.66;
 
-			*lump_p++ = BestColor(red,green,blue, 1, 254);
-		}
-		*lump_p++ = 255;
-	}
-	for (c=0 ; c<256 ; c++)
-		*lump_p++ = 255;
+            *lump_p++ = BestColor(red, green, blue, 1, 254);
+        }
+        *lump_p++ = 255;
+    }
+    for (c = 0; c < 256; c++)
+        *lump_p++ = 255;
 
-	// save off the new image
-	printf ("saving %s\n", savename);
-	CreatePath (savename);
-	WritePCXfile (savename, cropped, 256, levels+256, lbmpalette);
+    // save off the new image
+    printf("saving %s\n", savename);
+    CreatePath(savename);
+    WritePCXfile(savename, cropped, 256, levels + 256, lbmpalette);
 
-	free (cropped);
+    free(cropped);
 }
 
 /*
@@ -328,70 +308,63 @@ MIPTEX GRABBING
 =============================================================================
 */
 
-byte	pixdata[256];
+byte pixdata[256];
 
-int32_t		d_red, d_green, d_blue;
+int32_t d_red, d_green, d_blue;
 
-byte	palmap[32][32][32];
-qboolean	palmap_built;
+byte palmap[32][32][32];
+qboolean palmap_built;
 
 /*
 =============
 FindColor
 =============
 */
-int32_t FindColor (int32_t r, int32_t g, int32_t b)
-{
-	int32_t		bestcolor;
+int32_t FindColor(int32_t r, int32_t g, int32_t b) {
+    int32_t bestcolor;
 
-	if (r > 255)
-		r = 255;
-	if (r < 0)
-		r = 0;
-	if (g > 255)
-		g = 255;
-	if (g < 0)
-		g = 0;
-	if (b > 255)
-		b = 255;
-	if (b < 0)
-		b = 0;
+    if (r > 255)
+        r = 255;
+    if (r < 0)
+        r = 0;
+    if (g > 255)
+        g = 255;
+    if (g < 0)
+        g = 0;
+    if (b > 255)
+        b = 255;
+    if (b < 0)
+        b = 0;
 #ifndef TABLECOLORS
-	bestcolor = BestColor (r, g, b, 0, 254);
+    bestcolor = BestColor(r, g, b, 0, 254);
 #else
-	bestcolor = palmap[r>>3][g>>3][b>>3];
+    bestcolor = palmap[r >> 3][g >> 3][b >> 3];
 #endif
 
-	return bestcolor;
+    return bestcolor;
 }
 
-
-void BuildPalmap (void)
-{
+void BuildPalmap(void) {
 #ifdef TABLECOLORS
-	int32_t		r, g, b;
-	int32_t		bestcolor;
+    int32_t r, g, b;
+    int32_t bestcolor;
 
-	if (palmap_built)
-		return;
-	palmap_built = true;
+    if (palmap_built)
+        return;
+    palmap_built = true;
 
-	for (r=4 ; r<256 ; r+=8)
-	{
-		for (g=4 ; g<256 ; g+=8)
-		{
-			for (b=4 ; b<256 ; b+=8)
-			{
-				bestcolor = BestColor (r, g, b, 1, 254);
-				palmap[r>>3][g>>3][b>>3] = bestcolor;
-			}
-		}
-	}
+    for (r = 4; r < 256; r += 8) {
+        for (g = 4; g < 256; g += 8) {
+            for (b = 4; b < 256; b += 8) {
+                bestcolor                      = BestColor(r, g, b, 1, 254);
+                palmap[r >> 3][g >> 3][b >> 3] = bestcolor;
+            }
+        }
+    }
 #endif
 
-	if (!colormap_issued)
-		Error ("You must issue a $colormap command first");
-
+    if (!colormap_issued)
+        Error("You must issue a $colormap command first");
 }
 
 /*
@@ -399,102 +372,96 @@ void BuildPalmap (void)
 AveragePixels
 =============
 */
-byte AveragePixels (int32_t count)
-{
-	int32_t		r,g,b;
-	int32_t		i;
-	int32_t		vis;
-	int32_t		pix;
-	int32_t		bestcolor;
-	byte	*pal;
+byte AveragePixels(int32_t count) {
+    int32_t r, g, b;
+    int32_t i;
+    int32_t vis;
+    int32_t pix;
+    int32_t bestcolor;
+    byte *pal;
 
-	vis = 0;
-	r = g = b = 0;
-	for (i=0 ; i<count ; i++)
-	{
-		pix = pixdata[i];
+    vis = 0;
+    r = g = b = 0;
+    for (i = 0; i < count; i++) {
+        pix = pixdata[i];
 
-		r += lbmpalette[pix*3];
-		g += lbmpalette[pix*3+1];
-		b += lbmpalette[pix*3+2];
-		vis++;
-	}
+        r += lbmpalette[pix * 3];
+        g += lbmpalette[pix * 3 + 1];
+        b += lbmpalette[pix * 3 + 2];
+        vis++;
+    }
 
-	r /= vis;
-	g /= vis;
-	b /= vis;
+    r /= vis;
+    g /= vis;
+    b /= vis;
 
-	// error diffusion
-	r += d_red;
-	g += d_green;
-	b += d_blue;
+    // error diffusion
+    r += d_red;
+    g += d_green;
+    b += d_blue;
 
-//
-// find the best color
-//
-	bestcolor = FindColor (r, g, b);
+    //
+    // find the best color
+    //
+    bestcolor = FindColor(r, g, b);
 
-	// error diffusion
-	pal = colormap_palette + bestcolor*3;
-	d_red = r - (int32_t)pal[0];
-	d_green = g - (int32_t)pal[1];
-	d_blue = b - (int32_t)pal[2];
+    // error diffusion
+    pal       = colormap_palette + bestcolor * 3;
+    d_red     = r - (int32_t)pal[0];
+    d_green   = g - (int32_t)pal[1];
+    d_blue    = b - (int32_t)pal[2];
 
-	return bestcolor;
+    return bestcolor;
 }
 
-
-typedef enum
-{
-	pt_contents,
-	pt_flags,
-	pt_animvalue,
-	pt_flagvalue
+typedef enum {
+    pt_contents,
+    pt_flags,
+    pt_animvalue,
+    pt_flagvalue
 } parmtype_t;
 
 typedef struct
 {
-	char	*name;
-	int32_t		flags;
-	parmtype_t	type;
+    char *name;
+    int32_t flags;
+    parmtype_t type;
 } mipparm_t;
 
-mipparm_t	mipparms[] =
-{
-	// utility content attributes
-	{"water",	CONTENTS_WATER, pt_contents},
-	{"slime",	CONTENTS_SLIME, pt_contents},		// mildly damaging
-	{"lava",	CONTENTS_LAVA, pt_contents},		// very damaging
-	{"window",	CONTENTS_WINDOW, pt_contents},	// solid, but doesn't eat internal textures
-	{"mist",	CONTENTS_MIST, pt_contents},	// non-solid window
-	{"origin",	CONTENTS_ORIGIN, pt_contents},	// center of rotating brushes
-	{"playerclip",	CONTENTS_PLAYERCLIP, pt_contents},
-	{"monsterclip",	CONTENTS_MONSTERCLIP, pt_contents},
+mipparm_t mipparms[] =
+    {
+        // utility content attributes
+        {"water", CONTENTS_WATER, pt_contents},
+        {"slime", CONTENTS_SLIME, pt_contents},   // mildly damaging
+        {"lava", CONTENTS_LAVA, pt_contents},     // very damaging
+        {"window", CONTENTS_WINDOW, pt_contents}, // solid, but doesn't eat internal textures
+        {"mist", CONTENTS_MIST, pt_contents},     // non-solid window
+        {"origin", CONTENTS_ORIGIN, pt_contents}, // center of rotating brushes
+        {"playerclip", CONTENTS_PLAYERCLIP, pt_contents},
+        {"monsterclip", CONTENTS_MONSTERCLIP, pt_contents},
 
-	// utility surface attributes
-	{"hint",	SURF_HINT, pt_flags},
-	{"skip",	SURF_SKIP, pt_flags},
-	{"light",	SURF_LIGHT, pt_flagvalue},		// value is the light quantity
+        // utility surface attributes
+        {"hint", SURF_HINT, pt_flags},
+        {"skip", SURF_SKIP, pt_flags},
+        {"light", SURF_LIGHT, pt_flagvalue}, // value is the light quantity
 
-	// texture chaining
-	{"anim",	0,			pt_animvalue},		// value is the next animation
+        // texture chaining
+        {"anim", 0, pt_animvalue}, // value is the next animation
 
-	// server attributes
-	{"slick",	SURF_SLICK, pt_flags},
+        // server attributes
+        {"slick", SURF_SLICK, pt_flags},
 
-	// drawing attributes
-	{"sky",		SURF_SKY, pt_flags},
-	{"warping",	SURF_WARP, pt_flags},		// only valid with 64x64 textures
-	{"trans33",	SURF_TRANS33, pt_flags},	//translucent should also set fullbright
-	{"trans66",	SURF_TRANS66, pt_flags},
-	{"flowing",	SURF_FLOWING, pt_flags},	// flow direction towards angle 0
-	{"nodraw",	SURF_NODRAW, pt_flags},	// for clip textures and trigger textures
-	{"hint",	SURF_HINT, pt_flags},
-	{"skip",	SURF_SKIP, pt_flags},
+        // drawing attributes
+        {"sky", SURF_SKY, pt_flags},
+        {"warping", SURF_WARP, pt_flags},    // only valid with 64x64 textures
+        {"trans33", SURF_TRANS33, pt_flags}, // translucent should also set fullbright
+        {"trans66", SURF_TRANS66, pt_flags},
+        {"flowing", SURF_FLOWING, pt_flags}, // flow direction towards angle 0
+        {"nodraw", SURF_NODRAW, pt_flags},   // for clip textures and trigger textures
+        {"hint", SURF_HINT, pt_flags},
+        {"skip", SURF_SKIP, pt_flags},
 
-	{NULL, 0, pt_contents}
-};
-
+        {NULL, 0, pt_contents}};
 
 /*
 ==============
@@ -505,162 +472,151 @@ must be multiples of sixteen
 SURF_WINDOW
 ==============
 */
-void Cmd_Mip (void)
-{
-	int32_t             x,y,xl,yl,xh,yh,w,h;
-	byte            *screen_p, *source;
-	int32_t             linedelta;
-	miptex_t		*qtex;
-	int32_t				miplevel, mipstep;
-	int32_t				xx, yy, pix;
-	int32_t				count;
-	int32_t				flags, value, contents;
-	mipparm_t		*mp;
+void Cmd_Mip(void) {
+    int32_t x, y, xl, yl, xh, yh, w, h;
+    byte *screen_p, *source;
+    int32_t linedelta;
+    miptex_t *qtex;
+    int32_t miplevel, mipstep;
+    int32_t xx, yy, pix;
+    int32_t count;
+    int32_t flags, value, contents;
+    mipparm_t *mp;
 
-	char			lumpname[64];
-	byte			*lump_p;
-	char			filename[1200];
-	char			animname[124];
+    char lumpname[64];
+    byte *lump_p;
+    char filename[1200];
+    char animname[124];
 
-	GetToken (false);
-	strcpy (lumpname, token);
+    GetToken(false);
+    strcpy(lumpname, token);
 
-	GetToken (false);
-	xl = atoi (token);
-	GetToken (false);
-	yl = atoi (token);
-	GetToken (false);
-	w = atoi (token);
-	GetToken (false);
-	h = atoi (token);
+    GetToken(false);
+    xl = atoi(token);
+    GetToken(false);
+    yl = atoi(token);
+    GetToken(false);
+    w = atoi(token);
+    GetToken(false);
+    h = atoi(token);
 
-	if ( (w & 15) || (h & 15) )
-		Error ("line %i: miptex sizes must be multiples of 16", scriptline);
+    if ((w & 15) || (h & 15))
+        Error("line %i: miptex sizes must be multiples of 16", scriptline);
 
-	flags = 0;
-	contents = 0;
-	value = 0;
+    flags       = 0;
+    contents    = 0;
+    value       = 0;
 
-	animname[0] = 0;
+    animname[0] = 0;
 
-	// get optional flags and values
-	while (TokenAvailable ())
-	{
-		GetToken (false);
+    // get optional flags and values
+    while (TokenAvailable()) {
+        GetToken(false);
 
-		for (mp=mipparms ; mp->name ; mp++)
-		{
-			if (!strcmp(mp->name, token))
-			{
-				switch (mp->type)
-				{
-				case pt_animvalue:
-					GetToken (false);	// specify the next animation frame
-					strcpy (animname, token);
-					break;
-				case pt_flags:
-					flags |= mp->flags;
-					break;
-				case pt_contents:
-					contents |= mp->flags;
-					break;
-				case pt_flagvalue:
-					flags |= mp->flags;
-					GetToken (false);	// specify the light value
-					value = atoi(token);
-					break;
-				}
-				break;
-			}
-		}
-		if (!mp->name)
-			Error ("line %i: unknown parm %s", scriptline, token);
-	}
+        for (mp = mipparms; mp->name; mp++) {
+            if (!strcmp(mp->name, token)) {
+                switch (mp->type) {
+                case pt_animvalue:
+                    GetToken(false); // specify the next animation frame
+                    strcpy(animname, token);
+                    break;
+                case pt_flags:
+                    flags |= mp->flags;
+                    break;
+                case pt_contents:
+                    contents |= mp->flags;
+                    break;
+                case pt_flagvalue:
+                    flags |= mp->flags;
+                    GetToken(false); // specify the light value
+                    value = atoi(token);
+                    break;
+                }
+                break;
+            }
+        }
+        if (!mp->name)
+            Error("line %i: unknown parm %s", scriptline, token);
+    }
 
-	sprintf (filename, "%stextures/%s/%s.wal", gamedir, mip_prefix, lumpname);
-	if (g_release)
-		return;	// textures are only released by $maps
+    sprintf(filename, "%stextures/%s/%s.wal", gamedir, mip_prefix, lumpname);
+    if (g_release)
+        return; // textures are only released by $maps
 
-	xh = xl+w;
-	yh = yl+h;
+    xh   = xl + w;
+    yh   = yl + h;
 
-	qtex = malloc (sizeof(miptex_t) + w*h*2);
-	memset (qtex, 0, sizeof(miptex_t));
+    qtex = malloc(sizeof(miptex_t) + w * h * 2);
+    memset(qtex, 0, sizeof(miptex_t));
 
-	qtex->width = LittleLong(w);
-	qtex->height = LittleLong(h);
-	qtex->flags = LittleLong(flags);
-	qtex->contents = LittleLong(contents);
-	qtex->value = LittleLong(value);
+    qtex->width    = LittleLong(w);
+    qtex->height   = LittleLong(h);
+    qtex->flags    = LittleLong(flags);
+    qtex->contents = LittleLong(contents);
+    qtex->value    = LittleLong(value);
 
-	//qb: overflow check
-	if(strlen(mip_prefix) + strlen(lumpname) > 32)
+    // qb: overflow check
+    if (strlen(mip_prefix) + strlen(lumpname) > 32)
         Error("%s/%s exceeds 32 char limit", mip_prefix, lumpname);
 
-	sprintf (qtex->name, "%s/%s", mip_prefix, lumpname);
-	if (animname[0])
-		sprintf (qtex->animname, "%s/%s", mip_prefix, animname);
+    sprintf(qtex->name, "%s/%s", mip_prefix, lumpname);
+    if (animname[0])
+        sprintf(qtex->animname, "%s/%s", mip_prefix, animname);
 
-	lump_p = (byte *)(&qtex->value+1);
+    lump_p           = (byte *)(&qtex->value + 1);
 
-	screen_p = byteimage + yl*byteimagewidth + xl;
-	linedelta = byteimagewidth - w;
+    screen_p         = byteimage + yl * byteimagewidth + xl;
+    linedelta        = byteimagewidth - w;
 
-	source = lump_p;
-	qtex->offsets[0] = LittleLong(lump_p - (byte *)qtex);
+    source           = lump_p;
+    qtex->offsets[0] = LittleLong(lump_p - (byte *)qtex);
 
-	for (y=yl ; y<yh ; y++)
-	{
-		for (x=xl ; x<xh ; x++)
-		{
-			pix = *screen_p++;
-			if (pix == 255)
-				pix = 1;		// should never happen
-			*lump_p++ = pix;
-		}
-		screen_p += linedelta;
-	}
+    for (y = yl; y < yh; y++) {
+        for (x = xl; x < xh; x++) {
+            pix = *screen_p++;
+            if (pix == 255)
+                pix = 1; // should never happen
+            *lump_p++ = pix;
+        }
+        screen_p += linedelta;
+    }
 
-//
-// subsample for greater mip levels
-//
-	d_red = d_green = d_blue = 0;	// no distortion yet
+    //
+    // subsample for greater mip levels
+    //
+    d_red = d_green = d_blue = 0; // no distortion yet
 
-	for (miplevel = 1 ; miplevel<4 ; miplevel++)
-	{
-		qtex->offsets[miplevel] = LittleLong(lump_p - (byte *)qtex);
+    for (miplevel = 1; miplevel < 4; miplevel++) {
+        qtex->offsets[miplevel] = LittleLong(lump_p - (byte *)qtex);
 
-		mipstep = 1<<miplevel;
-		for (y=0 ; y<h ; y+=mipstep)
-		{
+        mipstep                 = 1 << miplevel;
+        for (y = 0; y < h; y += mipstep) {
 
-			for (x = 0 ; x<w ; x+= mipstep)
-			{
-				count = 0;
-				for (yy=0 ; yy<mipstep ; yy++)
-					for (xx=0 ; xx<mipstep ; xx++)
-					{
-						pixdata[count] = source[ (y+yy)*w + x + xx ];
-						count++;
-					}
-				*lump_p++ = AveragePixels (count);
-			}
-		}
-	}
+            for (x = 0; x < w; x += mipstep) {
+                count = 0;
+                for (yy = 0; yy < mipstep; yy++)
+                    for (xx = 0; xx < mipstep; xx++) {
+                        pixdata[count] = source[(y + yy) * w + x + xx];
+                        count++;
+                    }
+                *lump_p++ = AveragePixels(count);
+            }
+        }
+    }
 
-//
-// dword align the size
-//
-	while ((intptr_t)lump_p&3)
-		*lump_p++ = 0;
+    //
+    // dword align the size
+    //
+    while ((intptr_t)lump_p & 3)
+        *lump_p++ = 0;
 
-//
-// write it out
-//
-	printf ("writing %s\n", filename);
-	SaveFile (filename, (byte *)qtex, lump_p - (byte *)qtex);
+    //
+    // write it out
+    //
+    printf("writing %s\n", filename);
+    SaveFile(filename, (byte *)qtex, lump_p - (byte *)qtex);
 
-	free (qtex);
+    free(qtex);
 }
 
 /*
@@ -668,36 +624,32 @@ void Cmd_Mip (void)
 Cmd_Mippal
 ===============
 */
-void Cmd_Mippal (void)
-{
-	colormap_issued = true;
-	if (g_release)
-		return;
+void Cmd_Mippal(void) {
+    colormap_issued = true;
+    if (g_release)
+        return;
 
-	memcpy (colormap_palette, lbmpalette, 768);
+    memcpy(colormap_palette, lbmpalette, 768);
 
-	BuildPalmap();
+    BuildPalmap();
 }
-
 
 /*
 ===============
 Cmd_Mipdir
 ===============
 */
-void Cmd_Mipdir (void)
-{
-	char	filename[1100];
+void Cmd_Mipdir(void) {
+    char filename[1100];
 
-	GetToken (false);
-	strcpy (mip_prefix, token);
-	// create the directory if needed
-	sprintf (filename, "%stextures", gamedir);
-	Q_mkdir (filename);
-	sprintf (filename, "%stextures/%s", gamedir, mip_prefix);
-	Q_mkdir (filename);
+    GetToken(false);
+    strcpy(mip_prefix, token);
+    // create the directory if needed
+    sprintf(filename, "%stextures", gamedir);
+    Q_mkdir(filename);
+    sprintf(filename, "%stextures/%s", gamedir, mip_prefix);
+    Q_mkdir(filename);
 }
-
 
 /*
 =============================================================================
@@ -710,59 +662,52 @@ also copies the tga files for GL rendering.
 */
 
 // 3dstudio environment map suffixes
-char	*suf[6] = {"rt", "ft", "lf", "bk", "up", "dn"};
+char *suf[6] = {"rt", "ft", "lf", "bk", "up", "dn"};
 
 /*
 =================
 Cmd_Environment
 =================
 */
-void Cmd_Environment (void)
-{
-	char	name[2100];
-	int32_t		i, x, y;
-	byte	image[256*256];
-	byte	*tga;
+void Cmd_Environment(void) {
+    char name[2100];
+    int32_t i, x, y;
+    byte image[256 * 256];
+    byte *tga;
 
-	GetToken (false);
+    GetToken(false);
 
-	if (g_release)
-	{
-		for (i=0 ; i<6 ; i++)
-		{
-			sprintf (name, "env/%s%s.pcx", token, suf[i]);
-			ReleaseFile (name);
-			sprintf (name, "env/%s%s.tga", token, suf[i]);
-			ReleaseFile (name);
-		}
-		return;
-	}
-	// get the palette
-	BuildPalmap ();
+    if (g_release) {
+        for (i = 0; i < 6; i++) {
+            sprintf(name, "env/%s%s.pcx", token, suf[i]);
+            ReleaseFile(name);
+            sprintf(name, "env/%s%s.tga", token, suf[i]);
+            ReleaseFile(name);
+        }
+        return;
+    }
+    // get the palette
+    BuildPalmap();
 
-	sprintf (name, "%senv/", gamedir);
-	CreatePath (name);
+    sprintf(name, "%senv/", gamedir);
+    CreatePath(name);
 
-	// convert the images
-	for (i=0 ; i<6 ; i++)
-	{
-		sprintf (name, "%senv/%s%s.tga", gamedir, token, suf[i]);
-		printf ("loading %s...\n", name);
-		LoadTGA (name, &tga, NULL, NULL);
+    // convert the images
+    for (i = 0; i < 6; i++) {
+        sprintf(name, "%senv/%s%s.tga", gamedir, token, suf[i]);
+        printf("loading %s...\n", name);
+        LoadTGA(name, &tga, NULL, NULL);
 
-		for (y=0 ; y<256 ; y++)
-		{
-			for (x=0 ; x<256 ; x++)
-			{
-				image[y*256+x] = FindColor (tga[(y*256+x)*4+0],tga[(y*256+x)*4+1],tga[(y*256+x)*4+2]);
-			}
-		}
-		free (tga);
-		sprintf (name, "%senv/%s%s.pcx", gamedir, token, suf[i]);
-		if (FileTime (name) != -1)
-			printf ("%s already exists, not overwriting.\n", name);
-		else
-			WritePCXfile (name, image, 256, 256, colormap_palette);
-	}
+        for (y = 0; y < 256; y++) {
+            for (x = 0; x < 256; x++) {
+                image[y * 256 + x] = FindColor(tga[(y * 256 + x) * 4 + 0], tga[(y * 256 + x) * 4 + 1], tga[(y * 256 + x) * 4 + 2]);
+            }
+        }
+        free(tga);
+        sprintf(name, "%senv/%s%s.pcx", gamedir, token, suf[i]);
+        if (FileTime(name) != -1)
+            printf("%s already exists, not overwriting.\n", name);
+        else
+            WritePCXfile(name, image, 256, 256, colormap_palette);
+    }
 }
-

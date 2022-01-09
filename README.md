@@ -5,7 +5,7 @@ Includes 4bsp, 4vis, 4rad, and 4data.
 Forked from compiler tools supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
 
 # Test feature:  
-Extended map limits for very large maps patterned after the Quake BSP2 format.  Several 16-bit data types are changed to 32-bit.  Lightmaps are higher res.  This feature requires a supporting engine.  See common/qfiles.h for differences in limits.
+Extended map limits for larger or more detailed maps.  Several 16-bit data types are changed to 32-bit.  Lightmaps are higher res.  This feature requires a supporting engine.  See common/qfiles.h for differences in limits.
 
 Usage:  Add -qbsp to the 4bsp command line.  4vis and 4rad will detect QBSP automatically.
 
@@ -57,9 +57,9 @@ radiosity
 *   v220 (Valve) support: Trenchbroom and JACK editors can open and save a hybrid format that preserves texture flags.
 *   chop:  Usually, higher is better and faster.  Start at 1024 and work down if any issues.  
 *   choplight: Set the chop size independetly for surface lights.  Lower settings may improve quality of large surface lights when chop is high. Try "choplight 32".
-*   -largebounds: Increase max map size for supporting engines.  Maybe only kmquake2?
+*   -largebounds: Increase max map size for supporting engines.
 *   -moreents: Increase max number of entities for supporting engines.
-*   -qbsp: big increase to most map limits, similar to Quake's BSP2 format.  No released engine supports this yet.  I am working on a prototype called 'qb2'.  Source is on github.
+*   -qbsp: big increase to most map limits.  No released engine supports this yet.  See https://github.com/qbism/qb2 for prototype code.
 
 4vis
 *   It works the same as always. -fast for a quick single pass.

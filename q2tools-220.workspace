@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<CodeBlocks_workspace_file>
-	<Workspace title="Workspace">
-		<Project filename="4vis/4vis.cbp" />
-		<Project filename="4rad/4rad.cbp" />
-		<Project filename="4data/4data.cbp" />
-		<Project filename="4bsp/4bsp.cbp" />
-	</Workspace>
-</CodeBlocks_workspace_file>

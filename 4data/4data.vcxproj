@@ -138,15 +138,13 @@
     <ClCompile Include="video.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\4data.h" />
     <ClInclude Include="..\common\bspfile.h" />
     <ClInclude Include="..\common\cmdlib.h" />
-    <ClInclude Include="..\common\l3dslib.h" />
-    <ClInclude Include="..\common\llwolib.h" />
     <ClInclude Include="..\common\mathlib.h" />
     <ClInclude Include="..\common\mdfour.h" />
     <ClInclude Include="..\common\scriplib.h" />
     <ClInclude Include="..\common\threads.h" />
-    <ClInclude Include="..\common\trilib.h" />
     <ClInclude Include="\4vis\vis.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

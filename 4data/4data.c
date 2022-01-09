@@ -20,25 +20,25 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "4data.h"
 
-qboolean	g_compress_pak;
-qboolean	g_release;			// don't grab, copy output data to new tree
-qboolean	g_pak;				// if true, copy to pak instead of release
-char		g_releasedir[1024];	// c:\game\base, etc
-qboolean	g_archive;			// don't grab, copy source data to new tree
-qboolean	do3ds;
+qboolean g_compress_pak;
+qboolean g_release;      // don't grab, copy output data to new tree
+qboolean g_pak;          // if true, copy to pak instead of release
+char g_releasedir[1024]; // c:\game\base, etc
+qboolean g_archive;      // don't grab, copy source data to new tree
+qboolean do3ds;
 //*********************** Added for LWO support
-qboolean	dolwo;
-qboolean	nolbm;
+qboolean dolwo;
+qboolean nolbm;
 //*********************** [KDT]
-char		g_only[256];		// if set, only grab this cd
-qboolean	g_skipmodel;		// set true when a cd is not g_only
+char g_only[256];     // if set, only grab this cd
+qboolean g_skipmodel; // set true when a cd is not g_only
 
-char		*ext_3ds = "3ds";
+char *ext_3ds = "3ds";
 //*********************** Added for LWO support
-char		*ext_lwo = "lwo";
+char *ext_lwo = "lwo";
 //*********************** [KDT]
-char		*ext_tri= "tri";
-char		*trifileext;
+char *ext_tri = "tri";
+char *trifileext;
 
 /*
 =======================================================
@@ -48,46 +48,42 @@ char		*trifileext;
 =======================================================
 */
 
-unsigned Com_BlockChecksum (void *buffer, int32_t length);
+unsigned Com_BlockChecksum(void *buffer, int32_t length);
 
 typedef struct
 {
-	char	name[56];
-	int32_t		filepos, filelen;
+    char name[56];
+    int32_t filepos, filelen;
 } packfile_t;
 
 typedef struct
 {
-	char	id[4];
-	int32_t		dirofs;
-	int32_t		dirlen;
+    char id[4];
+    int32_t dirofs;
+    int32_t dirlen;
 } packheader_t;
 
-packfile_t		pfiles[16384];
-FILE			*pakfile;
-packfile_t		*pf;
-packheader_t	pakheader;
-
-
+packfile_t pfiles[16384];
+FILE *pakfile;
+packfile_t *pf;
+packheader_t pakheader;
 
 /*
 ==============
 BeginPak
 ==============
 */
-void BeginPak (char *outname)
-{
-	if (!g_pak)
-		return;
+void BeginPak(char *outname) {
+    if (!g_pak)
+        return;
 
-	pakfile = SafeOpenWrite (outname);
+    pakfile = SafeOpenWrite(outname);
 
-	// leave space for header
-	SafeWrite (pakfile, &pakheader, sizeof(pakheader));
+    // leave space for header
+    SafeWrite(pakfile, &pakheader, sizeof(pakheader));
 
-	pf = pfiles;
+    pf = pfiles;
 }
-
 
 /*
 ==============
@@ -98,103 +94,95 @@ Either copies the file to the release dir, or adds it to
 the pak file.
 ==============
 */
-void ReleaseFile (char *filename)
-{
-	int32_t		len;
-	byte	*buf;
-	char	source[1024];
-	char	dest[1200];
+void ReleaseFile(char *filename) {
+    int32_t len;
+    byte *buf;
+    char source[1024];
+    char dest[1200];
 
-	if (!g_release)
-		return;
+    if (!g_release)
+        return;
 
-	sprintf (source, "%s%s", gamedir, filename);
+    sprintf(source, "%s%s", gamedir, filename);
 
-	if (!g_pak)
-	{	// copy it
-		sprintf (dest, "%s/%s", g_releasedir, filename);
-		printf ("copying to %s\n", dest);
-		QCopyFile (source, dest);
-		return;
-	}
+    if (!g_pak) { // copy it
+        sprintf(dest, "%s/%s", g_releasedir, filename);
+        printf("copying to %s\n", dest);
+        QCopyFile(source, dest);
+        return;
+    }
 
-	// pak it
-	printf ("paking %s\n", filename);
-	if (strlen(filename) >= sizeof(pf->name))
-		Error ("Filename too long for pak: %s", filename);
+    // pak it
+    printf("paking %s\n", filename);
+    if (strlen(filename) >= sizeof(pf->name))
+        Error("Filename too long for pak: %s", filename);
 
-	len = LoadFile (source, (void **)&buf);
+    len = LoadFile(source, (void **)&buf);
 
-	if (g_compress_pak && len < 4096*1024 )
-	{
-		cblock_t	in, out;
-		cblock_t Huffman (cblock_t in);
+    if (g_compress_pak && len < 4096 * 1024) {
+        cblock_t in, out;
+        cblock_t Huffman(cblock_t in);
 
-		in.count = len;
-		in.data = buf;
+        in.count = len;
+        in.data  = buf;
 
-		out = Huffman (in);
+        out      = Huffman(in);
 
-		if (out.count < in.count)
-		{
-			printf ("   compressed from %i to %i\n", in.count, out.count);
-			free (in.data);
-			buf = out.data;
-			len = out.count;
-		}
-		else
-			free (out.data);
-	}
+        if (out.count < in.count) {
+            printf("   compressed from %i to %i\n", in.count, out.count);
+            free(in.data);
+            buf = out.data;
+            len = out.count;
+        } else
+            free(out.data);
+    }
 
-	strcpy (pf->name, filename);
-	pf->filepos = LittleLong(ftell(pakfile));
-	pf->filelen = LittleLong(len);
-	pf++;
+    strcpy(pf->name, filename);
+    pf->filepos = LittleLong(ftell(pakfile));
+    pf->filelen = LittleLong(len);
+    pf++;
 
-	SafeWrite (pakfile, buf, len);
+    SafeWrite(pakfile, buf, len);
 
-	free (buf);
+    free(buf);
 }
-
 
 /*
 ==============
 FinishPak
 ==============
 */
-void FinishPak (void)
-{
-	int32_t		dirlen;
-	int32_t		d;
-	int32_t		i;
-	unsigned	checksum;
+void FinishPak(void) {
+    int32_t dirlen;
+    int32_t d;
+    int32_t i;
+    unsigned checksum;
 
-	if (!g_pak)
-		return;
+    if (!g_pak)
+        return;
 
-	pakheader.id[0] = 'P';
-	pakheader.id[1] = 'A';
-	pakheader.id[2] = 'C';
-	pakheader.id[3] = 'K';
-	dirlen = (byte *)pf - (byte *)pfiles;
-	pakheader.dirofs = LittleLong(ftell(pakfile));
-	pakheader.dirlen = LittleLong(dirlen);
+    pakheader.id[0]  = 'P';
+    pakheader.id[1]  = 'A';
+    pakheader.id[2]  = 'C';
+    pakheader.id[3]  = 'K';
+    dirlen           = (byte *)pf - (byte *)pfiles;
+    pakheader.dirofs = LittleLong(ftell(pakfile));
+    pakheader.dirlen = LittleLong(dirlen);
 
-	checksum = Com_BlockChecksum ( (void *)pfiles, dirlen );
+    checksum         = Com_BlockChecksum((void *)pfiles, dirlen);
 
-	SafeWrite (pakfile, pfiles, dirlen);
+    SafeWrite(pakfile, pfiles, dirlen);
 
-	i = ftell (pakfile);
+    i = ftell(pakfile);
 
-	fseek (pakfile, 0, SEEK_SET);
-	SafeWrite (pakfile, &pakheader, sizeof(pakheader));
-	fclose (pakfile);
+    fseek(pakfile, 0, SEEK_SET);
+    SafeWrite(pakfile, &pakheader, sizeof(pakheader));
+    fclose(pakfile);
 
-	d = pf - pfiles;
-	printf ("%i files packed in %i bytes\n",d, i);
-	printf ("checksum: 0x%x\n", checksum);
+    d = pf - pfiles;
+    printf("%i files packed in %i bytes\n", d, i);
+    printf("checksum: 0x%x\n", checksum);
 }
-
 
 /*
 ===============
@@ -204,10 +192,9 @@ This is only used to cause a file to be copied during a release
 build (default.cfg, maps, etc)
 ===============
 */
-void Cmd_File (void)
-{
-	GetToken (false);
-	ReleaseFile (token);
+void Cmd_File(void) {
+    GetToken(false);
+    ReleaseFile(token);
 }
 
 /*
@@ -218,33 +205,30 @@ PackDirectory_r
 */
 #ifdef _WIN32
 #include "io.h"
-void PackDirectory_r (char *dir)
-{
-	struct _finddata_t fileinfo;
-	int32_t		handle;
-	char	dirstring[1024];
-	char	filename[1024];
+void PackDirectory_r(char *dir) {
+    struct _finddata_t fileinfo;
+    int32_t handle;
+    char dirstring[1024];
+    char filename[1024];
 
-	sprintf (dirstring, "%s%s/*.*", gamedir, dir);
+    sprintf(dirstring, "%s%s/*.*", gamedir, dir);
 
-	handle = _findfirst (dirstring, &fileinfo);
-	if (handle == -1)
-		return;
+    handle = _findfirst(dirstring, &fileinfo);
+    if (handle == -1)
+        return;
 
-	do
-	{
-		sprintf (filename, "%s/%s", dir, fileinfo.name);
-		if (fileinfo.attrib & _A_SUBDIR)
-		{	// directory
-			if (fileinfo.name[0] != '.')	// don't pak . and ..
-				PackDirectory_r (filename);
-			continue;
-		}
-		// copy or pack the file
-		ReleaseFile (filename);
-	} while (_findnext( handle, &fileinfo ) != -1);
+    do {
+        sprintf(filename, "%s/%s", dir, fileinfo.name);
+        if (fileinfo.attrib & _A_SUBDIR) { // directory
+            if (fileinfo.name[0] != '.')   // don't pak . and ..
+                PackDirectory_r(filename);
+            continue;
+        }
+        // copy or pack the file
+        ReleaseFile(filename);
+    } while (_findnext(handle, &fileinfo) != -1);
 
-	_findclose (handle);
+    _findclose(handle);
 }
 #else
 
@@ -255,48 +239,44 @@ void PackDirectory_r (char *dir)
 #include <dirent.h>
 #endif
 
-void PackDirectory_r (char *dir)
-{
+void PackDirectory_r(char *dir) {
 #ifdef NeXT
-	struct direct **namelist, *ent;
+    struct direct **namelist, *ent;
 #else
-	struct dirent **namelist, *ent;
+    struct dirent **namelist, *ent;
 #endif
-	int32_t		count;
-	struct stat st;
-	int32_t			i;
-	char		fullname[1024];
-	char		dirstring[1400];
-	char		*name;
+    int32_t count;
+    struct stat st;
+    int32_t i;
+    char fullname[1024];
+    char dirstring[1400];
+    char *name;
 
-	sprintf (dirstring, "%s%s", gamedir, dir);
-	count = scandir(dirstring, &namelist, NULL, NULL);
+    sprintf(dirstring, "%s%s", gamedir, dir);
+    count = scandir(dirstring, &namelist, NULL, NULL);
 
-	for (i=0 ; i<count ; i++)
-	{
-		ent = namelist[i];
-		name = ent->d_name;
+    for (i = 0; i < count; i++) {
+        ent  = namelist[i];
+        name = ent->d_name;
 
-		if (name[0] == '.')
-			continue;
+        if (name[0] == '.')
+            continue;
 
-		sprintf (fullname, "%s/%s", dir, name);
-		sprintf (dirstring, "%s%s/%s", gamedir, dir, name);
+        sprintf(fullname, "%s/%s", dir, name);
+        sprintf(dirstring, "%s%s/%s", gamedir, dir, name);
 
-		if (stat (dirstring, &st) == -1)
-			Error ("fstating %s", pf->name);
-		if (st.st_mode & S_IFDIR)
-		{	// directory
-			PackDirectory_r (fullname);
-			continue;
-		}
+        if (stat(dirstring, &st) == -1)
+            Error("fstating %s", pf->name);
+        if (st.st_mode & S_IFDIR) { // directory
+            PackDirectory_r(fullname);
+            continue;
+        }
 
-		// copy or pack the file
-		ReleaseFile (fullname);
-	}
+        // copy or pack the file
+        ReleaseFile(fullname);
+    }
 }
 #endif
-
 
 /*
 ===============
@@ -306,35 +286,33 @@ This is only used to cause a directory to be copied during a
 release build (sounds, etc)
 ===============
 */
-void Cmd_Dir (void)
-{
-	GetToken (false);
-	PackDirectory_r (token);
+void Cmd_Dir(void) {
+    GetToken(false);
+    PackDirectory_r(token);
 }
 
 //========================================================================
 
-#define	MAX_RTEX	16384
-int32_t		numrtex;
-char	rtex[MAX_RTEX][64];
+#define MAX_RTEX 16384
+int32_t numrtex;
+char rtex[MAX_RTEX][64];
 
-void ReleaseTexture (char *name)
-{
-	int32_t		i;
-	char	path[1024];
+void ReleaseTexture(char *name) {
+    int32_t i;
+    char path[1024];
 
-	for (i=0 ; i<numrtex ; i++)
-		if (!Q_strcasecmp(name, rtex[i]))
-			return;
+    for (i = 0; i < numrtex; i++)
+        if (!Q_strcasecmp(name, rtex[i]))
+            return;
 
-	if (numrtex == MAX_RTEX)
-		Error ("numrtex == MAX_RTEX");
+    if (numrtex == MAX_RTEX)
+        Error("numrtex == MAX_RTEX");
 
-	strcpy (rtex[i], name);
-	numrtex++;
+    strcpy(rtex[i], name);
+    numrtex++;
 
-	sprintf (path, "textures/%s.wal", name);
-	ReleaseFile (path);
+    sprintf(path, "textures/%s.wal", name);
+    ReleaseFile(path);
 }
 
 /*
@@ -346,28 +324,25 @@ Releases the .bsp files for the maps, and scans all of the files to
 build a list of all textures used, which are then released.
 ===============
 */
-void Cmd_Maps (void)
-{
-	char	map[2200];
-	int32_t		i;
+void Cmd_Maps(void) {
+    char map[2200];
+    int32_t i;
 
-	while (TokenAvailable ())
-	{
-		GetToken (false);
-		sprintf (map, "maps/%s.bsp", token);
-		ReleaseFile (map);
+    while (TokenAvailable()) {
+        GetToken(false);
+        sprintf(map, "maps/%s.bsp", token);
+        ReleaseFile(map);
 
-		if (!g_release)
-			continue;
+        if (!g_release)
+            continue;
 
-		// get all the texture references
-		sprintf (map, "%smaps/%s.bsp", gamedir, token);
-		LoadBSPFileTexinfo (map);
-		for (i=0 ; i<numtexinfo ; i++)
-			ReleaseTexture (texinfo[i].texture);
-	}
+        // get all the texture references
+        sprintf(map, "%smaps/%s.bsp", gamedir, token);
+        LoadBSPFileTexinfo(map);
+        for (i = 0; i < numtexinfo; i++)
+            ReleaseTexture(texinfo[i].texture);
+    }
 }
-
 
 //==============================================================
 
@@ -376,87 +351,84 @@ void Cmd_Maps (void)
 ParseScript
 ===============
 */
-void ParseScript (void)
-{
-	while (1)
-	{
-		do
-		{	// look for a line starting with a $ command
-			GetToken (true);
-			if (endofscript)
-				return;
-			if (token[0] == '$')
-				break;
-			while (TokenAvailable())
-				GetToken (false);
-		} while (1);
+void ParseScript(void) {
+    while (1) {
+        do { // look for a line starting with a $ command
+            GetToken(true);
+            if (endofscript)
+                return;
+            if (token[0] == '$')
+                break;
+            while (TokenAvailable())
+                GetToken(false);
+        } while (1);
 
-		//
-		// model commands
-		//
-		if (!strcmp (token, "$modelname"))
-			Cmd_Modelname ();
-		else if (!strcmp (token, "$base"))
-			Cmd_Base ();
-		else if (!strcmp (token, "$cd"))
-			Cmd_Cd ();
-		else if (!strcmp (token, "$origin"))
-			Cmd_Origin ();
-		else if (!strcmp (token, "$scale"))
-			Cmd_ScaleUp ();
-		else if (!strcmp (token, "$frame"))
-			Cmd_Frame ();
-		else if (!strcmp (token, "$skin"))
-			Cmd_Skin ();
-		else if (!strcmp (token, "$skinsize"))
-			Cmd_Skinsize ();
-		//
-		// sprite commands
-		//
-		else if (!strcmp (token, "$spritename"))
-			Cmd_SpriteName ();
-		else if (!strcmp (token, "$load"))
-			Cmd_Load ();
-		else if (!strcmp (token, "$spriteframe"))
-			Cmd_SpriteFrame ();
-		//
-		// image commands
-		//
-		else if (!strcmp (token, "$grab"))
-			Cmd_Grab ();
-		else if (!strcmp (token, "$raw"))
-			Cmd_Raw ();
-		else if (!strcmp (token, "$colormap"))
-			Cmd_Colormap ();
-		else if (!strcmp (token, "$mippal"))
-			Cmd_Mippal ();
-		else if (!strcmp (token, "$mipdir"))
-			Cmd_Mipdir ();
-		else if (!strcmp (token, "$mip"))
-			Cmd_Mip ();
-		else if (!strcmp (token, "$environment"))
-			Cmd_Environment ();
-		//
-		// video
-		//
-		else if (!strcmp (token, "$video"))
-			Cmd_Video ();
-		//
-		// misc
-		//
-		else if (!strcmp (token, "$file"))
-			Cmd_File ();
-		else if (!strcmp (token, "$dir"))
-			Cmd_Dir ();
-		else if (!strcmp (token, "$maps"))
-			Cmd_Maps ();
-		else if (!strcmp (token, "$alphalight"))
-			Cmd_Alphalight ();
-		else if (!strcmp (token, "$inverse16table" ))
-			Cmd_Inverse16Table();
-		else
-			Error ("bad command %s\n", token);
-	}
+        //
+        // model commands
+        //
+        if (!strcmp(token, "$modelname"))
+            Cmd_Modelname();
+        else if (!strcmp(token, "$base"))
+            Cmd_Base();
+        else if (!strcmp(token, "$cd"))
+            Cmd_Cd();
+        else if (!strcmp(token, "$origin"))
+            Cmd_Origin();
+        else if (!strcmp(token, "$scale"))
+            Cmd_ScaleUp();
+        else if (!strcmp(token, "$frame"))
+            Cmd_Frame();
+        else if (!strcmp(token, "$skin"))
+            Cmd_Skin();
+        else if (!strcmp(token, "$skinsize"))
+            Cmd_Skinsize();
+        //
+        // sprite commands
+        //
+        else if (!strcmp(token, "$spritename"))
+            Cmd_SpriteName();
+        else if (!strcmp(token, "$load"))
+            Cmd_Load();
+        else if (!strcmp(token, "$spriteframe"))
+            Cmd_SpriteFrame();
+        //
+        // image commands
+        //
+        else if (!strcmp(token, "$grab"))
+            Cmd_Grab();
+        else if (!strcmp(token, "$raw"))
+            Cmd_Raw();
+        else if (!strcmp(token, "$colormap"))
+            Cmd_Colormap();
+        else if (!strcmp(token, "$mippal"))
+            Cmd_Mippal();
+        else if (!strcmp(token, "$mipdir"))
+            Cmd_Mipdir();
+        else if (!strcmp(token, "$mip"))
+            Cmd_Mip();
+        else if (!strcmp(token, "$environment"))
+            Cmd_Environment();
+        //
+        // video
+        //
+        else if (!strcmp(token, "$video"))
+            Cmd_Video();
+        //
+        // misc
+        //
+        else if (!strcmp(token, "$file"))
+            Cmd_File();
+        else if (!strcmp(token, "$dir"))
+            Cmd_Dir();
+        else if (!strcmp(token, "$maps"))
+            Cmd_Maps();
+        else if (!strcmp(token, "$alphalight"))
+            Cmd_Alphalight();
+        else if (!strcmp(token, "$inverse16table"))
+            Cmd_Inverse16Table();
+        else
+            Error("bad command %s\n", token);
+    }
 }
 
 //=======================================================
@@ -466,105 +438,87 @@ void ParseScript (void)
 main
 ==============
 */
-int32_t main (int32_t argc, char **argv)
-{
-	static	int32_t		i;		// VC4.2 compiler bug if auto...
-	char	path[1024];
+int32_t main(int32_t argc, char **argv) {
+    static int32_t i; // VC4.2 compiler bug if auto...
+    char path[1024];
 
-	ExpandWildcards (&argc, &argv);
+    ExpandWildcards(&argc, &argv);
 
-	for (i=1 ; i<argc ; i++)
-	{
-		if (!strcmp(argv[i], "-archive"))
-		{
-			archive = true;
-			strcpy (archivedir, argv[i+1]);
-			printf ("Archiving source to: %s\n", archivedir);
-			i++;
-		}
-		else if (!strcmp(argv[i], "-release"))
-		{
-			g_release = true;
-			strcpy (g_releasedir, argv[i+1]);
-			printf ("Copy output to: %s\n", g_releasedir);
-			i++;
-		}
-		else if (!strcmp(argv[i], "-compress"))
-		{
-			g_compress_pak = true;
-			printf ("Compressing pakfile\n");
-		}
-		else if (!strcmp(argv[i], "-pak"))
-		{
-			g_release = true;
-			g_pak = true;
-			printf ("Building pakfile: %s\n", argv[i+1]);
-			BeginPak (argv[i+1]);
-			i++;
-		}
-		else if (!strcmp(argv[i], "-only"))
-		{
-			strcpy (g_only, argv[i+1]);
-			printf ("Only grabbing %s\n", g_only);
-			i++;
-		}
-		else if (!strcmp(argv[i], "-3ds"))
-		{
-			do3ds = true;
-			printf ("loading .3ds files\n");
-		}
-//*********************** Added for LWO support
-		else if (!strcmp(argv[i], "-lwo"))
-		{
-			dolwo = true;
-			printf ("loading .lwo files\n");
-		}
-		else if (!strcmp(argv[i], "-nolbm"))
-		{
-			nolbm = true;
-			printf ("skipping .lbm files\n");
-		}
-//*********************** [KDT]
-		else if (argv[i][0] == '-')
-			Error ("Unknown option \"%s\"", argv[i]);
-		else
-			break;
-	}
+    for (i = 1; i < argc; i++) {
+        if (!strcmp(argv[i], "-archive")) {
+            archive = true;
+            strcpy(archivedir, argv[i + 1]);
+            printf("Archiving source to: %s\n", archivedir);
+            i++;
+        } else if (!strcmp(argv[i], "-release")) {
+            g_release = true;
+            strcpy(g_releasedir, argv[i + 1]);
+            printf("Copy output to: %s\n", g_releasedir);
+            i++;
+        } else if (!strcmp(argv[i], "-compress")) {
+            g_compress_pak = true;
+            printf("Compressing pakfile\n");
+        } else if (!strcmp(argv[i], "-pak")) {
+            g_release = true;
+            g_pak     = true;
+            printf("Building pakfile: %s\n", argv[i + 1]);
+            BeginPak(argv[i + 1]);
+            i++;
+        } else if (!strcmp(argv[i], "-only")) {
+            strcpy(g_only, argv[i + 1]);
+            printf("Only grabbing %s\n", g_only);
+            i++;
+        } else if (!strcmp(argv[i], "-3ds")) {
+            do3ds = true;
+            printf("loading .3ds files\n");
+        }
+        //*********************** Added for LWO support
+        else if (!strcmp(argv[i], "-lwo")) {
+            dolwo = true;
+            printf("loading .lwo files\n");
+        } else if (!strcmp(argv[i], "-nolbm")) {
+            nolbm = true;
+            printf("skipping .lbm files\n");
+        }
+        //*********************** [KDT]
+        else if (argv[i][0] == '-')
+            Error("Unknown option \"%s\"", argv[i]);
+        else
+            break;
+    }
 
-	if (i >= argc)
-		Error ("usage: 4data [-archive <directory>] [-release <directory>] [-only <model>] [-3ds] file.qgt");
+    if (i >= argc)
+        Error("usage: 4data [-archive <directory>] [-release <directory>] [-only <model>] [-3ds] file.qgt");
 
-	if (do3ds)
-		trifileext = ext_3ds;
-//*********************** Added for LWO support
-	else if (dolwo)
-		trifileext = ext_lwo;
-//*********************** [KDT]
-	else
-		trifileext = ext_tri;
+    if (do3ds)
+        trifileext = ext_3ds;
+    //*********************** Added for LWO support
+    else if (dolwo)
+        trifileext = ext_lwo;
+    //*********************** [KDT]
+    else
+        trifileext = ext_tri;
 
-	for ( ; i<argc ; i++)
-	{
-		printf ("--------------- %s ---------------\n", argv[i]);
-		// load the script
-		strcpy (path, argv[i]);
-		DefaultExtension (path, ".qdt");
-		SetQdirFromPath (path);
-		LoadScriptFile (ExpandArg(path));
+    for (; i < argc; i++) {
+        printf("--------------- %s ---------------\n", argv[i]);
+        // load the script
+        strcpy(path, argv[i]);
+        DefaultExtension(path, ".qdt");
+        SetQdirFromPath(path);
+        LoadScriptFile(ExpandArg(path));
 
-		//
-		// parse it
-		//
-		ParseScript ();
+        //
+        // parse it
+        //
+        ParseScript();
 
-		// write out the last model
-		FinishModel ();
-		FinishSprite ();
-	}
+        // write out the last model
+        FinishModel();
+        FinishSprite();
+    }
 
-	if (g_pak)
-		FinishPak ();
+    if (g_pak)
+        FinishPak();
 
-	return 0;
+    return 0;
 }
-
