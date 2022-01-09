@@ -190,8 +190,6 @@ void LoadLBM(char *filename, byte **picture, byte **palette) {
         case BODYID:
             body_p = LBM_P;
 
-            if (bmhd.w * bmhd.h > sizeof(size_t))
-                Error("LBM pic_p overflow");
             pic_p = picbuffer = malloc(bmhd.w * bmhd.h);
             if (formtype == PBMID) {
                 //
