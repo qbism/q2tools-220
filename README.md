@@ -4,13 +4,6 @@ Includes 4bsp, 4vis, 4rad, and 4data.
 
 Forked from compiler tools supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
 
-# Test feature:  
-Extended map limits for larger or more detailed maps.  Several 16-bit data types are changed to 32-bit.  Lightmaps are higher res.  This feature requires a supporting engine.  See common/qfiles.h for differences in limits.
-
-Usage:  Add -qbsp to the 4bsp command line.  4vis and 4rad will detect QBSP automatically.
-
-
-
 # Enhancements:
 
 bsp
@@ -24,7 +17,7 @@ bsp
 *   Increased limits within standard file format.  Requires a supporting engine. (kmqbsp3)
 *   Fix so SURF_NODRAW flagged faces are not included in texture processing. (Paril)
 *   Feature: set CONTENTS_AUX flag with CONTENTS_MIST to disable rendering of mist backfaces.
-*   Extreme limits with extended file format. Future supporting engine. (ideas from motorsep, Paril, Knightmare)
+*   Increased map limits with extended file format. Future supporting engine. (ideas from motorsep, Paril, Knightmare)
 		
 vis
 *   Increase vis data size max. Issue warning for > vanilla limit. (qbism)
@@ -56,10 +49,9 @@ radiosity
 4bsp
 *   v220 (Valve) support: Trenchbroom and JACK editors can open and save a hybrid format that preserves texture flags.
 *   chop:  Usually, higher is better and faster.  Start at 1024 and work down if any issues.  
-*   choplight: Set the chop size independetly for surface lights.  Lower settings may improve quality of large surface lights when chop is high. Try "choplight 32".
+*   choplight: Set the chop size independetly for surface lights.  Lower settings may improve quality of large surface lights when chop is high. Try "choplight 16".
 *   -largebounds: Increase max map size for supporting engines.
 *   -moreents: Increase max number of entities for supporting engines.
-*   -qbsp: big increase to most map limits.  No released engine supports this yet.  See https://github.com/qbism/qb2 for prototype code.
 
 4vis
 *   It works the same as always. -fast for a quick single pass.
@@ -98,9 +90,14 @@ Compile a model from individual .tri, .3ds, or .lwo frames. Example:
     //$frame walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8 walk9 walk10
     ...etc.
 
+# Test feature:  
+Extended map limits for larger or more detailed maps.  Several 16-bit data types are changed to 32-bit.  Lightmaps are higher res.  This feature requires a supporting engine.  See common/qfiles.h for differences in limits.
+
+Usage:  Add -qbsp to the 4bsp command line.  4vis and 4rad will detect QBSP automatically.  No released engine supports this yet.  See https://github.com/qbism/qb2 for prototype code.
+
 
 # Build from source:
-Linux-  Makefiles for 32-bit and 64-bit builds of Linux and Windows are included. Assuming a 64-bit build environment, packages lib32z1 and lib32z1-dev are needed to build 32-bit.
+Linux-  Makefiles for Linux and 64-bit Windows are included.
 
 Cross-compile- Required packages: mingw-w64, mingw-w64-i686-dev, gcc-multilib.  Pre-compiled Windows dependency libraries are included in /mgw-sdk (borrowed from Q2PRO SDK), or download and build them from scratch.
 
