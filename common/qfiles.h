@@ -270,7 +270,7 @@ typedef struct miptex_s {
 #define MAX_MAP_BRUSHSIDES_QBSP  4194304
 #define MAX_MAP_PORTALS_QBSP     1048576
 #define MAX_MAP_SURFEDGES_QBSP   4194304
-#define MAX_MAP_LIGHTING_QBSP    13631488
+#define MAX_MAP_LIGHTING_QBSP    54525952
 #define MAX_MAP_VISIBILITY_QBSP  0x8000000
 
 // key / value pair sizes
