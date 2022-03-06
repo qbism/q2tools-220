@@ -78,7 +78,7 @@ typedef struct passage_s {
     sep_t *planes;
 } passage_t;
 
-#define MAX_PORTALS_ON_LEAF 128
+#define MAX_PORTALS_ON_LEAF 1024 //qb: was 128
 typedef struct leaf_s {
     int32_t numportals;
     passage_t *passages;
