@@ -1011,6 +1011,7 @@ int32_t main(int32_t argc, char **argv) {
     printf("radmin      : %f\n", patch_cutoff);
     printf("subdiv      : %f\n", subdiv);
     printf("smooth angle: %f\n", smoothing_value);
+    printf("nudge       : %f\n", sample_nudge);
     printf("threads     : %d\n", numthreads);
 
     ThreadSetDefault();

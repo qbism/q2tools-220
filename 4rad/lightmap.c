@@ -109,8 +109,8 @@ void BuildFaceExtents(void) {
             vec_t *st_mins          = face_extents[face_index].st_mins;
             vec_t *st_maxs          = face_extents[face_index].st_maxs;
 
-            mins[0] = mins[1] = 999999;
-            maxs[0] = maxs[1] = -999999;
+            mins[0] = mins[1] = BOGUS_RANGE;
+            maxs[0] = maxs[1] = -BOGUS_RANGE;
 
             for (i = 0; i < s->numedges; i++) {
                 const int32_t e = dsurfedges[s->firstedge + i];
@@ -161,8 +161,8 @@ void BuildFaceExtents(void) {
             vec_t *st_mins          = face_extents[face_index].st_mins;
             vec_t *st_maxs          = face_extents[face_index].st_maxs;
 
-            mins[0] = mins[1] = 999999;
-            maxs[0] = maxs[1] = -999999;
+            mins[0] = mins[1] = BOGUS_RANGE;
+            maxs[0] = maxs[1] = -BOGUS_RANGE;
 
             for (i = 0; i < s->numedges; i++) {
                 const int32_t e = dsurfedges[s->firstedge + i];
@@ -878,7 +878,7 @@ void TriangulatePoints(triangulation_t *trian) {
         return;
 
     // find the two closest points
-    bestd = 9999;
+    bestd = BOGUS_RANGE;
     for (i = 0; i < trian->numpoints; i++) {
         p1 = trian->points[i]->origin;
         for (j = i + 1; j < trian->numpoints; j++) {
@@ -1034,7 +1034,7 @@ void SampleTriangulation(vec3_t point, triangulation_t *trian, triangle_t **last
     }
 
     // search for nearest point
-    best = 99999;
+    best = BOGUS_RANGE;
     p1   = NULL;
     for (j = 0; j < trian->numpoints; j++) {
         p0 = trian->points[j];
@@ -1102,8 +1102,8 @@ void CalcFaceExtents(lightinfo_t *l) {
         dface_tx *s;
         s       = l->faceX;
 
-        mins[0] = mins[1] = 999999;
-        maxs[0] = maxs[1] = -99999;
+        mins[0] = mins[1] = BOGUS_RANGE;
+        maxs[0] = maxs[1] = -BOGUS_RANGE;
 
         tex               = &texinfo[s->texinfo];
 
@@ -1130,8 +1130,8 @@ void CalcFaceExtents(lightinfo_t *l) {
         dface_t *s;
         s       = l->face;
 
-        mins[0] = mins[1] = 999999;
-        maxs[0] = maxs[1] = -99999;
+        mins[0] = mins[1] = BOGUS_RANGE;
+        maxs[0] = maxs[1] = -BOGUS_RANGE;
 
         tex               = &texinfo[s->texinfo];
 
@@ -1798,12 +1798,22 @@ static void LightContributionToPoint(directlight_t *l, vec3_t pos, int32_t noden
                 return; // behind light surface
 
             if (!noedgefix) {
+                if (use_qbsp) {  //qb: 4x lightmap res
+                if (dist >36) // qb: edge lighting fix- don't drop off right away
+                    scale = (l->intensity / ((dist - 15) * (dist - 15))) * dot * dot2;
+                else if (dist > 16)
+                    scale = (l->intensity / (dist - 7)) * dot * dot2;
+                else
+                    scale = l->intensity * dot * dot2;
+                } else {                
                 if (dist > 18) // qb: edge lighting fix- don't drop off right away
                     scale = (l->intensity / ((dist - 15) * (dist - 15))) * dot * dot2;
                 else if (dist > 8)
                     scale = (l->intensity / (dist - 7)) * dot * dot2;
                 else
                     scale = l->intensity * dot * dot2;
+                }
+
             } else
                 scale = (l->intensity / (dist * dist)) * dot * dot2;
             break;

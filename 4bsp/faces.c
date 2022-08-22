@@ -91,7 +91,7 @@ unsigned HashVec(vec3_t vec) {
 
     return y * HASH_SIZE + x;
 }
-vec_t g_min_vertex_diff_sq = 99999.9f; // jitdebug
+vec_t g_min_vertex_diff_sq = BOGUS_RANGE; // jitdebug
 vec3_t g_min_vertex_pos;               // jitdebug
 
 /*
@@ -770,8 +770,8 @@ void SubdivideFace(node_t *node, face_t *f) {
 
     for (axis = 0; axis < 2; axis++) {
         while (1) {
-            mins = 999999;
-            maxs = -999999;
+            mins = BOGUS_RANGE;
+            maxs = -BOGUS_RANGE;
 
             VectorCopy(tex->vecs[axis], temp);
             w = f->w;

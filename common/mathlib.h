@@ -28,7 +28,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <math.h>
 
 // big enough without being so big we get major floating point errors.
-#define BOGUS_RANGE ((1 << 14) << 1)
+#define BOGUS_RANGE (1 << 20) //qb: to comply with 24-bit 20.3 network max.  1048576
 
 #ifdef BSP          // only do this for qbsp, leads to stack overflows on qrad3.
 #define DOUBLEVEC_T // jit - might as well be more accurate, and sometimes doubles are even faster on modern hardware, anyway...

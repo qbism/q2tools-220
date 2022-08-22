@@ -1059,7 +1059,7 @@ void GrabFrame(char *frame) {
         VectorScale(vnorms[i].normalsum, 1.0 / c, v);
         VectorNormalize(v, v);
 
-        maxdot      = -999999.0;
+        maxdot      = -BOGUS_RANGE;
         maxdotindex = -1;
 
         for (j = 0; j < NUMVERTEXNORMALS; j++) {
