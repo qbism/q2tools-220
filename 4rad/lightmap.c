@@ -130,9 +130,29 @@ void BuildFaceExtents(void) {
                     }
                 }
 
+                /* qb:  from ericw-tools light/ltface.cc:
+                 * The (long double) casts below are important: The original code
+                 * was written for x87 floating-point which uses 80-bit floats for
+                 * intermediate calculations. But if you compile it without the
+                 * casts for modern x86_64, the compiler will round each
+                 * intermediate result to a 32-bit float, which introduces extra
+                 * rounding error.
+                 *
+                 * This becomes a problem if the rounding error causes the light
+                 * utilities and the engine to disagree about the lightmap size
+                 * for some surfaces.
+                 *
+                 * Casting to (long double) keeps the intermediate values at at
+                 * least 64 bits of precision, probably 128.
+                 */
+
                 for (j = 0; j < 2; j++) // calculate st_mins, st_maxs
                 {
-                    const vec_t val = DotProduct(v->point, tex->vecs[j]) + tex->vecs[j][3];
+                    // const vec_t val = DotProduct(v->point, tex->vecs[j]) + tex->vecs[j][3];
+                    const vec_t val = (long double)v->point[0] * tex->vecs[j][0] +
+                                      (long double)v->point[1] * tex->vecs[j][1] +
+                                      (long double)v->point[2] * tex->vecs[j][2] +
+                                      tex->vecs[j][3];
                     if (val < st_mins[j]) {
                         st_mins[j] = val;
                     }
@@ -184,7 +204,11 @@ void BuildFaceExtents(void) {
 
                 for (j = 0; j < 2; j++) // calculate st_mins, st_maxs
                 {
-                    const vec_t val = DotProduct(v->point, tex->vecs[j]) + tex->vecs[j][3];
+                    // const vec_t val = DotProduct(v->point, tex->vecs[j]) + tex->vecs[j][3];
+                    const vec_t val = (long double)v->point[0] * tex->vecs[j][0] +
+                                      (long double)v->point[1] * tex->vecs[j][1] +
+                                      (long double)v->point[2] * tex->vecs[j][2] +
+                                      tex->vecs[j][3];
                     if (val < st_mins[j]) {
                         st_mins[j] = val;
                     }
@@ -192,6 +216,7 @@ void BuildFaceExtents(void) {
                         st_maxs[j] = val;
                     }
                 }
+   
             }
 
             for (i = 0; i < 3; i++) // calculate center
@@ -1798,20 +1823,20 @@ static void LightContributionToPoint(directlight_t *l, vec3_t pos, int32_t noden
                 return; // behind light surface
 
             if (!noedgefix) {
-                if (use_qbsp) {  //qb: 4x lightmap res
-                if (dist >36) // qb: edge lighting fix- don't drop off right away
-                    scale = (l->intensity / ((dist - 15) * (dist - 15))) * dot * dot2;
-                else if (dist > 16)
-                    scale = (l->intensity / (dist - 7)) * dot * dot2;
-                else
-                    scale = l->intensity * dot * dot2;
-                } else {                
-                if (dist > 18) // qb: edge lighting fix- don't drop off right away
-                    scale = (l->intensity / ((dist - 15) * (dist - 15))) * dot * dot2;
-                else if (dist > 8)
-                    scale = (l->intensity / (dist - 7)) * dot * dot2;
-                else
-                    scale = l->intensity * dot * dot2;
+                if (use_qbsp) {    // qb: 4x lightmap res
+                    if (dist > 36) // qb: edge lighting fix- don't drop off right away
+                        scale = (l->intensity / ((dist - 15) * (dist - 15))) * dot * dot2;
+                    else if (dist > 16)
+                        scale = (l->intensity / (dist - 7)) * dot * dot2;
+                    else
+                        scale = l->intensity * dot * dot2;
+                } else {
+                    if (dist > 18) // qb: edge lighting fix- don't drop off right away
+                        scale = (l->intensity / ((dist - 15) * (dist - 15))) * dot * dot2;
+                    else if (dist > 8)
+                        scale = (l->intensity / (dist - 7)) * dot * dot2;
+                    else
+                        scale = l->intensity * dot * dot2;
                 }
 
             } else
