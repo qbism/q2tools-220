@@ -73,7 +73,7 @@ Example- a map in baseq2 using textures from 3tctf (Linux format):
 ./4rad -basedir 3tctf baseq2/maps/mymap
 
 In a custom mod folder:
-.ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd/4rad -basedir 3tctf mymod/maps/mymap
+./4rad -basedir 3tctf mymod/maps/mymap
 
 4rad will look for textures in basedir first (3tctf) then in moddir (mymod). It only looks for colormap.pcx in moddir/pics. I think that is required because it's the only place the game will look.
 
