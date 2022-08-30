@@ -62,10 +62,20 @@ radiosity
 *   -maxmapdata sets lightng memory limit.  Original is 0x200000 and it can be set up to 0x800000 (8388608).  Requires an engine that supports the higher limit.
 *	-saturation applies to light reflected from surfaces.  Values < 1.0 desaturate.  Values >1.0 oversaturate. 
 *   Any tga replacement textures found will be used for radiosity.
-*   -basedir sets the base directory.  Use this if modding other than baseq2.  Defaults to baseq2.
 *   -sunradscale sets sky radiosity scale when the sun (directional lighting) is active.  Default is 0.5.
 *   -nudge sets the fractional distance from face center when extra lighting samples are used (-extra).  Default is 0.25.
 *   _falloff property values; intensity - distance), 1 (inverse; intensity/distance), 2 (inverse-square; intensity/dist*dist)  default: 0  Note that inverse and inverse-square falloff require very high brightness values to be visible.
+*   -basedir sets the base directory.  Use this if modding other than baseq2.  Defaults to baseq2.
+# Regarding 4rad exe location and -basedir:
+4rad must be in gamedir (usually quake2) to work as intended. qdir, gamedir, and moddir are automatically determined. -basedir may be set from the command line.
+
+Example- a map in baseq2 using textures from 3tctf (Linux format):
+./4rad -basedir 3tctf baseq2/maps/mymap
+
+In a custom mod folder:
+.ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd/4rad -basedir 3tctf mymod/maps/mymap
+
+4rad will look for textures in basedir first (3tctf) then in moddir (mymod). It only looks for colormap.pcx in moddir/pics. I think that is required because it's the only place the game will look.
 
 
 4data
