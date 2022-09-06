@@ -858,7 +858,9 @@ int32_t main(int32_t argc, char **argv) {
                    "Usage: 4rad [options] [mapname]\n\n"
                    "    -ambient #: Minimum light level.\n"
                    "         range:  0 to 255.\n"
-                   "    -basedir [directory] :The base (mod) directory for textures.\n"
+                   "    -basedir [directory] :The base directory for textures.\n"
+                   "    -gamedir: Set game directory (folder with game executable).\n"
+                   "    -moddir: Set mod directory (base folder).\n"
                    "    -bounce #: Max number of light bounces for radiosity.\n"
                    "    -dice: Subdivide patches with a global grid rather than per patch.\n"
                    "    -direct #: Direct light scale factor.\n"
@@ -913,7 +915,18 @@ int32_t main(int32_t argc, char **argv) {
         {
             strcpy(basedir, (argv[i + 1]));
             i++;
-        } else if ((!strcmp(argv[i], "-chop")) || (!strcmp(argv[i], "-subdiv"))) {
+        }
+
+        // qb:  set gamedir and moddir
+        else if (!strcmp(argv[i], "-gamedir")) {
+            strcpy(gamedir, argv[i + 1]);
+            i++;
+        } else if (!strcmp(argv[i], "-moddir")) {
+            strcpy(moddir, argv[i + 1]);
+            i++;
+        }
+
+        else if ((!strcmp(argv[i], "-chop")) || (!strcmp(argv[i], "-subdiv"))) {
             subdiv = atoi(argv[i + 1]);
             if (subdiv < 16) {
                 subdiv = 16;
@@ -987,12 +1000,13 @@ int32_t main(int32_t argc, char **argv) {
 
     if (i != argc - 1) {
         printf("Usage: 4rad [options] [mapname]\n"
-               "    -ambient #            -basedir            -bounce #\n"
+               "    -ambient #            -basedir [dir]      -bounce #\n"
                "    -dice                 -direct #           -entity #\n"
                "    -extra                -help               -maxdata #\n"
                "    -maxlight #           -noedgefix          -nudge #\n"
                "    -saturate #           -scale #            -smooth #\n"
                "    -subdiv               -sunradscale #      -threads #\n"
+               "    -gamedir [dir]        -moddir [dir]\n"
                "Debugging tools:\n"
                "    -dump                 -noblock            -nopvs\n"
                "    -savetrace            -tmpin              -tmpout\n"

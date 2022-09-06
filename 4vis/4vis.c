@@ -489,6 +489,8 @@ int32_t main(int32_t argc, char **argv) {
                    "    -threads #: number of CPU threads to use\n"
                    "    -tmpin: read map from 'tmp' folder\n"
                    "    -tmpout: write map to 'tmp' folder\n"
+                   "    -gamedir: Set game directory (folder with game executable).\n"
+                   "    -moddir: Set mod directory (base folder).\n"
                    "    -v: extra verbose console output\n\n");
             printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 4vis HELP >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
             exit(1);
@@ -501,7 +503,18 @@ int32_t main(int32_t argc, char **argv) {
         } else if (!strcmp(argv[i], "-nosort")) {
             printf("nosort = true\n");
             nosort = true;
-        } else if (!strcmp(argv[i], "-tmpin"))
+        }
+
+        // qb:  set gamedir and moddir
+        else if (!strcmp(argv[i], "-gamedir")) {
+            strcpy(gamedir, argv[i + 1]);
+            i++;
+        } else if (!strcmp(argv[i], "-moddir")) {
+            strcpy(moddir, argv[i + 1]);
+            i++;
+        }
+
+        else if (!strcmp(argv[i], "-tmpin"))
             strcpy(inbase, "/tmp");
         else if (!strcmp(argv[i], "-tmpout"))
             strcpy(outbase, "/tmp");

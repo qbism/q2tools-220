@@ -26,30 +26,30 @@ extern float sublight_size;
 char source[1024];
 char name[1024];
 
-vec_t microvolume = 0.02f; // jit - was 1.0, but this messes up small brushes
-qboolean noprune = false;
-qboolean glview = false;
-qboolean nodetail = false;
-qboolean fulldetail = false;
-qboolean onlyents = false;
-qboolean nomerge = false;
-qboolean nowater = false;
-qboolean nocsg = false;
-qboolean noweld = false;
-qboolean noshare = false;
-qboolean nosubdiv = false;
-qboolean notjunc = false;
-qboolean leaktest = false;
+vec_t microvolume        = 0.02f; // jit - was 1.0, but this messes up small brushes
+qboolean noprune         = false;
+qboolean glview          = false;
+qboolean nodetail        = false;
+qboolean fulldetail      = false;
+qboolean onlyents        = false;
+qboolean nomerge         = false;
+qboolean nowater         = false;
+qboolean nocsg           = false;
+qboolean noweld          = false;
+qboolean noshare         = false;
+qboolean nosubdiv        = false;
+qboolean notjunc         = false;
+qboolean leaktest        = false;
 qboolean badnormal_check = false;
-qboolean origfix = true; // default to true
+qboolean origfix         = true; // default to true
 
 int32_t block_xl = -8, block_xh = 7, block_yl = -8, block_yh = 7;
 
 int32_t entity_num;
 
 int32_t max_entities = MAX_MAP_ENTITIES; // qb: from kmqbsp3- Knightmare- adjustable entity limit
-int32_t max_bounds = DEFAULT_MAP_SIZE;   // Knightmare- adjustable max bounds
-int32_t block_size = 1024;               // Knightmare- adjustable block size
+int32_t max_bounds   = DEFAULT_MAP_SIZE; // Knightmare- adjustable max bounds
+int32_t block_size   = 1024;             // Knightmare- adjustable block size
 
 node_t *block_nodes[10][10];
 
@@ -69,7 +69,7 @@ node_t *BlockTree(int32_t xl, int32_t yl, int32_t xh, int32_t yh) {
         node = block_nodes[xl + 5][yl + 5];
         if (!node) {
             // return an empty leaf
-            node = AllocNode();
+            node           = AllocNode();
             node->planenum = PLANENUM_LEAF;
             node->contents = 0; // CONTENTS_SOLID;
             return node;
@@ -82,21 +82,21 @@ node_t *BlockTree(int32_t xl, int32_t yl, int32_t xh, int32_t yh) {
 
     if (xh - xl > yh - yl) {
         // split x axis
-        mid = xl + (xh - xl) / 2 + 1;
-        normal[0] = 1;
-        normal[1] = 0;
-        normal[2] = 0;
-        dist = mid * block_size;
-        node->planenum = FindFloatPlane(normal, dist, 0);
+        mid               = xl + (xh - xl) / 2 + 1;
+        normal[0]         = 1;
+        normal[1]         = 0;
+        normal[2]         = 0;
+        dist              = mid * block_size;
+        node->planenum    = FindFloatPlane(normal, dist, 0);
         node->children[0] = BlockTree(mid, yl, xh, yh);
         node->children[1] = BlockTree(xl, yl, mid - 1, yh);
     } else {
-        mid = yl + (yh - yl) / 2 + 1;
-        normal[0] = 0;
-        normal[1] = 1;
-        normal[2] = 0;
-        dist = mid * block_size;
-        node->planenum = FindFloatPlane(normal, dist, 0);
+        mid               = yl + (yh - yl) / 2 + 1;
+        normal[0]         = 0;
+        normal[1]         = 1;
+        normal[2]         = 0;
+        dist              = mid * block_size;
+        node->planenum    = FindFloatPlane(normal, dist, 0);
         node->children[0] = BlockTree(xl, mid, xh, yh);
         node->children[1] = BlockTree(xl, yl, xh, mid - 1);
     }
@@ -133,9 +133,9 @@ void ProcessBlock_Thread(int32_t blocknum) {
     // the makelist and chopbrushes could be cached between the passes...
     brushes = MakeBspBrushList(brush_start, brush_end, mins, maxs);
     if (!brushes) {
-        node = AllocNode();
-        node->planenum = PLANENUM_LEAF;
-        node->contents = CONTENTS_SOLID;
+        node                                = AllocNode();
+        node->planenum                      = PLANENUM_LEAF;
+        node->contents                      = CONTENTS_SOLID;
         block_nodes[xblock + 5][yblock + 5] = node;
         return;
     }
@@ -143,7 +143,7 @@ void ProcessBlock_Thread(int32_t blocknum) {
     if (!nocsg)
         brushes = ChopBrushes(brushes);
 
-    tree = BrushBSP(brushes, mins, maxs);
+    tree                                = BrushBSP(brushes, mins, maxs);
 
     block_nodes[xblock + 5][yblock + 5] = tree->headnode;
 }
@@ -160,11 +160,11 @@ void ProcessWorldModel(void) {
     qboolean leaked;
     qboolean optimize;
 
-    e = &entities[entity_num];
+    e           = &entities[entity_num];
 
     brush_start = e->firstbrush;
-    brush_end = brush_start + e->numbrushes;
-    leaked = false;
+    brush_end   = brush_start + e->numbrushes;
+    leaked      = false;
 
     //
     // perform per-block operations
@@ -201,16 +201,16 @@ void ProcessWorldModel(void) {
 
         qprintf("--------------------------------------------\n");
 
-        tree = AllocTree();
+        tree           = AllocTree();
         tree->headnode = BlockTree(block_xl - 1, block_yl - 1, block_xh + 1, block_yh + 1);
 
-        tree->mins[0] = (block_xl)*block_size;
-        tree->mins[1] = (block_yl)*block_size;
-        tree->mins[2] = map_mins[2] - 8;
+        tree->mins[0]  = (block_xl)*block_size;
+        tree->mins[1]  = (block_yl)*block_size;
+        tree->mins[2]  = map_mins[2] - 8;
 
-        tree->maxs[0] = (block_xh + 1) * block_size;
-        tree->maxs[1] = (block_yh + 1) * block_size;
-        tree->maxs[2] = map_maxs[2] + 8;
+        tree->maxs[0]  = (block_xh + 1) * block_size;
+        tree->maxs[1]  = (block_yh + 1) * block_size;
+        tree->maxs[2]  = map_maxs[2] + 8;
 
         //
         // perform the global operations
@@ -265,14 +265,14 @@ void ProcessSubModel(void) {
     bspbrush_t *list;
     vec3_t mins, maxs;
 
-    e = &entities[entity_num];
+    e       = &entities[entity_num];
 
-    start = e->firstbrush;
-    end = start + e->numbrushes;
+    start   = e->firstbrush;
+    end     = start + e->numbrushes;
 
     mins[0] = mins[1] = mins[2] = -max_bounds;
     maxs[0] = maxs[1] = maxs[2] = max_bounds;
-    list = MakeBspBrushList(start, end, mins, maxs);
+    list                        = MakeBspBrushList(start, end, mins, maxs);
     if (!nocsg)
         list = ChopBrushes(list);
     tree = BrushBSP(list, mins, maxs);
@@ -339,6 +339,8 @@ int32_t main(int32_t argc, char **argv) {
                    "        Suggested range: 0.02 - 1.0\n"
                    "    -nosubdiv: Disable subdivision.\n"
                    "    -qbsp: Greatly expanded map and entity limits for supporting engines.\n"
+                   "    -gamedir: Set game directory (folder with game executable).\n"
+                   "    -moddir: Set mod directory (base folder).\n"
                    //                   "    -threads #: number of CPU threads to use\n"
                    "Debugging tools:\n"
                    "    -block # #: Division tree block size, square\n"
@@ -414,10 +416,10 @@ int32_t main(int32_t argc, char **argv) {
         // qb: qbsp
         else if (!strcmp(argv[i], "-qbsp")) {
             printf("use_qbsp = true\n");
-            use_qbsp = true;
+            use_qbsp     = true;
             max_entities = MAX_MAP_ENTITIES_QBSP;
-            max_bounds = MAX_MAP_SIZE;
-            block_size = MAX_BLOCK_SIZE; // qb: otherwise limits map range
+            max_bounds   = MAX_MAP_SIZE;
+            block_size   = MAX_BLOCK_SIZE; // qb: otherwise limits map range
         } else if (!strcmp(argv[i], "-noskipfix")) {
             printf("noskipfix = true\n");
             noskipfix = true;
@@ -433,6 +435,15 @@ int32_t main(int32_t argc, char **argv) {
                 block_size = MAX_BLOCK_SIZE; // qb: otherwise limits map range
                 printf("largebounds: using max bound size of %i\n", MAX_MAP_SIZE);
             }
+        }
+
+        // qb:  set gamedir and moddir
+        else if (!strcmp(argv[i], "-gamedir")) {
+            strcpy(gamedir, argv[i + 1]);
+            i++;
+        } else if (!strcmp(argv[i], "-moddir")) {
+            strcpy(moddir, argv[i + 1]);
+            i++;
         }
 
         else if ((!strcmp(argv[i], "-chop")) || (!strcmp(argv[i], "-subdiv"))) {
@@ -494,7 +505,7 @@ int32_t main(int32_t argc, char **argv) {
                "Usage: 4bsp [options] [mapname]\n"
                "    -chop #                  -choplight #         -help\n"
                "    -largebounds             -micro #             -nosubdiv\n"
-               "    -qbsp\n"
+               "    -qbsp                    -gamedir             -moddir\n"
                "Debugging tools:             -block # #           -blocks # # # #\n"
                "    -blocksize #             -fulldetail          -leaktest\n"
                "    -nocsg                   -nodetail            -nomerge\n"
