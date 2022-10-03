@@ -30,7 +30,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 #define INTEGRAL_EPSILON 0.01
-#define POINT_EPSILON 0.1 // qb: was 0.5. fix by tapir to 0.1 via jdolan on insideqc.
+
+// qb: was 0.5. fix by tapir to 0.1 via jdolan on insideqc.
+//qb: update- 0.1 causes gaps. Possibly just needs to be slightly less than OFF_EPSILON
+#define POINT_EPSILON 0.49 
+
 #define OFF_EPSILON 0.5
 
 extern brush_texture_t side_brushtextures[MAX_MAP_SIDES]; // qb: kmbsp3: caulk

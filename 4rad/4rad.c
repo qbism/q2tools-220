@@ -42,7 +42,6 @@ vec3_t face_offset[MAX_MAP_FACES_QBSP]; // for rotating bmodels
 dplane_t backplanes[MAX_MAP_PLANES_QBSP];
 
 char inbase[32], outbase[32];
-char basedir[64] = "baseq2"; // qb; default
 
 int32_t fakeplanes; // created planes for origin offset
 
@@ -835,6 +834,7 @@ int32_t main(int32_t argc, char **argv) {
     int32_t i;
     double start, end;
     char name[1060];
+    char tgamedir[1024] = "", tbasedir[1024] = "", tmoddir[1024] = "";
 
     printf("\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 4rad >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
     printf("radiosity compiler build " __DATE__ "\n");
@@ -858,9 +858,9 @@ int32_t main(int32_t argc, char **argv) {
                    "Usage: 4rad [options] [mapname]\n\n"
                    "    -ambient #: Minimum light level.\n"
                    "         range:  0 to 255.\n"
-                   "    -basedir [directory] :The base directory for textures.\n"
-                   "    -gamedir: Set game directory (folder with game executable).\n"
-                   "    -moddir: Set mod directory (base folder).\n"
+                   "    -moddir [path]: Set a mod directory. Default is parent dir of map file.\n"
+                   "    -basedir [path]: Set the directory for assets not in moddir. Default is moddir.\n"
+                   "    -gamedir [path]: Set game directory, the folder with game executable.\n"
                    "    -bounce #: Max number of light bounces for radiosity.\n"
                    "    -dice: Subdivide patches with a global grid rather than per patch.\n"
                    "    -direct #: Direct light scale factor.\n"
@@ -904,25 +904,23 @@ int32_t main(int32_t argc, char **argv) {
         } else if (!strcmp(argv[i], "-threads")) {
             numthreads = atoi(argv[i + 1]);
             i++;
-        } else if (!strcmp(argv[i], "-maxdata")) // qb: allows increase for modern engines
-        {
+        } else if (!strcmp(argv[i], "-maxdata")) { // qb: allows increase for some engines
             maxdata = atoi(argv[i + 1]);
             i++;
             if (maxdata > DEFAULT_MAP_LIGHTING) {
                 printf("lighting maxdata (%i) exceeds typical limit (%i).\n", maxdata, DEFAULT_MAP_LIGHTING);
             }
-        } else if (!strcmp(argv[i], "-basedir")) // qb: secondary dir for texture search
-        {
-            strcpy(basedir, (argv[i + 1]));
-            i++;
         }
 
-        // qb:  set gamedir and moddir
+        // qb:  set gamedir, moddir, and basedir
         else if (!strcmp(argv[i], "-gamedir")) {
-            strcpy(gamedir, argv[i + 1]);
+            strcpy(tgamedir, argv[i + 1]);
+            i++;
+        } else if (!strcmp(argv[i], "-basedir")) {
+            strcpy(tbasedir, argv[i + 1]);
             i++;
         } else if (!strcmp(argv[i], "-moddir")) {
-            strcpy(moddir, argv[i + 1]);
+            strcpy(tmoddir, argv[i + 1]);
             i++;
         }
 
@@ -1000,13 +998,13 @@ int32_t main(int32_t argc, char **argv) {
 
     if (i != argc - 1) {
         printf("Usage: 4rad [options] [mapname]\n"
-               "    -ambient #            -basedir [dir]      -bounce #\n"
+               "    -ambient #            -bounce #\n"
                "    -dice                 -direct #           -entity #\n"
                "    -extra                -help               -maxdata #\n"
                "    -maxlight #           -noedgefix          -nudge #\n"
                "    -saturate #           -scale #            -smooth #\n"
                "    -subdiv               -sunradscale #      -threads #\n"
-               "    -gamedir [dir]        -moddir [dir]\n"
+               "    -gamedir [path]       -basedir [path]     -moddir [path]\n"
                "Debugging tools:\n"
                "    -dump                 -noblock            -nopvs\n"
                "    -savetrace            -tmpin              -tmpout\n"
@@ -1035,8 +1033,28 @@ int32_t main(int32_t argc, char **argv) {
     smoothing_threshold = (float)cos(smoothing_value * (Q_PI / 180.0));
 
     SetQdirFromPath(argv[i]);
-    printf("qdir = %s\n", qdir);
+
+    if (strcmp(tmoddir, "")) {
+        strcpy(moddir, tmoddir);
+        Q_pathslash(moddir);
+        strcpy(basedir, moddir);
+    }
+    if (strcmp(tbasedir, "")) {
+        strcpy(basedir, tbasedir);
+        Q_pathslash(basedir);
+        if (!strcmp(tmoddir, ""))
+            strcpy(moddir, basedir);
+    }
+    if (strcmp(tgamedir, "")) {
+        strcpy(gamedir, tgamedir);
+        Q_pathslash(gamedir);
+    }
+
+    // qb: display dirs
+    printf("moddir = %s\n", moddir);
+    printf("basedir = %s\n", basedir);
     printf("gamedir = %s\n", gamedir);
+
     strcpy(source, ExpandArg(argv[i]));
 
     StripExtension(source);

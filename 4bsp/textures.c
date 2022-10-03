@@ -59,10 +59,10 @@ int32_t FindMiptex(char *name) {
 
     if (mod_fail) {
         // load the miptex to get the flags and values
-        sprintf(path, "%s%s", gamedir, pakpath);
+        sprintf(path, "%s%s", basedir, pakpath);
 
         if (TryLoadFile(path, (void **)&mt, false) != -1 ||
-            TryLoadFileFromPak(pakpath, (void **)&mt, gamedir) != -1) {
+            TryLoadFileFromPak(pakpath, (void **)&mt, basedir) != -1) {
             textureref[i].value    = LittleLong(mt->value);
             textureref[i].flags    = LittleLong(mt->flags);
             textureref[i].contents = LittleLong(mt->contents);

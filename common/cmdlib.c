@@ -160,18 +160,20 @@ void qprintf(char *format, ...) {
     fflush(stdout);
 }
 
-// qb: from AAtools
+// qb: similar to AAtools, except basedir defaults to moddir
 /*
  * Path determination
  *
  * assumes
  *   moddir is parent of whatever directory contains the .map/.bsp
+ *   basedir is moddir
  *   gamedir is parent of moddir
  *   qdir is parent of gamedir
  */
 char qdir[1024]    = "";
 char gamedir[1024] = "";
 char moddir[1024]  = "";
+char basedir[1024] = "";
 
 void SetQdirFromPath(char *path) {
     char cwd_map[512];
@@ -202,6 +204,8 @@ void SetQdirFromPath(char *path) {
 #else
     strcat(moddir, "../");
 #endif
+
+    strcpy(basedir, moddir);
 
     strcpy(gamedir, moddir);
 #ifdef WIN32
@@ -285,6 +289,23 @@ double I_FloatTime(void) {
 	}
 
 	return (tp.tv_sec - secbase) + tp.tv_usec / 1000000.0;
+#endif
+}
+
+void Q_pathslash(char *out) { // qb: added
+    qboolean lastslash;
+
+#ifdef WIN32
+    lastslash = (*out && out[strlen(out + 1)] == '\\');
+    // I believe Win32 can use either slash type. -Max
+    if (!lastslash)
+#endif
+        lastslash = (*out && out[strlen(out + 1)] == '/');
+    if (!lastslash)
+#ifdef WIN32
+        strcat(out, "\\");
+#else
+        strcat(out, "/");
 #endif
 }
 

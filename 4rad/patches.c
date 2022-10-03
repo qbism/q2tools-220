@@ -58,10 +58,15 @@ void CalcTextureReflectivity(void) {
 
     wal_tex = false;
 
-    sprintf(path, "%spics/colormap.pcx", moddir); // qb: was gamedir
-
     // get the game palette
-    Load256Image(path, NULL, &palette, NULL, NULL);
+    // qb: looks in moddir then basedir
+    sprintf(path, "%spics/colormap.pcx", moddir);
+    if (FileExists(path)) {
+        Load256Image(path, NULL, &palette, NULL, NULL);
+    } else {
+        sprintf(path, "%spics/colormap.pcx", basedir);
+        Load256Image(path, NULL, &palette, NULL, NULL);
+    }
 
     // always set index 0 even if no textures
     texture_reflectivity[0][0] = 0.5;
@@ -88,31 +93,31 @@ void CalcTextureReflectivity(void) {
             continue;
 
         // buffer is RGBA  (A  set to 255 for 24 bit format)
-        // looks in moddir then base dir
+        // qb: looks in moddir then basedir
         sprintf(path, "%stextures/%s.tga", moddir, texinfo[i].texture);
         if (FileExists(path)) // LoadTGA expects file to exist
         {
             LoadTGA(path, &pbuffer, &width, &height); // load rgba data
             qprintf("load %s\n", path);
         } else {
-            sprintf(path, "%s%s/textures/%s.tga", gamedir, basedir, texinfo[i].texture);
-            if (FileExists(path)) {
-                LoadTGA(path, &pbuffer, &width, &height); // load rgba data
-                qprintf("load %s from %s\n", path, basedir);
-            } else {
-                // look for wal file in moddir
-                sprintf(path, "%stextures/%s.wal", moddir, texinfo[i].texture);
-                qprintf("attempting %s\n", path);
+            // look for wal file in moddir
+            sprintf(path, "%stextures/%s.wal", moddir, texinfo[i].texture);
+            qprintf("attempting %s\n", path);
 
-                // load the miptex to get the flags and values
-                if (FileExists(path)) // qb: linux segfault if not exist
-                {
-                    if (TryLoadFile(path, (void **)&mt, false) != -1)
-                        wal_tex = true;
+            // load the miptex to get the flags and values
+            if (FileExists(path)) // qb: linux segfault if not exist
+            {
+                if (TryLoadFile(path, (void **)&mt, false) != -1)
+                    wal_tex = true;
+            } else {
+                // look for TGA in basedir            sprintf(path, "%stextures/%s.tga", basedir, texinfo[i].texture);
+                if (FileExists(path)) {
+                    LoadTGA(path, &pbuffer, &width, &height); // load rgba data
+                    qprintf("load %s\n", path);
                 } else {
                     // look for wal file in base dir
-                    sprintf(path, "%s%s/textures/%s.wal", gamedir, basedir, texinfo[i].texture);
-                    qprintf("attempting %s from %s\n", path, basedir);
+                    sprintf(path, "%stextures/%s.wal", basedir, texinfo[i].texture);
+                    qprintf("load %s\n", path);
 
                     // load the miptex to get the flags and values
                     if (FileExists(path)) // qb: linux segfault if not exist

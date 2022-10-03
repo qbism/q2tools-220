@@ -50,6 +50,7 @@ char *strtoupper(char *in);
 char *strlower(char *in);
 int32_t Q_strncasecmp(char *s1, char *s2, int32_t n);
 int32_t Q_strcasecmp(char *s1, char *s2);
+void Q_pathslash(char *out); //qb: added
 void Q_getwd(char *out);
 
 int32_t Q_filelength(FILE *f);
@@ -59,6 +60,7 @@ void Q_mkdir(char *path);
 
 extern char qdir[1024];
 extern char gamedir[1024];
+extern char basedir[1024];
 extern char moddir[1024];
 void SetQdirFromPath(char *path);
 char *ExpandArg(char *path);  // from cmd line

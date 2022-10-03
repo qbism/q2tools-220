@@ -35,14 +35,28 @@ radiosity
 *   Add face for vertex normal (vluzacn VHLT)
 *   Add -nudge to adjust sample nudge distance for -extra (qbism)
 *   Add -dice to subdivide patches with a global grid rather than per patch
-*	File path determination asumptions (Alien Arena tools):
+*	File path determination asumptions:
     *   moddir is parent of whatever directory contains the .map/.bsp
+    *   basedir is moddir unless set explicitly
     *   gamedir is parent of moddir
     *   qdir is parent of gamedir	
 	
 4data
 *	LWO support (KDT)
 
+Directory commands (applies to all tools)
+*   -moddir:  Set a mod directory.  Default is parent directory of the map file.
+*   -basedir: Set the base data directory for assets not found in moddir.  Default is moddir.
+*   -gamedir: Set game directory, the folder with game executable.  Default is parent of basedir.
+
+Example from aapokaapo:
+My editor is in C:/Games/Trenchbroom/
+My '.map'-files are in C:/Games/Trenchbroom/maps
+My compilers are in C:/Games/Trenchbroom/tools/
+My game/modfiles are in C:/Games/Paintball2/pball/ (my baseq2 dir)
+
+../Trenchbroom/tools/4rad -basedir C:/Games/Paintball2/pball -gamedir C:/Games/Paintball2 ../Trenchbroom/maps/mymap
+=> Compiler finds all the game files and compiles the map correctly
 
 # Notes:
 
@@ -56,7 +70,6 @@ radiosity
 4vis
 *   It works the same as always. -fast for a quick single pass.
 
-
 4rad
 *   -smooth sets the angle (in degrees) for autophong. Applies to convex and concave corners. Corners between (angle) and (180-angle) will not be phonged.  Default is 44, so it will phong a 9-sided or more prism, but not 8-sided.  Set to zero to disable.
 *   -maxmapdata sets lightng memory limit.  Original is 0x200000 and it can be set up to 0x800000 (8388608).  Requires an engine that supports the higher limit.
@@ -65,18 +78,6 @@ radiosity
 *   -sunradscale sets sky radiosity scale when the sun (directional lighting) is active.  Default is 0.5.
 *   -nudge sets the fractional distance from face center when extra lighting samples are used (-extra).  Default is 0.25.
 *   _falloff property values; intensity - distance), 1 (inverse; intensity/distance), 2 (inverse-square; intensity/dist*dist)  default: 0  Note that inverse and inverse-square falloff require very high brightness values to be visible.
-*   -basedir sets the base directory.  Use this if modding other than baseq2.  Defaults to baseq2.
-# Regarding 4rad exe location and -basedir:
-4rad must be in gamedir (usually quake2) to work as intended. qdir, gamedir, and moddir are automatically determined. -basedir may be set from the command line.
-
-Example- a map in baseq2 using textures from 3tctf (Linux format):
-./4rad -basedir 3tctf baseq2/maps/mymap
-
-In a custom mod folder:
-./4rad -basedir 3tctf mymod/maps/mymap
-
-4rad will look for textures in basedir first (3tctf) then in moddir (mymod). It only looks for colormap.pcx in moddir/pics. I think that is required because it's the only place the game will look.
-
 
 4data
 *   Runs a script file to convert assets to Q2 data types.  This example creates the colormap:

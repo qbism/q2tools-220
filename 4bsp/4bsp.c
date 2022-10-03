@@ -315,7 +315,8 @@ main
 */
 int32_t main(int32_t argc, char **argv) {
     int32_t i;
-    char path[2053] = "";
+    char path[2053]     = "";
+    char tgamedir[1024] = "", tbasedir[1024] = "", tmoddir[1024] = "";
 
     printf("\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 4bsp >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
     printf("BSP compiler build " __DATE__ "\n");
@@ -339,9 +340,10 @@ int32_t main(int32_t argc, char **argv) {
                    "        Suggested range: 0.02 - 1.0\n"
                    "    -nosubdiv: Disable subdivision.\n"
                    "    -qbsp: Greatly expanded map and entity limits for supporting engines.\n"
-                   "    -gamedir: Set game directory (folder with game executable).\n"
-                   "    -moddir: Set mod directory (base folder).\n"
-                   //                   "    -threads #: number of CPU threads to use\n"
+                   "    -moddir [path]: Set a mod directory. Default is parent dir of map file.\n"
+                   "    -basedir [path]: Set the directory for assets not in moddir. Default is moddir.\n"
+                   "    -gamedir [path]: Set game directory, the folder with game executable.\n"
+                   //"    -threads #: number of CPU threads to use\n"
                    "Debugging tools:\n"
                    "    -block # #: Division tree block size, square\n"
                    "    -blocks # # # #: Div tree block size, rectangular\n"
@@ -406,7 +408,6 @@ int32_t main(int32_t argc, char **argv) {
             onlyents = true;
         } else if (!strcmp(argv[i], "-micro")) {
             microvolume = atof(argv[i + 1]);
-            printf("microvolume = %f\n", microvolume);
             i++;
         } else if (!strcmp(argv[i], "-leaktest")) {
             printf("leaktest = true\n");
@@ -437,12 +438,15 @@ int32_t main(int32_t argc, char **argv) {
             }
         }
 
-        // qb:  set gamedir and moddir
+        // qb:  set gamedir, moddir, and basedir
         else if (!strcmp(argv[i], "-gamedir")) {
-            strcpy(gamedir, argv[i + 1]);
+            strcpy(tgamedir, argv[i + 1]);
             i++;
         } else if (!strcmp(argv[i], "-moddir")) {
-            strcpy(moddir, argv[i + 1]);
+            strcpy(tmoddir, argv[i + 1]);
+            i++;
+        } else if (!strcmp(argv[i], "-basedir")) {
+            strcpy(tbasedir, argv[i + 1]);
             i++;
         }
 
@@ -505,7 +509,7 @@ int32_t main(int32_t argc, char **argv) {
                "Usage: 4bsp [options] [mapname]\n"
                "    -chop #                  -choplight #         -help\n"
                "    -largebounds             -micro #             -nosubdiv\n"
-               "    -qbsp                    -gamedir             -moddir\n"
+               "    -qbsp                    -gamedir             -basedir\n"
                "Debugging tools:             -block # #           -blocks # # # #\n"
                "    -blocksize #             -fulldetail          -leaktest\n"
                "    -nocsg                   -nodetail            -nomerge\n"
@@ -523,6 +527,28 @@ int32_t main(int32_t argc, char **argv) {
 
     SetQdirFromPath(argv[i]);
 
+    if (strcmp(tmoddir, "")) {
+        strcpy(moddir, tmoddir);
+        Q_pathslash(moddir);
+        strcpy(basedir, moddir);
+    }
+    if (strcmp(tbasedir, "")) {
+        strcpy(basedir, tbasedir);
+        Q_pathslash(basedir);
+        if (!strcmp(tmoddir, ""))
+            strcpy(moddir, basedir);
+    }
+    if (strcmp(tgamedir, "")) {
+        strcpy(gamedir, tgamedir);
+        Q_pathslash(gamedir);
+    }
+   printf("microvolume = %f\n\n", microvolume);
+
+    // qb: display dirs
+    printf("moddir = %s\n", moddir);
+    printf("basedir = %s\n", basedir);
+    printf("gamedir = %s\n", gamedir);
+ 
     strcpy(source, ExpandArg(argv[i]));
     StripExtension(source);
 

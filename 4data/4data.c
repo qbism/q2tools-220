@@ -488,7 +488,10 @@ int32_t main(int32_t argc, char **argv) {
     }
 
     if (i >= argc)
-        Error("usage: 4data [-archive <directory>] [-release <directory>] [-only <model>] [-3ds] file.qgt");
+        Error("usage: 4data [options] file.qgt\n"
+              "    -archive [path]         -release [path]       -only [model]\n"
+              "    -3ds                    -lwo                  -compress\n"
+              "    -basedir [path]         -gamedir [path]        \n\n");
 
     if (do3ds)
         trifileext = ext_3ds;
@@ -504,7 +507,7 @@ int32_t main(int32_t argc, char **argv) {
         // load the script
         strcpy(path, argv[i]);
         DefaultExtension(path, ".qdt");
-        SetQdirFromPath(path);
+
         LoadScriptFile(ExpandArg(path));
 
         //
