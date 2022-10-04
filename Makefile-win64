@@ -17,9 +17,6 @@ SYS=Win64
 CC=x86_64-w64-mingw32-gcc
 STRIP=x86_64-w64-mingw32-strip
 
-INCLUDES=-I./mgw-sdk/inc -DUSE_PACKETDUP=1
-LIBS=-L./mgw-sdk/lib64
-
 # Compile Options
 WITH_PTHREAD ?= -pthread -DUSE_PTHREADS
 WITHOUT_PTHREAD ?= -DUSE_SETRLIMIT

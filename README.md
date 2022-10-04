@@ -110,7 +110,7 @@ Usage:  Add -qbsp to the 4bsp command line.  4vis and 4rad will detect QBSP auto
 # Build from source:
 Linux-  Makefiles for Linux and 64-bit Windows are included.
 
-Cross-compile- Required packages: mingw-w64, mingw-w64-i686-dev, gcc-multilib.  Pre-compiled Windows dependency libraries are included in /mgw-sdk (borrowed from Q2PRO SDK), or download and build them from scratch.
+Cross-compile- Required packages: mingw-w64, mingw-w64-i686-dev, gcc-multilib, and libz-mingw-w64-dev.
 
 Windows- Visual Studio sln is included. VS compiler fixes (Paril, MaxEd)
 
