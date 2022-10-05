@@ -430,7 +430,6 @@ re_test:
 }
 
 void MakeTransfers(int32_t i) {
-
     int32_t j;
     vec3_t delta;
     vec_t dist, inv_dist = 0, scale;
@@ -440,7 +439,7 @@ void MakeTransfers(int32_t i) {
     float total, inv_total;
     dplane_t plane;
     vec3_t origin;
-    float transfers[MAX_PATCHES_QBSP];
+    float * transfers;//[MAX_PATCHES_QBSP];
     int32_t s;
     int32_t itotal;
     byte pvs[(MAX_MAP_LEAFS_QBSP + 7) / 8];
@@ -467,6 +466,9 @@ void MakeTransfers(int32_t i) {
     } else if (test_trace) {
         DecompressBytes(trace_buf_size, patch->trace_hit, trace_buf);
     }
+
+    transfers = malloc(sizeof(*transfers) * num_patches);
+
     for (j = 0, patch2 = patches; j < num_patches; j++, patch2++) {
         transfers[j] = 0;
 
@@ -573,6 +575,9 @@ void MakeTransfers(int32_t i) {
 
     // don't bother locking around this.  not that important.
     total_transfer += patch->numtransfers;
+
+// cleanup:
+    free(transfers);
 }
 
 /*
@@ -834,7 +839,10 @@ light modelfile
 
 void RAD_ProcessArgument(const char * arg) {
     double start, end;
-    char name[1060];
+    char * name;
+    char * tgamedir = "";
+    char * tbasedir = "";
+    char * tmoddir = "";
 
     face_patches = (patch_t **)malloc(sizeof(*face_patches) * MAX_MAP_FACES_QBSP);
     face_entity = (entity_t **)malloc(sizeof(*face_entity) * MAX_MAP_FACES_QBSP);
@@ -854,7 +862,7 @@ void RAD_ProcessArgument(const char * arg) {
     DefaultExtension(source, ".bsp");
 
     //	ReadLightFile ();
-
+    name = (char *)malloc(strlen(inbase) + strlen(source) + 1);
     sprintf(name, "%s%s", inbase, source);
     printf("reading %s\n", name);
     LoadBSPFile(name);

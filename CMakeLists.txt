@@ -1,6 +1,18 @@
 cmake_minimum_required(VERSION 3.11)
 project(q2tools-220 LANGUAGES C)
 
+
+set(Q2T_USE_PTHREADS ON CACHE BOOL "compile with pthread support")
+
+if(Q2T_USE_PTHREADS)
+  set(THREADING_OPTION -pthread -DUSE_PTHREADS)
+else()
+  set(THREADING_OPTION -DUSE_SETRLIMIT)
+endif()
+
+add_library(q2tools-i INTERFACE)
+target_compile_options(q2tools-i INTERFACE -fno-common -Wall -Wno-unused-result -Wno-strict-aliasing ${THREADING_OPTION} -DUSE_ZLIB)
+
 add_library(q2tools-220-lib STATIC
     common/bspfile.c
     common/cmdlib.c
@@ -13,7 +25,6 @@ add_library(q2tools-220-lib STATIC
     common/scriplib.c
     common/threads.c
     common/trilib.c
-
     4bsp/4bsp.c
     4bsp/brushbsp.c
     4bsp/csg.c

@@ -216,7 +216,7 @@ void BuildFaceExtents(void) {
                         st_maxs[j] = val;
                     }
                 }
-   
+
             }
 
             for (i = 0; i < 3; i++) // calculate center
@@ -2172,8 +2172,8 @@ float sampleofs[5][2] =
     {{0, 0}, {-0.25, -0.25}, {0.25, -0.25}, {0.25, 0.25}, {-0.25, 0.25}};
 
 void BuildFacelights(int32_t facenum) {
-    lightinfo_t liteinfo[5];
-    float *styletable[MAX_LSTYLES];
+    lightinfo_t * liteinfo;//[5];
+    float **styletable;//[MAX_LSTYLES];
     int32_t i, j;
     float *spot;
     patch_t *patch;
@@ -2185,14 +2185,17 @@ void BuildFacelights(int32_t facenum) {
     vec3_t pos;
     vec3_t pointnormal;
 
+    liteinfo = malloc(sizeof(*liteinfo) * 5);
+    styletable = malloc(sizeof(*styletable) * MAX_LSTYLES);
+
     if (use_qbsp) {
         dface_tx *this_face;
         this_face = &dfacesX[facenum];
 
         if (texinfo[this_face->texinfo].flags & (SURF_WARP | SURF_SKY))
-            return; // non-lit texture
+            goto cleanup; // non-lit texture
 
-        memset(styletable, 0, sizeof(styletable));
+        memset(styletable, 0, sizeof(*styletable) * MAX_LSTYLES);
 
         if (extrasamples) // set with -extra option
             numsamples = 5;
@@ -2221,9 +2224,9 @@ void BuildFacelights(int32_t facenum) {
         this_face = &dfaces[facenum];
 
         if (texinfo[this_face->texinfo].flags & (SURF_WARP | SURF_SKY))
-            return; // non-lit texture
+            goto cleanup; // non-lit texture
 
-        memset(styletable, 0, sizeof(styletable));
+        memset(styletable, 0, sizeof(*styletable) * MAX_LSTYLES);
 
         if (extrasamples) // set with -extra option
             numsamples = 5;
@@ -2314,6 +2317,10 @@ void BuildFacelights(int32_t facenum) {
             VectorAdd(spot, face_patches[facenum]->baselight, spot);
         }
     }
+
+cleanup:
+    free(liteinfo);
+    free(styletable);
 }
 
 /*
