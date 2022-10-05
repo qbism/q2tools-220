@@ -222,7 +222,7 @@ void SetQdirFromPath(char *path) {
 #endif
 }
 
-char *ExpandArg(char *path) {
+char *ExpandArg(const char *path) {
     static char full[1024];
 
     if (path[0] != '/' && path[0] != '\\' && path[1] != ':') {

@@ -48,6 +48,7 @@ void CalcTextureReflectivity(void) {
     float c;
     byte *pbuffer = NULL; // mxd. "potentially uninitialized local pointer variable" in VS2017 if uninitialized
 
+    byte *palette_frompak = NULL;
     byte *ptexel;
     byte *palette;
     miptex_t *mt = NULL; // mxd. "potentially uninitialized local pointer variable" in VS2017 if uninitialized
@@ -65,7 +66,14 @@ void CalcTextureReflectivity(void) {
         Load256Image(path, NULL, &palette, NULL, NULL);
     } else {
         sprintf(path, "%spics/colormap.pcx", basedir);
-        Load256Image(path, NULL, &palette, NULL, NULL);
+        if(FileExists(path)) {
+            Load256Image(path, NULL, &palette, NULL, NULL);
+        } else if((i = TryLoadFileFromPak("pics/colormap.pcx", (void **)&palette_frompak, moddir)) != -1) {
+            // unicat: load from pack files, palette is loaded from the last 768 bytes
+            palette = palette_frompak - (i - 768);
+        } else {
+            Error("unable to load pics/colormap.pcx");
+        }
     }
 
     // always set index 0 even if no textures
@@ -228,6 +236,12 @@ void CalcTextureReflectivity(void) {
         qprintf("tex %i (%s) avg rgb [ %f, %f, %f ]\n",
                 i, path, texture_reflectivity[i][0],
                 texture_reflectivity[i][1], texture_reflectivity[i][2]);
+    }
+
+    if(palette_frompak) {
+        free(palette_frompak);
+    } else {
+        free(palette);
     }
 }
 

@@ -63,7 +63,7 @@ extern char gamedir[1024];
 extern char basedir[1024];
 extern char moddir[1024];
 void SetQdirFromPath(char *path);
-char *ExpandArg(char *path);  // from cmd line
+char *ExpandArg(const char *path);  // from cmd line
 char *ExpandPath(char *path); // from scripts
 char *ExpandPathAndArchive(char *path);
 
