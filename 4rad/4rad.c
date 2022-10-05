@@ -430,7 +430,6 @@ re_test:
 }
 
 void MakeTransfers(int32_t i) {
-
     int32_t j;
     vec3_t delta;
     vec_t dist, inv_dist = 0, scale;
@@ -440,7 +439,7 @@ void MakeTransfers(int32_t i) {
     float total, inv_total;
     dplane_t plane;
     vec3_t origin;
-    float transfers[MAX_PATCHES_QBSP];
+    float * transfers;//[MAX_PATCHES_QBSP];
     int32_t s;
     int32_t itotal;
     byte pvs[(MAX_MAP_LEAFS_QBSP + 7) / 8];
@@ -467,6 +466,9 @@ void MakeTransfers(int32_t i) {
     } else if (test_trace) {
         DecompressBytes(trace_buf_size, patch->trace_hit, trace_buf);
     }
+
+    transfers = malloc(sizeof(*transfers) * num_patches);
+
     for (j = 0, patch2 = patches; j < num_patches; j++, patch2++) {
         transfers[j] = 0;
 
@@ -573,6 +575,9 @@ void MakeTransfers(int32_t i) {
 
     // don't bother locking around this.  not that important.
     total_transfer += patch->numtransfers;
+
+// cleanup:
+    free(transfers);
 }
 
 /*
@@ -833,8 +838,10 @@ light modelfile
 int32_t main(int32_t argc, char **argv) {
     int32_t i;
     double start, end;
-    char name[1060];
-    char tgamedir[1024] = "", tbasedir[1024] = "", tmoddir[1024] = "";
+    char * name;
+    char * tgamedir = "";
+    char * tbasedir = "";
+    char * tmoddir = "";
 
     printf("\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 4rad >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
     printf("radiosity compiler build " __DATE__ "\n");
@@ -914,13 +921,13 @@ int32_t main(int32_t argc, char **argv) {
 
         // qb:  set gamedir, moddir, and basedir
         else if (!strcmp(argv[i], "-gamedir")) {
-            strcpy(tgamedir, argv[i + 1]);
+            tgamedir = argv[i + 1];
             i++;
         } else if (!strcmp(argv[i], "-basedir")) {
-            strcpy(tbasedir, argv[i + 1]);
+            tbasedir = argv[i + 1];
             i++;
         } else if (!strcmp(argv[i], "-moddir")) {
-            strcpy(tmoddir, argv[i + 1]);
+            tmoddir = argv[i + 1];
             i++;
         }
 
@@ -1061,7 +1068,7 @@ int32_t main(int32_t argc, char **argv) {
     DefaultExtension(source, ".bsp");
 
     //	ReadLightFile ();
-
+    name = (char *)malloc(strlen(inbase) + strlen(source) + 1);
     sprintf(name, "%s%s", inbase, source);
     printf("reading %s\n", name);
     LoadBSPFile(name);
