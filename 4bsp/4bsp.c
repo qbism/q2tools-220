@@ -323,6 +323,8 @@ void BSP_ProcessArgument(const char * arg) {
     strcpy(name, ExpandArg(arg));
     DefaultExtension(name, ".map"); // might be .reg
 
+    InitBSPFile();
+
     //
     // if onlyents, just grab the entites and resave
     //

@@ -422,7 +422,7 @@ void MakePatchForFace(int32_t fn, winding_t *w) {
 
         WindingCenter(w, patch->origin);
         VectorAdd(patch->origin, patch->plane->normal, patch->origin);
-        leaf           = PointInLeafX(patch->origin);
+        leaf           = RadPointInLeafX(patch->origin);
         patch->cluster = leaf->cluster;
 
         if (patch->cluster == -1) {
@@ -476,7 +476,7 @@ void MakePatchForFace(int32_t fn, winding_t *w) {
 
         WindingCenter(w, patch->origin);
         VectorAdd(patch->origin, patch->plane->normal, patch->origin);
-        leaf           = PointInLeaf(patch->origin);
+        leaf           = RadPointInLeaf(patch->origin);
         patch->cluster = leaf->cluster;
 
         if (patch->cluster == -1) {
@@ -597,14 +597,14 @@ void FinishSplit(patch_t *patch, patch_t *newp) {
         dleaf_tx *leaf;
         WindingCenter(patch->winding, patch->origin);
         VectorAdd(patch->origin, patch->plane->normal, patch->origin);
-        leaf           = PointInLeafX(patch->origin);
+        leaf           = RadPointInLeafX(patch->origin);
         patch->cluster = leaf->cluster;
         if (patch->cluster == -1)
             qprintf("patch->cluster == -1\n");
 
         WindingCenter(newp->winding, newp->origin);
         VectorAdd(newp->origin, newp->plane->normal, newp->origin);
-        leaf          = PointInLeafX(newp->origin);
+        leaf          = RadPointInLeafX(newp->origin);
         newp->cluster = leaf->cluster;
         if (newp->cluster == -1)
             qprintf("patch->cluster == -1\n");
@@ -612,14 +612,14 @@ void FinishSplit(patch_t *patch, patch_t *newp) {
         dleaf_t *leaf;
         WindingCenter(patch->winding, patch->origin);
         VectorAdd(patch->origin, patch->plane->normal, patch->origin);
-        leaf           = PointInLeaf(patch->origin);
+        leaf           = RadPointInLeaf(patch->origin);
         patch->cluster = leaf->cluster;
         if (patch->cluster == -1)
             qprintf("patch->cluster == -1\n");
 
         WindingCenter(newp->winding, newp->origin);
         VectorAdd(newp->origin, newp->plane->normal, newp->origin);
-        leaf          = PointInLeaf(newp->origin);
+        leaf          = RadPointInLeaf(newp->origin);
         newp->cluster = leaf->cluster;
         if (newp->cluster == -1)
             qprintf("patch->cluster == -1\n");

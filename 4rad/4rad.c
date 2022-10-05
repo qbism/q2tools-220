@@ -29,17 +29,17 @@ every surface must be divided into at least two patches each axis
 
 */
 
-patch_t ** face_patches;//[MAX_MAP_FACES_QBSP];
-entity_t ** face_entity;//[MAX_MAP_FACES_QBSP];
-patch_t * patches;//[MAX_PATCHES_QBSP];
+patch_t * face_patches[MAX_MAP_FACES_QBSP];
+entity_t * face_entity[MAX_MAP_FACES_QBSP];
+patch_t patches[MAX_PATCHES_QBSP];
 unsigned num_patches;
 int32_t num_smoothing; // qb: number of phong hits
 
-vec3_t * radiosity;//[MAX_PATCHES_QBSP];    // light leaving a patch
-vec3_t * illumination;//[MAX_PATCHES_QBSP]; // light arriving at a patch
+vec3_t radiosity[MAX_PATCHES_QBSP];    // light leaving a patch
+vec3_t illumination[MAX_PATCHES_QBSP]; // light arriving at a patch
 
-vec3_t * face_offset;//[MAX_MAP_FACES_QBSP]; // for rotating bmodels
-dplane_t * backplanes;//[MAX_MAP_PLANES_QBSP];
+vec3_t face_offset[MAX_MAP_FACES_QBSP]; // for rotating bmodels
+dplane_t backplanes[MAX_MAP_PLANES_QBSP];
 
 extern char inbase[32], outbase[32];
 
@@ -238,14 +238,14 @@ int32_t PointInLeafnum(vec3_t point) {
     return -nodenum - 1;
 }
 
-dleaf_tx *PointInLeafX(vec3_t point) {
+dleaf_tx *RadPointInLeafX(vec3_t point) {
     int32_t num;
 
     num = PointInLeafnum(point);
     return &dleafsX[num];
 }
 
-dleaf_t *MyPointInLeaf(vec3_t point) {
+dleaf_t *RadPointInLeaf(vec3_t point) {
     int32_t num;
 
     num = PointInLeafnum(point);
@@ -260,13 +260,13 @@ qboolean PvsForOrigin(vec3_t org, byte *pvs) {
 
     if (use_qbsp) {
         dleaf_tx *leaf;
-        leaf = PointInLeafX(org);
+        leaf = RadPointInLeafX(org);
         if (leaf->cluster == -1)
             return false; // in solid leaf
         DecompressVis(dvisdata + dvis->bitofs[leaf->cluster][DVIS_PVS], pvs);
     } else {
         dleaf_t *leaf;
-        leaf = MyPointInLeaf(org);
+        leaf = RadPointInLeaf(org);
         if (leaf->cluster == -1)
             return false; // in solid leaf
         DecompressVis(dvisdata + dvis->bitofs[leaf->cluster][DVIS_PVS], pvs);
@@ -835,8 +835,6 @@ main
 light modelfile
 ========
 */
-
-
 void RAD_ProcessArgument(const char * arg) {
     double start, end;
     char * name;
@@ -844,15 +842,7 @@ void RAD_ProcessArgument(const char * arg) {
     char * tbasedir = "";
     char * tmoddir = "";
 
-    face_patches = (patch_t **)malloc(sizeof(*face_patches) * MAX_MAP_FACES_QBSP);
-    face_entity = (entity_t **)malloc(sizeof(*face_entity) * MAX_MAP_FACES_QBSP);
-    patches = (patch_t *)malloc(sizeof(*patches) * MAX_PATCHES_QBSP);
-
-    radiosity = (vec3_t *)malloc(sizeof(*radiosity) * MAX_PATCHES_QBSP);
-    illumination = (vec3_t *)malloc(sizeof(*illumination) * MAX_PATCHES_QBSP);
-
-    face_offset = (vec3_t *)malloc(sizeof(*face_offset) * MAX_MAP_FACES_QBSP);
-    backplanes = (dplane_t *)malloc(sizeof(*backplanes) * MAX_MAP_PLANES_QBSP);
+    dlightdata_ptr = dlightdata;
 
     start               = I_FloatTime();
 
@@ -895,14 +885,4 @@ void RAD_ProcessArgument(const char * arg) {
 
     PrintBSPFileSizes();
     printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END 4rad >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
-
-    free(face_patches);
-    free(face_entity);
-    free(patches);
-
-    free(radiosity);
-    free(illumination);
-
-    free(face_offset);
-    free(backplanes);
 }

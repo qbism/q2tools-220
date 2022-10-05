@@ -41,7 +41,7 @@ edgeshare_t edgeshare[MAX_MAP_EDGES_QBSP];
 
 int32_t facelinks[MAX_MAP_FACES_QBSP];
 int32_t planelinks[2][MAX_MAP_PLANES_QBSP];
-int32_t maxdata, step;
+int32_t maxdata = DEFAULT_MAP_LIGHTING, step = LMSTEP;
 vec3_t face_texnormals[MAX_MAP_FACES_QBSP];
 float sunradscale = 0.5;
 byte *dlightdata_ptr;
@@ -1332,14 +1332,14 @@ void CalcPoints(lightinfo_t *l, float sofs, float tofs) {
 
                 if (use_qbsp) {
                     dleaf_tx *leaf;
-                    leaf = PointInLeafX(surf);
+                    leaf = RadPointInLeafX(surf);
                     if (leaf->contents != CONTENTS_SOLID) {
                         if (!TestLine_r(0, facemid, surf))
                             break; // got it
                     }
                 } else {
                     dleaf_t *leaf;
-                    leaf = PointInLeaf(surf);
+                    leaf = RadPointInLeaf(surf);
                     if (leaf->contents != CONTENTS_SOLID) {
                         if (!TestLine_r(0, facemid, surf))
                             break; // got it
@@ -1510,10 +1510,10 @@ void CreateDirectLights(void) {
         dl->nodenum = PointInNodenum(dl->origin);
 
         if (use_qbsp) {
-            leafX   = PointInLeafX(dl->origin);
+            leafX   = RadPointInLeafX(dl->origin);
             cluster = leafX->cluster;
         } else {
-            leaf    = PointInLeaf(dl->origin);
+            leaf    = RadPointInLeaf(dl->origin);
             cluster = leaf->cluster;
         }
 
@@ -1614,11 +1614,11 @@ void CreateDirectLights(void) {
         VectorCopy(p->origin, dl->origin);
 
         if (use_qbsp) {
-            leafX     = PointInLeafX(dl->origin);
+            leafX     = RadPointInLeafX(dl->origin);
             cluster   = leafX->cluster;
             dl->leafX = leafX;
         } else {
-            leaf     = PointInLeaf(dl->origin);
+            leaf     = RadPointInLeaf(dl->origin);
             cluster  = leaf->cluster;
             dl->leaf = leaf;
         }
