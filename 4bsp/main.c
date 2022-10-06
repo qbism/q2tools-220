@@ -18,7 +18,6 @@ void BSP_ProcessArgument(const char * arg) ;
 
 int32_t main(int32_t argc, char **argv) {
     int32_t i;
-    char path[2053]     = "";
     char tgamedir[1024] = "", tbasedir[1024] = "", tmoddir[1024] = "";
 
     printf("\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 4bsp >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");

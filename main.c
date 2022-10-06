@@ -123,7 +123,6 @@ void VIS_ProcessArgument(const char * arg);
 void RAD_ProcessArgument(const char * arg);
 
 int main(int argc, char *argv []) {
-    char path[2053]     = "";
     char tgamedir[1024] = "";
     char tbasedir[1024] = "";
     char tmoddir[1024]  = "";
