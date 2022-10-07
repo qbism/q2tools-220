@@ -21,7 +21,6 @@ int32_t main(int32_t argc, char **argv) {
     numthreads     = -1;
     maxdata        = DEFAULT_MAP_LIGHTING;
     step           = LMSTEP;
-    dlightdata_ptr = dlightdata;
 
     for (i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "-dump"))

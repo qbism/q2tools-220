@@ -47,6 +47,10 @@ qboolean com_eof;
 qboolean archive;
 char archivedir[1024];
 
+char inbase[32];
+char outbase[32];
+char source[1024];
+
 /*
 ===================
 ExpandWildcards

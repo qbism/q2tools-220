@@ -842,9 +842,7 @@ void RAD_ProcessArgument(const char * arg) {
     char * tbasedir = "";
     char * tmoddir = "";
 
-    dlightdata_ptr = dlightdata;
-
-    start               = I_FloatTime();
+    start = I_FloatTime();
 
     strcpy(source, ExpandArg(arg));
 
@@ -856,6 +854,7 @@ void RAD_ProcessArgument(const char * arg) {
     sprintf(name, "%s%s", inbase, source);
     printf("reading %s\n", name);
     LoadBSPFile(name);
+    dlightdata_ptr = dlightdata;
     if (use_qbsp) {
         maxdata = MAX_MAP_LIGHTING_QBSP;
         step    = QBSP_LMSTEP;

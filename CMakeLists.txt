@@ -49,9 +49,9 @@ add_library(q2tools-220-lib STATIC
 target_include_directories(q2tools-220-lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/common)
 
 add_executable(q2tools-220 main.c)
-add_executable(4bsp 4bsp/main.c)
-add_executable(4vis 4vis/main.c)
-add_executable(4rad 4rad/main.c)
+add_executable(4bsp 4bsp/4bsp_main.c)
+add_executable(4vis 4vis/4vis_main.c)
+add_executable(4rad 4rad/4rad_main.c)
 add_executable(4data
     4data/4data.c
     4data/images.c

@@ -23,7 +23,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 extern float subdivide_size;
 extern float sublight_size;
 
-char source[1024];
+extern char source[1024];
 char name[1024];
 
 vec_t microvolume        = 0.02f; // jit - was 1.0, but this messes up small brushes

@@ -27,9 +27,6 @@ extern qboolean use_qbsp;
 int32_t numportals;
 int32_t portalclusters;
 
-char inbase[32];
-char outbase[32];
-
 portal_t *portals;
 leaf_t *leafs;
 
@@ -51,6 +48,9 @@ qboolean nosort;
 int32_t totalvis;
 
 portal_t *sorted_portals[MAX_MAP_PORTALS_QBSP * 2];
+
+extern char inbase[32];
+extern char outbase[32];
 
 //=============================================================================
 
