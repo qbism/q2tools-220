@@ -6,13 +6,15 @@ set(Q2T_USE_PTHREADS ON CACHE BOOL "compile with pthread support")
 
 if(Q2T_USE_PTHREADS)
   set(THREADING_OPTION -pthread -DUSE_PTHREADS)
+	set(THREADING_LIB pthread)
 else()
   set(THREADING_OPTION -DUSE_SETRLIMIT)
+	set(THREADING_LIB)
 endif()
 
 add_library(q2tools-i INTERFACE)
 target_compile_options(q2tools-i INTERFACE -fno-common -Wall -Wno-unused-result -Wno-strict-aliasing ${THREADING_OPTION} -DUSE_ZLIB)
-target_link_libraries(q2tools-i INTERFACE m)
+target_link_libraries(q2tools-i INTERFACE m ${THREADING_LIB})
 
 add_library(q2tools-220-lib STATIC
     common/bspfile.c
