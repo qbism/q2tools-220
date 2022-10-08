@@ -156,8 +156,8 @@ int32_t TestLine_r(int32_t node, vec3_t start, vec3_t stop);
 
 void CreateDirectLights(void);
 
-dleaf_t *PointInLeaf(vec3_t point);
-dleaf_tx *PointInLeafX(vec3_t point);
+dleaf_t *RadPointInLeaf(vec3_t point);
+dleaf_tx *RadPointInLeafX(vec3_t point);
 
 extern dplane_t backplanes[MAX_MAP_PLANES_QBSP];
 extern int32_t fakeplanes; // created planes for origin offset

@@ -33,68 +33,101 @@ void GetLeafNums(void);
 // qb: add qbsp types
 
 int32_t nummodels;
-dmodel_t dmodels[MAX_MAP_MODELS_QBSP];
+dmodel_t * dmodels;//[MAX_MAP_MODELS_QBSP];
 
 int32_t visdatasize;
-byte dvisdata[MAX_MAP_VISIBILITY_QBSP];
-dvis_t *dvis = (dvis_t *)dvisdata;
+byte * dvisdata;//[MAX_MAP_VISIBILITY_QBSP];
+dvis_t *dvis;// = (dvis_t *)dvisdata;
 
 int32_t lightdatasize;
-byte dlightdata[MAX_MAP_LIGHTING_QBSP];
+byte * dlightdata;//[MAX_MAP_LIGHTING_QBSP];
 
 int32_t entdatasize;
-char dentdata[MAX_MAP_ENTSTRING_QBSP];
+char * dentdata;//[MAX_MAP_ENTSTRING_QBSP];
 
 int32_t numleafs;
-dleaf_t dleafs[MAX_MAP_LEAFS];
-dleaf_tx dleafsX[MAX_MAP_LEAFS_QBSP];
+dleaf_t * dleafs;//[MAX_MAP_LEAFS];
+dleaf_tx * dleafsX;//[MAX_MAP_LEAFS_QBSP];
 
 int32_t numplanes;
-dplane_t dplanes[MAX_MAP_PLANES_QBSP];
+dplane_t * dplanes;//[MAX_MAP_PLANES_QBSP];
 
 int32_t numvertexes;
-dvertex_t dvertexes[MAX_MAP_VERTS_QBSP];
+dvertex_t * dvertexes;//[MAX_MAP_VERTS_QBSP];
 
 int32_t numnodes;
-dnode_t dnodes[MAX_MAP_NODES];
-dnode_tx dnodesX[MAX_MAP_NODES_QBSP];
+dnode_t * dnodes;//[MAX_MAP_NODES];
+dnode_tx * dnodesX;//[MAX_MAP_NODES_QBSP];
 
 int32_t numtexinfo;
-texinfo_t texinfo[MAX_MAP_TEXINFO_QBSP];
+texinfo_t * texinfo;//[MAX_MAP_TEXINFO_QBSP];
 
 int32_t numfaces;
-dface_t dfaces[MAX_MAP_FACES];
-dface_tx dfacesX[MAX_MAP_FACES_QBSP];
+dface_t * dfaces;//[MAX_MAP_FACES];
+dface_tx * dfacesX;//[MAX_MAP_FACES_QBSP];
 
 int32_t numedges;
-dedge_t dedges[MAX_MAP_EDGES];
-dedge_tx dedgesX[MAX_MAP_EDGES_QBSP];
+dedge_t * dedges;//[MAX_MAP_EDGES];
+dedge_tx * dedgesX;//[MAX_MAP_EDGES_QBSP];
 
 int32_t numleaffaces;
-uint16_t dleaffaces[MAX_MAP_LEAFFACES];
-uint32_t dleaffacesX[MAX_MAP_LEAFFACES_QBSP];
+uint16_t * dleaffaces;//[MAX_MAP_LEAFFACES];
+uint32_t * dleaffacesX;//[MAX_MAP_LEAFFACES_QBSP];
 
 int32_t numleafbrushes;
-uint16_t dleafbrushes[MAX_MAP_LEAFBRUSHES];
-uint32_t dleafbrushesX[MAX_MAP_LEAFBRUSHES_QBSP];
+uint16_t * dleafbrushes;//[MAX_MAP_LEAFBRUSHES];
+uint32_t * dleafbrushesX;//[MAX_MAP_LEAFBRUSHES_QBSP];
 
 int32_t numsurfedges;
-int32_t dsurfedges[MAX_MAP_SURFEDGES_QBSP];
+int32_t * dsurfedges;//[MAX_MAP_SURFEDGES_QBSP];
 
 int32_t numbrushes;
-dbrush_t dbrushes[MAX_MAP_BRUSHES_QBSP];
+dbrush_t * dbrushes;//[MAX_MAP_BRUSHES_QBSP];
 
 int32_t numbrushsides;
-dbrushside_t dbrushsides[MAX_MAP_BRUSHSIDES];
-dbrushside_tx dbrushsidesX[MAX_MAP_BRUSHSIDES_QBSP];
+dbrushside_t * dbrushsides;//[MAX_MAP_BRUSHSIDES];
+dbrushside_tx * dbrushsidesX;//[MAX_MAP_BRUSHSIDES_QBSP];
 
 int32_t numareas;
-darea_t dareas[MAX_MAP_AREAS];
+darea_t * dareas;//[MAX_MAP_AREAS];
 
 int32_t numareaportals;
-dareaportal_t dareaportals[MAX_MAP_AREAPORTALS];
+dareaportal_t * dareaportals;//[MAX_MAP_AREAPORTALS];
 
 byte dpop[256];
+
+void InitBSPFile(void) {
+    static qboolean init = false;
+    if(!init) {
+        init = true;
+        dmodels = (dmodel_t*)malloc(sizeof(*dmodels) * MAX_MAP_MODELS_QBSP);
+        dvisdata = (byte*)malloc(sizeof(*dvisdata) * MAX_MAP_VISIBILITY_QBSP);
+        dvis = (dvis_t *)dvisdata;
+        dlightdata = (byte*)malloc(sizeof(*dlightdata) * MAX_MAP_LIGHTING_QBSP);
+        dentdata = (char*)malloc(sizeof(*dentdata) * MAX_MAP_ENTSTRING_QBSP);
+        dleafs = (dleaf_t*)malloc(sizeof(*dleafs) * MAX_MAP_LEAFS);
+        dleafsX = (dleaf_tx*)malloc(sizeof(*dleafsX) * MAX_MAP_LEAFS_QBSP);
+        dplanes = (dplane_t*)malloc(sizeof(*dplanes) * MAX_MAP_PLANES_QBSP);
+        dvertexes = (dvertex_t*)malloc(sizeof(*dvertexes) * MAX_MAP_VERTS_QBSP);
+        dnodes = (dnode_t*)malloc(sizeof(*dnodes) * MAX_MAP_NODES);
+        dnodesX = (dnode_tx*)malloc(sizeof(*dnodesX) * MAX_MAP_NODES_QBSP);
+        texinfo = (texinfo_t*)malloc(sizeof(*texinfo) * MAX_MAP_TEXINFO_QBSP);
+        dfaces = (dface_t*)malloc(sizeof(*dfaces) * MAX_MAP_FACES);
+        dfacesX = (dface_tx*)malloc(sizeof(*dfacesX) * MAX_MAP_FACES_QBSP);
+        dedges = (dedge_t*)malloc(sizeof(*dedges) * MAX_MAP_EDGES);
+        dedgesX = (dedge_tx*)malloc(sizeof(*dedgesX) * MAX_MAP_EDGES_QBSP);
+        dleaffaces = (uint16_t*)malloc(sizeof(*dleaffaces) * MAX_MAP_LEAFFACES);
+        dleaffacesX = (uint32_t*)malloc(sizeof(*dleaffacesX) * MAX_MAP_LEAFFACES_QBSP);
+        dleafbrushes = (uint16_t*)malloc(sizeof(*dleafbrushes) * MAX_MAP_LEAFBRUSHES);
+        dleafbrushesX = (uint32_t*)malloc(sizeof(*dleafbrushesX) * MAX_MAP_LEAFBRUSHES_QBSP);
+        dsurfedges = (int32_t*)malloc(sizeof(*dsurfedges) * MAX_MAP_SURFEDGES_QBSP);
+        dbrushes = (dbrush_t*)malloc(sizeof(*dbrushes) * MAX_MAP_BRUSHES_QBSP);
+        dbrushsides = (dbrushside_t*)malloc(sizeof(*dbrushsides) * MAX_MAP_BRUSHSIDES);
+        dbrushsidesX = (dbrushside_tx*)malloc(sizeof(*dbrushsidesX) * MAX_MAP_BRUSHSIDES_QBSP);
+        dareas = (darea_t*)malloc(sizeof(*dareas) * MAX_MAP_AREAS);
+        dareaportals = (dareaportal_t*)malloc(sizeof(*dareaportals) * MAX_MAP_AREAPORTALS);
+    }
+}
 
 /*
 ===============
@@ -396,6 +429,8 @@ LoadBSPFile
 */
 void LoadBSPFile(char *filename) {
     int32_t i;
+
+    InitBSPFile();
 
     //
     // load the file header

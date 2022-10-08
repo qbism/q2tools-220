@@ -47,6 +47,10 @@ qboolean com_eof;
 qboolean archive;
 char archivedir[1024];
 
+char inbase[32];
+char outbase[32];
+char source[1024];
+
 /*
 ===================
 ExpandWildcards
@@ -222,7 +226,7 @@ void SetQdirFromPath(char *path) {
 #endif
 }
 
-char *ExpandArg(char *path) {
+char *ExpandArg(const char *path) {
     static char full[1024];
 
     if (path[0] != '/' && path[0] != '\\' && path[1] != ':') {

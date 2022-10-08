@@ -50,8 +50,10 @@ int32_t GetThreadWork(void) {
     f = 10 * dispatch / workcount;
     if (f != oldf) {
         oldf = f;
-        if (pacifier)
+        if (pacifier) {
             printf("%i...", f);
+            fflush(stdout);
+        }
     }
 
     r = dispatch;

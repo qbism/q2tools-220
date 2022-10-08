@@ -48,6 +48,7 @@ void CalcTextureReflectivity(void) {
     float c;
     byte *pbuffer = NULL; // mxd. "potentially uninitialized local pointer variable" in VS2017 if uninitialized
 
+    byte *palette_frompak = NULL;
     byte *ptexel;
     byte *palette;
     miptex_t *mt = NULL; // mxd. "potentially uninitialized local pointer variable" in VS2017 if uninitialized
@@ -65,7 +66,14 @@ void CalcTextureReflectivity(void) {
         Load256Image(path, NULL, &palette, NULL, NULL);
     } else {
         sprintf(path, "%spics/colormap.pcx", basedir);
-        Load256Image(path, NULL, &palette, NULL, NULL);
+        if(FileExists(path)) {
+            Load256Image(path, NULL, &palette, NULL, NULL);
+        } else if((i = TryLoadFileFromPak("pics/colormap.pcx", (void **)&palette_frompak, moddir)) != -1) {
+            // unicat: load from pack files, palette is loaded from the last 768 bytes
+            palette = palette_frompak - (i - 768);
+        } else {
+            Error("unable to load pics/colormap.pcx");
+        }
     }
 
     // always set index 0 even if no textures
@@ -228,6 +236,12 @@ void CalcTextureReflectivity(void) {
         qprintf("tex %i (%s) avg rgb [ %f, %f, %f ]\n",
                 i, path, texture_reflectivity[i][0],
                 texture_reflectivity[i][1], texture_reflectivity[i][2]);
+    }
+
+    if(palette_frompak) {
+        free(palette_frompak);
+    } else {
+        free(palette);
     }
 }
 
@@ -408,7 +422,7 @@ void MakePatchForFace(int32_t fn, winding_t *w) {
 
         WindingCenter(w, patch->origin);
         VectorAdd(patch->origin, patch->plane->normal, patch->origin);
-        leaf           = PointInLeafX(patch->origin);
+        leaf           = RadPointInLeafX(patch->origin);
         patch->cluster = leaf->cluster;
 
         if (patch->cluster == -1) {
@@ -462,7 +476,7 @@ void MakePatchForFace(int32_t fn, winding_t *w) {
 
         WindingCenter(w, patch->origin);
         VectorAdd(patch->origin, patch->plane->normal, patch->origin);
-        leaf           = PointInLeaf(patch->origin);
+        leaf           = RadPointInLeaf(patch->origin);
         patch->cluster = leaf->cluster;
 
         if (patch->cluster == -1) {
@@ -583,14 +597,14 @@ void FinishSplit(patch_t *patch, patch_t *newp) {
         dleaf_tx *leaf;
         WindingCenter(patch->winding, patch->origin);
         VectorAdd(patch->origin, patch->plane->normal, patch->origin);
-        leaf           = PointInLeafX(patch->origin);
+        leaf           = RadPointInLeafX(patch->origin);
         patch->cluster = leaf->cluster;
         if (patch->cluster == -1)
             qprintf("patch->cluster == -1\n");
 
         WindingCenter(newp->winding, newp->origin);
         VectorAdd(newp->origin, newp->plane->normal, newp->origin);
-        leaf          = PointInLeafX(newp->origin);
+        leaf          = RadPointInLeafX(newp->origin);
         newp->cluster = leaf->cluster;
         if (newp->cluster == -1)
             qprintf("patch->cluster == -1\n");
@@ -598,14 +612,14 @@ void FinishSplit(patch_t *patch, patch_t *newp) {
         dleaf_t *leaf;
         WindingCenter(patch->winding, patch->origin);
         VectorAdd(patch->origin, patch->plane->normal, patch->origin);
-        leaf           = PointInLeaf(patch->origin);
+        leaf           = RadPointInLeaf(patch->origin);
         patch->cluster = leaf->cluster;
         if (patch->cluster == -1)
             qprintf("patch->cluster == -1\n");
 
         WindingCenter(newp->winding, newp->origin);
         VectorAdd(newp->origin, newp->plane->normal, newp->origin);
-        leaf          = PointInLeaf(newp->origin);
+        leaf          = RadPointInLeaf(newp->origin);
         newp->cluster = leaf->cluster;
         if (newp->cluster == -1)
             qprintf("patch->cluster == -1\n");

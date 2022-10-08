@@ -79,6 +79,7 @@ cmn_objs = $(cmn_srcs:.c=.o)
 	brushbsp.c	\
 	faces.c		\
 	leakfile.c	\
+	4bsp_main.c \
 	map.c		\
 	portals.c	\
 	prtfile.c	\
@@ -105,7 +106,8 @@ cmn_objs = $(cmn_srcs:.c=.o)
 #
 4vis_srcs =	\
 	4vis.c		\
-	flow.c
+	flow.c \
+	4vis_main.c
 
 4vis_cmnobjs =	\
 	bspfile.o	\
@@ -154,6 +156,7 @@ cmn_objs = $(cmn_srcs:.c=.o)
 4rad_srcs =	\
 	4rad.c		\
 	lightmap.c	\
+	4rad_main.c \
 	patches.c 	\
 	trace.c
 
@@ -171,10 +174,49 @@ cmn_objs = $(cmn_srcs:.c=.o)
 # 4rad_dep = $(addprefix $(depdir)/, $(4rad_srcs:.c=.d) )
 
 #
+# files for merged tools q2tools-220
+#
+q2tools_220_srcs =	\
+	main.c
+
+q2tools_220_cmnobjs = \
+	bspfile.o	\
+	cmdlib.o	\
+	l3dslib.o	\
+	llwolib.o	\
+	lbmlib.o	\
+	mathlib.o	\
+	mdfour.o	\
+	polylib.o	\
+	scriplib.o	\
+	trilib.o	\
+	threads.o \
+  4bsp.o     \
+	brushbsp.o	\
+	faces.o		\
+	leakfile.o	\
+	map.o		\
+	portals.o	\
+	prtfile.o	\
+	textures.o	\
+	tree.o		\
+	writebsp.o	\
+	csg.o \
+	4vis.o		\
+	flow.o \
+	4rad.o		\
+	lightmap.o	\
+	patches.o 	\
+	trace.o
+
+q2tools_220_objs = $(q2tools_220_srcs:.c=.o)
+q2tools_220_objs_all = $(q2tools_220_objs) $(q2tools_220_cmnobjs)
+
+#
 # --- targets ---
 #
 
-all: subdirectories $(builddir)/4bsp $(builddir)/4vis $(builddir)/4rad $(builddir)/4data
+all: subdirectories $(builddir)/4bsp $(builddir)/4vis $(builddir)/4rad $(builddir)/4data $(builddir)/q2tools-220
 
 # dependency (.d) files
 include $(cmn_dep)
@@ -221,6 +263,13 @@ $(builddir)/4data: $(4data_objs_all)
 $(4data_objs): %o : %c
 	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
 
+# link q2tools-220
+$(builddir)/q2tools-220: $(q2tools_220_objs_all)
+	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(q2tools_220_objs_all)) -o $(builddir)/q2tools-220 $(LDFLAGS)
+
+# compile q2tools-220 sources
+$(q2tools_220_objs): %o : %c
+	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
 
 subdirectories:
 #	mkdir -p $(depdir)
@@ -232,6 +281,7 @@ clean:
 	rm -f $(builddir)/4vis
 	rm -f $(builddir)/4rad
 	rm -f $(builddir)/4data
+	rm -f $(builddir)/q2tools-220
 
 # Add these to remove executables from install directory
 
@@ -246,6 +296,5 @@ install:
 	cp $(builddir)/4vis   $(INSTALL_DIR)
 	cp $(builddir)/4rad   $(INSTALL_DIR)
 	cp $(builddir)/4data   $(INSTALL_DIR)
-
-
+	cp $(builddir)/q2tools-220 $(INSTALL_DIR)
 
