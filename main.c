@@ -23,7 +23,7 @@ static char * help_string =
     "    -qbsp: Greatly expanded map and entity limits for supporting engines.\n"
     "VIS pass:\n"
     "    -vis: enable vis pass, requires a .bsp file as input or bsp pass enabled\n"
-    "    -fast: fast single vis pass"
+    "    -fast: fast single vis pass\n"
     "RAD pass:\n"
     "    -rad: enable rad pass, requires a .bsp file as input or bsp and vis passes enabled\n"
     "    -ambient #\n"
@@ -87,6 +87,7 @@ extern int32_t max_bounds;
 extern int32_t block_size;
 extern qboolean noskipfix;
 extern float subdivide_size;
+extern float subdiv;
 extern float sublight_size;
 extern int32_t block_xl;
 extern int32_t block_yl;
@@ -223,19 +224,20 @@ int main(int argc, char *argv []) {
         } else if (!strcmp(argv[i], "-basedir")) {
             strcpy(tbasedir, argv[i + 1]);
             i++;
-        } else if((!strcmp(argv[i], "-chop")) || (!strcmp(argv[i], "-subdiv"))) {
+        } else if(!strcmp(argv[i], "-chop") || !strcmp(argv[i], "-subdiv")) {  
             subdivide_size = atof(argv[i + 1]);
             if (subdivide_size < 32) {
                 subdivide_size = 32;
-                printf("subdivide_size set to minimum size: 32\n");
+                printf("subdivide size set to minimum size: 32\n");
             }
             if (subdivide_size > 1024) {
                 subdivide_size = 1024;
-                printf("subdivide_size set to maximum size: 1024\n");
+                printf("subdivide size set to maximum size: 1024\n");
             }
-            printf("subdivide_size = %f\n", subdivide_size);
+            subdiv = subdivide_size; //qb: rad default (64) is different than bsp (240)
+            printf("subdivide size = %f\n", subdivide_size);
             i++;
-        } else if((!strcmp(argv[i], "-choplight")) || (!strcmp(argv[i], "-choplights")) || (!strcmp(argv[i], "-subdivlight"))) {
+            } else if((!strcmp(argv[i], "-choplight")) || (!strcmp(argv[i], "-choplights")) || (!strcmp(argv[i], "-subdivlight"))) {
             // qb: chop surf lights independently
             sublight_size = atof(argv[i + 1]);
             if (sublight_size < 32) {
@@ -246,7 +248,7 @@ int main(int argc, char *argv []) {
                 sublight_size = 1024;
                 printf("sublight_size set to maximum size: 1024\n");
             }
-            printf("sublight_size = %f\n", sublight_size);
+            printf("surface light subdivide size = %f\n", sublight_size);
             i++;
         } else if(!strcmp(argv[i], "-blocksize")) {
             block_size = atof(argv[i + 1]);
