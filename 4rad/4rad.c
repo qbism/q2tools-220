@@ -838,9 +838,6 @@ light modelfile
 void RAD_ProcessArgument(const char * arg) {
     double start, end;
     char * name;
-    char * tgamedir = "";
-    char * tbasedir = "";
-    char * tmoddir = "";
 
     start = I_FloatTime();
 

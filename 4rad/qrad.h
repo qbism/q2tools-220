@@ -60,7 +60,7 @@ typedef struct directlight_s {
 // reaches other patches
 typedef struct
 {
-    uint16_t patch;
+    uint32_t patch;  //qb: for qbsp, was uint16_t
     uint16_t transfer;
 } transfer_t;
 
