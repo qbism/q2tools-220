@@ -98,7 +98,7 @@ subdirectories:
 
 clean:
 	rm -f $(builddir)/*.o
-	rm -f $(builddir)/q2tool\
+	rm -f $(builddir)/q2tool
 
 # Add to remove executables from install directory
 

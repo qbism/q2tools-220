@@ -30,28 +30,24 @@ DEBUG_CFLAGS ?= $(BASE_CFLAGS) -O0 -g -ggdb
 LDFLAGS ?= -lm -lz
 
 srcdir = .
-includedirs = -Icommon
+includedirs = -Isrc
 
 # source locations
-vpath %.h map2
-vpath %.c map2
-vpath %.h data2
-vpath %.c data2
-vpath %.h common
-vpath %.c common
+vpath %.h src
+vpath %.c src
 
 ifeq ($(BUILD),DEBUG)
-CFLAGS ?= $(DEBUG_CFLAGS) $(INCLUDES)
-builddir = debugWin64
-vpath %.o debugWin64
+CFLAGS ?= $(DEBUG_CFLAGS)
+builddir = debug
+vpath %.o debug
 else
-CFLAGS ?= $(RELEASE_CFLAGS) $(INCLUDES)
-builddir = releaseWin64
-vpath %.o releaseWin64
+CFLAGS ?= $(RELEASE_CFLAGS)
+builddir = release
+vpath %.o release
 endif
 
-# common files 
-cmn_srcs = \
+
+srcs = \
 	bspfile.c	\
 	cmdlib.c	\
 	l3dslib.c	\
@@ -62,43 +58,13 @@ cmn_srcs = \
 	polylib.c	\
 	scriplib.c	\
 	trilib.c	\
-	threads.c
-
-cmn_objs = $(cmn_srcs:.c=.o)
-
-
-#
-# files for data2
-#
-data_srcs =		\
+	threads.c	\
 	images.c	\
 	models.c	\
-	data2.c		\
+	data.c		\
 	sprites.c	\
 	tables.c	\
-	video.c
-
-data_cmnobjs =	\
-	bspfile.o	\
-	cmdlib.o	\
-	lbmlib.o	\
-	l3dslib.o	\
-	llwolib.o	\
-	mathlib.o	\
-	mdfour.o	\
-	polylib.o	\
-	scriplib.o	\
-	trilib.o	\
-	threads.o
-
-data_objs = $(data_srcs:.c=.o)
-data_objs_all = $(data_objs) $(data_cmnobjs)
-
-
-#
-# files for merged tool map2
-#
-map2_srcs =		\
+	video.c		\
 	main.c		\
 	rad.c		\
 	lightmap.c	\
@@ -116,51 +82,18 @@ map2_srcs =		\
 	writebsp.c	\
 	csg.c		\
 	vis.c 		\
-	flow.c 		\
+	flow.c 
 
-map2_cmnobjs = 	\
-	bspfile.o	\
-	cmdlib.o	\
-	l3dslib.o	\
-	llwolib.o	\
-	lbmlib.o	\
-	mathlib.o	\
-	mdfour.o	\
-	polylib.o	\
-	scriplib.o	\
-	trilib.o	\
-	threads.o 	
+objs = $(srcs:.c=.o)
 
-	
-map2_objs = $(map2_srcs:.c=.o)
-map2_objs_all = $(map2_objs) $(map2_cmnobjs)
+all: subdirectories $(builddir)/q2tool
 
-#
-# --- targets ---
-#
+# link
+$(builddir)/q2tool: $(objs)
+	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(objs)) -o $(builddir)/q2tool.exe $(LDFLAGS)
 
-all: subdirectories $(builddir)/data2 $(builddir)/map2
-
-
-# compile common sources
-$(cmn_objs): %o : %c
-	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
-
-
-# link data2
-$(builddir)/data2: $(data_objs_all)
-	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(data_objs_all)) -o $(builddir)/data2.exe $(LDFLAGS)
-
-# compile data2 sources
-$(data_objs): %o : %c
-	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
-
-# link map2
-$(builddir)/map2: $(map2_objs_all)
-	$(CC) $(CFLAGS) $(addprefix $(builddir)/, $(map2_objs_all)) -o $(builddir)/map2.exe $(LDFLAGS)
-
-# compile map2 sources
-$(map2_objs): %o : %c
+# compile sources
+$(objs): %o : %c
 	$(CC) -c $(includedirs) $(CFLAGS) $< -o $(builddir)/$@
 
 subdirectories:
@@ -168,15 +101,12 @@ subdirectories:
 
 clean:
 	rm -f $(builddir)/*.o
-	rm -f $(builddir)/data2.exe
-	rm -f $(builddir)/map2.exe
+	rm -f $(builddir)/q2tool.exe
 
-# Add these to remove executables from install directory
+# Add to remove executables from install directory
 
-#	rm -f $(INSTALL_DIR)/data2.exe
-#	rm -f $(INSTALL_DIR)/map2.exe
+#	rm -f $(INSTALL_DIR)/q2tool
 
 install:
 	mkdir -p $(INSTALL_DIR)
-	cp $(builddir)/data2.exe   $(INSTALL_DIR)
-	cp $(builddir)/map2.exe $(INSTALL_DIR)
+	cp $(builddir)/q2tool.exe $(INSTALL_DIR)
