@@ -12,11 +12,13 @@ else()
 	set(THREADING_LIB)
 endif()
 
+set(CMAKE_STATIC_LIBRARY_PREFIX_C "")
+
 add_library(q2tools-i INTERFACE)
-target_compile_options(q2tools-i INTERFACE -fno-common -Wall -Wno-unused-result -Wno-strict-aliasing ${THREADING_OPTION} -DUSE_ZLIB -O3 -z stack-size=16777216)
+target_compile_options(q2tools-i INTERFACE -fno-common -Wall -Wno-unused-result -Wno-strict-aliasing ${THREADING_OPTION} -DUSE_ZLIB -O3 -s -z stack-size=16777216)
 target_link_libraries(q2tools-i INTERFACE m ${THREADING_LIB})
 
-add_library(q2tool-lib STATIC
+add_library(libq2tool STATIC
     src/bspfile.c
     src/cmdlib.c
     src/l3dslib.c
@@ -55,9 +57,9 @@ add_library(q2tool-lib STATIC
     src/tables.c
     src/video.c
 )
-target_include_directories(q2tool-lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/common)
+target_include_directories(libq2tool PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/common)
 
 add_executable(q2tool src/main.c)
 
 
-target_link_libraries(q2tool q2tools-i q2tool-lib)
+target_link_libraries(q2tool q2tools-i libq2tool)

@@ -1,6 +1,5 @@
 # q2tools-220
 Q2 compiler tools featuring ability to bsp v220 map format, automatic phong and soft spotlights, and other enhancements.
-Includes 4bsp, 4vis, 4rad, and 4data.
 
 Forked from compiler tools supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
 
@@ -41,7 +40,7 @@ radiosity
     *   gamedir is parent of moddir
     *   qdir is parent of gamedir	
 	
-4data
+data
 *	LWO support (KDT)
 
 Directory commands (applies to all tools)
@@ -49,28 +48,28 @@ Directory commands (applies to all tools)
 *   -basedir: Set the base data directory for assets not found in moddir.  Default is moddir.
 *   -gamedir: Set game directory, the folder with game executable.  Default is parent of basedir.
 
-Example from aapokaapo:
+Based on an example provided by aapokaapo:
 My editor is in C:/Games/Trenchbroom/
 My '.map'-files are in C:/Games/Trenchbroom/maps
 My compilers are in C:/Games/Trenchbroom/tools/
 My game/modfiles are in C:/Games/Paintball2/pball/ (my baseq2 dir)
 
-../Trenchbroom/tools/4rad -basedir C:/Games/Paintball2/pball -gamedir C:/Games/Paintball2 ../Trenchbroom/maps/mymap
+../Trenchbroom/tools/q2tool -rad -basedir C:/Games/Paintball2/pball -gamedir C:/Games/Paintball2 ../Trenchbroom/maps/mymap
 => Compiler finds all the game files and compiles the map correctly
 
 # Notes:
 
-4bsp
+bsp
 *   v220 (Valve) support: Trenchbroom and JACK editors can open and save a hybrid format that preserves texture flags.
 *   chop:  Usually, higher is better and faster.  Start at 1024 and work down if any issues.  
 *   choplight: Set the chop size independetly for surface lights.  Lower settings may improve quality of large surface lights when chop is high. Try "choplight 16".
 *   -largebounds: Increase max map size for supporting engines.
 *   -moreents: Increase max number of entities for supporting engines.
 
-4vis
+vis
 *   It works the same as always. -fast for a quick single pass.
 
-4rad
+rad
 *   -smooth sets the angle (in degrees) for autophong. Applies to convex and concave corners. Corners between (angle) and (180-angle) will not be phonged.  Default is 44, so it will phong a 9-sided or more prism, but not 8-sided.  Set to zero to disable.
 *   -maxmapdata sets lightng memory limit.  Original is 0x200000 and it can be set up to 0x800000 (8388608).  Requires an engine that supports the higher limit.
 *	-saturation applies to light reflected from surfaces.  Values < 1.0 desaturate.  Values >1.0 oversaturate. 
@@ -79,7 +78,7 @@ My game/modfiles are in C:/Games/Paintball2/pball/ (my baseq2 dir)
 *   -nudge sets the fractional distance from face center when extra lighting samples are used (-extra).  Default is 0.25.
 *   _falloff property values; intensity - distance), 1 (inverse; intensity/distance), 2 (inverse-square; intensity/dist*dist)  default: 0  Note that inverse and inverse-square falloff require very high brightness values to be visible.
 
-4data
+data
 *   Runs a script file to convert assets to Q2 data types.  This example creates the colormap:
     
     $load base/pics/pal.pcx
@@ -104,15 +103,21 @@ Compile a model from individual .tri, .3ds, or .lwo frames. Example:
 # Test feature:  
 Extended map limits for larger or more detailed maps.  Several 16-bit data types are changed to 32-bit.  Lightmaps are higher res.  This feature requires a supporting engine.  See common/qfiles.h for differences in limits.
 
-Usage:  Add -qbsp to the 4bsp command line.  4vis and 4rad will detect QBSP automatically.  No released engine supports this yet.  See https://github.com/qbism/qb2 for prototype code.
+Usage:  Add -qbsp to the bsp command line.  vis and rad will detect QBSP automatically.  No released engine supports this yet.  See https://github.com/qbism/qb2 for prototype code.
 
 
-# Build from source:
-Linux-  Makefiles for Linux and 64-bit Windows are included.
+# Build from source in Linux:
+Linux-
+mkdir build
+cd build
+cmake ..
 
-Cross-compile- Required packages: mingw-w64, mingw-w64-i686-dev, gcc-multilib, and libz-mingw-w64-dev.
+Windows-
+mkdir buildwin
+cd buildwin
+cmake -DCMAKE_TOOLCHAIN_FILE=../win64.cmake ..
 
-Windows- Visual Studio sln is included. VS compiler fixes (Paril, MaxEd)
+Cross-compile requires packages: mingw-w64, mingw-w64-i686-dev, gcc-multilib, and libz-mingw-w64-dev.
 
 
 

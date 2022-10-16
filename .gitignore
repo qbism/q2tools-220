@@ -10,5 +10,5 @@
  *~
 .vscode/
 autosave/
-build/
+build*/
 release/
