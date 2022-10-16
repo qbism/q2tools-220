@@ -15,7 +15,7 @@ endif()
 set(CMAKE_STATIC_LIBRARY_PREFIX_C "")
 
 add_library(q2tools-i INTERFACE)
-target_compile_options(q2tools-i INTERFACE -fno-common -Wall -Wimplicit-function-declaration -Wno-strict-aliasing ${THREADING_OPTION} -DUSE_ZLIB -O3 -s -z stack-size=16777216)
+target_compile_options(q2tools-i INTERFACE -fno-common -Wall -Wno-strict-aliasing ${THREADING_OPTION} -DUSE_ZLIB -O3 -s -z stack-size=16777216)
 target_link_libraries(q2tools-i INTERFACE m ${THREADING_LIB})
 
 add_library(libq2tool STATIC

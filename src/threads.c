@@ -86,7 +86,7 @@ void RunThreadsOnIndividual(int32_t workcnt, qboolean showpacifier, void (*func)
 
 #ifdef USE_PTHREADS
 
-#ifdef WIN32
+#ifdef _WIN32
 
 #define USED
 

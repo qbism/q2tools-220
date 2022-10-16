@@ -24,7 +24,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <direct.h>
 #endif
 
@@ -186,7 +186,7 @@ void SetQdirFromPath(char *path) {
     memset(cwd_map, 0, sizeof(cwd_map));
     strncpy(cwd_map, path, sizeof(cwd_map) - 1);
 
-#ifdef WIN32
+#ifdef _WIN32
     lastslash = strrchr(cwd_map, '\\');
     // I believe Win32 can use either slash type. -Max
     if (lastslash == NULL)
@@ -203,7 +203,7 @@ void SetQdirFromPath(char *path) {
     }
 
     strcpy(moddir, cwd_map);
-#ifdef WIN32
+#ifdef _WIN32
     strcat(moddir, "..\\");
 #else
     strcat(moddir, "../");
@@ -212,14 +212,14 @@ void SetQdirFromPath(char *path) {
     strcpy(basedir, moddir);
 
     strcpy(gamedir, moddir);
-#ifdef WIN32
+#ifdef _WIN32
     strcat(gamedir, "..\\");
 #else
     strcat(gamedir, "../");
 #endif
 
     strcpy(qdir, gamedir);
-#ifdef WIN32
+#ifdef _WIN32
     strcat(qdir, "..\\");
 #else
     strcat(qdir, "../");
@@ -299,22 +299,24 @@ double I_FloatTime(void) {
 void Q_pathslash(char *out) { // qb: added
     qboolean lastslash;
 
-#ifdef WIN32
+#ifdef _WIN32
     lastslash = (*out && out[strlen(out + 1)] == '\\');
     // I believe Win32 can use either slash type. -Max
     if (!lastslash)
 #endif
         lastslash = (*out && out[strlen(out + 1)] == '/');
     if (!lastslash)
-#ifdef WIN32
+#ifdef _WIN32
         strcat(out, "\\");
 #else
         strcat(out, "/");
 #endif
 }
-
+#ifdef __APPLE__
+char *getcwd(char *__buf, size_t __size);
+#endif
 void Q_getwd(char *out) {
-#ifdef WIN32
+#ifdef _WIN32 
     if (!_getcwd(out, 256))
         Error("_getcwd failed");
     strcat(out, "\\");
@@ -326,7 +328,7 @@ void Q_getwd(char *out) {
 }
 
 void Q_mkdir(char *path) {
-#ifdef WIN32
+#ifdef _WIN32
     if (_mkdir(path) != -1)
         return;
 #else
