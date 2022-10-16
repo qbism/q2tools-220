@@ -93,6 +93,7 @@ static char *help_string =
     "    -nopvs:  Don't do potential visibility set check.\n"
     "    -savetrace: Test traces and report errors.\n";
 
+extern qboolean h2tex;
 extern qboolean origfix;
 extern qboolean noweld;
 extern qboolean nocsg;
@@ -333,6 +334,9 @@ int main(int argc, char *argv[]) {
         } else if (!strcmp(argv[i], "-extra")) {
             extrasamples = true;
             printf("extrasamples = true\n");
+        } else if (!strcmp(argv[i], "-h2tex")) {
+            h2tex = true;
+            printf("use Heretic II texture format = true\n");
         } else if (!strcmp(argv[i], "-noedgefix")) {
             // qb: light warp surfaces
             noedgefix = true;

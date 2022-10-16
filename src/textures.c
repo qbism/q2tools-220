@@ -22,6 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 int32_t nummiptex;
 textureref_t textureref[MAX_MAP_TEXTURES];
+qboolean h2tex;
 
 //==========================================================================
 
@@ -30,6 +31,8 @@ int32_t FindMiptex(char *name) {
     char path[1080];
     char pakpath[56];
     miptex_t *mt;
+    miptex_m8_t *mt_m8; // qb: attempt to add Heretic II support
+    miptex_m32_t *mt_m32;
 
     for (i = 0; i < nummiptex; i++)
         if (!strcmp(name, textureref[i].name)) {
@@ -41,19 +44,41 @@ int32_t FindMiptex(char *name) {
 
     mod_fail = true;
 
-    sprintf(pakpath, "textures/%s.wal", name);
+    // load the miptex to get the flags and values
+    if (h2tex) {
+        sprintf(path, "%stextures/%s.m32", gamedir, name);
+        if (TryLoadFile(path, (void **)&mt_m32, false) != -1) {
+            textureref[i].value    = LittleLong(mt_m32->value);
+            textureref[i].flags    = LittleLong(mt_m32->flags);
+            textureref[i].contents = LittleLong(mt_m32->contents);
+            strcpy(textureref[i].animname, mt_m32->animname);
+            free(mt_m32);
+        } else {
+            sprintf(path, "%stextures/%s.m8", gamedir, name);
+        }
 
-    if (moddir[0] != 0) {
-        sprintf(path, "%s%s", moddir, pakpath);
-        // load the miptex to get the flags and values
-        if (TryLoadFile(path, (void **)&mt, false) != -1 ||
-            TryLoadFileFromPak(pakpath, (void **)&mt, moddir) != -1) {
-            textureref[i].value    = LittleLong(mt->value);
-            textureref[i].flags    = LittleLong(mt->flags);
-            textureref[i].contents = LittleLong(mt->contents);
-            strcpy(textureref[i].animname, mt->animname);
-            free(mt);
-            mod_fail = false;
+        if (TryLoadFile(path, (void **)&mt_m8, false) != -1) {
+            textureref[i].value    = LittleLong(mt_m8->value);
+            textureref[i].flags    = LittleLong(mt_m8->flags);
+            textureref[i].contents = LittleLong(mt_m8->contents);
+            strcpy(textureref[i].animname, mt_m8->animname);
+            free(mt_m8);
+        }
+    } else {
+        sprintf(pakpath, "textures/%s.wal", name);
+
+        if (moddir[0] != 0) {
+            sprintf(path, "%s%s", moddir, pakpath);
+            // load the miptex to get the flags and values
+            if (TryLoadFile(path, (void **)&mt, false) != -1 ||
+                TryLoadFileFromPak(pakpath, (void **)&mt, moddir) != -1) {
+                textureref[i].value    = LittleLong(mt->value);
+                textureref[i].flags    = LittleLong(mt->flags);
+                textureref[i].contents = LittleLong(mt->contents);
+                strcpy(textureref[i].animname, mt->animname);
+                free(mt);
+                mod_fail = false;
+            }
         }
     }
 

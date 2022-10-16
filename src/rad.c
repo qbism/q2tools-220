@@ -42,6 +42,7 @@ vec3_t face_offset[MAX_MAP_FACES_QBSP]; // for rotating bmodels
 dplane_t backplanes[MAX_MAP_PLANES_QBSP];
 
 extern char inbase[32], outbase[32];
+extern qboolean h2tex;
 
 int32_t fakeplanes; // created planes for origin offset
 
@@ -857,6 +858,9 @@ void RAD_ProcessArgument(const char * arg) {
         step    = QBSP_LMSTEP;
     }
     ParseEntities();
+    if(h2tex)
+        CalcTextureReflectivity_Heretic2();
+        else 
     CalcTextureReflectivity();
 
     if (!visdatasize) {

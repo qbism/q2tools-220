@@ -185,6 +185,7 @@ typedef struct {
 ==============================================================================
 
   .WAL texture file format
+  .M8  //qb: Heretic II support from q2map
 
 ==============================================================================
 */
@@ -199,6 +200,64 @@ typedef struct miptex_s {
     int32_t contents;
     int32_t value;
 } miptex_t;
+
+#define PAL_SIZE        256
+#define H2_MIPLEVELS        16
+
+typedef struct palette_s
+{
+	union
+	{
+		struct
+		{
+			byte r,g,b;
+		};
+	};
+} palette_t;
+
+typedef struct miptex_m8_s
+{
+	int version;
+	char name[32];
+	unsigned width[H2_MIPLEVELS], height[H2_MIPLEVELS];
+	unsigned offsets[H2_MIPLEVELS];         // four mip maps stored
+	char animname[32];                  // next frame in animation chain
+	palette_t palette[PAL_SIZE];
+	int flags;
+	int contents;
+	int value;
+} miptex_m8_t;
+
+
+#define MIP32_VERSION   4
+#define MIP32_NOMIP_FLAG2       0x00000001
+#define MIP32_DETAILER_FLAG2        0x00000002
+typedef struct miptex_m32_s
+{
+	int version;
+	char name[128];
+	char altname[128];                  // texture substitution
+	char animname[128];                 // next frame in animation chain
+	char damagename[128];               // image that should be shown when damaged
+	unsigned width[H2_MIPLEVELS], height[H2_MIPLEVELS];
+	unsigned offsets[H2_MIPLEVELS];
+	int flags;
+	int contents;
+	int value;
+	float scale_x, scale_y;
+	int mip_scale;
+
+	// detail texturing info
+	char dt_name[128];              // detailed texture name
+	float dt_scale_x, dt_scale_y;
+	float dt_u, dt_v;
+	float dt_alpha;
+	int dt_src_blend_mode, dt_dst_blend_mode;
+
+	int flags2;
+	int unused[19];                     // future expansion to maintain compatibility with h2
+} miptex_m32_t;
+
 
 /*
 ==============================================================================

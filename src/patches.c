@@ -34,6 +34,91 @@ int32_t texture_sizes[MAX_MAP_TEXINFO_QBSP][2];
 */
 
 /*
+   ======================
+   CalcTextureReflectivity_Heretic2
+   ======================
+ */
+void CalcTextureReflectivity_Heretic2( void ){
+	int i;
+	int j, texels;
+	int color[3];
+	int texel;
+	char path[1024];
+	float r;
+	miptex_m8_t     *mt;
+	miptex_m32_t        *mt32;
+	byte            *pos;
+
+
+	// allways set index 0 even if no textures
+	texture_reflectivity[0][0] = 0.5;
+	texture_reflectivity[0][1] = 0.5;
+	texture_reflectivity[0][2] = 0.5;
+
+	for ( i = 0 ; i < numtexinfo ; i++ )
+	{
+		// see if an earlier texinfo allready got the value
+		for ( j = 0 ; j < i ; j++ )
+		{
+			if ( !strcmp( texinfo[i].texture, texinfo[j].texture ) ) {
+				VectorCopy( texture_reflectivity[j], texture_reflectivity[i] );
+				break;
+			}
+		}
+		if ( j != i ) {
+			continue;
+		}
+
+		// load the wal file
+
+		sprintf( path, "%stextures/%s.m32", gamedir, texinfo[i].texture );
+		if ( TryLoadFile( path, (void **)&mt32, false ) == -1 ) {
+			sprintf( path, "%stextures/%s.m8", gamedir, texinfo[i].texture );
+			if ( TryLoadFile( path, (void **)&mt, false ) == -1 ) {
+				texture_reflectivity[i][0] = 0.5;
+				texture_reflectivity[i][1] = 0.5;
+				texture_reflectivity[i][2] = 0.5;
+				continue;
+			}
+			texels = LittleLong( mt->width[0] ) * LittleLong( mt->height[0] );
+			color[0] = color[1] = color[2] = 0;
+
+			for ( j = 0 ; j < texels ; j++ )
+			{
+				texel = ( (byte *)mt )[LittleLong( mt->offsets[0] ) + j];
+				color[0] += mt->palette[texel].r;
+				color[1] += mt->palette[texel].g;
+				color[2] += mt->palette[texel].b;
+			}
+
+			free( mt );
+		}
+		else
+		{
+			texels = LittleLong( mt32->width[0] ) * LittleLong( mt32->height[0] );
+			color[0] = color[1] = color[2] = 0;
+
+			for ( j = 0 ; j < texels ; j++ )
+			{
+				pos = (byte *)mt32 + mt32->offsets[0] + ( j << 2 );
+				color[0] += *pos++; // r
+				color[1] += *pos++; // g
+				color[2] += *pos++; // b
+			}
+
+			free( mt32 );
+		}
+
+
+		for ( j = 0 ; j < 3 ; j++ )
+		{
+			r = color[j] / ( (float) texels * 255.0 );
+			texture_reflectivity[i][j] = r;
+		}
+	}
+}
+
+/*
 ======================
 CalcTextureReflectivity
 ======================

@@ -186,6 +186,7 @@ extern void MakeTnodes(dmodel_t *bm);
 extern void MakePatches(void);
 extern void SubdividePatches(void);
 extern void PairEdges(void);
+extern void CalcTextureReflectivity_Heretic2(void);
 extern void CalcTextureReflectivity(void);
 extern byte *dlightdata_ptr;
 extern byte dlightdata_raw[MAX_MAP_LIGHTING_QBSP];
