@@ -465,6 +465,4 @@ void DATA_ProcessArgument(const char * arg) {
 
     if (g_pak)
         FinishPak();
-
-    return 0;
 }
