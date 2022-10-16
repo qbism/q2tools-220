@@ -25,7 +25,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <stdio.h>
 #include "cmdlib.h"
 #include "mathlib.h"
-#include "4data.h"
+#include "data.h"
 
 // on disk representation of a face
 

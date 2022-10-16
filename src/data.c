@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 ===========================================================================
 */
 
-#include "4data.h"
+#include "data.h"
 
 qboolean g_compress_pak;
 qboolean g_release;      // don't grab, copy output data to new tree
@@ -39,6 +39,7 @@ char *ext_lwo = "lwo";
 //*********************** [KDT]
 char *ext_tri = "tri";
 char *trifileext;
+
 
 /*
 =======================================================
@@ -65,7 +66,7 @@ typedef struct
 
 packfile_t pfiles[16384];
 FILE *pakfile;
-packfile_t *pf;
+packfile_t *pakf;
 packheader_t pakheader;
 
 /*
@@ -82,7 +83,7 @@ void BeginPak(char *outname) {
     // leave space for header
     SafeWrite(pakfile, &pakheader, sizeof(pakheader));
 
-    pf = pfiles;
+    pakf = pfiles;
 }
 
 /*
@@ -114,7 +115,7 @@ void ReleaseFile(char *filename) {
 
     // pak it
     printf("paking %s\n", filename);
-    if (strlen(filename) >= sizeof(pf->name))
+    if (strlen(filename) >= sizeof(pakf->name))
         Error("Filename too long for pak: %s", filename);
 
     len = LoadFile(source, (void **)&buf);
@@ -137,10 +138,10 @@ void ReleaseFile(char *filename) {
             free(out.data);
     }
 
-    strcpy(pf->name, filename);
-    pf->filepos = LittleLong(ftell(pakfile));
-    pf->filelen = LittleLong(len);
-    pf++;
+    strcpy(pakf->name, filename);
+    pakf->filepos = LittleLong(ftell(pakfile));
+    pakf->filelen = LittleLong(len);
+    pakf++;
 
     SafeWrite(pakfile, buf, len);
 
@@ -165,7 +166,7 @@ void FinishPak(void) {
     pakheader.id[1]  = 'A';
     pakheader.id[2]  = 'C';
     pakheader.id[3]  = 'K';
-    dirlen           = (byte *)pf - (byte *)pfiles;
+    dirlen           = (byte *)pakf - (byte *)pfiles;
     pakheader.dirofs = LittleLong(ftell(pakfile));
     pakheader.dirlen = LittleLong(dirlen);
 
@@ -179,7 +180,7 @@ void FinishPak(void) {
     SafeWrite(pakfile, &pakheader, sizeof(pakheader));
     fclose(pakfile);
 
-    d = pf - pfiles;
+    d = pakf - pfiles;
     printf("%i files packed in %i bytes\n", d, i);
     printf("checksum: 0x%x\n", checksum);
 }
@@ -266,7 +267,7 @@ void PackDirectory_r(char *dir) {
         sprintf(dirstring, "%s%s/%s", gamedir, dir, name);
 
         if (stat(dirstring, &st) == -1)
-            Error("fstating %s", pf->name);
+            Error("fstating %s", pakf->name);
         if (st.st_mode & S_IFDIR) { // directory
             PackDirectory_r(fullname);
             continue;
@@ -433,65 +434,9 @@ void ParseScript(void) {
 
 //=======================================================
 
-/*
-==============
-main
-==============
-*/
-int32_t main(int32_t argc, char **argv) {
-    static int32_t i; // VC4.2 compiler bug if auto...
-    char path[1024];
 
-    ExpandWildcards(&argc, &argv);
-
-    for (i = 1; i < argc; i++) {
-        if (!strcmp(argv[i], "-archive")) {
-            archive = true;
-            strcpy(archivedir, argv[i + 1]);
-            printf("Archiving source to: %s\n", archivedir);
-            i++;
-        } else if (!strcmp(argv[i], "-release")) {
-            g_release = true;
-            strcpy(g_releasedir, argv[i + 1]);
-            printf("Copy output to: %s\n", g_releasedir);
-            i++;
-        } else if (!strcmp(argv[i], "-compress")) {
-            g_compress_pak = true;
-            printf("Compressing pakfile\n");
-        } else if (!strcmp(argv[i], "-pak")) {
-            g_release = true;
-            g_pak     = true;
-            printf("Building pakfile: %s\n", argv[i + 1]);
-            BeginPak(argv[i + 1]);
-            i++;
-        } else if (!strcmp(argv[i], "-only")) {
-            strcpy(g_only, argv[i + 1]);
-            printf("Only grabbing %s\n", g_only);
-            i++;
-        } else if (!strcmp(argv[i], "-3ds")) {
-            do3ds = true;
-            printf("loading .3ds files\n");
-        }
-        //*********************** Added for LWO support
-        else if (!strcmp(argv[i], "-lwo")) {
-            dolwo = true;
-            printf("loading .lwo files\n");
-        } else if (!strcmp(argv[i], "-nolbm")) {
-            nolbm = true;
-            printf("skipping .lbm files\n");
-        }
-        //*********************** [KDT]
-        else if (argv[i][0] == '-')
-            Error("Unknown option \"%s\"", argv[i]);
-        else
-            break;
-    }
-
-    if (i >= argc)
-        Error("usage: 4data [options] file.qgt\n"
-              "    -archive [path]         -release [path]       -only [model]\n"
-              "    -3ds                    -lwo                  -compress\n"
-              "    -basedir [path]         -gamedir [path]        \n\n");
+void DATA_ProcessArgument(const char * arg) {
+     char path[2053];
 
     if (do3ds)
         trifileext = ext_3ds;
@@ -502,10 +447,9 @@ int32_t main(int32_t argc, char **argv) {
     else
         trifileext = ext_tri;
 
-    for (; i < argc; i++) {
-        printf("--------------- %s ---------------\n", argv[i]);
+       printf("--------------- %s ---------------\n", arg);
         // load the script
-        strcpy(path, argv[i]);
+        strcpy(path, arg);
         DefaultExtension(path, ".qdt");
 
         LoadScriptFile(ExpandArg(path));
@@ -518,7 +462,6 @@ int32_t main(int32_t argc, char **argv) {
         // write out the last model
         FinishModel();
         FinishSprite();
-    }
 
     if (g_pak)
         FinishPak();

@@ -16,7 +16,7 @@ add_library(q2tools-i INTERFACE)
 target_compile_options(q2tools-i INTERFACE -fno-common -Wall -Wno-unused-result -Wno-strict-aliasing ${THREADING_OPTION} -DUSE_ZLIB)
 target_link_libraries(q2tools-i INTERFACE m ${THREADING_LIB})
 
-add_library(q2tools-220-lib STATIC
+add_library(map2-lib STATIC
     common/bspfile.c
     common/cmdlib.c
     common/l3dslib.c
@@ -28,43 +28,38 @@ add_library(q2tools-220-lib STATIC
     common/scriplib.c
     common/threads.c
     common/trilib.c
-    4bsp/4bsp.c
-    4bsp/brushbsp.c
-    4bsp/csg.c
-    4bsp/faces.c
-    4bsp/leakfile.c
-    4bsp/map.c
-    4bsp/portals.c
-    4bsp/prtfile.c
-    4bsp/textures.c
-    4bsp/tree.c
-    4bsp/writebsp.c
+    map2/bsp.c
+    map2/brushbsp.c
+    map2/csg.c
+    map2/faces.c
+    map2/leakfile.c
+    map2/map.c
+    map2/portals.c
+    map2/prtfile.c
+    map2/textures.c
+    map2/tree.c
+    map2/writebsp.c
 
-    4vis/4vis.c
-    4vis/flow.c
+    map2/vis.c
+    map2/flow.c
 
-    4rad/4rad.c
-    4rad/lightmap.c
-    4rad/patches.c
-    4rad/trace.c
+    map2/rad.c
+    map2/lightmap.c
+    map2/patches.c
+    map2/trace.c
 )
-target_include_directories(q2tools-220-lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/common)
+target_include_directories(map2-lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/common)
 
-add_executable(q2tools-220 main.c)
-add_executable(4bsp 4bsp/4bsp_main.c)
-add_executable(4vis 4vis/4vis_main.c)
-add_executable(4rad 4rad/4rad_main.c)
-add_executable(4data
-    4data/4data.c
-    4data/images.c
-    4data/models.c
-    4data/sprites.c
-    4data/tables.c
-    4data/video.c
+add_executable(map2 map2/main.c)
+
+add_executable(data2
+    data2/data2.c
+    data2/images.c
+    data2/models.c
+    data2/sprites.c
+    data2/tables.c
+    data2/video.c
 )
 
-target_link_libraries(q2tools-220 q2tools-i q2tools-220-lib)
-target_link_libraries(4bsp q2tools-i q2tools-220-lib)
-target_link_libraries(4vis q2tools-i q2tools-220-lib)
-target_link_libraries(4rad q2tools-i q2tools-220-lib)
-target_link_libraries(4data q2tools-i q2tools-220-lib)
+target_link_libraries(map2 q2tools-i map2-lib)
+target_link_libraries(data2 q2tools-i map2-lib)

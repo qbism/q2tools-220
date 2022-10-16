@@ -103,7 +103,7 @@ int32_t CompressVis(byte *vis, byte *dest);
 
 void InitBSPFile(void);
 void LoadBSPFile(char *filename);
-void LoadBSPFileTexinfo(char *filename); // just for 4data
+void LoadBSPFileTexinfo(char *filename); // just for data2
 void WriteBSPFile(char *filename);
 void PrintBSPFileSizes(void);
 

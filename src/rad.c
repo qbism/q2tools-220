@@ -880,5 +880,5 @@ void RAD_ProcessArgument(const char * arg) {
     printf("%i bytes light data used of %i max.\n", lightdatasize, maxdata);
 
     PrintBSPFileSizes();
-    printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END 4rad >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+    printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END rad >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 }

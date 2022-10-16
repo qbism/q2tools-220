@@ -18,8 +18,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 ===========================================================================
 */
 
-// 4data.h
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>

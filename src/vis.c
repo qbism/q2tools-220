@@ -508,5 +508,5 @@ void VIS_ProcessArgument(const char * arg) {
 
     PrintBSPFileSizes();
 
-    printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END 4vis >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+    printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END vis >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 }

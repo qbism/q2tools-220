@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 ===========================================================================
 */
 
-#include "4data.h"
+#include "data.h"
 
 char mip_prefix[64]; // directory to dump the textures in
 

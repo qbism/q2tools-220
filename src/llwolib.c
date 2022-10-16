@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "cmdlib.h"
 #include "mathlib.h"
-#include "4data.h"
+#include "data.h"
 
 #define MAXPOINTS 2000
 #define MAXPOLYS  2000

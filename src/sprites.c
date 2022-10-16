@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 ===========================================================================
 */
 
-#include "4data.h"
+#include "data.h"
 
 #define MAX_SPRFRAMES MAX_MD2SKINS
 

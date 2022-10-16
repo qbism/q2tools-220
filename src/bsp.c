@@ -359,5 +359,5 @@ void BSP_ProcessArgument(const char * arg) {
     }
 
     PrintBSPFileSizes();
-    printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END 4bsp >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+    printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END bsp >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 }

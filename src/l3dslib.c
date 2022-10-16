@@ -25,7 +25,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <stdio.h>
 #include "cmdlib.h"
 #include "mathlib.h"
-#include "4data.h"
+#include "data.h"
 
 #define MAIN3DS     0x4D4D
 #define EDIT3DS     0x3D3D // this is the start of the editor config
