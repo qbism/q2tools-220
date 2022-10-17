@@ -67,4 +67,4 @@ target_link_libraries(q2tool q2tools-i libq2tool)
 install(TARGETS q2tool)
 
 enable_testing()
-add_test(NAME q2tool COMMAND q2tool)
+add_test(NAME q2tool COMMAND q2tool -bsp)
