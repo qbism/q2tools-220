@@ -628,8 +628,8 @@ Allows failure
 typedef struct
 {
     uint8_t magic[4]; // Name of the new WAD format
-    long diroffset;   // Position of WAD directory from start of file
-    long dirsize;     // Number of entries * 0x40 (64 char)
+    uint32_t diroffset;   // Position of WAD directory from start of file
+    uint32_t dirsize;     // Number of entries * 0x40 (64 char)
 
     uint8_t bogus[50];
 } pakheader_t;
@@ -638,8 +638,8 @@ typedef struct
 {
     uint8_t filename[0x38]; // Name of the file, Unix style, with extension,
     // 56 chars, padded with '\0'.
-    long offset; // Position of the entry in PACK file
-    long size;   // Size of the entry in PACK file
+    uint32_t offset; // Position of the entry in PACK file
+    uint32_t size;   // Size of the entry in PACK file
 } pakentry_t;
 
 int32_t TryLoadFileFromPak(char *filename, void **bufferptr, char *gd) {
