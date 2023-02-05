@@ -728,8 +728,8 @@ void SubdividePatch(patch_t *patch) {
     patch_t *newp;
 
     w       = patch->winding;
-    mins[0] = mins[1] = mins[2] = BOGUS_RANGE;
-    maxs[0] = maxs[1] = maxs[2] = -BOGUS_RANGE;
+    mins[0] = mins[1] = mins[2] = BIG_BOGUS_RANGE;
+    maxs[0] = maxs[1] = maxs[2] = -BIG_BOGUS_RANGE;
     for (i = 0; i < w->numpoints; i++) {
         for (j = 0; j < 3; j++) {
             v = w->p[i][j];

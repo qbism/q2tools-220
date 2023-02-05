@@ -645,7 +645,7 @@ typedef struct
 int32_t TryLoadFileFromPak(char *filename, void **bufferptr, char *gd) {
     FILE *f;
     int32_t n, i, ret_len;
-    long dir_ents;
+    uint32_t dir_ents;
     void *buffer;
     pakheader_t pak_header;
     pakentry_t *pak_entry;

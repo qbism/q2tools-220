@@ -109,8 +109,8 @@ void BuildFaceExtents(void) {
             vec_t *st_mins          = face_extents[face_index].st_mins;
             vec_t *st_maxs          = face_extents[face_index].st_maxs;
 
-            mins[0] = mins[1] = BOGUS_RANGE;
-            maxs[0] = maxs[1] = -BOGUS_RANGE;
+            mins[0] = mins[1] = BIG_BOGUS_RANGE;
+            maxs[0] = maxs[1] = -BIG_BOGUS_RANGE;
 
             for (i = 0; i < s->numedges; i++) {
                 const int32_t e = dsurfedges[s->firstedge + i];
@@ -181,8 +181,8 @@ void BuildFaceExtents(void) {
             vec_t *st_mins          = face_extents[face_index].st_mins;
             vec_t *st_maxs          = face_extents[face_index].st_maxs;
 
-            mins[0] = mins[1] = BOGUS_RANGE;
-            maxs[0] = maxs[1] = -BOGUS_RANGE;
+            mins[0] = mins[1] = BIG_BOGUS_RANGE;
+            maxs[0] = maxs[1] = -BIG_BOGUS_RANGE;
 
             for (i = 0; i < s->numedges; i++) {
                 const int32_t e = dsurfedges[s->firstedge + i];
@@ -903,7 +903,7 @@ void TriangulatePoints(triangulation_t *trian) {
         return;
 
     // find the two closest points
-    bestd = BOGUS_RANGE;
+    bestd = BIG_BOGUS_RANGE;
     for (i = 0; i < trian->numpoints; i++) {
         p1 = trian->points[i]->origin;
         for (j = i + 1; j < trian->numpoints; j++) {
@@ -1059,7 +1059,7 @@ void SampleTriangulation(vec3_t point, triangulation_t *trian, triangle_t **last
     }
 
     // search for nearest point
-    best = BOGUS_RANGE;
+    best = BIG_BOGUS_RANGE;
     p1   = NULL;
     for (j = 0; j < trian->numpoints; j++) {
         p0 = trian->points[j];
@@ -1127,8 +1127,8 @@ void CalcFaceExtents(lightinfo_t *l) {
         dface_tx *s;
         s       = l->faceX;
 
-        mins[0] = mins[1] = BOGUS_RANGE;
-        maxs[0] = maxs[1] = -BOGUS_RANGE;
+        mins[0] = mins[1] = BIG_BOGUS_RANGE;
+        maxs[0] = maxs[1] = -BIG_BOGUS_RANGE;
 
         tex               = &texinfo[s->texinfo];
 
@@ -1155,8 +1155,8 @@ void CalcFaceExtents(lightinfo_t *l) {
         dface_t *s;
         s       = l->face;
 
-        mins[0] = mins[1] = BOGUS_RANGE;
-        maxs[0] = maxs[1] = -BOGUS_RANGE;
+        mins[0] = mins[1] = BIG_BOGUS_RANGE;
+        maxs[0] = maxs[1] = -BIG_BOGUS_RANGE;
 
         tex               = &texinfo[s->texinfo];
 

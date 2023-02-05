@@ -126,7 +126,7 @@ WindingArea
 =============
 */
 vec_t WindingArea(winding_t *w) {
-    int32_t i;
+    int64_t i;
     vec3_t d1, d2, cross;
     vec_t total;
 
@@ -142,10 +142,10 @@ vec_t WindingArea(winding_t *w) {
 
 void WindingBounds(winding_t *w, vec3_t mins, vec3_t maxs) {
     vec_t v;
-    int32_t i, j;
+    int64_t i, j;
 
-    mins[0] = mins[1] = mins[2] = BOGUS_RANGE;
-    maxs[0] = maxs[1] = maxs[2] = -BOGUS_RANGE;
+    mins[0] = mins[1] = mins[2] = BIG_BOGUS_RANGE;
+    maxs[0] = maxs[1] = maxs[2] = -BIG_BOGUS_RANGE;
 
     for (i = 0; i < w->numpoints; i++) {
         for (j = 0; j < 3; j++) {

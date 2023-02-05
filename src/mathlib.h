@@ -28,7 +28,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <math.h>
 
 // big enough without being so big we get major floating point errors.
-#define BOGUS_RANGE (1 << 20) //qb: to comply with 24-bit 20.3 network max.  1048576
+#define BOGUS_RANGE (1 << 14)
+#define BIG_BOGUS_RANGE (1 << 20) //qb: to comply with 24-bit 20.3 network max.  1048576
 
 #ifdef BSP          // only do this for qbsp, leads to stack overflows on qrad3.
 #define DOUBLEVEC_T // jit - might as well be more accurate, and sometimes doubles are even faster on modern hardware, anyway...
@@ -182,8 +183,8 @@ static inline vec_t ColorNormalize(vec3_t in, vec3_t out) {
 }
 
 static inline void ClearBounds(vec3_t mins, vec3_t maxs) {
-    mins[0] = mins[1] = mins[2] = BOGUS_RANGE;
-    maxs[0] = maxs[1] = maxs[2] = -BOGUS_RANGE;
+    mins[0] = mins[1] = mins[2] = BIG_BOGUS_RANGE;
+    maxs[0] = maxs[1] = maxs[2] = -BIG_BOGUS_RANGE;
 }
 
 static inline void AddPointToBounds(vec3_t v, vec3_t mins, vec3_t maxs) {
