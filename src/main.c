@@ -169,15 +169,15 @@ int main(int argc, char *argv[]) {
     char tbasedir[1024] = "";
     char tmoddir[1024]  = "";
     int32_t i;
- 
-    qboolean do_bsp     = false;
-    qboolean do_vis     = false;
-    qboolean do_rad     = false;
-    qboolean do_data    = false;
+
+    qboolean do_bsp  = false;
+    qboolean do_vis  = false;
+    qboolean do_rad  = false;
+    qboolean do_data = false;
 
     ThreadSetDefault();
 
-   printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< q2tool >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+    printf("\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< q2tool >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 
     for (i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "-bsp")) {
@@ -390,7 +390,7 @@ int main(int argc, char *argv[]) {
             i++;
         } else if (!strcmp(argv[i], "-nudge")) {
             sample_nudge = atof(argv[i + 1]);
-            // qb: nah, go crazy.  sample_nudge = BOUND(0, sample_nudge, 1.0);
+            sample_nudge = BOUND(-10, sample_nudge, 10.0);
             i++;
         } else if (!strcmp(argv[i], "-ambient")) {
             ambient = BOUND(0, atof(argv[i + 1]), 255);
@@ -493,26 +493,28 @@ int main(int argc, char *argv[]) {
         // qb: display dirs
         printf("moddir = %s\n", moddir);
         printf("basedir = %s\n", basedir);
-        printf("gamedir = %s\n", gamedir);
+        printf("gamedir = %s\n\n", gamedir);
 
         if (do_bsp) {
             int32_t old_numthreads = numthreads;
             // qb: below is from original source release.  On Windows, multi threads cause false leak errors.
             numthreads             = 1; // multiple threads aren't helping...
-            printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BEGIN bsp >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+            printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BEGIN bsp >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
             BSP_ProcessArgument(argv[i]);
             numthreads = old_numthreads;
         }
         if (do_vis || (do_bsp && do_rad)) {
-            printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BEGIN vis >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+            printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BEGIN vis >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
             VIS_ProcessArgument(argv[i]);
         }
+
         if (do_rad) {
-            printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BEGIN rad >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+            printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BEGIN rad >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
             RAD_ProcessArgument(argv[i]);
         }
+
         if (do_data) {
-            printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BEGIN data >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+            printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BEGIN data >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
             DATA_ProcessArgument(argv[i]);
         }
     }

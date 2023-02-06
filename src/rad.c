@@ -29,8 +29,8 @@ every surface must be divided into at least two patches each axis
 
 */
 
-patch_t * face_patches[MAX_MAP_FACES_QBSP];
-entity_t * face_entity[MAX_MAP_FACES_QBSP];
+patch_t *face_patches[MAX_MAP_FACES_QBSP];
+entity_t *face_entity[MAX_MAP_FACES_QBSP];
 patch_t patches[MAX_PATCHES_QBSP];
 unsigned num_patches;
 int32_t num_smoothing; // qb: number of phong hits
@@ -440,7 +440,7 @@ void MakeTransfers(int32_t i) {
     float total, inv_total;
     dplane_t plane;
     vec3_t origin;
-    float * transfers;//[MAX_PATCHES_QBSP];
+    float *transfers; //[MAX_PATCHES_QBSP];
     int32_t s;
     int32_t itotal;
     byte pvs[(MAX_MAP_LEAFS_QBSP + 7) / 8];
@@ -577,7 +577,7 @@ void MakeTransfers(int32_t i) {
     // don't bother locking around this.  not that important.
     total_transfer += patch->numtransfers;
 
-// cleanup:
+    // cleanup:
     free(transfers);
 }
 
@@ -836,10 +836,11 @@ main
 light modelfile
 ========
 */
-void RAD_ProcessArgument(const char * arg) {
+void RAD_ProcessArgument(const char *arg) {
     double start, end;
-    char * name;
+    char *name;
 
+    smoothing_threshold = cos(smoothing_value * (Q_PI / 180.0));
     start = I_FloatTime();
 
     strcpy(source, ExpandArg(arg));
@@ -858,10 +859,10 @@ void RAD_ProcessArgument(const char * arg) {
         step    = QBSP_LMSTEP;
     }
     ParseEntities();
-    if(h2tex)
+    if (h2tex)
         CalcTextureReflectivity_Heretic2();
-        else 
-    CalcTextureReflectivity();
+    else
+        CalcTextureReflectivity();
 
     if (!visdatasize) {
         printf("No vis information, direct lighting only.\n");
@@ -869,10 +870,24 @@ void RAD_ProcessArgument(const char * arg) {
         ambient   = 0.1;
     }
 
+    printf("sample nudge: %f\n", sample_nudge);
+    printf("ambient     : %f\n", ambient);
+    printf("scale       : %f\n", lightscale);
+    printf("maxlight    : %f\n", maxlight);
+    printf("entity      : %f\n", entity_scale);
+    printf("direct      : %f\n", direct_scale);
+    printf("saturation  : %f\n", saturation);
+    printf("bounce      : %d\n", numbounce);
+    printf("radmin      : %f\n", patch_cutoff);
+    printf("subdiv      : %f\n", subdiv);
+    printf("smooth angle: %f\n", smoothing_value);
+    printf("nudge       : %f\n", sample_nudge);
+    printf("threads     : %d\n", numthreads);
+
     RadWorld();
 
     if (smoothing_threshold > 0.0) {
-        printf("Smoothing edges found: %i\n", num_smoothing);
+        printf("Smoothing edges found: %i\n\n", num_smoothing);
     }
 
     sprintf(name, "%s%s", outbase, source);
@@ -884,5 +899,5 @@ void RAD_ProcessArgument(const char * arg) {
     printf("%i bytes light data used of %i max.\n", lightdatasize, maxdata);
 
     PrintBSPFileSizes();
-    printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END rad >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+    printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END rad >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n\n\n");
 }

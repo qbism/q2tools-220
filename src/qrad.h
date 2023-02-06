@@ -71,7 +71,7 @@ typedef struct
 #define QBSP_LMSTEP             4  // qb: higher res lightmap
 
 #define DEFAULT_SMOOTHING_VALUE 44.0
-#define DEFAULT_NUDGE_VALUE     0.25
+#define DEFAULT_NUDGE_VALUE     0.05
 
 typedef struct patch_s {
     winding_t *winding;
