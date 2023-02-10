@@ -178,9 +178,9 @@ vec_t BrushVolume(bspbrush_t *brush) {
 CountBrushList
 ================
 */
-//qb: upped from in32_t for qbsp + BIG_BOGUS_RANGE
-int64_t CountBrushList(bspbrush_t *brushes) {
-    int64_t c;
+
+int32_t CountBrushList(bspbrush_t *brushes) {
+    int32_t c;
 
     c = 0;
     for (; brushes; brushes = brushes->next)
@@ -628,7 +628,7 @@ side_t *SelectSplitSide(bspbrush_t *brushes, node_t *node) {
     qboolean hintsplit, detailsplit;
 
     bestside  = NULL;
-    bestvalue = -BIG_BOGUS_RANGE;
+    bestvalue = -BOGUS_RANGE;
 
     // the search order goes: visible-structural, visible-detail,
     // nonvisible-structural, nonvisible-detail.

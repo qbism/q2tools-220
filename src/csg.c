@@ -428,7 +428,7 @@ bspbrush_t *ChopBrushes(bspbrush_t *head) {
     bspbrush_t *tail;
     bspbrush_t *keep;
     bspbrush_t *sub, *sub2;
-    int64_t c1, c2;
+    int32_t c1, c2;
 
     qprintf("---- ChopBrushes ----\n");
     qprintf("original brushes: %i\n", CountBrushList(head));
@@ -450,8 +450,8 @@ newlist:
 
             sub  = NULL;
             sub2 = NULL;
-            c1   = BIG_BOGUS_RANGE;
-            c2   = BIG_BOGUS_RANGE;
+            c1   = BOGUS_RANGE;
+            c2   = BOGUS_RANGE;
 
             if (BrushGE(b2, b1)) {
                 sub = SubtractBrush(b1, b2);

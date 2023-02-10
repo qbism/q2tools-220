@@ -254,7 +254,7 @@ void SplitBrush(bspbrush_t *brush, int32_t planenum,
 tree_t *AllocTree(void);
 node_t *AllocNode(void);
 bspbrush_t *AllocBrush(int32_t numsides);
-int64_t CountBrushList(bspbrush_t *brushes);
+int32_t CountBrushList(bspbrush_t *brushes);
 void FreeBrush(bspbrush_t *brushes);
 vec_t BrushVolume(bspbrush_t *brush);
 

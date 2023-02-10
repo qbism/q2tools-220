@@ -43,7 +43,7 @@ void CalcTextureReflectivity_Heretic2( void ){
 	int j, texels;
 	int color[3];
 	int texel;
-	char path[1024];
+	char path[1100];
 	float r;
 	miptex_m8_t     *mt;
 	miptex_m32_t        *mt32;

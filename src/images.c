@@ -20,7 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "data.h"
 
-char mip_prefix[64]; // directory to dump the textures in
+char mip_prefix[32]; // directory to dump the textures in
 
 qboolean colormap_issued;
 byte colormap_palette[768];
@@ -483,10 +483,10 @@ void Cmd_Mip(void) {
     int32_t flags, value, contents;
     mipparm_t *mp;
 
-    char lumpname[64];
+    char lumpname[32];
     byte *lump_p;
     char filename[1200];
-    char animname[124];
+    char animname[32];
 
     GetToken(false);
     strcpy(lumpname, token);
@@ -558,10 +558,13 @@ void Cmd_Mip(void) {
     // qb: overflow check
     if (strlen(mip_prefix) + strlen(lumpname) > 32)
         Error("%s/%s exceeds 32 char limit", mip_prefix, lumpname);
-
     sprintf(qtex->name, "%s/%s", mip_prefix, lumpname);
-    if (animname[0])
+
+    if (animname[0]) {
+        if (strlen(mip_prefix) + strlen(animname) > 32)
+            Error("%s/%s exceeds 32 char limit", mip_prefix, animname);
         sprintf(qtex->animname, "%s/%s", mip_prefix, animname);
+    }
 
     lump_p           = (byte *)(&qtex->value + 1);
 

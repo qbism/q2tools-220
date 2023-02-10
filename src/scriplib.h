@@ -24,7 +24,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "cmdlib.h"
 #endif
 
-#define MAXTOKEN 1024
+#define MAXTOKEN 512
 
 extern char token[MAXTOKEN];
 extern char *scriptbuffer, *script_p, *scriptend_p;

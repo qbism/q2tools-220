@@ -28,7 +28,7 @@ dsprframe_t frames[MAX_SPRFRAMES];
 byte *byteimage, *lbmpalette;
 int32_t byteimagewidth, byteimageheight;
 
-char spritename[1024];
+char spritename[32];
 
 void FinishSprite(void);
 void Cmd_Spritename(void);

@@ -181,8 +181,8 @@ void BuildFaceExtents(void) {
             vec_t *st_mins          = face_extents[face_index].st_mins;
             vec_t *st_maxs          = face_extents[face_index].st_maxs;
 
-            mins[0] = mins[1] = BIG_BOGUS_RANGE;
-            maxs[0] = maxs[1] = -BIG_BOGUS_RANGE;
+            mins[0] = mins[1] = BOGUS_RANGE;
+            maxs[0] = maxs[1] = -BOGUS_RANGE;
 
             for (i = 0; i < s->numedges; i++) {
                 const int32_t e = dsurfedges[s->firstedge + i];
@@ -1155,8 +1155,8 @@ void CalcFaceExtents(lightinfo_t *l) {
         dface_t *s;
         s       = l->face;
 
-        mins[0] = mins[1] = BIG_BOGUS_RANGE;
-        maxs[0] = maxs[1] = -BIG_BOGUS_RANGE;
+        mins[0] = mins[1] = BOGUS_RANGE;
+        maxs[0] = maxs[1] = -BOGUS_RANGE;
 
         tex               = &texinfo[s->texinfo];
 
