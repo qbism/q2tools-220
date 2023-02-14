@@ -84,7 +84,7 @@ static char *help_string =
     "    -saturate #: Saturation factor of light bounced off surfaces.\n"
     "    -scale #: Light intensity multiplier.\n"
     "    -smooth #: Threshold angle (# and 180deg - #) for phong smoothing.\n"
-    "    -subdiv (or -chop) #: Maximum patch size.  Default: 64\n"
+    "    -subdiv #: Maximum patch size.  Default: 64\n"
     "    -sunradscale #: Sky light intensity scale when sun is active.\n"
     "    -threads #:  Number of CPU cores to use.\n"
     "rad debugging options:\n"
@@ -268,7 +268,7 @@ int main(int argc, char *argv[]) {
         } else if (!strcmp(argv[i], "-basedir")) {
             strcpy(tbasedir, argv[i + 1]);
             i++;
-        } else if (!strcmp(argv[i], "-chop") || !strcmp(argv[i], "-subdiv")) {
+        } else if (!strcmp(argv[i], "-chop")) {
             subdivide_size = atof(argv[i + 1]);
             if (subdivide_size < 32) {
                 subdivide_size = 32;
@@ -278,8 +278,19 @@ int main(int argc, char *argv[]) {
                 subdivide_size = 1024;
                 printf("subdivide size set to maximum size: 1024\n");
             }
-            subdiv = subdivide_size; // qb: rad default (64) is different than bsp (240)
-            printf("subdivide size = %f\n", subdivide_size);
+            printf("polygon subdivide size (chop)= %f\n", subdivide_size);
+            i++;
+       } else if (!strcmp(argv[i], "-subdiv")) {
+            subdiv = atof(argv[i + 1]);
+            if (subdiv < 16) {
+                subdiv = 16;
+                printf("rad subdiv size set to minimum size: 32\n");
+            }
+            if (subdiv > 1024) {
+                subdiv = 1024;
+                printf("rad subdiv size set to maximum size: 1024\n");
+            }
+             printf("rad subdiv size = %f\n", subdivide_size);
             i++;
         } else if ((!strcmp(argv[i], "-choplight")) || (!strcmp(argv[i], "-choplights")) || (!strcmp(argv[i], "-subdivlight"))) {
             // qb: chop surf lights independently
