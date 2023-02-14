@@ -856,7 +856,6 @@ void RAD_ProcessArgument(const char *arg) {
     dlightdata_ptr = dlightdata;
     if (use_qbsp) {
         maxdata = MAX_MAP_LIGHTING_QBSP;
-        step    = QBSP_LMSTEP;
     }
     ParseEntities();
     if (h2tex)

@@ -41,7 +41,7 @@ edgeshare_t edgeshare[MAX_MAP_EDGES_QBSP];
 
 int32_t facelinks[MAX_MAP_FACES_QBSP];
 int32_t planelinks[2][MAX_MAP_PLANES_QBSP];
-int32_t maxdata = DEFAULT_MAP_LIGHTING, step = LMSTEP;
+int32_t maxdata = DEFAULT_MAP_LIGHTING;
 vec3_t face_texnormals[MAX_MAP_FACES_QBSP];
 float sunradscale = 0.5;
 byte *dlightdata_ptr;
@@ -1185,8 +1185,8 @@ void CalcFaceExtents(lightinfo_t *l) {
         l->exactmins[i] = mins[i];
         l->exactmaxs[i] = maxs[i];
 
-        mins[i]         = floor(mins[i] / step);
-        maxs[i]         = ceil(maxs[i] / step);
+        mins[i]         = floor(mins[i] / LMSTEP);
+        maxs[i]         = ceil(maxs[i] / LMSTEP);
 
         l->texmins[i]   = mins[i];
         l->texsize[i]   = maxs[i] - mins[i];
@@ -1202,8 +1202,8 @@ void CalcFaceExtents(lightinfo_t *l) {
             l->exactmins[i] = mins[i];
             l->exactmaxs[i] = maxs[i];
 
-            mins[i]         = floor(mins[i] / step);
-            maxs[i]         = ceil(maxs[i] / step);
+            mins[i]         = floor(mins[i] / LMSTEP);
+            maxs[i]         = ceil(maxs[i] / LMSTEP);
 
             l->texmins[i]   = mins[i];
             l->texsize[i]   = maxs[i] - mins[i];
@@ -1316,13 +1316,13 @@ void CalcPoints(lightinfo_t *l, float sofs, float tofs) {
     w            = l->texsize[0] + 1;
     l->numsurfpt = w * h;
 
-    starts       = l->texmins[0] * step;
-    startt       = l->texmins[1] * step;
+    starts       = l->texmins[0] * LMSTEP;
+    startt       = l->texmins[1] * LMSTEP;
 
     for (t = 0; t < h; t++) {
         for (s = 0; s < w; s++, surf += 3) {
-            us = starts + (s + sofs) * step;
-            ut = startt + (t + tofs) * step;
+            us = starts + (s + sofs) * LMSTEP;
+            ut = startt + (t + tofs) * LMSTEP;
 
             // if a line can be traced from surf to facemid, the point is good
             for (i = 0; i < 6; i++) {
@@ -1948,9 +1948,9 @@ void AddSampleToPatch(vec3_t pos, vec3_t color, int32_t facenum) {
         // see if the point is in this patch (roughly)
         WindingBounds(patch->winding, mins, maxs);
         for (i = 0; i < 3; i++) {
-            if (mins[i] > pos[i] + step)
+            if (mins[i] > pos[i] + LMSTEP)
                 goto nextpatch;
-            if (maxs[i] < pos[i] - step)
+            if (maxs[i] < pos[i] - LMSTEP)
                 goto nextpatch;
         }
 
