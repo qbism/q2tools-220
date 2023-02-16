@@ -4,8 +4,9 @@ Q2 compiler tools featuring ability to bsp v220 map format, automatic phong and 
 Forked from compiler tools supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
 
 # Enhancements:
+# All functions are rolled into a single executable: q2tool.  Select one or multiple compile steps to run.
 
-bsp
+-bsp
 *   Split microbrushes (GDD tools)
 *	Fix for scaled textures using an origin brush. (DWH)
 *   Fix for rotation using origin brush (MaxEd)
@@ -18,10 +19,10 @@ bsp
 *   Feature: set CONTENTS_AUX flag with CONTENTS_MIST to disable rendering of mist backfaces.
 *   Increased map limits with extended file format. Future supporting engine. (ideas from motorsep, Paril, Knightmare)
 		
-vis
+-vis
 *   Increase vis data size max. Issue warning for > vanilla limit. (qbism)
 		
-radiosity
+-rad
 *   Reduce dark banding at sky: Faces are never behind the sky.  (idea from ericw-tools)
 *   Keep emit_surface active for sky planes when sun is active. Adjust with -sunradscale. (qbism)
 *   Use any existing TGA replacement textures for radiosity (AA tools)
@@ -40,7 +41,7 @@ radiosity
     *   gamedir is parent of moddir
     *   qdir is parent of gamedir	
 	
-data
+-data
 *	LWO support (KDT)
 
 Directory commands (applies to all tools)
@@ -100,8 +101,8 @@ Compile a model from individual .tri, .3ds, or .lwo frames. Example:
     //$frame walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8 walk9 walk10
     ...etc.
 
-# Test feature:  
-Extended map limits for larger or more detailed maps.  Several 16-bit data types are changed to 32-bit.  Lightmaps are higher res.  This feature requires a supporting engine.  See common/qfiles.h for differences in limits.
+# qbsp format:  
+Extended map limits for larger or more detailed maps.  Several 16-bit data types are changed to 32-bit.  This feature requires a supporting engine.  See common/qfiles.h for differences in limits.
 
 Usage:  Add -qbsp to the bsp command line.  vis and rad will detect QBSP automatically.  No released engine supports this yet.  See https://github.com/qbism/qb2 for prototype code.
 
@@ -118,6 +119,3 @@ cd buildwin
 cmake -DCMAKE_TOOLCHAIN_FILE=../win64.cmake ..
 
 Cross-compile requires packages: mingw-w64, mingw-w64-i686-dev, gcc-multilib, and libz-mingw-w64-dev.
-
-
-
