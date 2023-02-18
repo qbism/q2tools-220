@@ -291,10 +291,7 @@ void RunThreadsOn(int32_t workcnt, qboolean showpacifier, void (*func)(int32_t))
     oldf      = -1;
     pacifier  = showpacifier;
     start     = I_FloatTime();
-#ifdef NeXT
-    if (pacifier)
-        setbuf(stdout, NULL);
-#endif
+
     func(0);
 
     end = I_FloatTime();

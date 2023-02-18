@@ -34,7 +34,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 typedef uint8_t UBYTE;
 // conflicts with windows typedef short			WORD;
 typedef uint16_t UWORD;
-typedef long LONG;
+typedef uint32_t LONG;
 
 typedef enum {
     ms_none,

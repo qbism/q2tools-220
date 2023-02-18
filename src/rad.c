@@ -287,7 +287,7 @@ extern tnode_t *tnodes;
 
 int32_t total_transfer;
 
-static long total_mem;
+static uint32_t total_mem;
 
 static int32_t first_transfer = 1;
 
@@ -372,11 +372,7 @@ void DecompressBytes(int32_t size, byte *in, byte *decompressed) {
 
 static int32_t trace_bytes = 0;
 
-#ifdef WIN32
 static inline int32_t lowestCommonNode(int32_t nodeNum1, int32_t nodeNum2)
-#else
-static inline int32_t lowestCommonNode(int32_t nodeNum1, int32_t nodeNum2)
-#endif
 {
     int32_t child1, tmp, headNode = 0;
 

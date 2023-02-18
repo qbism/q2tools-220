@@ -164,7 +164,7 @@ void RAD_ProcessArgument(const char *arg);
 void DATA_ProcessArgument(const char *arg);
 void BeginPak(char *outname);
 
-int main(int argc, char *argv[]) {
+int32_t main(int32_t argc, char *argv[]) {
     char tgamedir[1024] = "";
     char tbasedir[1024] = "";
     char tmoddir[1024]  = "";

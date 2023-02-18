@@ -352,7 +352,7 @@ void RecursiveLeafFlow(int32_t leafnum, threaddata_t *thread, pstack_t *prevstac
     plane_t backplane;
     leaf_t *leaf;
     int32_t i, j;
-    long *test, *might, *vis, more;
+    uint32_t *test, *might, *vis, more;
     int32_t pnum;
 
     thread->c_chains++;
@@ -366,8 +366,8 @@ void RecursiveLeafFlow(int32_t leafnum, threaddata_t *thread, pstack_t *prevstac
     stack.leaf      = leaf;
     stack.portal    = NULL;
 
-    might           = (long *)stack.mightsee;
-    vis             = (long *)thread->base->portalvis;
+    might           = (uint32_t *)stack.mightsee;
+    vis             = (uint32_t *)thread->base->portalvis;
 
     // check all portals for flowing into other leafs
     for (i = 0; i < leaf->numportals; i++) {
@@ -380,14 +380,14 @@ void RecursiveLeafFlow(int32_t leafnum, threaddata_t *thread, pstack_t *prevstac
 
         // if the portal can't see anything we haven't allready seen, skip it
         if (p->status == stat_done) {
-            test = (long *)p->portalvis;
+            test = (uint32_t *)p->portalvis;
         } else {
-            test = (long *)p->portalflood;
+            test = (uint32_t *)p->portalflood;
         }
 
         more = 0;
         for (j = 0; j < portallongs; j++) {
-            might[j] = ((long *)prevstack->mightsee)[j] & test[j];
+            might[j] = ((uint32_t *)prevstack->mightsee)[j] & test[j];
             more |= (might[j] & ~vis[j]);
         }
 
@@ -506,7 +506,7 @@ void PortalFlow(int32_t portalnum) {
     data.pstack_head.source      = p->winding;
     data.pstack_head.portalplane = p->plane;
     for (i = 0; i < portallongs; i++)
-        ((long *)data.pstack_head.mightsee)[i] = ((long *)p->portalflood)[i];
+        ((uint32_t *)data.pstack_head.mightsee)[i] = ((uint32_t *)p->portalflood)[i];
     RecursiveLeafFlow(p->leaf, &data, &data.pstack_head);
 
     p->status = stat_done;
@@ -667,7 +667,7 @@ void RecursiveLeafBitFlow(int32_t leafnum, byte *mightsee, byte *cansee) {
     portal_t *p;
     leaf_t *leaf;
     int32_t i, j;
-    long more;
+    uint32_t more;
     int32_t pnum;
     byte newmight[MAX_MAP_PORTALS_QBSP / 8];
 
@@ -685,8 +685,8 @@ void RecursiveLeafBitFlow(int32_t leafnum, byte *mightsee, byte *cansee) {
         // if this portal can see some portals we mightsee, recurse
         more = 0;
         for (j = 0; j < portallongs; j++) {
-            ((long *)newmight)[j] = ((long *)mightsee)[j] & ((long *)p->portalflood)[j];
-            more |= ((long *)newmight)[j] & ~((long *)cansee)[j];
+            ((uint32_t *)newmight)[j] = ((uint32_t *)mightsee)[j] & ((uint32_t *)p->portalflood)[j];
+            more |= ((uint32_t *)newmight)[j] & ~((uint32_t *)cansee)[j];
         }
 
         if (!more)

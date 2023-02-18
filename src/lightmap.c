@@ -1645,11 +1645,7 @@ void CreateDirectLights(void) {
     printf("%i direct lights\n", numdlights);
 }
 
-#ifdef _WIN32
 static inline int32_t lowestCommonNode(int32_t nodeNum1, int32_t nodeNum2)
-#else
-static inline int32_t lowestCommonNode(int32_t nodeNum1, int32_t nodeNum2)
-#endif
 {
     int32_t child1, tmp, headNode = 0;
 

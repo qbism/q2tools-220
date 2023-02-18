@@ -246,7 +246,7 @@ float avertexnormals[NUMVERTEXNORMALS][3] =
 FILE *headerouthandle = NULL;
 
 void Load3DSTriangleList(char *filename, triangle_t **pptri, int32_t *numtriangles);
-void LoadLWOTriangleList(char *filename, triangle_t **pptri, int *numtriangles);
+void LoadLWOTriangleList(char *filename, triangle_t **pptri, int32_t *numtriangles);
 
 //==============================================================
 

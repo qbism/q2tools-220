@@ -29,7 +29,7 @@
 #define _MDFOUR_H
 
 #ifndef int32
-#define int32 int
+#define int32 int32_t
 #endif
 
 #if SIZEOF_INT > 4

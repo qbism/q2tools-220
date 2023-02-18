@@ -39,10 +39,10 @@ int32_t texture_sizes[MAX_MAP_TEXINFO_QBSP][2];
    ======================
  */
 void CalcTextureReflectivity_Heretic2( void ){
-	int i;
-	int j, texels;
-	int color[3];
-	int texel;
+	int32_t i;
+	int32_t j, texels;
+	int32_t color[3];
+	int32_t texel;
 	char path[1100];
 	float r;
 	miptex_m8_t     *mt;

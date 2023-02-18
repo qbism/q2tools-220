@@ -176,7 +176,7 @@ void ClusterMerge(int32_t leafnum) {
         if (p->status != stat_done)
             Error("portal not done");
         for (j = 0; j < portallongs; j++)
-            ((long *)portalvector)[j] |= ((long *)p->portalvis)[j];
+            ((uint32_t *)portalvector)[j] |= ((uint32_t *)p->portalvis)[j];
         pnum = p - portals;
         portalvector[pnum >> 3] |= 1 << (pnum & 7);
     }
@@ -316,10 +316,10 @@ void LoadPortals(char *name) {
 
     // these counts should take advantage of 64 bit systems automatically
     leafbytes   = ((portalclusters + 63) & ~63) >> 3;
-    leaflongs   = leafbytes / sizeof(long);
+    leaflongs   = leafbytes / sizeof(uint32_t);
 
     portalbytes = ((numportals * 2 + 63) & ~63) >> 3;
-    portallongs = portalbytes / sizeof(long);
+    portallongs = portalbytes / sizeof(uint32_t);
 
     // each file portal is split into two memory portals
     portals     = malloc(2 * numportals * sizeof(portal_t));
@@ -412,7 +412,7 @@ by ORing together all the PVS visible from a leaf
 void CalcPHS(void) {
     int32_t i, j, k, l, index;
     int32_t bitbyte;
-    long *dest, *src;
+    uint32_t *dest, *src;
     byte *scan;
     int32_t count;
     byte uncompressed[MAX_MAP_LEAFS_QBSP / 8];
@@ -435,10 +435,10 @@ void CalcPHS(void) {
                 index = ((j << 3) + k);
                 if (index >= portalclusters)
                     Error("Bad bit in PVS"); // pad bits should be 0
-                src  = (long *)(uncompressedvis + index * leafbytes);
-                dest = (long *)uncompressed;
+                src  = (uint32_t *)(uncompressedvis + index * leafbytes);
+                dest = (uint32_t *)uncompressed;
                 for (l = 0; l < leaflongs; l++)
-                    ((long *)uncompressed)[l] |= src[l];
+                    ((uint32_t *)uncompressed)[l] |= src[l];
             }
         }
         for (j = 0; j < portalclusters; j++)
@@ -450,7 +450,7 @@ void CalcPHS(void) {
         //
         j    = CompressVis(uncompressed, compressed);
 
-        dest = (long *)vismap_p;
+        dest = (uint32_t *)vismap_p;
         vismap_p += j;
 
         if (vismap_p > vismap_end)

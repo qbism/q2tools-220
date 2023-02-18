@@ -19,11 +19,11 @@ struct {
 
 char trashcan[10000];
 char buffer[1000];
-long counter;
+uint32_t counter;
 union {
     char c[4];
     float f;
-    long l;
+    uint32_t l;
 } buffer4;
 union {
     char c[2];
@@ -33,10 +33,10 @@ union {
 FILE *lwo;
 short numpoints, numpolys;
 
-long lflip(long x) {
+uint32_t lflip(uint32_t x) {
     union {
         char b[4];
-        long l;
+        uint32_t l;
     } in, out;
 
     in.l     = x;
@@ -63,7 +63,7 @@ float fflip(float x) {
     return out.l;
 }
 
-int sflip(short x) {
+int32_t sflip(short x) {
     union {
         char b[2];
         short i;
