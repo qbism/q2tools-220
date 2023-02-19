@@ -312,7 +312,7 @@ void Q_pathslash(char *out) { // qb: added
 char *getcwd(char *__buf, size_t __size);
 #endif
 void Q_getwd(char *out) {
-#ifdef _WIN32 
+#ifdef _WIN32
     if (!_getcwd(out, 256))
         Error("_getcwd failed");
     strcat(out, "\\");
@@ -623,9 +623,9 @@ Allows failure
 */
 typedef struct
 {
-    uint8_t magic[4]; // Name of the new WAD format
-    uint32_t diroffset;   // Position of WAD directory from start of file
-    uint32_t dirsize;     // Number of entries * 0x40 (64 char)
+    uint8_t magic[4];   // Name of the new WAD format
+    uint32_t diroffset; // Position of WAD directory from start of file
+    uint32_t dirsize;   // Number of entries * 0x40 (64 char)
 
     uint8_t bogus[50];
 } pakheader_t;
@@ -887,10 +887,6 @@ short BigShort(short l) {
     return (b1 << 8) + b2;
 }
 
-short LittleShort(short l) {
-    return l;
-}
-
 int32_t BigLong(int32_t l) {
     byte b1, b2, b3, b4;
 
@@ -900,10 +896,6 @@ int32_t BigLong(int32_t l) {
     b4 = (l >> 24) & 255;
 
     return ((int32_t)b1 << 24) + ((int32_t)b2 << 16) + ((int32_t)b3 << 8) + b4;
-}
-
-int32_t LittleLong(int32_t l) {
-    return l;
 }
 
 float BigFloat(float l) {
@@ -920,11 +912,6 @@ float BigFloat(float l) {
 
     return out.f;
 }
-
-float LittleFloat(float l) {
-    return l;
-}
-
 
 //=======================================================
 

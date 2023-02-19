@@ -94,12 +94,14 @@ void ExtractFileExtension(char *path, char *dest);
 
 int32_t ParseNum(char *str);
 
+//qb:  change to defines
+#define LittleShort(x)    ((uint16_t)(x))
+#define LittleLong(x)     ((uint32_t)(x))
+#define LittleFloat(x)    ((float)(x))
+
 short BigShort(short l);
-short LittleShort(short l);
 int32_t BigLong(int32_t l);
-int32_t LittleLong(int32_t l);
 float BigFloat(float l);
-float LittleFloat(float l);
 char *COM_Parse(char *data);
 
 extern char com_token[1024];
