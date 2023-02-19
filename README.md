@@ -3,8 +3,87 @@ Q2 compiler tools featuring ability to bsp v220 map format, automatic phong and 
 
 Forked from compiler tools supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
 
+Additional documentation, notes, and examples on social media:  https://3v.is/notice/ASqLl2Veho7QL0eX5c
+
+Automated development builds for Linux, Windows, Mac:  scroll to the bottom of
+https://github.com/qbism/q2tools-220/actions/runs/4217475571
+
+
+# Usage: q2tool [mode] [options] [file]
+
+```
+    -moddir [path]: Set a mod directory. Default is parent dir of map file.
+    -basedir [path]: Set the directory for assets not in moddir. Default is moddir.
+    -gamedir [path]: Set game directory, the folder with game executable.
+    -v: Display more verbose output.
+    -threads #: number of CPU threads to use
+
+BSP pass:
+    -bsp: enable bsp pass, requires a .map file as input
+    -chop #: Subdivide size.
+        Default: 240  Range: 32-1024
+    -choplight #: Subdivide size for surface lights.
+        Default: 240  Range: 32-1024
+    -largebounds or -lb: Increase max map size for supporting engines.
+    -micro #: Minimum microbrush size. Default: 0.02
+        Suggested range: 0.02 - 1.0
+    -nosubdiv: Disable subdivision.
+    -qbsp: Greatly expanded map and entity limits for supporting engines.
+bsp debugging options:
+    -block # #: Division tree block size, square
+    -blocks # # # #: Div tree block size, rectangular
+    -blocksize: map cube size for processing. Default: 1024
+    -fulldetail: Change most brushes to detail.
+    -leaktest: Perform leak test only.
+    -nocsg: No constructive solid geometry.
+    -nodetail: No detail brushes.
+    -nomerge: Don't merge visible faces per node.
+    -noorigfix: Disable texture fix for origin offsets.
+    -noprune: Disable node pruning.
+    -noshare: Don't look for shared edges on save.
+    -noskipfix: Do not automatically set skip contents to zero.
+    -notjunc: Disable edge cleanup.
+    -nowater: Ignore warp surfaces.
+    -noweld: Disable vertex welding.
+    -onlyents: Grab the entites and resave.
+
+VIS pass:
+    -vis: enable vis pass, requires a .bsp file as input or bsp pass enabled
+    -fast: fast single vis pass
+
+RAD pass:
+    -rad: enable rad pass, requires a .bsp file as input or bsp and vis passes enabled
+    -ambient #: Minimum light level.
+         range:  0 to 255.
+    -moddir [path]: Set a mod directory. Default is parent dir of map file.
+    -basedir [path]: Set the directory for assets not in moddir. Default is moddir.
+    -gamedir [path]: Set game directory, the folder with game executable.
+    -bounce #: Max number of light bounces for radiosity.
+    -dice: Subdivide patches with a global grid rather than per patch.
+    -direct #: Direct light scale factor.
+    -entity #: Entity light scale factor.
+    -extra: Use extra samples to smooth lighting.
+    -maxdata #: 2097152 is default max. Not needed for QBSP format.
+         Increase requires a supporting engine.
+    -maxlight #: Maximium light level.
+         range:  0 to 255.
+    -noedgefix: disable dark edges at sky fix. More of a hack, really.
+    -nudge #: Nudge factor for samples. Distance fraction from center.
+    -saturate #: Saturation factor of light bounced off surfaces.
+    -scale #: Light intensity multiplier.
+    -smooth #: Threshold angle (# and 180deg - #) for phong smoothing.
+    -subdiv #: Maximum patch size.  Default: 64
+    -sunradscale #: Sky light intensity scale when sun is active.
+    -threads #:  Number of CPU cores to use.
+rad debugging options:
+    -dump: Dump patches to a text file.
+    -noblock: Brushes don't block lighting path.
+    -nopvs:  Don't do potential visibility set check.
+    -savetrace: Test traces and report errors.
+
+```
+
 # Enhancements:
-# All functions are rolled into a single executable: q2tool.  Select one or multiple compile steps to run.
 
 -bsp
 *   Split microbrushes (GDD tools)
@@ -57,6 +136,7 @@ My game/modfiles are in C:/Games/Paintball2/pball/ (my baseq2 dir)
 
 ../Trenchbroom/tools/q2tool -rad -basedir C:/Games/Paintball2/pball -gamedir C:/Games/Paintball2 ../Trenchbroom/maps/mymap
 => Compiler finds all the game files and compiles the map correctly
+
 
 # Notes:
 
