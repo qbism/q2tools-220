@@ -784,11 +784,8 @@ void EmitAreaPortals(node_t *headnode) {
         Error("MAX_MAP_AREAS");
     numareas       = c_areas + 1;
     
-    // was numareaportals = 1: // leave 0 as an error
-    // qb: may create an error itself with dareas[0].numareaportals undefined.
-    numareaportals = 0;
-
-    for (i = 0; i < c_areas; i++) { // qb: was (i = 1; i <=c_areas; i++)
+    numareaportals = 0; //qb:  was 1, need to initialze 0 for Windows build
+     for (i = 0; i <= c_areas; i++) {  //qb: was i=1
         dareas[i].firstareaportal = numareaportals;
         for (j = 0; j < num_entities; j++) {
             e = &entities[j];
@@ -805,7 +802,7 @@ void EmitAreaPortals(node_t *headnode) {
                 numareaportals++;
             }
         }
-        dareas[i].numareaportals = numareaportals - dareas[i].firstareaportal;
+         dareas[i].numareaportals = numareaportals - dareas[i].firstareaportal;
     }
     qprintf("%5i numareas\n", numareas);
     qprintf("%5i numareaportals\n", numareaportals);
