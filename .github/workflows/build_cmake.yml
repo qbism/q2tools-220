@@ -93,7 +93,7 @@ jobs:
       shell: cmake -P {0}
       run: |
         string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-        message("::set-output name=timestamp::${current_date}")
+         message("timestamp=${current_date}" >> $GITHUB_OUTPUT)
 
     - name: ccache cache files
       uses: actions/cache@v3
@@ -295,7 +295,7 @@ jobs:
     - id: set_upload_url
       run: |
         upload_url=`cat ./upload_url`
-        echo ::set-output name=upload_url::$upload_url
+        echo upload_url=$upload_url >> $GITHUB_OUTPUT
 
     - name: Upload to Release
       id: upload_to_release
