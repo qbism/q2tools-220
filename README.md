@@ -5,8 +5,7 @@ Forked from compiler tools supporting the v220 map format by XaeroX and DarkEsse
 
 Additional documentation, notes, and examples on social media:  https://3v.is/notice/ASqLl2Veho7QL0eX5c
 
-Automated development builds for Linux, Windows, Mac:  scroll to the bottom of
-https://github.com/qbism/q2tools-220/actions/runs/4217475571
+Automated development builds for Linux, Windows, Mac:  green checkmark -> details (for any build) ->summary
 
 
 # Usage: q2tool [mode] [options] [file]
