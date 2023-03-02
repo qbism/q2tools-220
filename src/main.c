@@ -411,6 +411,7 @@ int32_t main(int32_t argc, char *argv[]) {
             printf("savetrace = true\n");
         } else if (!strcmp(argv[i], "-maxlight")) {
             maxlight = BOUND(0, atof(argv[i + 1]), 255);
+            i++;
         } else if (!strcmp(argv[i], "-archive")) {
             archive = true;
             strcpy(archivedir, argv[i + 1]);
