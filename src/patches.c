@@ -71,9 +71,9 @@ void CalcTextureReflectivity_Heretic2( void ){
 
 		// load the wal file
 
-		sprintf( path, "%stextures/%s.m32", gamedir, texinfo[i].texture );
+		sprintf( path, "%stextures/%s.m32", moddir, texinfo[i].texture );
 		if ( TryLoadFile( path, (void **)&mt32, false ) == -1 ) {
-			sprintf( path, "%stextures/%s.m8", gamedir, texinfo[i].texture );
+			sprintf( path, "%stextures/%s.m8", moddir, texinfo[i].texture );
 			if ( TryLoadFile( path, (void **)&mt, false ) == -1 ) {
 				texture_reflectivity[i][0] = 0.5;
 				texture_reflectivity[i][1] = 0.5;
