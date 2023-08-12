@@ -264,6 +264,7 @@ void CalcTextureReflectivity(void) {
                     a = tex_a / 765.0;
                 } else if (texinfo[i].flags & SURF_TRANS66) {
                     a = tex_a / 382.5;
+                // Do we need something here for SURF_ALPHATEST?
                 } else {
                     a = 1.0;
                 }

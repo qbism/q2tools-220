@@ -458,6 +458,8 @@ typedef struct
 #define SURF_HINT             0x0100 // make a bsp splitter
 #define SURF_SKIP             0x0200 // ignore surface to make non-closed brushes
 
+#define SURF_ALPHATEST        0x02000000 // binary transparency - used by Q2EX, Q2Pro, KMQ2, etc.
+
 // qb: qbsp types - dnode_tx, dedge_tx, dface_tx, dleaf_tx, dbrushside_tx
 
 typedef struct

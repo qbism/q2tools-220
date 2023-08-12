@@ -278,7 +278,7 @@ void Cmd_Colormap(void) {
             *lump_p++ = c;
     }
 
-    // 66% transparancy table
+    // 66% translucency table
     for (l = 0; l < 255; l++) {
         for (c = 0; c < 255; c++) {
             red       = lbmpalette[c * 3] * 0.33 + lbmpalette[l * 3] * 0.66;
@@ -460,6 +460,7 @@ mipparm_t mipparms[] =
         {"nodraw", SURF_NODRAW, pt_flags},   // for clip textures and trigger textures
         {"hint", SURF_HINT, pt_flags},
         {"skip", SURF_SKIP, pt_flags},
+        {"alphatest", SURF_ALPHATEST, pt_flags}, // binary transparency
 
         {NULL, 0, pt_contents}};
 
