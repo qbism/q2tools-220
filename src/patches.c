@@ -256,7 +256,7 @@ void CalcTextureReflectivity(void) {
                 cur_color[2] = (float)(*ptexel++); // b
                 tex_a        = (float)(*ptexel++);
 
-                if (texinfo[i].flags & (SURF_WARP | SURF_NODRAW)) {
+                if (texinfo[i].flags & (SURF_WARP | SURF_NODRAW | SURF_ALPHATEST)) {
                     a = 0.0;
                 } else if ((texinfo[i].flags & SURF_TRANS33) && (texinfo[i].flags & SURF_TRANS66)) {
                     a = tex_a / 511.0;
