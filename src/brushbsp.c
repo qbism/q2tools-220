@@ -707,7 +707,7 @@ side_t *SelectSplitSide(bspbrush_t *brushes, node_t *node) {
 
                 // never split a hint side except with another hint
                 if ((hintsplit && !(side->surf & SURF_HINT)) && (!detailsplit || (side->contents & CONTENTS_DETAIL)))
-                    value = -(1<<14);
+                    value = -BOGUS_RANGE;
 
                 // save off the side test so we don't need
                 // to recalculate it when we actually seperate

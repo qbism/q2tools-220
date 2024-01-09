@@ -29,7 +29,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 // on disk representation of a face
 
-#define FLOAT_START BIG_BOGUS_RANGE
+#define FLOAT_START BOGUS_RANGE
 #define FLOAT_END   -FLOAT_START
 #define MAGIC       123322
 

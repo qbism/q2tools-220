@@ -137,8 +137,8 @@ void VectorInverse(vec3_t v) {
 }
 
 void ClearBounds(vec3_t mins, vec3_t maxs) {
-    mins[0] = mins[1] = mins[2] = BIG_BOGUS_RANGE;
-    maxs[0] = maxs[1] = maxs[2] = -BIG_BOGUS_RANGE;
+    mins[0] = mins[1] = mins[2] = BOGUS_RANGE;
+    maxs[0] = maxs[1] = maxs[2] = -BOGUS_RANGE;
 }
 
 void AddPointToBounds(vec3_t v, vec3_t mins, vec3_t maxs) {

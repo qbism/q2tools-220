@@ -225,8 +225,8 @@ void ProcessWorldModel(void) {
             LeakFile(tree);
             if (leaktest) {
                 printf("--- MAP LEAKED ---\n");
-                exit(0);
             }
+            exit(0);
         }
 
         MarkVisibleSides(tree, brush_start, brush_end);
