@@ -742,7 +742,7 @@ typedef struct triangle_s {
     triedge_t *edges[3];
 } triangle_t;
 
-#define MAX_TRI_POINTS 1024
+#define MAX_TRI_POINTS 4096  //qb: was 1024
 #define MAX_TRI_EDGES  (MAX_TRI_POINTS * 6)
 #define MAX_TRI_TRIS   (MAX_TRI_POINTS * 2)
 
