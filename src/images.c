@@ -439,6 +439,7 @@ mipparm_t mipparms[] =
         {"origin", CONTENTS_ORIGIN, pt_contents}, // center of rotating brushes
         {"playerclip", CONTENTS_PLAYERCLIP, pt_contents},
         {"monsterclip", CONTENTS_MONSTERCLIP, pt_contents},
+        {"projectileclip", CONTENTS_PROJECTILECLIP, pt_contents},  //qb: blocks projectiles but not hitscan
 
         // utility surface attributes
         {"hint", SURF_HINT, pt_flags},

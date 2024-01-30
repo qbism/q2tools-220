@@ -624,11 +624,11 @@ void ParseBrush(entity_t *mapent) {
         // translucent objects are automatically classified as detail
         if (side->surf & (SURF_TRANS33 | SURF_TRANS66 | SURF_ALPHATEST))
             side->contents |= CONTENTS_DETAIL;
-        if (side->contents & (CONTENTS_PLAYERCLIP | CONTENTS_MONSTERCLIP))
+        if (side->contents & (CONTENTS_PLAYERCLIP | CONTENTS_MONSTERCLIP | CONTENTS_PROJECTILECLIP))
             side->contents |= CONTENTS_DETAIL;
         if (fulldetail)
             side->contents &= ~CONTENTS_DETAIL;
-        if (!(side->contents & ((LAST_VISIBLE_CONTENTS - 1) | CONTENTS_PLAYERCLIP | CONTENTS_MONSTERCLIP | CONTENTS_MIST)))
+        if (!(side->contents & ((LAST_VISIBLE_CONTENTS - 1) | CONTENTS_PLAYERCLIP | CONTENTS_MONSTERCLIP | CONTENTS_PROJECTILECLIP | CONTENTS_MIST)))
             side->contents |= CONTENTS_SOLID;
 
         // qb: don't change SURF_SKIP contents
@@ -710,7 +710,7 @@ void ParseBrush(entity_t *mapent) {
 
     // brushes that will not be visible at all will never be
     // used as bsp splitters
-    if (b->contents & (CONTENTS_PLAYERCLIP | CONTENTS_MONSTERCLIP)) {
+    if (b->contents & (CONTENTS_PLAYERCLIP | CONTENTS_MONSTERCLIP | CONTENTS_PROJECTILECLIP)) {
         c_clipbrushes++;
         for (i = 0; i < b->numsides; i++)
             b->original_sides[i].texinfo = TEXINFO_NODE;
