@@ -457,7 +457,13 @@ typedef struct
 
 #define SURF_HINT             0x0100 // make a bsp splitter
 #define SURF_SKIP             0x0200 // ignore surface to make non-closed brushes
-#define SURF_ALPHATEST        0x02000000 //alpha test flag
+
+#define SURF_ALPHATEST        (uint32_t)1 << 25 //alpha test flag
+#define SURF_N64_UV           (uint32_t)1 << 28 //N64 UV and surface flag hack
+#define SURF_SCROLLX          (uint32_t)1 << 29 //slow x scroll
+#define SURF_SCROLLY          (uint32_t)1 << 30 //slow y scroll
+#define SURF_SCROLLFLIP       (uint32_t)1 << 31 //flip scroll directon
+
 
 // qb: qbsp types - dnode_tx, dedge_tx, dface_tx, dleaf_tx, dbrushside_tx
 
