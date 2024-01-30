@@ -423,6 +423,7 @@ typedef struct
 
 // remaining contents are non-visible, and don't eat brushes
 
+#define CONTENTS_PROJECTILECLIP  (uint32_t)1 << 14 //qb: blocks projectile but not hitscan.  Requires game support
 #define CONTENTS_AREAPORTAL   0x8000
 
 #define CONTENTS_PLAYERCLIP   0x10000
