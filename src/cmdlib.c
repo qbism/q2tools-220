@@ -659,11 +659,7 @@ int32_t TryLoadFileFromPak(char *filename, void **bufferptr, char *gd) {
         if (ret_len != -1)
             break;
 
-    for (n = 0;; n++) {
-        if (ret_len != -1)
-            break;
-
-        sprintf(file, "%spak%d.pak", gd, n);
+        sprintf(file, "%spak%d.pak", gd, pakn);
 
         f = fopen(file, "rb");
 

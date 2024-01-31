@@ -85,17 +85,20 @@ rad debugging options:
 # Enhancements:
 
 -bsp
-*   Split microbrushes (GDD tools)
-*	Fix for scaled textures using an origin brush. (DWH)
-*   Fix for rotation using origin brush (MaxEd)
-*   Fix microbrush deformation (Jitspoe)
+*   Alphatest surface flag (fence textures) for supporting engines
+*   N64 style scroll flags for supporting engines	
 *   Caulk brushes similar to Q3 mapping (kmbsp3)	
-*   Texinfo overflow check (MaxEd)
+*   Caulk brushes similar to Q3 mapping (kmbsp3)	
 *   Set chop size for surface lights (qbism - idea from JDolan)
-*   Increased limits within standard file format.  Requires a supporting engine. (kmqbsp3)
 *   Fix so SURF_NODRAW flagged faces are not included in texture processing. (Paril)
 *   Feature: set CONTENTS_AUX flag with CONTENTS_MIST to disable rendering of mist backfaces.
+*   Increased limits within standard file format.  Requires a supporting engine. (kmqbsp3)
 *   Increased map limits with extended file format. Future supporting engine. (ideas from motorsep, Paril, Knightmare)
+*   Split microbrushes (GDD tools)
+*   Fix for scaled textures using an origin brush. (DWH)
+*   Fix for rotation using origin brush (MaxEd)
+*   Fix microbrush deformation (Jitspoe)
+*   Texinfo overflow check (MaxEd)
 		
 -vis
 *   Increase vis data size max. Issue warning for > vanilla limit. (qbism)

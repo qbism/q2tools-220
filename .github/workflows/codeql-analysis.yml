@@ -11,6 +11,12 @@
 #
 name: "CodeQL"
 
+env:
+  CMAKE_VERSION: 3.23.0
+  NINJA_VERSION: 1.10.2
+  BUILD_TYPE: Release
+  CCACHE_VERSION: 4.6
+  
 on:
   push:
     branches: [ master ]
