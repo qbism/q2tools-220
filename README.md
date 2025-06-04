@@ -92,6 +92,7 @@ rad debugging options:
 *   Set chop size for surface lights (qbism - idea from JDolan)
 *   Fix so SURF_NODRAW flagged faces are not included in texture processing. (Paril)
 *   Feature: set CONTENTS_AUX flag with CONTENTS_MIST to disable rendering of mist backfaces.
+*   Feature: CONTENTS_PROJECTILECLIP content flag will be collided against by CONTENTS_PROJECTILE entities.
 *   Increased limits within standard file format.  Requires a supporting engine. (kmqbsp3)
 *   Increased map limits with extended file format. Future supporting engine. (ideas from motorsep, Paril, Knightmare)
 *   Split microbrushes (GDD tools)
