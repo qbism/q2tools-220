@@ -3,8 +3,6 @@ Q2 compiler tools featuring ability to bsp v220 map format, automatic phong and 
 
 Forked from compiler tools supporting the v220 map format by XaeroX and DarkEssence distributed with the J.A.C.K. level editor.
 
-Additional documentation, notes, and examples on social media:  https://3v.is/notice/ASqLl2Veho7QL0eX5c
-
 Automated development builds for Linux, Windows, Mac:  green checkmark -> details (for any build) ->summary
 
 
@@ -187,7 +185,7 @@ Compile a model from individual .tri, .3ds, or .lwo frames. Example:
 # qbsp format:  
 Extended map limits for larger or more detailed maps.  Several 16-bit data types are changed to 32-bit.  This feature requires a supporting engine.  See common/qfiles.h for differences in limits.
 
-Usage:  Add -qbsp to the bsp command line.  vis and rad will detect QBSP automatically.  No released engine supports this yet.  See https://github.com/qbism/qb2 for prototype code.
+Usage:  Add -qbsp to the bsp command line.  vis and rad will detect QBSP automatically.  Currently supported by Q2RTX and Quake2 Rerelease.
 
 
 # Build from source in Linux:
