@@ -69,7 +69,7 @@ static int32_t FindNearestColor( uint32_t color )
 }
 */
 
-extern byte BestColor(int32_t, int32_t, int32_t, int32_t, int32_t);
+extern uint8_t BestColor(int32_t, int32_t, int32_t, int32_t, int32_t);
 
 void Inverse16_BuildTable(void) {
     int32_t i;
@@ -139,7 +139,7 @@ void Cmd_Alphalight(void) {
 
     RunThreadsOnIndividual(32 * 32 * 32, true, Alphalight_Thread);
 
-    SaveFile(savename, (byte *)alphamap, sizeof(alphamap));
+    SaveFile(savename, (uint8_t *)alphamap, sizeof(alphamap));
 }
 
 void Cmd_Inverse16Table(void) {
@@ -156,5 +156,5 @@ void Cmd_Inverse16Table(void) {
 
     Inverse16_BuildTable();
 
-    SaveFile(savename, (byte *)inverse16to8table, sizeof(inverse16to8table));
+    SaveFile(savename, (uint8_t *)inverse16to8table, sizeof(inverse16to8table));
 }

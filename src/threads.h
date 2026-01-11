@@ -22,7 +22,7 @@ extern int32_t numthreads;
 
 void ThreadSetDefault(void);
 int32_t GetThreadWork(void);
-void RunThreadsOnIndividual(int32_t workcnt, qboolean showpacifier, void (*func)(int32_t));
-void RunThreadsOn(int32_t workcnt, qboolean showpacifier, void (*func)(int32_t));
+void RunThreadsOnIndividual(int32_t workcnt, bool showpacifier, void (*func)(int32_t));
+void RunThreadsOn(int32_t workcnt, bool showpacifier, void (*func)(int32_t));
 void ThreadLock(void);
 void ThreadUnlock(void);

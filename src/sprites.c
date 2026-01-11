@@ -25,7 +25,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 dsprite_t sprite;
 dsprframe_t frames[MAX_SPRFRAMES];
 
-byte *byteimage, *lbmpalette;
+uint8_t *byteimage, *lbmpalette;
 int32_t byteimagewidth, byteimageheight;
 
 char spritename[32];
@@ -125,7 +125,7 @@ void Cmd_SpriteFrame(void) {
     int32_t y, xl, yl, w, h;
     dsprframe_t *pframe;
     int32_t ox, oy;
-    byte *cropped;
+    uint8_t *cropped;
     char savename[2100];
 
     GetToken(false);

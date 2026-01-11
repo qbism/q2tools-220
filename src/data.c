@@ -20,18 +20,18 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "data.h"
 
-qboolean g_compress_pak;
-qboolean g_release;      // don't grab, copy output data to new tree
-qboolean g_pak;          // if true, copy to pak instead of release
+bool g_compress_pak;
+bool g_release;      // don't grab, copy output data to new tree
+bool g_pak;          // if true, copy to pak instead of release
 char g_releasedir[1024]; // c:\game\base, etc
-qboolean g_archive;      // don't grab, copy source data to new tree
-qboolean do3ds;
+bool g_archive;      // don't grab, copy source data to new tree
+bool do3ds;
 //*********************** Added for LWO support
-qboolean dolwo;
-qboolean nolbm;
+bool dolwo;
+bool nolbm;
 //*********************** [KDT]
 char g_only[256];     // if set, only grab this cd
-qboolean g_skipmodel; // set true when a cd is not g_only
+bool g_skipmodel; // set true when a cd is not g_only
 
 char *ext_3ds = "3ds";
 //*********************** Added for LWO support
@@ -97,7 +97,7 @@ the pak file.
 */
 void ReleaseFile(char *filename) {
     int32_t len;
-    byte *buf;
+    uint8_t *buf;
     char source[1024];
     char dest[1200];
 
@@ -166,7 +166,7 @@ void FinishPak(void) {
     pakheader.id[1]  = 'A';
     pakheader.id[2]  = 'C';
     pakheader.id[3]  = 'K';
-    dirlen           = (byte *)pakf - (byte *)pfiles;
+    dirlen           = (uint8_t *)pakf - (uint8_t *)pfiles;
     pakheader.dirofs = LittleLong(ftell(pakfile));
     pakheader.dirlen = LittleLong(dirlen);
 

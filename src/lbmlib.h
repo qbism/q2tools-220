@@ -20,15 +20,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 // piclib.h
 
-void LoadLBM(char *filename, byte **picture, byte **palette);
-void WriteLBMfile(char *filename, byte *data, int32_t width, int32_t height, byte *palette);
-void LoadPCX(char *filename, byte **picture, byte **palette, int32_t *width, int32_t *height);
-void WritePCXfile(char *filename, byte *data, int32_t width, int32_t height, byte *palette);
+void LoadLBM(char *filename, uint8_t **picture, uint8_t **palette);
+void WriteLBMfile(char *filename, uint8_t *data, int32_t width, int32_t height, uint8_t *palette);
+void LoadPCX(char *filename, uint8_t **picture, uint8_t **palette, int32_t *width, int32_t *height);
+void WritePCXfile(char *filename, uint8_t *data, int32_t width, int32_t height, uint8_t *palette);
 
 // loads / saves either lbm or pcx, depending on extension
-void Load256Image(char *name, byte **pixels, byte **palette,
+void Load256Image(char *name, uint8_t **pixels, uint8_t **palette,
                   int32_t *width, int32_t *height);
-void Save256Image(char *name, byte *pixels, byte *palette,
+void Save256Image(char *name, uint8_t *pixels, uint8_t *palette,
                   int32_t width, int32_t height);
 
-void LoadTGA(char *filename, byte **pixels, int32_t *width, int32_t *height);
+void LoadTGA(char *filename, uint8_t **pixels, int32_t *width, int32_t *height);

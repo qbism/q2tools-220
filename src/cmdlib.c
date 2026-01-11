@@ -38,9 +38,9 @@ int32_t myargc;
 char **myargv;
 
 char com_token[1024];
-qboolean com_eof;
+bool com_eof;
 
-qboolean archive;
+bool archive;
 char archivedir[1024];
 
 char inbase[32];
@@ -147,7 +147,7 @@ void Error(char *error, ...) {
 #endif
 
 // only qprintf if in verbose mode
-qboolean verbose = false;
+bool verbose = false;
 void qprintf(char *format, ...) {
     va_list argptr;
 
@@ -293,7 +293,7 @@ double I_FloatTime(void) {
 }
 
 void Q_pathslash(char *out) { // qb: added
-    qboolean lastslash;
+    bool lastslash;
 
 #ifdef _WIN32
     lastslash = (*out && out[strlen(out + 1)] == '\\');
@@ -549,7 +549,7 @@ void SafeWrite(FILE *f, void *buffer, int32_t count) {
 FileExists
 ==============
 */
-qboolean FileExists(char *filename) {
+bool FileExists(char *filename) {
     FILE *f;
 
     f = fopen(filename, "r");
@@ -872,13 +872,13 @@ int32_t ParseNum(char *str) {
 /*
 ============================================================================
 
-BYTE ORDER FUNCTIONS
+uint8_t ORDER FUNCTIONS
 
 ============================================================================
 */
 
 short BigShort(short l) {
-    byte b1, b2;
+    uint8_t b1, b2;
 
     b1 = l & 255;
     b2 = (l >> 8) & 255;
@@ -887,7 +887,7 @@ short BigShort(short l) {
 }
 
 int32_t BigLong(int32_t l) {
-    byte b1, b2, b3, b4;
+    uint8_t b1, b2, b3, b4;
 
     b1 = l & 255;
     b2 = (l >> 8) & 255;
@@ -899,7 +899,7 @@ int32_t BigLong(int32_t l) {
 
 float BigFloat(float l) {
     union {
-        byte b[4];
+        uint8_t b[4];
         float f;
     } in, out;
 
@@ -914,7 +914,7 @@ float BigFloat(float l) {
 
 //=======================================================
 
-// FIXME: byte swap?
+// FIXME: uint8_t swap?
 
 // this is a 16 bit, non-reflected CRC using the polynomial 0x1021
 // and the initial and final xor values shown below...  in other words, the
@@ -962,7 +962,7 @@ void CRC_Init(uint16_t *crcvalue) {
     *crcvalue = CRC_INIT_VALUE;
 }
 
-void CRC_ProcessByte(uint16_t *crcvalue, byte data) {
+void CRC_ProcessByte(uint16_t *crcvalue, uint8_t data) {
     *crcvalue = (*crcvalue << 8) ^ crctable[(*crcvalue >> 8) ^ data];
 }
 

@@ -47,7 +47,7 @@ void CalcTextureReflectivity_Heretic2( void ){
 	float r;
 	miptex_m8_t     *mt;
 	miptex_m32_t        *mt32;
-	byte            *pos;
+	uint8_t            *pos;
 
 
 	// allways set index 0 even if no textures
@@ -85,7 +85,7 @@ void CalcTextureReflectivity_Heretic2( void ){
 
 			for ( j = 0 ; j < texels ; j++ )
 			{
-				texel = ( (byte *)mt )[LittleLong( mt->offsets[0] ) + j];
+				texel = ( (uint8_t *)mt )[LittleLong( mt->offsets[0] ) + j];
 				color[0] += mt->palette[texel].r;
 				color[1] += mt->palette[texel].g;
 				color[2] += mt->palette[texel].b;
@@ -100,7 +100,7 @@ void CalcTextureReflectivity_Heretic2( void ){
 
 			for ( j = 0 ; j < texels ; j++ )
 			{
-				pos = (byte *)mt32 + mt32->offsets[0] + ( j << 2 );
+				pos = (uint8_t *)mt32 + mt32->offsets[0] + ( j << 2 );
 				color[0] += *pos++; // r
 				color[1] += *pos++; // g
 				color[2] += *pos++; // b
@@ -126,16 +126,16 @@ CalcTextureReflectivity
 void CalcTextureReflectivity(void) {
     int32_t i, j, k, count;
     int32_t texels, texel;
-    qboolean wal_tex;
+    bool wal_tex;
     float color[3], cur_color[3], tex_a, a;
     char path[1200];
     float *r, *g, *b;
     float c;
-    byte *pbuffer = NULL; // mxd. "potentially uninitialized local pointer variable" in VS2017 if uninitialized
+    uint8_t *pbuffer = NULL; // mxd. "potentially uninitialized local pointer variable" in VS2017 if uninitialized
 
-    byte *palette_frompak = NULL;
-    byte *ptexel;
-    byte *palette;
+    uint8_t *palette_frompak = NULL;
+    uint8_t *ptexel;
+    uint8_t *palette;
     miptex_t *mt = NULL; // mxd. "potentially uninitialized local pointer variable" in VS2017 if uninitialized
     float *fbuffer, *ftexel;
     int32_t width, height;
@@ -234,7 +234,7 @@ void CalcTextureReflectivity(void) {
             color[0] = color[1] = color[2] = 0;
 
             for (j = 0; j < texels; j++) {
-                texel = ((byte *)mt)[LittleLong(mt->offsets[0]) + j];
+                texel = ((uint8_t *)mt)[LittleLong(mt->offsets[0]) + j];
                 for (k = 0; k < 3; k++)
                     color[k] += palette[texel * 3 + k];
             }
@@ -435,7 +435,7 @@ void BaseLightForFaceI(dface_t *f, vec3_t color) {
     VectorScale(texture_reflectivity[f->texinfo], tx->value, color);
 }
 
-qboolean IsSkyX(dface_tx *f) {
+bool IsSkyX(dface_tx *f) {
     texinfo_t *tx;
 
     tx = &texinfo[f->texinfo];
@@ -444,7 +444,7 @@ qboolean IsSkyX(dface_tx *f) {
     return false;
 }
 
-qboolean IsSkyI(dface_t *f) {
+bool IsSkyI(dface_t *f) {
     texinfo_t *tx;
 
     tx = &texinfo[f->texinfo];

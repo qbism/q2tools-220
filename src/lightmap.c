@@ -30,8 +30,8 @@ typedef struct
 {
     dface_t *faces[2];
     dface_tx *facesX[2];
-    qboolean coplanar;
-    qboolean smooth;
+    bool coplanar;
+    bool smooth;
     vec_t cos_normals_angle;
     vec3_t interface_normal;
     vec3_t vertex_normal[2];
@@ -44,7 +44,7 @@ int32_t planelinks[2][MAX_MAP_PLANES_QBSP];
 int32_t maxdata = DEFAULT_MAP_LIGHTING;
 vec3_t face_texnormals[MAX_MAP_FACES_QBSP];
 float sunradscale = 0.5;
-byte *dlightdata_ptr;
+uint8_t *dlightdata_ptr;
 
 // qb: quemap- face extents
 typedef struct face_extents_s {
@@ -73,7 +73,7 @@ const dplane_t *getPlaneFromFaceNumber(const uint32_t faceNumber) {
     }
 }
 
-qboolean GetIntertexnormal(int32_t facenum1, int32_t facenum2) {
+bool GetIntertexnormal(int32_t facenum1, int32_t facenum2) {
     vec3_t normal;
     const dplane_t *p1 = getPlaneFromFaceNumber(facenum1);
     const dplane_t *p2 = getPlaneFromFaceNumber(facenum2);
@@ -974,7 +974,7 @@ void LerpTriangle(triangulation_t *trian, triangle_t *t, vec3_t point, vec3_t co
     }
 }
 
-qboolean PointInTriangle(vec3_t point, triangle_t *t) {
+bool PointInTriangle(vec3_t point, triangle_t *t) {
     int32_t i;
     triedge_t *e;
     vec_t d;
@@ -1710,8 +1710,8 @@ LightContributionToPoint
 static void LightContributionToPoint(directlight_t *l, vec3_t pos, int32_t nodenum,
                                      vec3_t normal, vec3_t color,
                                      float lightscale2,
-                                     qboolean *sun_main_once,
-                                     qboolean *sun_ambient_once) {
+                                     bool *sun_main_once,
+                                     bool *sun_ambient_once) {
     vec3_t delta, target, occluded, colorsky = {0, 0, 0};
     float dot, dot2;
     float dist;
@@ -1719,7 +1719,7 @@ static void LightContributionToPoint(directlight_t *l, vec3_t pos, int32_t noden
     float main_val;
     int32_t i;
     int32_t lcn;
-    qboolean set_main;
+    bool set_main;
 
     VectorClear(color);
 
@@ -1877,7 +1877,7 @@ Lightscale2 is the normalizer for multisampling, -extra cmd line arg
 
 void GatherSampleLight(vec3_t pos, vec3_t normal,
                        float **styletable, int32_t offset, int32_t mapsize, float lightscale2,
-                       qboolean *sun_main_once, qboolean *sun_ambient_once, byte *pvs) {
+                       bool *sun_main_once, bool *sun_ambient_once, uint8_t *pvs) {
     int32_t i;
     directlight_t *l;
     float *dest;
@@ -2143,8 +2143,8 @@ void GetPhongNormal(int32_t facenum, vec3_t spot, vec3_t phongnormal) {
  * surface normal to reduce false-positive traces. Test the PVS at the new
  * position, returning true if the new point is valid, false otherwise.
  */
-static qboolean NudgeSamplePosition(const vec3_t in, const vec3_t normal, const vec3_t center,
-                                    vec3_t out, byte *pvs) {
+static bool NudgeSamplePosition(const vec3_t in, const vec3_t normal, const vec3_t center,
+                                    vec3_t out, uint8_t *pvs) {
     vec3_t dir;
 
     VectorCopy(in, out);
@@ -2176,7 +2176,7 @@ void BuildFacelights(int32_t facenum) {
     int32_t numsamples;
     int32_t tablesize;
     facelight_t *fl;
-    qboolean sun_main_once, sun_ambient_once;
+    bool sun_main_once, sun_ambient_once;
     vec_t *center;
     vec3_t pos;
     vec3_t pointnormal;
@@ -2263,7 +2263,7 @@ void BuildFacelights(int32_t facenum) {
         sun_main_once    = false;
 
         for (j = 0; j < numsamples; j++) {
-            byte pvs[(MAX_MAP_LEAFS_QBSP + 7) / 8];
+            uint8_t pvs[(MAX_MAP_LEAFS_QBSP + 7) / 8];
 
             if (numsamples > 1) {
                 if (!NudgeSamplePosition(liteinfo[j].surfpt[i], liteinfo[0].facenormal, center, pos, pvs)) {
@@ -2335,7 +2335,7 @@ void FinalLightFace(int32_t facenum) {
     facelight_t *fl;
     float max;
     float newmax;
-    byte *dest;
+    uint8_t *dest;
     triangle_t *last_valid;
     int32_t pfacenum;
     vec3_t facemins, facemaxs;
@@ -2473,9 +2473,9 @@ void FinalLightFace(int32_t facenum) {
                 }
 
                 // and output to 8:8:8 RGB
-                *dest++ = (byte)(lb[0] + 0.5);
-                *dest++ = (byte)(lb[1] + 0.5);
-                *dest++ = (byte)(lb[2] + 0.5);
+                *dest++ = (uint8_t)(lb[0] + 0.5);
+                *dest++ = (uint8_t)(lb[1] + 0.5);
+                *dest++ = (uint8_t)(lb[2] + 0.5);
             }
         }
     } else // ibsp
@@ -2600,9 +2600,9 @@ void FinalLightFace(int32_t facenum) {
                 }
 
                 // and output to 8:8:8 RGB
-                *dest++ = (byte)(lb[0] + 0.5);
-                *dest++ = (byte)(lb[1] + 0.5);
-                *dest++ = (byte)(lb[2] + 0.5);
+                *dest++ = (uint8_t)(lb[0] + 0.5);
+                *dest++ = (uint8_t)(lb[1] + 0.5);
+                *dest++ = (uint8_t)(lb[2] + 0.5);
             }
         }
     }
@@ -2627,7 +2627,7 @@ void FinalLightFaceSH(int32_t facenum) {
     facelight_t *fl;
     float max;
     float newmax;
-    byte *dest;
+    uint8_t *dest;
     triangle_t *last_valid;
     int32_t pfacenum;
     vec3_t facemins, facemaxs;
@@ -2765,9 +2765,9 @@ void FinalLightFaceSH(int32_t facenum) {
                 }
 
                 // and output to 8:8:8 RGB
-                *dest++ = (byte)(lb[0] + 0.5);
-                *dest++ = (byte)(lb[1] + 0.5);
-                *dest++ = (byte)(lb[2] + 0.5);
+                *dest++ = (uint8_t)(lb[0] + 0.5);
+                *dest++ = (uint8_t)(lb[1] + 0.5);
+                *dest++ = (uint8_t)(lb[2] + 0.5);
             }
         }
     } else // ibsp
@@ -2892,9 +2892,9 @@ void FinalLightFaceSH(int32_t facenum) {
                 }
 
                 // and output to 8:8:8 RGB
-                *dest++ = (byte)(lb[0] + 0.5);
-                *dest++ = (byte)(lb[1] + 0.5);
-                *dest++ = (byte)(lb[2] + 0.5);
+                *dest++ = (uint8_t)(lb[0] + 0.5);
+                *dest++ = (uint8_t)(lb[1] + 0.5);
+                *dest++ = (uint8_t)(lb[2] + 0.5);
             }
         }
     }

@@ -38,11 +38,11 @@ extern int32_t nummodels;
 extern dmodel_t * dmodels;//[MAX_MAP_MODELS_QBSP];
 
 extern int32_t visdatasize;
-extern byte * dvisdata;//[MAX_MAP_VISIBILITY_QBSP];
+extern uint8_t * dvisdata;//[MAX_MAP_VISIBILITY_QBSP];
 extern dvis_t *dvis;
 
 extern int32_t lightdatasize;
-extern byte * dlightdata;//[MAX_MAP_LIGHTING_QBSP];
+extern uint8_t * dlightdata;//[MAX_MAP_LIGHTING_QBSP];
 
 extern int32_t entdatasize;
 extern char * dentdata;//[MAX_MAP_ENTSTRING_QBSP];
@@ -96,10 +96,10 @@ extern int32_t numbrushsides;
 extern dbrushside_t * dbrushsides;//[MAX_MAP_BRUSHSIDES];
 extern dbrushside_tx * dbrushsidesX;//[MAX_MAP_BRUSHSIDES_QBSP];
 
-extern byte dpop[256];
+extern uint8_t dpop[256];
 
-void DecompressVis(byte *in, byte *decompressed);
-int32_t CompressVis(byte *vis, byte *dest);
+void DecompressVis(uint8_t *in, uint8_t *decompressed);
+int32_t CompressVis(uint8_t *vis, uint8_t *dest);
 
 void InitBSPFile(void);
 void LoadBSPFile(char *filename);

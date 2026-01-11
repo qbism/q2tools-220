@@ -49,7 +49,7 @@ static struct mdfour *m;
 #define ROUND2(a, b, c, d, k, s) a = lshift(a + G(b, c, d) + X[k] + 0x5A827999, s)
 #define ROUND3(a, b, c, d, k, s) a = lshift(a + H(b, c, d) + X[k] + 0x6ED9EBA1, s)
 
-/* this applies md4 to 64 byte chunks */
+/* this applies md4 to 64 uint8_t chunks */
 static void mdfour64(uint32_t *M) {
     int32_t j;
     uint32_t AA, BB, CC, DD;

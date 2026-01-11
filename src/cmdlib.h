@@ -31,13 +31,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <time.h>
 #include <stdarg.h>
 #include <stdint.h>
-
-#ifndef __BYTEBOOL__
-#define __BYTEBOOL__
-typedef enum { false,
-               true } qboolean;
-typedef uint8_t byte;
-#endif
+#include <stdbool.h>
 
 // the dec offsetof macro doesnt work very well...
 #define myoffsetof(type, identifier) ((size_t) & ((type *)0)->identifier)
@@ -81,7 +75,7 @@ int32_t LoadFile(char *filename, void **bufferptr);
 int32_t TryLoadFile(char *filename, void **bufferptr, int32_t print_error);
 int32_t TryLoadFileFromPak(char *filename, void **bufferptr, char *gamedir);
 void SaveFile(char *filename, void *buffer, int32_t count);
-qboolean FileExists(char *filename);
+bool FileExists(char *filename);
 
 void DefaultExtension(char *path, char *extension);
 void DefaultPath(char *path, char *basepath);
@@ -105,21 +99,21 @@ float BigFloat(float l);
 char *COM_Parse(char *data);
 
 extern char com_token[1024];
-extern qboolean com_eof;
+extern bool com_eof;
 
 char *copystring(char *s);
 
 void CRC_Init(uint16_t *crcvalue);
-void CRC_ProcessByte(uint16_t *crcvalue, byte data);
+void CRC_ProcessByte(uint16_t *crcvalue, uint8_t data);
 uint16_t CRC_Value(uint16_t crcvalue);
 
 void CreatePath(char *path);
 void QCopyFile(char *from, char *to);
 
-extern qboolean archive;
+extern bool archive;
 extern char archivedir[1024];
 
-extern qboolean verbose;
+extern bool verbose;
 void qprintf(char *format, ...);
 
 void ExpandWildcards(int32_t *argc, char ***argv);
@@ -127,7 +121,7 @@ void ExpandWildcards(int32_t *argc, char ***argv);
 // for compression routines
 typedef struct
 {
-    byte *data;
+    uint8_t *data;
     int32_t count;
 } cblock_t;
 

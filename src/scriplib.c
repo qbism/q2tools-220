@@ -44,8 +44,8 @@ script_t *script;
 int32_t scriptline;
 
 char token[MAXTOKEN];
-qboolean endofscript;
-qboolean tokenready; // only true if UnGetToken was just called
+bool endofscript;
+bool tokenready; // only true if UnGetToken was just called
 
 // qb: brush info from AA tools
 char brush_info[2000]      = "No brushes processed yet. Look near beginning of map";
@@ -138,7 +138,7 @@ void UnGetToken(void) {
     tokenready = true;
 }
 
-qboolean EndOfScript(qboolean crossline) {
+bool EndOfScript(bool crossline) {
     if (!crossline)
         Error("Line %i is incomplete\n", scriptline);
 
@@ -163,7 +163,7 @@ qboolean EndOfScript(qboolean crossline) {
 GetToken
 ==============
 */
-qboolean GetToken(qboolean crossline) {
+bool GetToken(bool crossline) {
     char *token_p;
 
     if (tokenready) // is a token allready waiting?
@@ -263,7 +263,7 @@ TokenAvailable
 Returns true if there is another token on the line
 ==============
 */
-qboolean TokenAvailable(void) {
+bool TokenAvailable(void) {
     char *search_p;
 
     search_p = script->script_p;

@@ -71,22 +71,22 @@ void Cmd_Alphalight(void);
 
 void Cmd_Video(void);
 
-void RemapZero(byte *pixels, byte *palette, int32_t width, int32_t height);
+void RemapZero(uint8_t *pixels, uint8_t *palette, int32_t width, int32_t height);
 
 void ReleaseFile(char *filename);
 
-extern byte *byteimage, *lbmpalette;
+extern uint8_t *byteimage, *lbmpalette;
 extern int32_t byteimagewidth, byteimageheight;
 
-extern qboolean g_release;      // don't grab, copy output data to new tree
+extern bool g_release;      // don't grab, copy output data to new tree
 extern char g_releasedir[1024]; // c:\game\base, etc
-extern qboolean g_archive;      // don't grab, copy source data to new tree
-extern qboolean do3ds;
+extern bool g_archive;      // don't grab, copy source data to new tree
+extern bool do3ds;
 //*********************** Added for LWO support
-extern qboolean dolwo;
-extern qboolean nolbm;
+extern bool dolwo;
+extern bool nolbm;
 //*********************** [KDT]
 extern char g_only[256];     // if set, only grab this cd
-extern qboolean g_skipmodel; // set true when a cd is not g_only
+extern bool g_skipmodel; // set true when a cd is not g_only
 
 extern char *trifileext;

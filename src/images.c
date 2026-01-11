@@ -22,8 +22,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 char mip_prefix[32]; // directory to dump the textures in
 
-qboolean colormap_issued;
-byte colormap_palette[768];
+bool colormap_issued;
+uint8_t colormap_palette[768];
 
 /*
 ==============
@@ -34,7 +34,7 @@ This is because NT won't let us change index 0, so any palette
 animation leaves those pixels untouched.
 ==============
 */
-void RemapZero(byte *pixels, byte *palette, int32_t width, int32_t height) {
+void RemapZero(uint8_t *pixels, uint8_t *palette, int32_t width, int32_t height) {
     int32_t i, c;
     int32_t alt_zero;
     int32_t value, best;
@@ -64,7 +64,7 @@ $grab filename x y width height
 */
 void Cmd_Grab(void) {
     int32_t xl, yl, w, h, y;
-    byte *cropped;
+    uint8_t *cropped;
     char savename[2400];
     char dest[1200];
 
@@ -120,7 +120,7 @@ $grab filename x y width height
 */
 void Cmd_Raw(void) {
     int32_t xl, yl, w, h, y;
-    byte *cropped;
+    uint8_t *cropped;
     char savename[2100];
     char dest[1200];
 
@@ -174,12 +174,12 @@ COLORMAP GRABBING
 BestColor
 ===============
 */
-byte BestColor(int32_t r, int32_t g, int32_t b, int32_t start, int32_t stop) {
+uint8_t BestColor(int32_t r, int32_t g, int32_t b, int32_t start, int32_t stop) {
     int32_t i;
     int32_t dr, dg, db;
     int32_t bestdistortion, distortion;
     int32_t bestcolor;
-    byte *pal;
+    uint8_t *pal;
 
     //
     // let any color go to 0 as a last resort
@@ -223,7 +223,7 @@ void Cmd_Colormap(void) {
     int32_t l, c;
     float frac, red, green, blue;
     float range;
-    byte *cropped, *lump_p;
+    uint8_t *cropped, *lump_p;
     char savename[2060];
     char dest[1060];
 
@@ -308,12 +308,12 @@ MIPTEX GRABBING
 =============================================================================
 */
 
-byte pixdata[256];
+uint8_t pixdata[256];
 
 int32_t d_red, d_green, d_blue;
 
-byte palmap[32][32][32];
-qboolean palmap_built;
+uint8_t palmap[32][32][32];
+bool palmap_built;
 
 /*
 =============
@@ -372,13 +372,13 @@ void BuildPalmap(void) {
 AveragePixels
 =============
 */
-byte AveragePixels(int32_t count) {
+uint8_t AveragePixels(int32_t count) {
     int32_t r, g, b;
     int32_t i;
     int32_t vis;
     int32_t pix;
     int32_t bestcolor;
-    byte *pal;
+    uint8_t *pal;
 
     vis = 0;
     r = g = b = 0;
@@ -480,7 +480,7 @@ SURF_WINDOW
 */
 void Cmd_Mip(void) {
     int32_t x, y, xl, yl, xh, yh, w, h;
-    byte *screen_p, *source;
+    uint8_t *screen_p, *source;
     int32_t linedelta;
     miptex_t *qtex;
     int32_t miplevel, mipstep;
@@ -490,7 +490,7 @@ void Cmd_Mip(void) {
     mipparm_t *mp;
 
     char lumpname[32];
-    byte *lump_p;
+    uint8_t *lump_p;
     char filename[1200];
     char animname[32];
 
@@ -572,13 +572,13 @@ void Cmd_Mip(void) {
         sprintf(qtex->animname, "%s/%s", mip_prefix, animname);
     }
 
-    lump_p           = (byte *)(&qtex->value + 1);
+    lump_p           = (uint8_t *)(&qtex->value + 1);
 
     screen_p         = byteimage + yl * byteimagewidth + xl;
     linedelta        = byteimagewidth - w;
 
     source           = lump_p;
-    qtex->offsets[0] = LittleLong(lump_p - (byte *)qtex);
+    qtex->offsets[0] = LittleLong(lump_p - (uint8_t *)qtex);
 
     for (y = yl; y < yh; y++) {
         for (x = xl; x < xh; x++) {
@@ -596,7 +596,7 @@ void Cmd_Mip(void) {
     d_red = d_green = d_blue = 0; // no distortion yet
 
     for (miplevel = 1; miplevel < 4; miplevel++) {
-        qtex->offsets[miplevel] = LittleLong(lump_p - (byte *)qtex);
+        qtex->offsets[miplevel] = LittleLong(lump_p - (uint8_t *)qtex);
 
         mipstep                 = 1 << miplevel;
         for (y = 0; y < h; y += mipstep) {
@@ -623,7 +623,7 @@ void Cmd_Mip(void) {
     // write it out
     //
     printf("writing %s\n", filename);
-    SaveFile(filename, (byte *)qtex, lump_p - (byte *)qtex);
+    SaveFile(filename, (uint8_t *)qtex, lump_p - (uint8_t *)qtex);
 
     free(qtex);
 }
@@ -681,8 +681,8 @@ Cmd_Environment
 void Cmd_Environment(void) {
     char name[2100];
     int32_t i, x, y;
-    byte image[256 * 256];
-    byte *tga;
+    uint8_t image[256 * 256];
+    uint8_t *tga;
 
     GetToken(false);
 

@@ -292,7 +292,7 @@ void WriteModelFile(FILE *modelouthandle) {
     int32_t j, k;
     frame_t *in;
     daliasframe_t *out;
-    byte buffer[MAX_VERTS * 4 + 128];
+    uint8_t buffer[MAX_VERTS * 4 + 128];
     float v;
 
     model.ident      = IDALIASHEADER;
@@ -359,11 +359,11 @@ void WriteModelFile(FILE *modelouthandle) {
         }
 
         for (j = 0; j < model.num_xyz; j++) {
-            // all of these are byte values, so no need to deal with endianness
+            // all of these are uint8_t values, so no need to deal with endianness
             out->verts[j].lightnormalindex = in->v[j].lightnormalindex;
 
             for (k = 0; k < 3; k++) {
-                // scale to byte values & min/max check
+                // scale to uint8_t values & min/max check
                 v = Q_rint((in->v[j].v[k] - out->translate[k]) / out->scale[k]);
 
                 // clamp, so rounding doesn't wrap from 255.6 to 0
@@ -1108,10 +1108,10 @@ is saved out to the header file.
 ===============
 */
 void Cmd_Skin(void) {
-    byte *palette;
-    byte *pixels;
+    uint8_t *palette;
+    uint8_t *pixels;
     int32_t width, height;
-    byte *cropped;
+    uint8_t *cropped;
     int32_t y;
     char name[4000], savename[4000];
 

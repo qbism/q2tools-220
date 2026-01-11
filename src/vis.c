@@ -22,7 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "threads.h"
 #include "stdlib.h"
 
-extern qboolean use_qbsp;
+extern bool use_qbsp;
 
 int32_t numportals;
 int32_t portalclusters;
@@ -32,9 +32,9 @@ leaf_t *leafs;
 
 int32_t c_portaltest, c_portalpass, c_portalcheck;
 
-byte *uncompressedvis;
+uint8_t *uncompressedvis;
 
-byte *vismap, *vismap_p, *vismap_end; // past visfile
+uint8_t *vismap, *vismap_p, *vismap_end; // past visfile
 int32_t originalvismapsize;
 
 int32_t leafbytes; // (portalclusters+63)>>3
@@ -42,8 +42,8 @@ int32_t leaflongs;
 
 int32_t portalbytes, portallongs;
 
-qboolean fastvis;
-qboolean nosort;
+bool fastvis;
+bool nosort;
 
 int32_t totalvis;
 
@@ -129,7 +129,7 @@ void SortPortals(void) {
 LeafVectorFromPortalVector
 ==============
 */
-int32_t LeafVectorFromPortalVector(byte *portalbits, byte *leafbits) {
+int32_t LeafVectorFromPortalVector(uint8_t *portalbits, uint8_t *leafbits) {
     int32_t i;
     portal_t *p;
     int32_t c_leafs;
@@ -157,12 +157,12 @@ Merges the portal visibility for a leaf
 */
 void ClusterMerge(int32_t leafnum) {
     leaf_t *leaf;
-    byte portalvector[MAX_PORTALS_QBSP / 8];
-    byte uncompressed[MAX_MAP_LEAFS_QBSP / 8];
-    byte compressed[MAX_MAP_LEAFS_QBSP / 8];
+    uint8_t portalvector[MAX_PORTALS_QBSP / 8];
+    uint8_t uncompressed[MAX_MAP_LEAFS_QBSP / 8];
+    uint8_t compressed[MAX_MAP_LEAFS_QBSP / 8];
     int32_t i, j;
     int32_t numvis;
-    byte *dest;
+    uint8_t *dest;
     portal_t *p;
     int32_t pnum;
 
@@ -333,7 +333,7 @@ void LoadPortals(char *name) {
 
     vismap = vismap_p = dvisdata;
     dvis->numclusters = portalclusters;
-    vismap_p          = (byte *)&dvis->bitofs[portalclusters];
+    vismap_p          = (uint8_t *)&dvis->bitofs[portalclusters];
 
     vismap_end        = vismap + MAX_MAP_VISIBILITY_QBSP;
 
@@ -413,10 +413,10 @@ void CalcPHS(void) {
     int32_t i, j, k, l, index;
     int32_t bitbyte;
     uint32_t *dest, *src;
-    byte *scan;
+    uint8_t *scan;
     int32_t count;
-    byte uncompressed[MAX_MAP_LEAFS_QBSP / 8];
-    byte compressed[MAX_MAP_LEAFS_QBSP / 8];
+    uint8_t uncompressed[MAX_MAP_LEAFS_QBSP / 8];
+    uint8_t compressed[MAX_MAP_LEAFS_QBSP / 8];
 
     printf("Building PHS...\n");
 
@@ -456,7 +456,7 @@ void CalcPHS(void) {
         if (vismap_p > vismap_end)
             Error("Vismap expansion overflow. Exceeds extended limit");
 
-        dvis->bitofs[i][DVIS_PHS] = (byte *)dest - vismap;
+        dvis->bitofs[i][DVIS_PHS] = (uint8_t *)dest - vismap;
 
         memcpy(dest, compressed, j);
     }

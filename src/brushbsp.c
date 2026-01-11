@@ -405,7 +405,7 @@ TestBrushToPlanenum
 */
 // qb: GDD tools detailsplit
 int32_t TestBrushToPlanenum(bspbrush_t *brush, int32_t planenum,
-                            int32_t *numsplits, qboolean *hintsplit, qboolean *detailsplit, int32_t *epsilonbrush) {
+                            int32_t *numsplits, bool *hintsplit, bool *detailsplit, int32_t *epsilonbrush) {
     int32_t i, j, num;
     plane_t *plane;
     int32_t s;
@@ -500,7 +500,7 @@ existance by the vertex snapping.
 ================
 */
 #define EDGE_LENGTH 0.2
-qboolean WindingIsTiny(winding_t *w) {
+bool WindingIsTiny(winding_t *w) {
 #if 0
     if (WindingArea (w) < 1)
         return true;
@@ -533,7 +533,7 @@ Returns true if the winding still has one of the points
 from basewinding for plane
 ================
 */
-qboolean WindingIsHuge(winding_t *w) {
+bool WindingIsHuge(winding_t *w) {
     int32_t i, j;
 
     for (i = 0; i < w->numpoints; i++) {
@@ -590,9 +590,9 @@ void CheckPlaneAgainstParents(int32_t pnum, node_t *node, bspbrush_t *brush) {
     }
 }
 
-qboolean CheckPlaneAgainstVolume(int32_t pnum, node_t *node) {
+bool CheckPlaneAgainstVolume(int32_t pnum, node_t *node) {
     bspbrush_t *front, *back;
-    qboolean good;
+    bool good;
 
     SplitBrush(node->volume, pnum, &front, &back);
 
@@ -625,7 +625,7 @@ side_t *SelectSplitSide(bspbrush_t *brushes, node_t *node) {
     int32_t front, back, both, facing, splits;
     int32_t bsplits;
     int32_t epsilonbrush;
-    qboolean hintsplit, detailsplit;
+    bool hintsplit, detailsplit;
 
     bestside  = NULL;
     bestvalue = -BOGUS_RANGE;

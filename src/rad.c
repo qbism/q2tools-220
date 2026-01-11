@@ -42,20 +42,20 @@ vec3_t face_offset[MAX_MAP_FACES_QBSP]; // for rotating bmodels
 dplane_t backplanes[MAX_MAP_PLANES_QBSP];
 
 extern char inbase[32], outbase[32];
-extern qboolean h2tex;
+extern bool h2tex;
 
 int32_t fakeplanes; // created planes for origin offset
 
 int32_t numbounce     = 4;     // default was 8
-qboolean noblock      = false; // when true, disables occlusion testing on light rays
-qboolean extrasamples = false;
-qboolean dicepatches  = false;
-qboolean noedgefix    = false;
+bool noblock      = false; // when true, disables occlusion testing on light rays
+bool extrasamples = false;
+bool dicepatches  = false;
+bool noedgefix    = false;
 int32_t memory        = false;
 float patch_cutoff    = 0.0f; // set with -radmin 0.0..1.0, see MakeTransfers()
 
 float subdiv          = 64;
-qboolean dumppatches;
+bool dumppatches;
 
 void BuildFaceExtents(void); // qb: from quemap
 int32_t TestLine(vec3_t start, vec3_t stop);
@@ -106,7 +106,7 @@ float sample_nudge    = DEFAULT_NUDGE_VALUE; // qb: adjustable nudge for multisa
 float ambient          = 0.0f;
 float lightscale       = 1.0f;
 float maxlight         = 255.0f;
-// qboolean nocolor = false;
+// bool nocolor = false;
 float grayscale        = 0.0f;
 float saturation       = 1.0f; // qb: change desaturate to saturation
 float direct_scale     = 1.0f;
@@ -128,15 +128,15 @@ float entity_scale     = 1.0f;
  *  target, then {0,0,0} is used for the target. If _sun_color is not specified
  *  in the .map, the color of the light entity is used.
  */
-qboolean sun           = false;
-qboolean sun_alt_color = false;
+bool sun           = false;
+bool sun_alt_color = false;
 vec3_t sun_pos         = {0.0f, 0.0f, 1.0f};
 float sun_main         = 250.0f;
 float sun_ambient      = 0.0f;
 vec3_t sun_color       = {1, 1, 1};
 
-qboolean nopvs;
-qboolean save_trace = false;
+bool nopvs;
+bool save_trace = false;
 
 extern char source[1024];
 
@@ -253,7 +253,7 @@ dleaf_t *RadPointInLeaf(vec3_t point) {
     return &dleafs[num];
 }
 
-qboolean PvsForOrigin(vec3_t org, byte *pvs) {
+bool PvsForOrigin(vec3_t org, uint8_t *pvs) {
     if (!visdatasize) {
         memset(pvs, 255, (numleafs + 7) / 8);
         return true;
@@ -296,14 +296,14 @@ static int32_t first_transfer = 1;
 #define TRACE_BYTE(x) (((x) + 7) >> 3)
 #define TRACE_BIT(x)  ((x)&0x1F)
 
-static byte trace_buf[MAX_TRACE_BUF + 1];
-static byte trace_tmp[MAX_TRACE_BUF + 1];
+static uint8_t trace_buf[MAX_TRACE_BUF + 1];
+static uint8_t trace_tmp[MAX_TRACE_BUF + 1];
 static int32_t trace_buf_size;
 
-int32_t CompressBytes(int32_t size, byte *source, byte *dest) {
+int32_t CompressBytes(int32_t size, uint8_t *source, uint8_t *dest) {
     int32_t j;
     int32_t rep;
-    byte *dest_p;
+    uint8_t *dest_p;
 
     dest_p = dest + 1;
 
@@ -340,9 +340,9 @@ int32_t CompressBytes(int32_t size, byte *source, byte *dest) {
     return dest_p - dest;
 }
 
-void DecompressBytes(int32_t size, byte *in, byte *decompressed) {
+void DecompressBytes(int32_t size, uint8_t *in, uint8_t *decompressed) {
     int32_t c;
-    byte *out;
+    uint8_t *out;
 
     if (in[0] == 0) // not compressed
     {
@@ -439,7 +439,7 @@ void MakeTransfers(int32_t i) {
     float *transfers; //[MAX_PATCHES_QBSP];
     int32_t s;
     int32_t itotal;
-    byte pvs[(MAX_MAP_LEAFS_QBSP + 7) / 8];
+    uint8_t pvs[(MAX_MAP_LEAFS_QBSP + 7) / 8];
     int32_t cluster;
     int32_t calc_trace, test_trace;
 

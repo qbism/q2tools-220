@@ -61,7 +61,7 @@ typedef struct
     short pageWidth, pageHeight;
 } bmhd_t;
 
-extern bmhd_t bmhd; // will be in native byte order
+extern bmhd_t bmhd; // will be in native uint8_t order
 
 #define FORMID ('F' + ('O' << 8) + ((int32_t)'R' << 16) + ((int32_t)'M' << 24))
 #define ILBMID ('I' + ('L' << 8) + ((int32_t)'B' << 16) + ((int32_t)'M' << 24))
@@ -85,9 +85,9 @@ LBMRLEdecompress
 Source must be evenly aligned!
 ================
 */
-byte *LBMRLEDecompress(byte *source, byte *unpacked, int32_t bpwidth) {
+uint8_t *LBMRLEDecompress(uint8_t *source, uint8_t *unpacked, int32_t bpwidth) {
     int32_t count;
-    byte b, rept;
+    uint8_t b, rept;
 
     count = 0;
 
@@ -122,12 +122,12 @@ byte *LBMRLEDecompress(byte *source, byte *unpacked, int32_t bpwidth) {
 LoadLBM
 =================
 */
-void LoadLBM(char *filename, byte **picture, byte **palette) {
-    byte *LBMbuffer, *picbuffer, *cmapbuffer;
+void LoadLBM(char *filename, uint8_t **picture, uint8_t **palette) {
+    uint8_t *LBMbuffer, *picbuffer, *cmapbuffer;
     int32_t y;
-    byte *LBM_P, *LBMEND_P;
-    byte *pic_p;
-    byte *body_p;
+    uint8_t *LBM_P, *LBMEND_P;
+    uint8_t *pic_p;
+    uint8_t *body_p;
 
     int32_t formtype, formlength;
     int32_t chunktype, chunklength;
@@ -197,7 +197,7 @@ void LoadLBM(char *filename, byte **picture, byte **palette) {
                 //
                 for (y = 0; y < bmhd.h; y++, pic_p += bmhd.w) {
                     if (bmhd.compression == cm_rle1)
-                        body_p = LBMRLEDecompress((byte *)body_p, pic_p, bmhd.w);
+                        body_p = LBMRLEDecompress((uint8_t *)body_p, pic_p, bmhd.w);
                     else if (bmhd.compression == cm_none) {
                         memcpy(pic_p, body_p, bmhd.w);
                         body_p += Align(bmhd.w);
@@ -237,9 +237,9 @@ void LoadLBM(char *filename, byte **picture, byte **palette) {
 WriteLBMfile
 ==============
 */
-void WriteLBMfile(char *filename, byte *data,
-                  int32_t width, int32_t height, byte *palette) {
-    byte *lbm, *lbmptr;
+void WriteLBMfile(char *filename, uint8_t *data,
+                  int32_t width, int32_t height, uint8_t *palette) {
+    uint8_t *lbm, *lbmptr;
     int32_t *formlength, *bmhdlength, *cmaplength, *bodylength;
     int32_t length;
     bmhd_t basebmhd;
@@ -287,7 +287,7 @@ void WriteLBMfile(char *filename, byte *data,
     memcpy(lbmptr, &basebmhd, sizeof(basebmhd));
     lbmptr += sizeof(basebmhd);
 
-    length      = lbmptr - (byte *)bmhdlength - 4;
+    length      = lbmptr - (uint8_t *)bmhdlength - 4;
     *bmhdlength = BigLong(length);
     if (length & 1)
         *lbmptr++ = 0; // pad chunk to even offset
@@ -306,7 +306,7 @@ void WriteLBMfile(char *filename, byte *data,
     memcpy(lbmptr, palette, 768);
     lbmptr += 768;
 
-    length      = lbmptr - (byte *)cmaplength - 4;
+    length      = lbmptr - (uint8_t *)cmaplength - 4;
     *cmaplength = BigLong(length);
     if (length & 1)
         *lbmptr++ = 0; // pad chunk to even offset
@@ -325,7 +325,7 @@ void WriteLBMfile(char *filename, byte *data,
     memcpy(lbmptr, data, width * height);
     lbmptr += width * height;
 
-    length      = lbmptr - (byte *)bodylength - 4;
+    length      = lbmptr - (uint8_t *)bodylength - 4;
     *bodylength = BigLong(length);
     if (length & 1)
         *lbmptr++ = 0; // pad chunk to even offset
@@ -333,7 +333,7 @@ void WriteLBMfile(char *filename, byte *data,
     //
     // done
     //
-    length      = lbmptr - (byte *)formlength - 4;
+    length      = lbmptr - (uint8_t *)formlength - 4;
     *formlength = BigLong(length);
     if (length & 1)
         *lbmptr++ = 0; // pad chunk to even offset
@@ -375,13 +375,13 @@ typedef struct
 LoadPCX
 ==============
 */
-void LoadPCX(char *filename, byte **pic, byte **palette, int32_t *width, int32_t *height) {
-    byte *raw;
+void LoadPCX(char *filename, uint8_t **pic, uint8_t **palette, int32_t *width, int32_t *height) {
+    uint8_t *raw;
     pcx_t *pcx;
     int32_t x, y;
     int32_t len;
     int32_t dataByte, runLength;
-    byte *out, *pix;
+    uint8_t *out, *pix;
 
     //
     // load the file
@@ -408,7 +408,7 @@ void LoadPCX(char *filename, byte **pic, byte **palette, int32_t *width, int32_t
 
     if (palette) {
         *palette = malloc(768);
-        memcpy(*palette, (byte *)pcx + len - 768, 768);
+        memcpy(*palette, (uint8_t *)pcx + len - 768, 768);
     }
 
     if (width)
@@ -442,7 +442,7 @@ void LoadPCX(char *filename, byte **pic, byte **palette, int32_t *width, int32_t
         }
     }
 
-    if (raw - (byte *)pcx > len)
+    if (raw - (uint8_t *)pcx > len)
         Error("PCX file %s was malformed", filename);
 
     free(pcx);
@@ -453,11 +453,11 @@ void LoadPCX(char *filename, byte **pic, byte **palette, int32_t *width, int32_t
 WritePCXfile
 ==============
 */
-void WritePCXfile(char *filename, byte *data,
-                  int32_t width, int32_t height, byte *palette) {
+void WritePCXfile(char *filename, uint8_t *data,
+                  int32_t width, int32_t height, uint8_t *palette) {
     int32_t i, j, length;
     pcx_t *pcx;
-    byte *pack;
+    uint8_t *pack;
 
     pcx = malloc(width * height * 2 + 1000);
     memset(pcx, 0, sizeof(*pcx));
@@ -491,12 +491,12 @@ void WritePCXfile(char *filename, byte *data,
     }
 
     // write the palette
-    *pack++ = 0x0c; // palette ID byte
+    *pack++ = 0x0c; // palette ID uint8_t
     for (i = 0; i < 768; i++)
         *pack++ = *palette++;
 
     // write output file
-    length = pack - (byte *)pcx;
+    length = pack - (uint8_t *)pcx;
     SaveFile(filename, pcx, length);
 
     free(pcx);
@@ -518,7 +518,7 @@ Will load either an lbm or pcx, depending on extension.
 Any of the return pointers can be NULL if you don't want them.
 ==============
 */
-void Load256Image(char *name, byte **pixels, byte **palette,
+void Load256Image(char *name, uint8_t **pixels, uint8_t **palette,
                   int32_t *width, int32_t *height) {
     char ext[128];
 
@@ -542,7 +542,7 @@ Save256Image
 Will save either an lbm or pcx, depending on extension.
 ==============
 */
-void Save256Image(char *name, byte *pixels, byte *palette,
+void Save256Image(char *name, uint8_t *pixels, uint8_t *palette,
                   int32_t width, int32_t height) {
     char ext[128];
 
@@ -572,7 +572,7 @@ typedef struct _TargaHeader {
 } TargaHeader;
 
 int32_t fgetLittleShort(FILE *f) {
-    byte b1, b2;
+    uint8_t b1, b2;
 
     b1 = fgetc(f);
     b2 = fgetc(f);
@@ -581,7 +581,7 @@ int32_t fgetLittleShort(FILE *f) {
 }
 
 int32_t fgetLittleLong(FILE *f) {
-    byte b1, b2, b3, b4;
+    uint8_t b1, b2, b3, b4;
 
     b1 = fgetc(f);
     b2 = fgetc(f);
@@ -596,12 +596,12 @@ int32_t fgetLittleLong(FILE *f) {
 LoadTGA
 =============
 */
-void LoadTGA(char *name, byte **pixels, int32_t *width, int32_t *height) {
+void LoadTGA(char *name, uint8_t **pixels, int32_t *width, int32_t *height) {
     int32_t columns, rows, numPixels;
-    byte *pixbuf;
+    uint8_t *pixbuf;
     int32_t row, column;
     FILE *fin;
-    byte *targa_rgba;
+    uint8_t *targa_rgba;
     TargaHeader targa_header;
 
     fin = fopen(name, "rb");

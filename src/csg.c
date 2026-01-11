@@ -135,7 +135,7 @@ Returns true if the two brushes definately do not intersect.
 There will be false negatives for some non-axial combinations.
 ===============
 */
-qboolean BrushesDisjoint(bspbrush_t *a, bspbrush_t *b) {
+bool BrushesDisjoint(bspbrush_t *a, bspbrush_t *b) {
     int32_t i, j;
 
     // check bounding boxes
@@ -406,7 +406,7 @@ BrushGE
 Returns true if b1 is allowed to bite b2
 ==================
 */
-qboolean BrushGE(bspbrush_t *b1, bspbrush_t *b2) {
+bool BrushGE(bspbrush_t *b1, bspbrush_t *b2) {
     // detail brushes never bite structural brushes
     if ((b1->original->contents & CONTENTS_DETAIL) && !(b2->original->contents & CONTENTS_DETAIL))
         return false;

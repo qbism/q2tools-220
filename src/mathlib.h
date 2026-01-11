@@ -82,7 +82,7 @@ extern vec3_t vec3_origin;
                                                                   : (b))
 
 #ifndef MATH_INLINE
-qboolean VectorCompare(vec3_t v1, vec3_t v2);
+bool VectorCompare(vec3_t v1, vec3_t v2);
 
 vec_t _DotProduct(vec3_t v1, vec3_t v2);
 void _VectorSubtract(vec3_t va, vec3_t vb, vec3_t out);
@@ -97,7 +97,7 @@ vec_t ColorNormalize(vec3_t in, vec3_t out);
 void ClearBounds(vec3_t mins, vec3_t maxs);
 void AddPointToBounds(vec3_t v, vec3_t mins, vec3_t maxs);
 
-qboolean RayPlaneIntersect(vec3_t p_n, vec_t p_d, vec3_t l_o, vec3_t l_n,
+bool RayPlaneIntersect(vec3_t p_n, vec_t p_d, vec3_t l_o, vec3_t l_n,
                            vec3_t res);
 
 #else
@@ -107,7 +107,7 @@ static inline double VectorLengthSq(vec3_t v) // jit
     return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 }
 
-static inline qboolean VectorCompare(vec3_t v1, vec3_t v2) {
+static inline bool VectorCompare(vec3_t v1, vec3_t v2) {
     int32_t i;
 
     for (i = 0; i < 3; i++)
@@ -199,7 +199,7 @@ static inline void AddPointToBounds(vec3_t v, vec3_t mins, vec3_t maxs) {
     }
 }
 
-static inline qboolean RayPlaneIntersect(vec3_t p_n, vec_t p_d, vec3_t l_o, vec3_t l_n,
+static inline bool RayPlaneIntersect(vec3_t p_n, vec_t p_d, vec3_t l_o, vec3_t l_n,
                                          vec3_t res) {
     float dot, t;
 

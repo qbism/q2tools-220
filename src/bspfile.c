@@ -23,8 +23,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "bspfile.h"
 #include "scriplib.h"
 
-qboolean use_qbsp  = false; // qb: huge map support
-qboolean noskipfix = false; // qb: warn about SURF_SKIP contents rather than silently changing to zero
+bool use_qbsp  = false; // qb: huge map support
+bool noskipfix = false; // qb: warn about SURF_SKIP contents rather than silently changing to zero
 
 void GetLeafNums(void);
 
@@ -36,11 +36,11 @@ int32_t nummodels;
 dmodel_t *dmodels; //[MAX_MAP_MODELS_QBSP];
 
 int32_t visdatasize;
-byte *dvisdata; //[MAX_MAP_VISIBILITY_QBSP];
+uint8_t *dvisdata; //[MAX_MAP_VISIBILITY_QBSP];
 dvis_t *dvis;   // = (dvis_t *)dvisdata;
 
 int32_t lightdatasize;
-byte *dlightdata; //[MAX_MAP_LIGHTING_QBSP];
+uint8_t *dlightdata; //[MAX_MAP_LIGHTING_QBSP];
 
 int32_t entdatasize;
 char *dentdata; //[MAX_MAP_ENTSTRING_QBSP];
@@ -94,16 +94,16 @@ darea_t *dareas; //[MAX_MAP_AREAS];
 int32_t numareaportals;
 dareaportal_t *dareaportals; //[MAX_MAP_AREAPORTALS];
 
-byte dpop[256];
+uint8_t dpop[256];
 
 void InitBSPFile(void) {
-    static qboolean init = false;
+    static bool init = false;
     if (!init) {
         init          = true;
         dmodels       = (dmodel_t *)malloc(sizeof(*dmodels) * MAX_MAP_MODELS_QBSP);
-        dvisdata      = (byte *)malloc(sizeof(*dvisdata) * MAX_MAP_VISIBILITY_QBSP);
+        dvisdata      = (uint8_t *)malloc(sizeof(*dvisdata) * MAX_MAP_VISIBILITY_QBSP);
         dvis          = (dvis_t *)dvisdata;
-        dlightdata    = (byte *)malloc(sizeof(*dlightdata) * MAX_MAP_LIGHTING_QBSP);
+        dlightdata    = (uint8_t *)malloc(sizeof(*dlightdata) * MAX_MAP_LIGHTING_QBSP);
         dentdata      = (char *)malloc(sizeof(*dentdata) * MAX_MAP_ENTSTRING_QBSP);
         dleafs        = (dleaf_t *)malloc(sizeof(*dleafs) * MAX_MAP_LEAFS);
         dleafsX       = (dleaf_tx *)malloc(sizeof(*dleafsX) * MAX_MAP_LEAFS_QBSP);
@@ -135,11 +135,11 @@ CompressVis
 
 ===============
 */
-int32_t CompressVis(byte *vis, byte *dest) {
+int32_t CompressVis(uint8_t *vis, uint8_t *dest) {
     int32_t j;
     int32_t rep;
     int32_t visrow;
-    byte *dest_p;
+    uint8_t *dest_p;
 
     dest_p = dest;
     //	visrow = (r_numvisleafs + 7)>>3;
@@ -168,9 +168,9 @@ int32_t CompressVis(byte *vis, byte *dest) {
 DecompressVis
 ===================
 */
-void DecompressVis(byte *in, byte *decompressed) {
+void DecompressVis(uint8_t *in, uint8_t *decompressed) {
     int32_t c;
-    byte *out;
+    uint8_t *out;
     int32_t row;
 
     //	row = (r_numvisleafs+7)>>3;
@@ -200,10 +200,10 @@ void DecompressVis(byte *in, byte *decompressed) {
 =============
 SwapBSPFile
 
-Byte swaps all data in a bsp file.
+uint8_t swaps all data in a bsp file.
 =============
 */
-void SwapBSPFile(qboolean todisk) {
+void SwapBSPFile(bool todisk) {
     int32_t i, j;
     dmodel_t *d;
 
@@ -417,7 +417,7 @@ int32_t CopyLump(int32_t lump, void *dest, int32_t size) {
     if (length % size)
         Error("LoadBSPFile: odd lump size  (length: %i  size: %i  remainder: %i)", length, size, length % size);
 
-    memcpy(dest, (byte *)header + ofs, length);
+    memcpy(dest, (uint8_t *)header + ofs, length);
 
     return length / size;
 }
@@ -738,7 +738,7 @@ epair_t *ParseEpair(void) {
 ParseEntity
 ================
 */
-qboolean ParseEntity(void) {
+bool ParseEntity(void) {
     epair_t *e;
     entity_t *mapent;
 

@@ -38,7 +38,7 @@ typedef struct
 
 typedef struct
 {
-    qboolean original; // don't free, it's part of the portal
+    bool original; // don't free, it's part of the portal
     int32_t numpoints;
     vec3_t points[MAX_POINTS_ON_FIXED_WINDING]; // variable sized
 } winding_t;
@@ -60,9 +60,9 @@ typedef struct
 
     winding_t *winding;
     vstatus_t status;
-    byte *portalfront; // [portals], preliminary
-    byte *portalflood; // [portals], intermediate
-    byte *portalvis;   // [portals], final
+    uint8_t *portalfront; // [portals], preliminary
+    uint8_t *portalflood; // [portals], intermediate
+    uint8_t *portalvis;   // [portals], final
 
     int32_t nummightsee; // bit count on portalflood for sort
 } portal_t;
@@ -86,7 +86,7 @@ typedef struct leaf_s {
 } leaf_t;
 
 typedef struct pstack_s {
-    byte mightsee[MAX_PORTALS_QBSP / 8]; // bit string
+    uint8_t mightsee[MAX_PORTALS_QBSP / 8]; // bit string
     struct pstack_s *next;
     leaf_t *leaf;
     portal_t *portal; // portal exiting
@@ -117,9 +117,9 @@ extern int32_t c_portalskip, c_leafskip;
 extern int32_t c_vistest, c_mighttest;
 extern int32_t c_chains;
 
-extern byte *vismap, *vismap_p, *vismap_end; // past visfile
+extern uint8_t *vismap, *vismap_p, *vismap_end; // past visfile
 
-extern byte *uncompressed;
+extern uint8_t *uncompressed;
 
 extern int32_t leafbytes, leaflongs;
 extern int32_t portalbytes, portallongs;
@@ -132,4 +132,4 @@ void PortalFlow(int32_t portalnum);
 
 extern portal_t *sorted_portals[MAX_MAP_PORTALS_QBSP * 2];
 
-int32_t CountBits(byte *bits, int32_t numbits);
+int32_t CountBits(uint8_t *bits, int32_t numbits);

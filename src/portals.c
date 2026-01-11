@@ -104,7 +104,7 @@ The nodes on either side of the portal may actually be clusters,
 not leafs, so all contents should be ored together
 =============
 */
-qboolean Portal_VisFlood(portal_t *p) {
+bool Portal_VisFlood(portal_t *p) {
     int32_t c1, c2;
 
     if (!p->onnode)
@@ -141,7 +141,7 @@ The entity flood determines which areas are
 Flowing from side s to side !s
 ===============
 */
-qboolean Portal_EntityFlood(portal_t *p, int32_t s) {
+bool Portal_EntityFlood(portal_t *p, int32_t s) {
     if (p->nodes[0]->planenum != PLANENUM_LEAF || p->nodes[1]->planenum != PLANENUM_LEAF)
         Error("Portal_EntityFlood: not a leaf");
 
@@ -320,7 +320,7 @@ winding_t *BaseWindingForNode(node_t *node) {
 
 //============================================================
 
-qboolean WindingIsTiny(winding_t *w);
+bool WindingIsTiny(winding_t *w);
 
 /*
 ==================
@@ -556,7 +556,7 @@ void FloodPortals_r(node_t *node, int32_t dist) {
 PlaceOccupant
 =============
 */
-qboolean PlaceOccupant(node_t *headnode, vec3_t origin, entity_t *occupant) {
+bool PlaceOccupant(node_t *headnode, vec3_t origin, entity_t *occupant) {
     node_t *node;
     vec_t d;
     plane_t *plane;
@@ -588,11 +588,11 @@ FloodEntities
 Marks all nodes that can be reached by entites
 =============
 */
-qboolean FloodEntities(tree_t *tree) {
+bool FloodEntities(tree_t *tree) {
     int32_t i;
     vec3_t origin;
     char *cl;
-    qboolean inside;
+    bool inside;
     node_t *headnode;
 
     headnode = tree->headnode;
@@ -638,7 +638,7 @@ qboolean FloodEntities(tree_t *tree) {
         qprintf("entity reached from outside -- no filling\n");
     }
 
-    return (qboolean)(inside && !tree->outside_node.occupied);
+    return (bool)(inside && !tree->outside_node.occupied);
 }
 
 /*

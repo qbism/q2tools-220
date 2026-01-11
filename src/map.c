@@ -20,7 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "qbsp.h"
 
-extern qboolean onlyents;
+extern bool onlyents;
 
 int32_t nummapbrushes;
 mapbrush_t mapbrushes[MAX_MAP_BRUSHES_QBSP];
@@ -90,7 +90,7 @@ PlaneEqual
 */
 
 #define DIST_EPSILON 0.01
-qboolean PlaneEqual(plane_t *p, vec3_t normal, vec_t dist) {
+bool PlaneEqual(plane_t *p, vec3_t normal, vec_t dist) {
 #if 1
     if (
         fabs(p->normal[0] - normal[0]) < NORMAL_EPSILON && fabs(p->normal[1] - normal[1]) < NORMAL_EPSILON && fabs(p->normal[2] - normal[2]) < NORMAL_EPSILON && fabs(p->dist - dist) < DIST_EPSILON)
@@ -801,7 +801,7 @@ void MoveBrushesToWorld(entity_t *mapent) {
 ParseMapEntity
 ================
 */
-qboolean ParseMapEntity(void) {
+bool ParseMapEntity(void) {
     mapbrush_t *b;
 
     if (!GetToken(true))

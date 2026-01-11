@@ -20,7 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "data.h"
 
-byte *soundtrack;
+uint8_t *soundtrack;
 char base[32];
 
 /*
@@ -41,10 +41,10 @@ typedef struct
     int32_t dataofs; // chunk starts this many bytes from file start
 } wavinfo_t;
 
-byte *data_p;
-byte *iff_end;
-byte *last_chunk;
-byte *iff_data;
+uint8_t *data_p;
+uint8_t *iff_end;
+uint8_t *last_chunk;
+uint8_t *iff_data;
 int32_t iff_chunk_len;
 
 int32_t samplecounts[0x10000];
@@ -118,7 +118,7 @@ void DumpChunks(void) {
 GetWavinfo
 ============
 */
-wavinfo_t GetWavinfo(char *name, byte *wav, int32_t wavlength) {
+wavinfo_t GetWavinfo(char *name, uint8_t *wav, int32_t wavlength) {
     wavinfo_t info;
     int32_t i;
     int32_t format;
@@ -281,7 +281,7 @@ MTF
 */
 cblock_t MTF(cblock_t in) {
     int32_t i, j, b, code;
-    byte *out_p;
+    uint8_t *out_p;
     int32_t index[256];
     cblock_t out;
 
@@ -316,7 +316,7 @@ cblock_t MTF(cblock_t in) {
 //==========================================================================
 
 int32_t bwt_size;
-byte *bwt_data;
+uint8_t *bwt_data;
 
 int32_t bwtCompare(const void *elem1, const void *elem2) {
     int32_t i;
@@ -350,7 +350,7 @@ BWT
 cblock_t BWT(cblock_t in) {
     int32_t *sorted;
     int32_t i;
-    byte *out_p;
+    uint8_t *out_p;
     cblock_t out;
 
     bwt_size = in.count;
@@ -393,7 +393,7 @@ cblock_t BWT(cblock_t in) {
 
 typedef struct hnode_s {
     int32_t count;
-    qboolean used;
+    bool used;
     int32_t children[2];
 } hnode_t;
 
@@ -454,7 +454,7 @@ cblock_t Huffman(cblock_t in) {
     hnode_t *node;
     int32_t outbits, c;
     unsigned bits;
-    byte *out_p;
+    uint8_t *out_p;
     cblock_t out;
     int32_t max;
 
@@ -548,7 +548,7 @@ int32_t rle_bytes[256];
 
 cblock_t RLE(cblock_t in) {
     int32_t i;
-    byte *out_p;
+    uint8_t *out_p;
     int32_t val;
     int32_t repeat;
     cblock_t out;
@@ -605,7 +605,7 @@ LZSS
 #define FRONT_BITS   4
 cblock_t LZSS(cblock_t in) {
     int32_t i;
-    byte *out_p;
+    uint8_t *out_p;
     cblock_t out;
     int32_t val;
     int32_t j, start, max;
@@ -841,7 +841,7 @@ void Huffman1_Count(cblock_t in) {
 Huffman1_Build
 ==================
 */
-byte scaled[256][HUF_TOKENS];
+uint8_t scaled[256][HUF_TOKENS];
 void Huffman1_Build(FILE *f) {
     int32_t i, j, v;
     int32_t max;
@@ -900,7 +900,7 @@ cblock_t Huffman1(cblock_t in) {
     int32_t i;
     int32_t outbits, c;
     unsigned bits;
-    byte *out_p;
+    uint8_t *out_p;
     cblock_t out;
     int32_t prev;
     int32_t v;
@@ -968,7 +968,7 @@ cblock_t Huffman1(cblock_t in) {
 LoadFrame
 ===================
 */
-cblock_t LoadFrame(char *base, int32_t frame, int32_t digits, byte **palette) {
+cblock_t LoadFrame(char *base, int32_t frame, int32_t digits, uint8_t **palette) {
     int32_t ten3, ten2, ten1, ten0;
     cblock_t in;
     int32_t width, height;
@@ -1023,9 +1023,9 @@ void Cmd_Video(void) {
     char name[1200];
     FILE *output;
     int32_t startframe, frame;
-    byte *palette;
+    uint8_t *palette;
     int32_t width, height;
-    byte current_palette[768];
+    uint8_t current_palette[768];
     int32_t command;
     int32_t i;
     int32_t digits;

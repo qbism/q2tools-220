@@ -77,7 +77,7 @@ typedef struct patch_s {
     struct patch_s *next; // next in face
     int32_t numtransfers;
     transfer_t *transfers;
-    byte *trace_hit;
+    uint8_t *trace_hit;
 
     int32_t nodenum;
 
@@ -85,7 +85,7 @@ typedef struct patch_s {
     vec3_t origin;
     dplane_t *plane;
 
-    qboolean sky;
+    bool sky;
 
     vec3_t totallight; // accumulated by radiosity
                        // does NOT include light
@@ -114,14 +114,14 @@ extern int32_t nodeparents[MAX_MAP_NODES_QBSP];
 
 extern float lightscale;
 
-extern qboolean use_qbsp;
+extern bool use_qbsp;
 
 void MakeShadowSplits(void);
 
 //==============================================
 
 void BuildVisMatrix(void);
-qboolean CheckVisBit(unsigned p1, unsigned p2);
+bool CheckVisBit(unsigned p1, unsigned p2);
 
 //==============================================
 
@@ -131,22 +131,22 @@ void LinkPlaneFaces(void);
 
 extern float grayscale;
 extern float saturation;
-extern qboolean extrasamples;
-extern qboolean dicepatches;
+extern bool extrasamples;
+extern bool dicepatches;
 extern int32_t numbounce;
-extern qboolean noblock;
-extern qboolean noedgefix;
+extern bool noblock;
+extern bool noedgefix;
 
 extern directlight_t *directlights[MAX_MAP_LEAFS_QBSP];
 
-extern byte nodehit[MAX_MAP_NODES_QBSP];
+extern uint8_t nodehit[MAX_MAP_NODES_QBSP];
 
 void BuildLightmaps(void);
 
 void BuildFacelights(int32_t facenum);
 
 void FinalLightFace(int32_t facenum);
-qboolean PvsForOrigin(vec3_t org, byte *pvs);
+bool PvsForOrigin(vec3_t org, uint8_t *pvs);
 
 int32_t PointInNodenum(vec3_t point);
 int32_t TestLine(vec3_t start, vec3_t stop);
@@ -167,8 +167,8 @@ extern float subdiv;
 extern float direct_scale;
 extern float entity_scale;
 
-extern qboolean sun;
-extern qboolean sun_alt_color;
+extern bool sun;
+extern bool sun_alt_color;
 extern vec3_t sun_pos;
 extern float sun_main;
 extern float sun_ambient;
@@ -187,7 +187,7 @@ extern void SubdividePatches(void);
 extern void PairEdges(void);
 extern void CalcTextureReflectivity_Heretic2(void);
 extern void CalcTextureReflectivity(void);
-extern byte *dlightdata_ptr;
-extern byte dlightdata_raw[MAX_MAP_LIGHTING_QBSP];
+extern uint8_t *dlightdata_ptr;
+extern uint8_t dlightdata_raw[MAX_MAP_LIGHTING_QBSP];
 
 extern float sunradscale;

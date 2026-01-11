@@ -104,8 +104,8 @@ typedef struct
 
 typedef struct
 {
-    byte v[3]; // scaled byte to fit in frame mins/maxs
-    byte lightnormalindex;
+    uint8_t v[3]; // scaled uint8_t to fit in frame mins/maxs
+    uint8_t lightnormalindex;
 } dtrivertx_t;
 
 #define DTRIVERTX_V0   0
@@ -116,7 +116,7 @@ typedef struct
 
 typedef struct
 {
-    float scale[3];       // multiply byte verts by this
+    float scale[3];       // multiply uint8_t verts by this
     float translate[3];   // then add this
     char name[16];        // frame name from grabbing
     dtrivertx_t verts[1]; // variable sized
@@ -137,7 +137,7 @@ typedef struct
 
     int32_t skinwidth;
     int32_t skinheight;
-    int32_t framesize; // byte size of each frame
+    int32_t framesize; // uint8_t size of each frame
 
     int32_t num_skins;
     int32_t num_xyz;
@@ -147,7 +147,7 @@ typedef struct
     int32_t num_frames;
 
     int32_t ofs_skins;  // each skin is a MAX_SKINNAME string
-    int32_t ofs_st;     // byte offset from start for stverts
+    int32_t ofs_st;     // uint8_t offset from start for stverts
     int32_t ofs_tris;   // offset for dtriangles
     int32_t ofs_frames; // offset for first frame
     int32_t ofs_glcmds;
@@ -210,7 +210,7 @@ typedef struct palette_s
 	{
 		struct
 		{
-			byte r,g,b;
+			uint8_t r,g,b;
 		};
 	};
 } palette_t;
@@ -519,7 +519,7 @@ typedef struct
     short texinfo;
 
     // lighting info
-    byte styles[MAXLIGHTMAPS];
+    uint8_t styles[MAXLIGHTMAPS];
     int32_t lightofs; // start of [numstyles*surfsize] samples
 } dface_t;
 
@@ -533,7 +533,7 @@ typedef struct
     int32_t texinfo;
 
     // lighting info
-    byte styles[MAXLIGHTMAPS];
+    uint8_t styles[MAXLIGHTMAPS];
     int32_t lightofs; // start of [numstyles*surfsize] samples
 } dface_tx;           // qb: qbsp
 
@@ -596,7 +596,7 @@ typedef struct
 #define ANGLE_DOWN -2
 
 // the visibility lump consists of a header with a count, then
-// byte offsets for the PVS and PHS of each cluster, then the raw
+// uint8_t offsets for the PVS and PHS of each cluster, then the raw
 // compressed bit vectors
 #define DVIS_PVS   0
 #define DVIS_PHS   1

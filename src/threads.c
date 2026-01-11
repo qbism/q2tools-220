@@ -26,9 +26,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 int32_t dispatch;
 int32_t workcount;
 int32_t oldf;
-qboolean pacifier;
+bool pacifier;
 
-qboolean threaded;
+bool threaded;
 
 /*
 =============
@@ -77,7 +77,7 @@ void ThreadWorkerFunction(int32_t threadnum) {
     }
 }
 
-void RunThreadsOnIndividual(int32_t workcnt, qboolean showpacifier, void (*func)(int32_t)) {
+void RunThreadsOnIndividual(int32_t workcnt, bool showpacifier, void (*func)(int32_t)) {
     if (numthreads == -1)
         ThreadSetDefault();
     workfunction = func;
@@ -133,7 +133,7 @@ void ThreadUnlock(void) {
 RunThreadsOn
 =============
 */
-void RunThreadsOn(int32_t workcnt, qboolean showpacifier, void (*func)(int32_t)) {
+void RunThreadsOn(int32_t workcnt, bool showpacifier, void (*func)(int32_t)) {
     int32_t threadid[MAX_THREADS];
     HANDLE threadhandle[MAX_THREADS];
     int32_t i;
@@ -206,7 +206,7 @@ void ThreadUnlock(void) {
 RunThreadsOn
 =============
 */
-void RunThreadsOn(int32_t workcnt, qboolean showpacifier, void (*func)(int32_t)) {
+void RunThreadsOn(int32_t workcnt, bool showpacifier, void (*func)(int32_t)) {
     int32_t i;
     pthread_t work_threads[MAX_THREADS];
     void *status;
@@ -283,7 +283,7 @@ void ThreadUnlock(void) {
 RunThreadsOn
 =============
 */
-void RunThreadsOn(int32_t workcnt, qboolean showpacifier, void (*func)(int32_t)) {
+void RunThreadsOn(int32_t workcnt, bool showpacifier, void (*func)(int32_t)) {
     int32_t start, end;
 
     dispatch  = 0;

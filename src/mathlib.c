@@ -40,7 +40,7 @@ double VectorLength(vec3_t v) {
     return length;
 }
 
-qboolean VectorCompare(vec3_t v1, vec3_t v2) {
+bool VectorCompare(vec3_t v1, vec3_t v2) {
     int32_t i;
 
     for (i = 0; i < 3; i++)
@@ -155,7 +155,7 @@ void AddPointToBounds(vec3_t v, vec3_t mins, vec3_t maxs) {
 }
 
 // qb: from AA tools
-qboolean RayPlaneIntersect(vec3_t p_n, vec_t p_d, vec3_t l_o, vec3_t l_n,
+bool RayPlaneIntersect(vec3_t p_n, vec_t p_d, vec3_t l_o, vec3_t l_n,
                            vec3_t res) {
     float dot, t;
 

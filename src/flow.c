@@ -38,7 +38,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   void CalcMightSee (leaf_t *leaf,
 */
 
-int32_t CountBits(byte *bits, int32_t numbits) {
+int32_t CountBits(uint8_t *bits, int32_t numbits) {
     int32_t i;
     int32_t c;
 
@@ -215,14 +215,14 @@ order goes source, pass, target.  If the order goes pass, source, target then
 flipclip should be set.
 ==============
 */
-winding_t *ClipToSeperators(winding_t *source, winding_t *pass, winding_t *target, qboolean flipclip, pstack_t *stack) {
+winding_t *ClipToSeperators(winding_t *source, winding_t *pass, winding_t *target, bool flipclip, pstack_t *stack) {
     int32_t i, j, k, l;
     plane_t plane;
     vec3_t v1, v2;
     float d;
     vec_t length;
     int32_t counts[3];
-    qboolean fliptest;
+    bool fliptest;
 
     // check all combinations
     for (i = 0; i < source->numpoints; i++) {
@@ -533,7 +533,7 @@ typedef struct passage_s
         struct passage_s	*next;
         struct portal_s		*to;
         stryct sep_s		*seperators;
-        byte				*mightsee;
+        uint8_t				*mightsee;
 } passage_t;
 
 typedef struct portal_s
@@ -663,13 +663,13 @@ RecursiveLeafBitFlow
 
 ==================
 */
-void RecursiveLeafBitFlow(int32_t leafnum, byte *mightsee, byte *cansee) {
+void RecursiveLeafBitFlow(int32_t leafnum, uint8_t *mightsee, uint8_t *cansee) {
     portal_t *p;
     leaf_t *leaf;
     int32_t i, j;
     uint32_t more;
     int32_t pnum;
-    byte newmight[MAX_MAP_PORTALS_QBSP / 8];
+    uint8_t newmight[MAX_MAP_PORTALS_QBSP / 8];
 
     leaf = &leafs[leafnum];
 

@@ -22,7 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 int32_t nummiptex;
 textureref_t textureref[MAX_MAP_TEXTURES];
-qboolean h2tex;
+bool h2tex;
 
 //==========================================================================
 
@@ -164,7 +164,7 @@ static inline void CheckTexinfoCount() // mxd
         Error("ERROR: texinfo count exceeds extended limit (%i).\n", MAX_MAP_TEXINFO);
 }
 
-qboolean TexinfosMatch(texinfo_t t1, texinfo_t t2) // mxd
+bool TexinfosMatch(texinfo_t t1, texinfo_t t2) // mxd
 {
     if (t1.flags != t2.flags || t1.value != t2.value || strcmp(t1.texture, t2.texture))
         return false;
@@ -262,7 +262,7 @@ int32_t TexinfoForBrushTexture_UV(brush_texture_t *bt, vec_t *UVaxis) {
     return texinfoindex;
 }
 
-extern qboolean origfix;
+extern bool origfix;
 
 int32_t TexinfoForBrushTexture(plane_t *plane, brush_texture_t *bt, vec3_t origin) {
     if (!bt->name[0])

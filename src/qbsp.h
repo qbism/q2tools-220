@@ -52,9 +52,9 @@ typedef struct side_s {
     struct side_s *original; // bspbrush_t sides will reference the mapbrush_t sides
     int32_t contents;        // from miptex
     int32_t surf;            // from miptex
-    qboolean visible;        // choose visble planes first
-    qboolean tested;         // this plane allready checked as a split
-    qboolean bevel;          // don't ever use for bsp splitting
+    bool visible;        // choose visble planes first
+    bool tested;         // this plane allready checked as a split
+    bool bevel;          // don't ever use for bsp splitting
 } side_t;
 
 typedef struct brush_s {
@@ -89,7 +89,7 @@ typedef struct face_s {
     int32_t outputnumber;
     winding_t *w;
     int32_t numpoints;
-    qboolean badstartvert; // tjunctions cannot be fixed without a midpoint vertex
+    bool badstartvert; // tjunctions cannot be fixed without a midpoint vertex
     int32_t vertexnums[MAXEDGES];
 } face_t;
 
@@ -111,7 +111,7 @@ typedef struct node_s {
     bspbrush_t *volume; // one for each leaf/node
 
     // nodes only
-    qboolean detail_seperator; // a detail brush caused the split
+    bool detail_seperator; // a detail brush caused the split
     side_t *side;              // the side that created the node
     struct node_s *children[2];
     face_t *faces;
@@ -133,7 +133,7 @@ typedef struct portal_s {
     struct portal_s *next[2];
     winding_t *winding;
 
-    qboolean sidefound; // false if ->side hasn't been checked
+    bool sidefound; // false if ->side hasn't been checked
     side_t *side;       // NULL = non-visible
     face_t *face[2];    // output face in bsp file
 } portal_t;
@@ -160,19 +160,19 @@ extern vec3_t map_mins, map_maxs;
 extern int32_t nummapbrushsides;
 extern side_t brushsides[MAX_MAP_SIDES];
 
-extern qboolean noprune;
-extern qboolean nodetail;
-extern qboolean fulldetail;
-extern qboolean nomerge;
-extern qboolean nosubdiv;
-extern qboolean nowater;
-extern qboolean noweld;
-extern qboolean noshare;
-extern qboolean notjunc;
-extern qboolean badnormal_check;
+extern bool noprune;
+extern bool nodetail;
+extern bool fulldetail;
+extern bool nomerge;
+extern bool nosubdiv;
+extern bool nowater;
+extern bool noweld;
+extern bool noshare;
+extern bool notjunc;
+extern bool badnormal_check;
 extern float badnormal;
-extern qboolean use_qbsp;
-extern qboolean noskipfix;
+extern bool use_qbsp;
+extern bool noskipfix;
 
 extern vec_t microvolume;
 
@@ -217,7 +217,7 @@ void FindGCD(int32_t *v);
 
 mapbrush_t *Brush_LoadEntity(entity_t *ent);
 int32_t PlaneTypeForNormal(vec3_t normal);
-qboolean MakeBrushPlanes(mapbrush_t *b);
+bool MakeBrushPlanes(mapbrush_t *b);
 int32_t FindIntPlane(int32_t *inormal, int32_t *iorigin);
 void CreateBrush(int32_t brushnum);
 
@@ -273,9 +273,9 @@ void MakeHeadnodePortals(tree_t *tree);
 void MakeNodePortal(node_t *node);
 void SplitNodePortals(node_t *node);
 
-qboolean Portal_VisFlood(portal_t *p);
+bool Portal_VisFlood(portal_t *p);
 
-qboolean FloodEntities(tree_t *tree);
+bool FloodEntities(tree_t *tree);
 void FillOutside(node_t *headnode);
 void FloodAreas(tree_t *tree);
 void MarkVisibleSides(tree_t *tree, int32_t start, int32_t end);

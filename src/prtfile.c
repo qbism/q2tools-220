@@ -31,7 +31,7 @@ Save out name.prt for qvis to read
 
 #define PORTALFILE "PRT1"
 
-extern qboolean use_qbsp;
+extern bool use_qbsp;
 
 FILE *pf;
 int32_t num_visclusters; // clusters the player can be in

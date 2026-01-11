@@ -556,7 +556,7 @@ WindingOnPlaneSide
 ============
 */
 int32_t WindingOnPlaneSide(winding_t *w, vec3_t normal, vec_t dist) {
-    qboolean front, back;
+    bool front, back;
     int32_t i;
     vec_t d;
 

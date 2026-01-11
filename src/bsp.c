@@ -27,21 +27,21 @@ extern char source[1024];
 char name[1024];
 
 vec_t microvolume        = 0.02f; // jit - was 1.0, but this messes up small brushes
-qboolean noprune         = false;
-qboolean glview          = false;
-qboolean nodetail        = false;
-qboolean fulldetail      = false;
-qboolean onlyents        = false;
-qboolean nomerge         = false;
-qboolean nowater         = false;
-qboolean nocsg           = false;
-qboolean noweld          = false;
-qboolean noshare         = false;
-qboolean nosubdiv        = false;
-qboolean notjunc         = false;
-qboolean leaktest        = false;
-qboolean badnormal_check = false;
-qboolean origfix         = true; // default to true
+bool noprune         = false;
+bool glview          = false;
+bool nodetail        = false;
+bool fulldetail      = false;
+bool onlyents        = false;
+bool nomerge         = false;
+bool nowater         = false;
+bool nocsg           = false;
+bool noweld          = false;
+bool noshare         = false;
+bool nosubdiv        = false;
+bool notjunc         = false;
+bool leaktest        = false;
+bool badnormal_check = false;
+bool origfix         = true; // default to true
 
 int32_t block_xl = -8, block_xh = 7, block_yl = -8, block_yh = 7;
 
@@ -157,8 +157,8 @@ ProcessWorldModel
 void ProcessWorldModel(void) {
     entity_t *e;
     tree_t *tree;
-    qboolean leaked;
-    qboolean optimize;
+    bool leaked;
+    bool optimize;
 
     e           = &entities[entity_num];
 

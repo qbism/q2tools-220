@@ -93,26 +93,26 @@ static char *help_string =
     "    -nopvs:  Don't do potential visibility set check.\n"
     "    -savetrace: Test traces and report errors.\n";
 
-extern qboolean h2tex;
-extern qboolean origfix;
-extern qboolean noweld;
-extern qboolean nocsg;
-extern qboolean noshare;
-extern qboolean notjunc;
-extern qboolean nowater;
-extern qboolean noprune;
-extern qboolean nomerge;
-extern qboolean nosubdiv;
-extern qboolean nodetail;
-extern qboolean fulldetail;
-extern qboolean onlyents;
+extern bool h2tex;
+extern bool origfix;
+extern bool noweld;
+extern bool nocsg;
+extern bool noshare;
+extern bool notjunc;
+extern bool nowater;
+extern bool noprune;
+extern bool nomerge;
+extern bool nosubdiv;
+extern bool nodetail;
+extern bool fulldetail;
+extern bool onlyents;
 extern float microvolume;
-extern qboolean leaktest;
-extern qboolean use_qbsp;
+extern bool leaktest;
+extern bool use_qbsp;
 extern int32_t max_entities;
 extern int32_t max_bounds;
 extern int32_t block_size;
-extern qboolean noskipfix;
+extern bool noskipfix;
 extern float subdivide_size;
 extern float subdiv;
 extern float sublight_size;
@@ -123,40 +123,40 @@ extern int32_t block_yh;
 extern char inbase[32];
 extern char outbase[32];
 
-extern qboolean fastvis;
+extern bool fastvis;
 
-extern qboolean nosort;
-extern qboolean dumppatches;
+extern bool nosort;
+extern bool dumppatches;
 extern int32_t numbounce;
-extern qboolean extrasamples;
-extern qboolean noedgefix;
+extern bool extrasamples;
+extern bool noedgefix;
 extern int32_t maxdata;
 extern float lightscale;
 extern float sunradscale;
 extern float patch_cutoff;
 extern float direct_scale;
 extern float entity_scale;
-extern qboolean noblock;
+extern bool noblock;
 extern float smoothing_value;
 extern float sample_nudge;
 extern float ambient;
-extern qboolean save_trace;
+extern bool save_trace;
 extern float maxlight;
-extern qboolean dicepatches;
+extern bool dicepatches;
 extern float saturation;
-extern qboolean nopvs;
+extern bool nopvs;
 
 // data
-extern qboolean g_compress_pak;
-extern qboolean g_release;
-extern qboolean g_pak;
+extern bool g_compress_pak;
+extern bool g_release;
+extern bool g_pak;
 extern char g_releasedir[1024];
-extern qboolean g_archive;
-extern qboolean do3ds;
-extern qboolean dolwo;
-extern qboolean nolbm;
+extern bool g_archive;
+extern bool do3ds;
+extern bool dolwo;
+extern bool nolbm;
 extern char g_only[256];
-extern qboolean g_skipmodel;
+extern bool g_skipmodel;
 
 void BSP_ProcessArgument(const char *arg);
 void VIS_ProcessArgument(const char *arg);
@@ -170,10 +170,10 @@ int32_t main(int32_t argc, char *argv[]) {
     char tmoddir[1024]  = "";
     int32_t i;
 
-    qboolean do_bsp  = false;
-    qboolean do_vis  = false;
-    qboolean do_rad  = false;
-    qboolean do_data = false;
+    bool do_bsp  = false;
+    bool do_vis  = false;
+    bool do_rad  = false;
+    bool do_data = false;
 
     ThreadSetDefault();
 
@@ -474,7 +474,7 @@ int32_t main(int32_t argc, char *argv[]) {
 
     for (; i < argc; i++) {
         size_t input_length = strlen(argv[i]);
-        qboolean is_data    = strcmp(argv[i] + input_length - 4, ".qdt") == 0;
+        bool is_data    = strcmp(argv[i] + input_length - 4, ".qdt") == 0;
 
         if (do_data) {
             if (!is_data)
