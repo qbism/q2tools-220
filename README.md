@@ -190,16 +190,20 @@ Usage:  Add -qbsp to the bsp command line.  vis and rad will detect QBSP automat
 
 # Build from source in Linux:
 Linux-  
-mkdir build  
-cd build  
-cmake ..  
+```
+mkdir build && cd build
+cmake ..
+make && sudo make install
+```
 
-Windows-  
-mkdir buildwin  
-cd buildwin  
+Windows-
+```
+mkdir buildwin
+cd buildwin
 cmake -DCMAKE_TOOLCHAIN_FILE=../win64.cmake .. 
+```
 
-Cross-compile requires packages: mingw-w64, mingw-w64-i686-dev, gcc-multilib, and libz-mingw-w64-dev.  
+Cross-compile requires packages: `mingw-w64, mingw-w64-i686-dev, gcc-multilib, and libz-mingw-w64-dev`.
 
-Testing Windows in Linux with wine if default is 32-bit:  
-WINEARCH=win64 WINEPREFIX=~/64bitprefix wine q2tool.exe
+Testing Windows in Linux with wine if default is 32-bit:
+`WINEARCH=win64 WINEPREFIX=~/64bitprefix wine q2tool.exe`
