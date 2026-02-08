@@ -200,7 +200,8 @@ Windows-
 ```
 mkdir buildwin
 cd buildwin
-cmake -DCMAKE_TOOLCHAIN_FILE=../win64.cmake .. 
+cmake -DCMAKE_TOOLCHAIN_FILE=../win64.cmake ..
+make
 ```
 
 Cross-compile requires packages: `mingw-w64, mingw-w64-i686-dev, gcc-multilib, and libz-mingw-w64-dev`.
