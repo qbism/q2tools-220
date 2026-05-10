@@ -23,12 +23,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #define MAX_THREADS 64
 
-int32_t dispatch;
-int32_t workcount;
-int32_t oldf;
-bool pacifier;
+volatile int32_t dispatch;
+volatile int32_t workcount;
+volatile int32_t oldf;
+volatile bool pacifier;
 
-bool threaded;
+volatile bool threaded;
 
 /*
 =============
@@ -41,8 +41,8 @@ int32_t GetThreadWork(void) {
     int32_t f;
 
     ThreadLock();
-
-    if (dispatch >= workcount) {
+    
+     if (dispatch >= workcount) {
         ThreadUnlock();
         return -1;
     }
@@ -145,6 +145,7 @@ void RunThreadsOn(int32_t workcnt, bool showpacifier, void (*func)(int32_t)) {
     oldf      = -1;
     pacifier  = showpacifier;
     threaded  = true;
+    enter     = 0;  // Reset lock state for this run
 
     //
     // run threads in parallel
