@@ -55,6 +55,7 @@ int32_t FindMiptex(char *name) {
                 textureref[i].contents = LittleLong(mt_m32->contents);
                 strcpy(textureref[i].animname, mt_m32->animname);
                 free(mt_m32);
+                mod_fail = false;
             } else {
                 sprintf(pakpath, "textures/%s.m8", name);
                 sprintf(path, "%s%s", moddir, pakpath);
@@ -64,6 +65,7 @@ int32_t FindMiptex(char *name) {
                     textureref[i].contents = LittleLong(mt_m8->contents);
                     strcpy(textureref[i].animname, mt_m8->animname);
                     free(mt_m8);
+                    mod_fail = false;
                 }
             }
         } else {
