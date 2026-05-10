@@ -42,7 +42,7 @@ int32_t GetThreadWork(void) {
 
     ThreadLock();
 
-    if (dispatch == workcount) {
+    if (dispatch >= workcount) {
         ThreadUnlock();
         return -1;
     }
