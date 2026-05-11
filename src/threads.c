@@ -179,7 +179,7 @@ void RunThreadsOn(int32_t workcnt, bool showpacifier, void (*func)(int32_t)) {
 #else
 #define USED
 
-int32_t numthreads = 4;
+int32_t numthreads = -1;
 
 void ThreadSetDefault(void) {
     if (numthreads == -1) // not set manually

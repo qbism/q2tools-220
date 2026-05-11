@@ -51,7 +51,7 @@ int32_t max_entities = MAX_MAP_ENTITIES; // qb: from kmqbsp3- Knightmare- adjust
 int32_t max_bounds   = DEFAULT_MAP_SIZE; // Knightmare- adjustable max bounds
 int32_t block_size   = 1024;             // Knightmare- adjustable block size
 
-node_t *block_nodes[16][16];  // Increased from [10][10] to accommodate block range -8..7
+node_t *block_nodes[10][10];
 
 /*
 ============
@@ -158,7 +158,7 @@ void ProcessWorldModel(void) {
     entity_t *e;
     tree_t *tree;
     bool leaked;
-    bool optimize;
+    int32_t optimize;
 
     e = &entities[entity_num];
 
@@ -187,9 +187,7 @@ void ProcessWorldModel(void) {
     if (block_yh > 3)
         block_yh = 3;
 
-    for (optimize = false; optimize <= true; optimize++) {
-        // Clear block nodes for this pass
-        memset(block_nodes, 0, sizeof(block_nodes));
+    for (optimize = 0; optimize <= 1; optimize++) {
         
         qprintf("--------------------------------------------\n");
 
