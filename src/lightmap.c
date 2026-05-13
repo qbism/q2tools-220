@@ -93,6 +93,7 @@ bool GetIntertexnormal(int32_t facenum1, int32_t facenum2) {
 void BuildFaceExtents(void) {
     const dvertex_t *v;
     int32_t i, j, k;
+    vec_t *mins, *maxs, *center, *st_mins, *st_maxs;
 
     if (use_qbsp)
         for (k = 0; k < numfaces; k++) {
@@ -101,13 +102,11 @@ void BuildFaceExtents(void) {
             const texinfo_t *tex    = &texinfo[s->texinfo];
             const size_t face_index = (ptrdiff_t)(s - dfacesX);
 
-            vec_t *mins             = face_extents[face_index].mins;
-            vec_t *maxs             = face_extents[face_index].maxs;
-
-            vec_t *center           = face_extents[face_index].center;
-
-            vec_t *st_mins          = face_extents[face_index].st_mins;
-            vec_t *st_maxs          = face_extents[face_index].st_maxs;
+            mins             = face_extents[face_index].mins;
+            maxs             = face_extents[face_index].maxs;
+            center           = face_extents[face_index].center;
+            st_mins          = face_extents[face_index].st_mins;
+            st_maxs          = face_extents[face_index].st_maxs;
 
             mins[0] = mins[1] = BOGUS_RANGE;
             maxs[0] = maxs[1] = -BOGUS_RANGE;
@@ -173,13 +172,11 @@ void BuildFaceExtents(void) {
             const texinfo_t *tex    = &texinfo[s->texinfo];
             const size_t face_index = (ptrdiff_t)(s - dfaces);
 
-            vec_t *mins             = face_extents[face_index].mins;
-            vec_t *maxs             = face_extents[face_index].maxs;
-
-            vec_t *center           = face_extents[face_index].center;
-
-            vec_t *st_mins          = face_extents[face_index].st_mins;
-            vec_t *st_maxs          = face_extents[face_index].st_maxs;
+            mins             = face_extents[face_index].mins;
+            maxs             = face_extents[face_index].maxs;
+            center           = face_extents[face_index].center;
+            st_mins          = face_extents[face_index].st_mins;
+            st_maxs          = face_extents[face_index].st_maxs;
 
             mins[0] = mins[1] = BOGUS_RANGE;
             maxs[0] = maxs[1] = -BOGUS_RANGE;
