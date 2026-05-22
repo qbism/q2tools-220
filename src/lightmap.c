@@ -1855,7 +1855,7 @@ static void LightContributionToPoint(directlight_t *l, vec3_t pos, int32_t noden
 
     if (scale > 0.0f) {
         scale *= lightscale2;                       // adjust for multisamples, -extra cmd line arg
-        VectorScale(l->color, scale * 0.25, color); // qb: scale hack for intensity similar to original rad
+        VectorScale(l->color, scale * 0.2, color); // qb: scale hack for intensity similar to original rad
     }
 
     for (i = 0; i < 3; i++) {
@@ -1864,7 +1864,7 @@ static void LightContributionToPoint(directlight_t *l, vec3_t pos, int32_t noden
     }
 }
 
-/*
+/*              
 =============
 GatherSampleLight
 
@@ -1959,75 +1959,58 @@ void AddSampleToPatch(vec3_t pos, vec3_t color, int32_t facenum) {
 //   GetPhongNormal
 //  =====================================================================================
 void GetPhongNormal(int32_t facenum, vec3_t spot, vec3_t phongnormal) {
-    int32_t j, ne;
-    int32_t s; // split every edge into two parts
-    vec3_t facenormal;
-
-    // Calculate modified point normal for surface
-    // Use the edge normals if they are defined.  Bend the surface towards the edge normal(s)
-    // Crude first attempt: find nearest edge normal and do a simple interpolation with facenormal.
-    // Second attempt: find edge points+center that bound the point and do a three-point triangulation(baricentric)
-    // Better third attempt: generate the point normals for all vertices and do baricentric triangulation.
-
+    int32_t j, s, ne, firstedge;
+    vec3_t facenormal, center, vspot;
+    
     const dface_tx *fx = dfacesX + facenum;
     const dface_t *fi  = dfaces + facenum;
 
+    // 1. Setup variables and fetch base plane normal once
     if (use_qbsp) {
         const dplane_t *p = getPlaneFromFaceX(fx);
-        ne                = fx->numedges;
+        ne        = fx->numedges;
+        firstedge = fx->firstedge;
         VectorCopy(p->normal, facenormal);
     } else {
         const dplane_t *p = getPlaneFromFace(fi);
-        ne                = fi->numedges;
+        ne        = fi->numedges;
+        firstedge = fi->firstedge;
         VectorCopy(p->normal, facenormal);
     }
 
     VectorCopy(facenormal, phongnormal);
 
+    //pull constant face variables outside the loop
+    VectorCopy(face_extents[facenum].center, center);
+    VectorSubtract(spot, center, vspot); // Only calculate vspot once
+
     for (j = 0; j < ne; j++) {
-        vec3_t p1;
-        vec3_t p2;
-        vec3_t v1;
-        vec3_t v2;
-        vec3_t vspot;
-        unsigned prev_edge;
-        unsigned next_edge;
-        int32_t e;
-        int32_t e1;
-        int32_t e2;
-        edgeshare_t *es;
-        edgeshare_t *es1;
-        edgeshare_t *es2;
-        float a1;
-        float a2;
-        float aa;
-        float bb;
-        float ab;
+        vec3_t p1, p2, v1, v2;
+        unsigned prev_edge, next_edge;
+        int32_t e, e1, e2;
+        edgeshare_t *es, *es1, *es2;
+        float a1, a2, aa, bb, ab, det;
 
+        //Fast previous/next edge index without using slow modulo (%)
+        prev_edge = firstedge + (j == 0 ? ne - 1 : j - 1);
+        next_edge = firstedge + (j == ne - 1 ? 0 : j + 1);
+
+        e  = dsurfedges[firstedge + j];
+        e1 = dsurfedges[prev_edge];
+        e2 = dsurfedges[next_edge];
+
+        es  = &edgeshare[abs(e)];
+        es1 = &edgeshare[abs(e1)];
+        es2 = &edgeshare[abs(e2)];
+
+        if ((!es->smooth || es->coplanar) && 
+            (!es1->smooth || es1->coplanar) && 
+            (!es2->smooth || es2->coplanar)) {
+            continue;
+        }
+
+        // Fetch vertices based on BSP type
         if (use_qbsp) {
-            if (j) {
-                prev_edge = fx->firstedge + ((j + fx->numedges - 1) % fx->numedges);
-            } else {
-                prev_edge = fx->firstedge + fx->numedges - 1;
-            }
-
-            if ((j + 1) != fx->numedges) {
-                next_edge = fx->firstedge + ((j + 1) % fx->numedges);
-            } else {
-                next_edge = fx->firstedge;
-            }
-
-            e   = dsurfedges[fx->firstedge + j];
-            e1  = dsurfedges[prev_edge];
-            e2  = dsurfedges[next_edge];
-
-            es  = &edgeshare[abs(e)];
-            es1 = &edgeshare[abs(e1)];
-            es2 = &edgeshare[abs(e2)];
-
-            if ((!es->smooth || es->coplanar) && (!es1->smooth || es1->coplanar) && (!es2->smooth || es2->coplanar)) {
-                continue;
-            }
             if (e > 0) {
                 VectorCopy(dvertexes[dedgesX[e].v[0]].point, p1);
                 VectorCopy(dvertexes[dedgesX[e].v[1]].point, p2);
@@ -2035,32 +2018,7 @@ void GetPhongNormal(int32_t facenum, vec3_t spot, vec3_t phongnormal) {
                 VectorCopy(dvertexes[dedgesX[-e].v[1]].point, p1);
                 VectorCopy(dvertexes[dedgesX[-e].v[0]].point, p2);
             }
-        }
-
-        else {
-            if (j) {
-                prev_edge = fi->firstedge + ((j + fi->numedges - 1) % fi->numedges);
-            } else {
-                prev_edge = fi->firstedge + fi->numedges - 1;
-            }
-
-            if ((j + 1) != fi->numedges) {
-                next_edge = fi->firstedge + ((j + 1) % fi->numedges);
-            } else {
-                next_edge = fi->firstedge;
-            }
-
-            e   = dsurfedges[fi->firstedge + j];
-            e1  = dsurfedges[prev_edge];
-            e2  = dsurfedges[next_edge];
-
-            es  = &edgeshare[abs(e)];
-            es1 = &edgeshare[abs(e1)];
-            es2 = &edgeshare[abs(e2)];
-
-            if ((!es->smooth || es->coplanar) && (!es1->smooth || es1->coplanar) && (!es2->smooth || es2->coplanar)) {
-                continue;
-            }
+        } else {
             if (e > 0) {
                 VectorCopy(dvertexes[dedges[e].v[0]].point, p1);
                 VectorCopy(dvertexes[dedges[e].v[1]].point, p2);
@@ -2074,40 +2032,43 @@ void GetPhongNormal(int32_t facenum, vec3_t spot, vec3_t phongnormal) {
         VectorAdd(p1, face_offset[facenum], p1);
         VectorAdd(p2, face_offset[facenum], p2);
 
+        // Pre-calculate edge midpoint (v2) and bb OUTSIDE the 's' loop
+        vec3_t s2;
+        VectorAdd(p1, p2, s2);
+        VectorScale(s2, 0.5f, s2);
+        VectorSubtract(s2, center, v2);
+        
+        bb = DotProduct(v2, v2);
+        float dot_vspot_v2 = DotProduct(vspot, v2);
+
         for (s = 0; s < 2; s++) {
-            vec3_t s1, s2;
-            if (s == 0) {
-                VectorCopy(p1, s1);
-            } else {
-                VectorCopy(p2, s1);
-            }
-
-            VectorAdd(p1, p2, s2); // edge center
-            VectorScale(s2, 0.5, s2);
-
-            VectorSubtract(s1, face_extents[facenum].center, v1);
-            VectorSubtract(s2, face_extents[facenum].center, v2);
-            VectorSubtract(spot, face_extents[facenum].center, vspot);
+            vec3_t s1;
+            if (s) VectorCopy(p2, s1);
+                else VectorCopy(p1, s1);
+            VectorSubtract(s1, center, v1);
 
             aa = DotProduct(v1, v1);
-            bb = DotProduct(v2, v2);
             ab = DotProduct(v1, v2);
-            a1 = (bb * DotProduct(v1, vspot) - ab * DotProduct(vspot, v2)) / (aa * bb - ab * ab);
-            a2 = (DotProduct(vspot, v2) - a1 * ab) / bb;
+            
+            // 5. Determinant NaN protection (CRITICAL)
+            det = aa * bb - ab * ab;
+            if (det > -1e-5f && det < 1e-5f) continue; // Prevent divide-by-zero!
 
-            // Test center to sample vector for inclusion between center to vertex vectors (Use dot product of vectors)
-            if (a1 >= -0.01 && a2 >= -0.01) {
-                // calculate distance from edge to pos
-                vec3_t n1, n2;
-                vec3_t temp;
+            float inv_det = 1.0f / det;
+            a1 = (bb * DotProduct(v1, vspot) - ab * dot_vspot_v2) * inv_det;
+            a2 = (dot_vspot_v2 - a1 * ab) / bb;
 
-                if (es->smooth)
+            // Test center to sample vector for inclusion
+            if (a1 >= -0.01f && a2 >= -0.01f) {
+                vec3_t n1, n2, temp;
+
+                if (es->smooth) {
                     if (s == 0) {
                         VectorCopy(es->vertex_normal[e > 0 ? 0 : 1], n1);
                     } else {
                         VectorCopy(es->vertex_normal[e > 0 ? 1 : 0], n1);
                     }
-                else if (s == 0 && es1->smooth) {
+                } else if (s == 0 && es1->smooth) {
                     VectorCopy(es1->vertex_normal[e1 > 0 ? 1 : 0], n1);
                 } else if (s == 1 && es2->smooth) {
                     VectorCopy(es2->vertex_normal[e2 > 0 ? 0 : 1], n1);
@@ -2121,40 +2082,50 @@ void GetPhongNormal(int32_t facenum, vec3_t spot, vec3_t phongnormal) {
                     VectorCopy(facenormal, n2);
                 }
 
-                // Interpolate between the center and edge normals based on sample position
-                // VectorScale(facenormal, 1.0 - a1 - a2, phongnormal);
-                VectorScale(facenormal, fabs((1.0 - a1) - a2), phongnormal); // qb: eureka... need that fabs()!
+                // Interpolate between the center and edge normals
+                VectorScale(facenormal, fabs((1.0f - a1) - a2), phongnormal);
+                
                 VectorScale(n1, a1, temp);
                 VectorAdd(phongnormal, temp, phongnormal);
+                
                 VectorScale(n2, a2, temp);
                 VectorAdd(phongnormal, temp, phongnormal);
+                
                 VectorNormalize(phongnormal, phongnormal);
-                break;
+                return;
             }
         }
     }
 }
+//Move the incoming sample position safely towards the true surface center and along the
+//surface normal to clear coplanar BSP nodes.
 
-/**
- * @brief Move the incoming sample position towards the surface center and along the
- * surface normal to reduce false-positive traces. Test the PVS at the new
- * position, returning true if the new point is valid, false otherwise.
- */
 static bool NudgeSamplePosition(const vec3_t in, const vec3_t normal, const vec3_t center,
                                     vec3_t out, uint8_t *pvs) {
     vec3_t dir;
+    float dist;
 
     VectorCopy(in, out);
 
-    // move into the level using the normal and surface center
-    VectorSubtract(out, center, dir);
-    VectorNormalize(dir, dir);
+    //Vector FROM sample TO true geometric center
+    VectorSubtract(center, out, dir); 
+    dist = VectorLength(dir);
+    
+    //NaN protection (don't normalize if the sample is already dead-center)
+    if (dist > 0.001f) {
+        VectorScale(dir, 1.0f / dist, dir);
+        // Clamp the inward pull so we don't accidentally push a sample past the center
+        float safe_nudge = (sample_nudge < dist) ? sample_nudge : dist;
+        VectorMA(out, safe_nudge, dir, out);
+    }
 
-    VectorMA(out, sample_nudge, dir, out);
+    //push off the face plane into empty space to avoid BSP boundary traps
     VectorMA(out, sample_nudge, normal, out);
 
     return PvsForOrigin(out, pvs);
 }
+
+
 
 /*
 =============
