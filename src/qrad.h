@@ -146,6 +146,7 @@ void BuildLightmaps(void);
 void BuildFacelights(int32_t facenum);
 
 void FinalLightFace(int32_t facenum);
+void BlendLightmaps(void);
 bool PvsForOrigin(vec3_t org, uint8_t *pvs);
 
 int32_t PointInNodenum(vec3_t point);
@@ -177,17 +178,17 @@ extern vec3_t sun_color;
 extern float smoothing_threshold;
 extern float smoothing_value;
 extern float sample_nudge;
-extern int32_t num_smoothing;
 
 extern int32_t refine_amt, refine_setting;
 extern int32_t PointInLeafnum(vec3_t point);
 extern void MakeTnodes(dmodel_t *bm);
 extern void MakePatches(void);
 extern void SubdividePatches(void);
-extern void PairEdges(void);
+extern void BuildSpatialNormals(void);
 extern void CalcTextureReflectivity_Heretic2(void);
 extern void CalcTextureReflectivity(void);
 extern uint8_t *dlightdata_ptr;
 extern uint8_t dlightdata_raw[MAX_MAP_LIGHTING_QBSP];
 
 extern float sunradscale;
+extern float blend_amount;

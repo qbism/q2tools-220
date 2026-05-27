@@ -66,7 +66,7 @@ static char *help_string =
     "RAD pass:\n"
     "    -rad: enable rad pass, requires a .bsp file as input or bsp and vis passes enabled\n"
     "    -ambient #: Minimum light level.\n"
-    "         range:  0 to 255.\n"
+    "         Range:  0 to 255\n"
     "    -moddir [path]: Set a mod directory. Default is parent dir of map file.\n"
     "    -basedir [path]: Set the directory for assets not in moddir. Default is moddir.\n"
     "    -gamedir [path]: Set game directory, the folder with game executable.\n"
@@ -75,10 +75,14 @@ static char *help_string =
     "    -direct #: Direct light scale factor.\n"
     "    -entity #: Entity light scale factor.\n"
     "    -extra: Use extra samples to smooth lighting.\n"
+    "    -blend #: Blending factor between adjacent faces. \n"
+    "         Range: 0.0 to 1.0\n"
+    "    -dirt #: Dirtmapping (ambient occlusion) factor between adjacent faces. \n"
+    "         Range: 0.0 to 1.0\n"
     "    -maxdata #: 2097152 is default max. Not needed for QBSP format.\n"
     "         Increase requires a supporting engine.\n"
     "    -maxlight #: Maximium light level.\n"
-    "         range:  0 to 255.\n"
+    "         Range:  0 to 255.\n"
     "    -noedgefix: disable dark edges at sky fix. More of a hack, really.\n"
     "    -nudge #: Nudge factor for samples. Distance fraction from center.\n"
     "    -saturate #: Saturation factor of light bounced off surfaces.\n"
@@ -145,6 +149,8 @@ extern float maxlight;
 extern bool dicepatches;
 extern float saturation;
 extern bool nopvs;
+extern float blend_amount;
+extern float dirt_amount;
 
 // data
 extern bool g_compress_pak;
@@ -398,6 +404,15 @@ int32_t main(int32_t argc, char *argv[]) {
         } else if (!strcmp(argv[i], "-smooth")) {
             // qb: limit range
             smoothing_value = BOUND(0, atof(argv[i + 1]), 90);
+            i++;
+        } else if (!strcmp(argv[i], "-blend")) {
+            blend_amount = BOUND(0.0, atof(argv[i + 1]), 1.0);
+            printf("blend factor= %f\n", blend_amount);
+            i++;
+        } else if (!strcmp(argv[i], "-dirt")) {
+            dirt_amount = atoi(argv[i + 1]);
+            BOUND(0, dirt_amount, 1);
+            printf("dirt factor= %d\n", dirt_amount);
             i++;
         } else if (!strcmp(argv[i], "-nudge")) {
             sample_nudge = atof(argv[i + 1]);
