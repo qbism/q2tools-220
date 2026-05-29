@@ -410,7 +410,7 @@ void BaseLightForFaceX(dface_tx *f, vec3_t color) {
     tx = &texinfo[f->texinfo];
     if (!(tx->flags & SURF_LIGHT) || tx->value == 0) {
         if (tx->flags & SURF_LIGHT) {
-            printf("Surface light has 0 intensity.\n");
+            cacheprintf("Surface light has 0 intensity.\n");
         }
         VectorClear(color);
         return;
@@ -427,7 +427,7 @@ void BaseLightForFaceI(dface_t *f, vec3_t color) {
     tx = &texinfo[f->texinfo];
     if (!(tx->flags & SURF_LIGHT) || tx->value == 0) {
         if (tx->flags & SURF_LIGHT) {
-            printf("Surface light has 0 intensity.\n");
+            cacheprintf("Surface light has 0 intensity.\n");
         }
         VectorClear(color);
         return;

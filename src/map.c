@@ -208,7 +208,10 @@ int32_t FindFloatPlane(vec3_t normal, vec_t dist, int32_t bnum) {
     int32_t i;
     plane_t *p;
     int32_t hash, h;
+    int32_t result = -1;
 
+    ThreadLock();
+    
     SnapPlane(normal, &dist);
     hash = (int32_t)fabs(dist) / 8;
     hash &= (PLANE_HASHES - 1);
@@ -217,12 +220,21 @@ int32_t FindFloatPlane(vec3_t normal, vec_t dist, int32_t bnum) {
     for (i = -1; i <= 1; i++) {
         h = (hash + i) & (PLANE_HASHES - 1);
         for (p = planehash[h]; p; p = p->hash_chain) {
-            if (PlaneEqual(p, normal, dist))
-                return p - mapplanes;
+            if (PlaneEqual(p, normal, dist)) {
+                result = p - mapplanes;
+                break; // Plane found
+            }
         }
+        if (result != -1) break; // Exit outer loop if found
     }
 
-    return CreateNewFloatPlane(normal, dist, bnum);
+    // If no existing plane was found, create a new one
+    if (result == -1) {
+        result = CreateNewFloatPlane(normal, dist, bnum);
+    }
+
+    ThreadUnlock();
+    return result;
 }
 
 /*

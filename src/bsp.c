@@ -141,10 +141,14 @@ void ProcessBlock_Thread(int32_t blocknum) {
     }
 
     if (!nocsg)
+    {
+        int32_t before = CountBrushList(brushes);
+        qprintf("ProcessBlock: brushes before chop: %i\n", before);
         brushes = ChopBrushes(brushes);
+        qprintf("ProcessBlock: brushes after  chop: %i\n", CountBrushList(brushes));
+    }
 
-    tree                                = BrushBSP(brushes, mins, maxs);
-
+    tree = BrushBSP(brushes, mins, maxs);
     block_nodes[xblock + 5][yblock + 5] = tree->headnode;
 }
 
@@ -358,6 +362,7 @@ void BSP_ProcessArgument(const char * arg) {
 
         ProcessModels();
     }
+    uncacheprintf();
 
     PrintBSPFileSizes();
     printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END bsp >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");

@@ -288,7 +288,7 @@ void ClipWindingEpsilon(
     vec_t dists[MAX_POINTS_ON_WINDING + 4];
     int32_t sides[MAX_POINTS_ON_WINDING + 4];
     int32_t counts[3];
-    static vec_t dot; // VC 4.2 optimizer bug if not static
+    vec_t dot; // removed static to make this thread-safe
     int32_t i, j;
     vec_t *p1, *p2;
     vec3_t mid;
@@ -389,12 +389,12 @@ void ChopWindingInPlace(winding_t **inout, vec3_t normal, vec_t dist, vec_t epsi
     vec_t dists[MAX_POINTS_ON_WINDING + 4];
     int32_t sides[MAX_POINTS_ON_WINDING + 4];
     int32_t counts[3];
-    static vec_t dot; // VC 4.2 optimizer bug if not static
     int32_t i, j;
     vec_t *p1, *p2;
     vec3_t mid;
     winding_t *f;
     int32_t maxpts;
+    vec_t dot;
 
     in        = *inout;
     counts[0] = counts[1] = counts[2] = 0;

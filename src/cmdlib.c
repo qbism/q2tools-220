@@ -21,6 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // cmdlib.c
 
 #include "cmdlib.h"
+#include "threads.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -148,16 +149,132 @@ void Error(char *error, ...) {
 
 // only qprintf if in verbose mode
 bool verbose = false;
+
+//cached messaging to reduce console spam
+typedef struct {
+    char *text;
+    int32_t count;
+} cache_entry_t;
+
+static cache_entry_t *cached_messages = NULL;
+static int32_t cached_message_count = 0;
+static int32_t cached_message_capacity = 0;
+
+static char *CopyString(const char *text) {
+    char *copy;
+    size_t len;
+
+    len = strlen(text);
+    copy = malloc(len + 1);
+    if (!copy)
+        Error("Out of memory in CopyString");
+    strcpy(copy, text);
+    return copy;
+}
+
+static char *FormatString(const char *format, va_list argptr) {
+    char *buffer;
+    int32_t size;
+    va_list argcopy;
+
+    va_copy(argcopy, argptr);
+    size = vsnprintf(NULL, 0, format, argcopy);
+    va_end(argcopy);
+    if (size < 0)
+        size = 0;
+    buffer = malloc(size + 1);
+    if (!buffer)
+        Error("Out of memory in FormatString");
+    vsnprintf(buffer, size + 1, format, argptr);
+    return buffer;
+}
+
+static void ClearCachedMessages(void) {
+    int32_t i;
+    for (i = 0; i < cached_message_count; i++) {
+        free(cached_messages[i].text);
+    }
+    free(cached_messages);
+    cached_messages = NULL;
+    cached_message_count = 0;
+    cached_message_capacity = 0;
+}
+
+static void AddCachedMessage(const char *message) {
+    int32_t i;
+    for (i = 0; i < cached_message_count; i++) {
+        if (strcmp(cached_messages[i].text, message) == 0) {
+            cached_messages[i].count++;
+            return;
+        }
+    }
+
+    if (cached_message_count >= cached_message_capacity) {
+        int32_t new_capacity = cached_message_capacity ? cached_message_capacity * 2 : 16;
+        cache_entry_t *new_array = realloc(cached_messages, new_capacity * sizeof(cache_entry_t));
+        if (!new_array)
+            Error("Out of memory while caching messages");
+        cached_messages = new_array;
+        cached_message_capacity = new_capacity;
+    }
+
+    cached_messages[cached_message_count].text = CopyString(message);
+    cached_messages[cached_message_count].count = 1;
+    cached_message_count++;
+}
+
+void cacheprintf(char *format, ...) {
+    va_list argptr;
+    char *message;
+
+    va_start(argptr, format);
+    message = FormatString(format, argptr);
+    va_end(argptr);
+
+    ThreadLock();
+    AddCachedMessage(message);
+    ThreadUnlock();
+    free(message);
+}
+
+void uncacheprintf(void) {
+    int32_t i;
+
+    ThreadLock();
+    for (i = 0; i < cached_message_count; i++) {
+        cache_entry_t *entry = &cached_messages[i];
+        if (entry->count == 1) {
+            fputs(entry->text, stdout);
+        } else {
+            size_t len = strlen(entry->text);
+            if (len > 0 && entry->text[len - 1] == '\n') {
+                char *trimmed = CopyString(entry->text);
+                trimmed[len - 1] = '\0';
+                printf("%s (x%d)\n", trimmed, entry->count);
+                free(trimmed);
+            } else {
+                printf("%s (x%d)\n", entry->text, entry->count);
+            }
+        }
+    }
+    if (cached_message_count > 0)
+        fflush(stdout);
+    ClearCachedMessages();
+    ThreadUnlock();
+}
+
 void qprintf(char *format, ...) {
     va_list argptr;
 
     if (!verbose)
         return;
 
+    ThreadLock();
     va_start(argptr, format);
     vprintf(format, argptr);
     va_end(argptr);
     fflush(stdout);
+    ThreadUnlock();
 }
 
 // qb: similar to AAtools, except basedir defaults to moddir

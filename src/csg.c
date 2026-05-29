@@ -175,9 +175,6 @@ int32_t IntersectionContents(int32_t c1, int32_t c2) {
     return out;
 }
 
-int32_t minplanenums[3];
-int32_t maxplanenums[3];
-
 /*
 ===============
 ClipBrushToBox
@@ -185,7 +182,8 @@ ClipBrushToBox
 Any planes shared with the box edge will be set to no texinfo
 ===============
 */
-bspbrush_t *ClipBrushToBox(bspbrush_t *brush, vec3_t clipmins, vec3_t clipmaxs) {
+bspbrush_t *ClipBrushToBox(bspbrush_t *brush, vec3_t clipmins, vec3_t clipmaxs,
+                           int32_t minplanenums[3], int32_t maxplanenums[3]) {
     int32_t i, j;
     bspbrush_t *front, *back;
     int32_t p;
@@ -239,6 +237,9 @@ bspbrush_t *MakeBspBrushList(int32_t startbrush, int32_t endbrush,
     int32_t vis;
     vec3_t normal;
     vec_t dist; // jit (use higher precision, if enabled)
+
+    int32_t minplanenums[3];
+    int32_t maxplanenums[3];
 
     for (i = 0; i < 2; i++) {
         VectorClear(normal);
@@ -294,7 +295,7 @@ bspbrush_t *MakeBspBrushList(int32_t startbrush, int32_t endbrush,
         //
         // carve off anything outside the clip box
         //
-        newbrush = ClipBrushToBox(newbrush, clipmins, clipmaxs);
+        newbrush = ClipBrushToBox(newbrush, clipmins, clipmaxs, minplanenums, maxplanenums);
         if (!newbrush)
             continue;
 

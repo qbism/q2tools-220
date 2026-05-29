@@ -51,7 +51,7 @@ VIS pass:
 RAD pass:
     -rad: enable rad pass, requires a .bsp file as input or bsp and vis passes enabled
     -ambient #: Minimum light level.
-         range:  0 to 255.
+         Range:  0 to 255
     -moddir [path]: Set a mod directory. Default is parent dir of map file.
     -basedir [path]: Set the directory for assets not in moddir. Default is moddir.
     -gamedir [path]: Set game directory, the folder with game executable.
@@ -60,10 +60,14 @@ RAD pass:
     -direct #: Direct light scale factor.
     -entity #: Entity light scale factor.
     -extra: Use extra samples to smooth lighting.
+    -blend #: Blending factor between adjacent faces.
+         Range: 0.0 to 1.0   Default: 1.0
+    -dirt #: Dirtmapping (ambient occlusion) factor between adjacent faces.
+         Range: 0.0 to 1.0   Default: 0.0
     -maxdata #: 2097152 is default max. Not needed for QBSP format.
          Increase requires a supporting engine.
     -maxlight #: Maximium light level.
-         range:  0 to 255.
+         Range:  0 to 255.   Default 255
     -noedgefix: disable dark edges at sky fix. More of a hack, really.
     -nudge #: Nudge factor for samples. Distance fraction from center.
     -saturate #: Saturation factor of light bounced off surfaces.
@@ -71,7 +75,8 @@ RAD pass:
     -smooth #: Threshold angle (# and 180deg - #) for phong smoothing.
     -subdiv #: Maximum patch size.  Default: 64
     -sunradscale #: Sky light intensity scale when sun is active.
-    -threads #:  Number of CPU cores to use.
+    -threads #:  Number of CPU cores to use.  
+          Default: Automatic, available cores minus 1.
 rad debugging options:
     -dump: Dump patches to a text file.
     -noblock: Brushes don't block lighting path.

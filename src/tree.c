@@ -19,8 +19,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 #include "qbsp.h"
 
-extern int32_t c_nodes;
-
 void RemovePortalFromNode(portal_t *portal, node_t *l);
 
 node_t *NodeForPoint(node_t *node, vec3_t origin) {
@@ -92,8 +90,6 @@ void FreeTree_r(node_t *node) {
     if (node->volume)
         FreeBrush(node->volume);
 
-    if (numthreads == 1)
-        c_nodes--;
     free(node);
 }
 

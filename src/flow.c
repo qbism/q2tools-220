@@ -18,6 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 ===========================================================================
 */
 #include "vis.h"
+#include "threads.h"
 
 /*
 
@@ -347,7 +348,7 @@ If src_portal is NULL, this is the originating leaf
 ==================
 */
 void RecursiveLeafFlow(int32_t leafnum, threaddata_t *thread, pstack_t *prevstack) {
-    pstack_t stack;
+    pstack_t *stack;
     portal_t *p;
     plane_t backplane;
     leaf_t *leaf;
@@ -357,17 +358,22 @@ void RecursiveLeafFlow(int32_t leafnum, threaddata_t *thread, pstack_t *prevstac
 
     thread->c_chains++;
 
-    leaf            = &leafs[leafnum];
+    leaf = &leafs[leafnum];
     //	CheckStack (leaf, thread);
 
-    prevstack->next = &stack;
+    stack = malloc(sizeof(*stack));
+    if (!stack)
+        Error("RecursiveLeafFlow: out of memory");
+    memset(stack, 0, sizeof(*stack));
 
-    stack.next      = NULL;
-    stack.leaf      = leaf;
-    stack.portal    = NULL;
+    prevstack->next = stack;
 
-    might           = (uint32_t *)stack.mightsee;
-    vis             = (uint32_t *)thread->base->portalvis;
+    stack->next   = NULL;
+    stack->leaf   = leaf;
+    stack->portal = NULL;
+
+    might = (uint32_t *)stack->mightsee;
+    vis   = (uint32_t *)thread->base->portalvis;
 
     // check all portals for flowing into other leafs
     for (i = 0; i < leaf->numportals; i++) {
@@ -379,11 +385,16 @@ void RecursiveLeafFlow(int32_t leafnum, threaddata_t *thread, pstack_t *prevstac
         }
 
         // if the portal can't see anything we haven't allready seen, skip it
-        if (p->status == stat_done) {
-            test = (uint32_t *)p->portalvis;
-        } else {
-            test = (uint32_t *)p->portalflood;
+        ThreadLock();
+        {
+            vstatus_t pstatus = p->status;
+            if (pstatus == stat_done) {
+                test = (uint32_t *)p->portalvis;
+            } else {
+                test = (uint32_t *)p->portalflood;
+            }
         }
+        ThreadUnlock();
 
         more = 0;
         for (j = 0; j < portallongs; j++) {
@@ -397,17 +408,17 @@ void RecursiveLeafFlow(int32_t leafnum, threaddata_t *thread, pstack_t *prevstac
         }
 
         // get plane of portal, point normal into the neighbor leaf
-        stack.portalplane = p->plane;
+        stack->portalplane = p->plane;
         VectorSubtract(vec3_origin, p->plane.normal, backplane.normal);
         backplane.dist        = -p->plane.dist;
 
         //		c_portalcheck++;
 
-        stack.portal          = p;
-        stack.next            = NULL;
-        stack.freewindings[0] = 1;
-        stack.freewindings[1] = 1;
-        stack.freewindings[2] = 1;
+        stack->portal          = p;
+        stack->next            = NULL;
+        stack->freewindings[0] = 1;
+        stack->freewindings[1] = 1;
+        stack->freewindings[2] = 1;
 
 #if 1
         {
@@ -418,16 +429,16 @@ void RecursiveLeafFlow(int32_t leafnum, threaddata_t *thread, pstack_t *prevstac
             if (d < -p->radius) {
                 continue;
             } else if (d > p->radius) {
-                stack.pass = p->winding;
+                stack->pass = p->winding;
             } else {
-                stack.pass = ChopWinding_flow(p->winding, &stack, &thread->pstack_head.portalplane);
-                if (!stack.pass)
+                stack->pass = ChopWinding_flow(p->winding, stack, &thread->pstack_head.portalplane);
+                if (!stack->pass)
                     continue;
             }
         }
 #else
-        stack.pass = ChopWinding_flow(p->winding, &stack, &thread->pstack_head.portalplane);
-        if (!stack.pass)
+        stack->pass = ChopWinding_flow(p->winding, stack, &thread->pstack_head.portalplane);
+        if (!stack->pass)
             continue;
 #endif
 
@@ -443,16 +454,16 @@ void RecursiveLeafFlow(int32_t leafnum, threaddata_t *thread, pstack_t *prevstac
             }
             //	else if (d < -p->radius)
             else if (d < -thread->base->radius) {
-                stack.source = prevstack->source;
+                stack->source = prevstack->source;
             } else {
-                stack.source = ChopWinding_flow(prevstack->source, &stack, &backplane);
-                if (!stack.source)
+                stack->source = ChopWinding_flow(prevstack->source, stack, &backplane);
+                if (!stack->source)
                     continue;
             }
         }
 #else
-        stack.source = ChopWinding_flow(prevstack->source, &stack, &backplane);
-        if (!stack.source)
+        stack->source = ChopWinding_flow(prevstack->source, stack, &backplane);
+        if (!stack->source)
             continue;
 #endif
 
@@ -461,25 +472,26 @@ void RecursiveLeafFlow(int32_t leafnum, threaddata_t *thread, pstack_t *prevstac
             // mark the portal as visible
             thread->base->portalvis[pnum >> 3] |= (1 << (pnum & 7));
 
-            RecursiveLeafFlow(p->leaf, thread, &stack);
+            RecursiveLeafFlow(p->leaf, thread, stack);
             continue;
         }
 
-        stack.pass = ClipToSeperators(stack.source, prevstack->pass, stack.pass, false, &stack);
-        if (!stack.pass)
+        stack->pass = ClipToSeperators(stack->source, prevstack->pass, stack->pass, false, stack);
+        if (!stack->pass)
             continue;
 
-        stack.pass = ClipToSeperators(prevstack->pass, stack.source, stack.pass, true, &stack);
-        if (!stack.pass)
+        stack->pass = ClipToSeperators(prevstack->pass, stack->source, stack->pass, true, stack);
+        if (!stack->pass)
             continue;
 
         // mark the portal as visible
         thread->base->portalvis[pnum >> 3] |= (1 << (pnum & 7));
 
         // flow through it for real
-        RecursiveLeafFlow(p->leaf, thread, &stack);
+        RecursiveLeafFlow(p->leaf, thread, stack);
     }
-}
+    prevstack->next = NULL;
+    free(stack);}
 
 /*
 ===============
@@ -494,10 +506,12 @@ void PortalFlow(int32_t portalnum) {
     portal_t *p;
     int32_t c_might, c_can;
 
-    p         = sorted_portals[portalnum];
+    p = sorted_portals[portalnum];
+    ThreadLock();
     p->status = stat_working;
+    ThreadUnlock();
 
-    c_might   = CountBits(p->portalflood, numportals * 2);
+    c_might = CountBits(p->portalflood, numportals * 2);
 
     memset(&data, 0, sizeof(data));
     data.base                    = p;
@@ -509,12 +523,14 @@ void PortalFlow(int32_t portalnum) {
         ((uint32_t *)data.pstack_head.mightsee)[i] = ((uint32_t *)p->portalflood)[i];
     RecursiveLeafFlow(p->leaf, &data, &data.pstack_head);
 
+    ThreadLock();
     p->status = stat_done;
+    ThreadUnlock();
 
-    c_can     = CountBits(p->portalvis, numportals * 2);
+    c_can = CountBits(p->portalvis, numportals * 2);
 
-    qprintf("portal:%4i  mightsee:%4i  cansee:%4i (%i chains)\n",
-            (int32_t)(p - portals), c_might, c_can, data.c_chains);
+   // qprintf("portal:%4i  mightsee:%4i  cansee:%4i (%i chains)\n",
+   //         (int32_t)(p - portals), c_might, c_can, data.c_chains);
 }
 
 /*

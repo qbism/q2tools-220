@@ -2066,8 +2066,20 @@ void BuildFacelights(int32_t facenum) {
     winding_t *w;
     uint8_t pvs[(MAX_MAP_LEAFS_QBSP + 7) / 8];
 
-    liteinfo = thread_liteinfo;
-    styletable = thread_styletable;
+    /* Use per-invocation/thread-local storage to avoid races when
+       BuildFacelights runs concurrently on multiple threads. Allocate
+       the potentially large `lightinfo_t` array on the heap to avoid
+       overflowing the thread stack. */
+    lightinfo_t *local_liteinfo = malloc(sizeof(lightinfo_t) * 5);
+    if (!local_liteinfo) {
+        Error("BuildFacelights: malloc failed\n");
+    }
+    float *local_styletable[MAX_LSTYLES];
+
+    liteinfo = local_liteinfo;
+    styletable = local_styletable;
+    for (i = 0; i < MAX_LSTYLES; i++)
+        styletable[i] = NULL;
 
     if (use_qbsp) {
         dface_tx *this_face;
@@ -2235,6 +2247,33 @@ void BuildFacelights(int32_t facenum) {
     }
 
 cleanup:
+    /* free any allocated style tables and the heap-allocated liteinfo */
+    for (i = 0; i < MAX_LSTYLES; i++) {
+        if (!styletable || !styletable[i])
+            continue;
+        /* if this style buffer was moved into the facelight samples, don't free it */
+        bool owned = true;
+        if (fl) {
+            int k;
+            owned = true;
+            for (k = 0; k < fl->numstyles; k++) {
+                if (fl->samples[k] == styletable[i]) {
+                    owned = false; /* ownership transferred */
+                    break;
+                }
+            }
+        }
+        if (owned) {
+            free(styletable[i]);
+            styletable[i] = NULL;
+        }
+    }
+    if (liteinfo) {
+        /* if liteinfo points to our heap allocation, free it */
+        if (liteinfo != thread_liteinfo)
+            free(liteinfo);
+        liteinfo = thread_liteinfo; /* restore global pointer */
+    }
     return;
 }
 

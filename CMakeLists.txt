@@ -1,22 +1,11 @@
 cmake_minimum_required(VERSION 3.11)
 project(q2tools-220 LANGUAGES C)
 
-
-set(Q2T_USE_PTHREADS ON CACHE BOOL "compile with pthread support")
-
-if(Q2T_USE_PTHREADS)
-  set(THREADING_OPTION -pthread -DUSE_PTHREADS)
-	set(THREADING_LIB pthread)
-else()
-  set(THREADING_OPTION -DUSE_SETRLIMIT)
-	set(THREADING_LIB)
-endif()
-
 set(CMAKE_STATIC_LIBRARY_PREFIX_C "")
 
 add_library(q2tools-i INTERFACE)
-target_compile_options(q2tools-i INTERFACE -fno-common ${THREADING_OPTION} -DUSE_ZLIB -O3 -s -z stack-size=16777216)
-target_link_libraries(q2tools-i INTERFACE m ${THREADING_LIB})
+target_compile_options(q2tools-i INTERFACE -fno-common -pthread -DUSE_ZLIB -O3 -s -z stack-size=16777216)
+target_link_libraries(q2tools-i INTERFACE m pthread)
 
 add_library(libq2tool STATIC
     src/bspfile.c

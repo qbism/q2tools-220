@@ -76,13 +76,13 @@ static char *help_string =
     "    -entity #: Entity light scale factor.\n"
     "    -extra: Use extra samples to smooth lighting.\n"
     "    -blend #: Blending factor between adjacent faces. \n"
-    "         Range: 0.0 to 1.0\n"
+    "         Range: 0.0 to 1.0   Default: 1.0\n"
     "    -dirt #: Dirtmapping (ambient occlusion) factor between adjacent faces. \n"
-    "         Range: 0.0 to 1.0\n"
+    "         Range: 0.0 to 1.0   Default: 0.0\n"
     "    -maxdata #: 2097152 is default max. Not needed for QBSP format.\n"
     "         Increase requires a supporting engine.\n"
     "    -maxlight #: Maximium light level.\n"
-    "         Range:  0 to 255.\n"
+    "         Range:  0 to 255.  Default: 255\n"
     "    -noedgefix: disable dark edges at sky fix. More of a hack, really.\n"
     "    -nudge #: Nudge factor for samples. Distance fraction from center.\n"
     "    -saturate #: Saturation factor of light bounced off surfaces.\n"
@@ -203,7 +203,7 @@ int32_t main(int32_t argc, char *argv[]) {
             exit(1);
         } else if (!strcmp(argv[i], "-threads")) {
             numthreads = atoi(argv[i + 1]);
-            printf("threads = %i\n", numthreads);
+            printf("threads requested = %i\n", numthreads);
             i++;
         } else if (!strcmp(argv[i], "-noweld")) {
             printf("noweld = true\n");
@@ -412,7 +412,7 @@ int32_t main(int32_t argc, char *argv[]) {
         } else if (!strcmp(argv[i], "-dirt")) {
             dirt_amount = atoi(argv[i + 1]);
             BOUND(0, dirt_amount, 1);
-            printf("dirt factor= %d\n", dirt_amount);
+            printf("dirt factor = %d\n", dirt_amount);
             i++;
         } else if (!strcmp(argv[i], "-nudge")) {
             sample_nudge = atof(argv[i + 1]);
@@ -472,12 +472,13 @@ int32_t main(int32_t argc, char *argv[]) {
                "-vis\n"
                "    -fast                    -threads #\n\n"
                "-rad\n"
-               "    -ambient #            -bounce #\n"
+               "    -ambient #            -bounce #           -blend #\n"
                "    -dice                 -direct #           -entity #\n"
                "    -extra                -help               -maxdata #\n"
                "    -maxlight #           -noedgefix          -nudge #\n"
                "    -saturate #           -scale #            -smooth #\n"
-               "    -subdiv               -sunradscale #      -threads #\n\n"
+               "    -subdiv               -sunradscale #      -threads #\n"
+               "    -dirt #\n\n"
                "-data\n"
                "    -archive [path]         -release [path]       -only [model]\n"
                "    -3ds                    -lwo                  -compress\n\n"
@@ -523,12 +524,8 @@ int32_t main(int32_t argc, char *argv[]) {
         printf("gamedir = %s\n\n", gamedir);
 
         if (do_bsp) {
-            int32_t old_numthreads = numthreads;
-            // qb: below is from original source release.  On Windows, multi threads cause false leak errors.
-            numthreads             = 1; // multiple threads aren't helping...
             printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BEGIN bsp >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
             BSP_ProcessArgument(argv[i]);
-            numthreads = old_numthreads;
         }
         if (do_vis || (do_bsp && do_rad)) {
             printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BEGIN vis >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");

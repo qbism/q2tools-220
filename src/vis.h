@@ -59,7 +59,7 @@ typedef struct
     float radius;
 
     winding_t *winding;
-    vstatus_t status;
+    volatile vstatus_t status;
     uint8_t *portalfront; // [portals], preliminary
     uint8_t *portalflood; // [portals], intermediate
     uint8_t *portalvis;   // [portals], final

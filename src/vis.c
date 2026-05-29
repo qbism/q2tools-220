@@ -185,7 +185,7 @@ void ClusterMerge(int32_t leafnum) {
     numvis = LeafVectorFromPortalVector(portalvector, uncompressed);
 
     if (uncompressed[leafnum >> 3] & (1 << (leafnum & 7)))
-        printf("WARNING: Leaf portals saw into leaf\n");
+        cacheprintf("WARNING: Leaf portals saw into leaf\n");
 
     uncompressed[leafnum >> 3] |= (1 << (leafnum & 7));
     numvis++; // count the leaf itself
@@ -409,46 +409,66 @@ Calculate the PHS (Potentially Hearable Set)
 by ORing together all the PVS visible from a leaf
 ================
 */
-void CalcPHS(void) {
-    int32_t i, j, k, l, index;
+static uint8_t *phs_uncompressed;
+static int32_t phs_count;
+
+static void CalcPHSRow(int32_t leafnum) {
+    int32_t j, k, l, index;
     int32_t bitbyte;
-    uint32_t *dest, *src;
+    uint32_t *src;
     uint8_t *scan;
-    int32_t count;
-    uint8_t uncompressed[MAX_MAP_LEAFS_QBSP / 8];
+    uint8_t *uncompressed;
+    int32_t localcount;
+
+    uncompressed = phs_uncompressed + leafnum * leafbytes;
+    scan         = uncompressedvis + leafnum * leafbytes;
+
+    memcpy(uncompressed, scan, leafbytes);
+    for (j = 0; j < leafbytes; j++) {
+        bitbyte = scan[j];
+        if (!bitbyte)
+            continue;
+        for (k = 0; k < 8; k++) {
+            if (!(bitbyte & (1 << k)))
+                continue;
+            index = (j << 3) + k;
+            if (index >= portalclusters)
+                Error("Bad bit in PVS"); // pad bits should be 0
+            src = (uint32_t *)(uncompressedvis + index * leafbytes);
+            for (l = 0; l < leaflongs; l++)
+                ((uint32_t *)uncompressed)[l] |= src[l];
+        }
+    }
+
+    localcount = 0;
+    for (j = 0; j < portalclusters; j++)
+        if (uncompressed[j >> 3] & (1 << (j & 7)))
+            localcount++;
+
+    ThreadLock();
+    phs_count += localcount;
+    ThreadUnlock();
+}
+
+void CalcPHS(void) {
+    int32_t i, j;
+    uint32_t *dest;
+    uint8_t *uncompressed;
     uint8_t compressed[MAX_MAP_LEAFS_QBSP / 8];
 
     printf("Building PHS...\n");
 
-    count = 0;
-    for (i = 0; i < portalclusters; i++) {
-        scan = uncompressedvis + i * leafbytes;
-        memcpy(uncompressed, scan, leafbytes);
-        for (j = 0; j < leafbytes; j++) {
-            bitbyte = scan[j];
-            if (!bitbyte)
-                continue;
-            for (k = 0; k < 8; k++) {
-                if (!(bitbyte & (1 << k)))
-                    continue;
-                // OR this pvs row into the phs
-                index = ((j << 3) + k);
-                if (index >= portalclusters)
-                    Error("Bad bit in PVS"); // pad bits should be 0
-                src  = (uint32_t *)(uncompressedvis + index * leafbytes);
-                dest = (uint32_t *)uncompressed;
-                for (l = 0; l < leaflongs; l++)
-                    ((uint32_t *)uncompressed)[l] |= src[l];
-            }
-        }
-        for (j = 0; j < portalclusters; j++)
-            if (uncompressed[j >> 3] & (1 << (j & 7)))
-                count++;
+    phs_uncompressed = malloc(portalclusters * leafbytes);
+    if (!phs_uncompressed)
+        Error("CalcPHS: out of memory");
 
-        //
-        // compress the bit string
-        //
-        j    = CompressVis(uncompressed, compressed);
+    phs_count = 0;
+    RunThreadsOnIndividual(portalclusters, true, CalcPHSRow);
+
+    for (i = 0; i < portalclusters; i++) {
+        uncompressed = phs_uncompressed + i * leafbytes;
+
+        j = CompressVis(uncompressed, compressed);
 
         dest = (uint32_t *)vismap_p;
         vismap_p += j;
@@ -461,7 +481,9 @@ void CalcPHS(void) {
         memcpy(dest, compressed, j);
     }
 
-    printf("Average clusters hearable: %i\n", count / portalclusters);
+    free(phs_uncompressed);
+
+    printf("Average clusters hearable: %i\n", phs_count / portalclusters);
 }
 
 /*
@@ -505,6 +527,7 @@ void VIS_ProcessArgument(const char * arg) {
 
     sprintf(name, "%s%s", outbase, source);
     WriteBSPFile(name);
+    uncacheprintf();
 
     PrintBSPFileSizes();
 
