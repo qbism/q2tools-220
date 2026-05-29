@@ -23,6 +23,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <stdint.h>
 #ifdef _WIN32
 #include <windows.h>
+#else
+    #include <unistd.h> // Required for sysconf()
 #endif
 
 #define MAX_THREADS 128  // Array sizing upper bound; actual max is computed from CPU count
