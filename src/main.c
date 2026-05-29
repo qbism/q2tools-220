@@ -203,7 +203,7 @@ int32_t main(int32_t argc, char *argv[]) {
             exit(1);
         } else if (!strcmp(argv[i], "-threads")) {
             numthreads = atoi(argv[i + 1]);
-            printf("threads = %i\n", numthreads);
+            printf("threads requested = %i\n", numthreads);
             i++;
         } else if (!strcmp(argv[i], "-noweld")) {
             printf("noweld = true\n");
@@ -412,7 +412,7 @@ int32_t main(int32_t argc, char *argv[]) {
         } else if (!strcmp(argv[i], "-dirt")) {
             dirt_amount = atoi(argv[i + 1]);
             BOUND(0, dirt_amount, 1);
-            printf("dirt factor= %d\n", dirt_amount);
+            printf("dirt factor = %d\n", dirt_amount);
             i++;
         } else if (!strcmp(argv[i], "-nudge")) {
             sample_nudge = atof(argv[i + 1]);
@@ -523,12 +523,8 @@ int32_t main(int32_t argc, char *argv[]) {
         printf("gamedir = %s\n\n", gamedir);
 
         if (do_bsp) {
-            int32_t old_numthreads = numthreads;
-            // qb: below is from original source release.  On Windows, multi threads cause false leak errors.
-            numthreads             = 1; // multiple threads aren't helping...
             printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BEGIN bsp >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
             BSP_ProcessArgument(argv[i]);
-            numthreads = old_numthreads;
         }
         if (do_vis || (do_bsp && do_rad)) {
             printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BEGIN vis >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");

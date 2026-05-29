@@ -115,6 +115,8 @@ extern char archivedir[1024];
 
 extern bool verbose;
 void qprintf(char *format, ...);
+void cacheprintf(char *format, ...);
+void uncacheprintf(void);
 
 void ExpandWildcards(int32_t *argc, char ***argv);
 

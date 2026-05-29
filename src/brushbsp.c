@@ -20,8 +20,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "qbsp.h"
 
-int32_t c_nodes;
-int32_t c_nonvis;
 int32_t c_active_brushes;
 
 #define PSIDE_FRONT  1
@@ -615,7 +613,7 @@ to partition the brushes with.
 Returns NULL if there are no valid planes to split with..
 ================
 */
-side_t *SelectSplitSide(bspbrush_t *brushes, node_t *node) {
+side_t *SelectSplitSide(bspbrush_t *brushes, node_t *node, int32_t *c_nonvis) {
     int32_t value, bestvalue;
     bspbrush_t *brush, *test;
     side_t *side, *bestside;
@@ -724,10 +722,8 @@ side_t *SelectSplitSide(bspbrush_t *brushes, node_t *node) {
         // if we found a good plane, don't bother trying any
         // other passes
         if (bestside) {
-            if (pass > 1) {
-                if (numthreads == 1)
-                    c_nonvis++;
-            }
+            if (pass > 1)
+                (*c_nonvis)++;
             if (pass > 0)
                 node->detail_seperator = true; // not needed for vis
             break;
@@ -847,7 +843,7 @@ void SplitBrush(bspbrush_t *brush, int32_t planenum,
     }
 
     if (WindingIsHuge(w)) {
-        qprintf("WARNING: huge winding\n");
+        cacheprintf("WARNING: huge winding\n");
     }
 
     midwinding = w;
@@ -896,7 +892,7 @@ void SplitBrush(bspbrush_t *brush, int32_t planenum,
         BoundBrush(b[i]);
         for (j = 0; j < 3; j++) {
             if (b[i]->mins[j] < -max_bounds || b[i]->maxs[j] > max_bounds) {
-                qprintf("bogus brush after clip\n");
+                cacheprintf("bogus brush after clip\n");
                 break;
             }
         }
@@ -909,9 +905,9 @@ void SplitBrush(bspbrush_t *brush, int32_t planenum,
 
     if (!(b[0] && b[1])) {
         if (!b[0] && !b[1])
-            qprintf("split removed brush\n");
+            cacheprintf("split removed brush\n");
         else
-            qprintf("split not on both sides\n");
+            cacheprintf("split not on both sides\n");
         if (b[0]) {
             FreeBrush(b[0]);
             *front = CopyBrush(brush);
@@ -1019,17 +1015,16 @@ void SplitBrushList(bspbrush_t *brushes,
 BuildTree_r
 ================
 */
-node_t *BuildTree_r(node_t *node, bspbrush_t *brushes) {
+node_t *BuildTree_r(node_t *node, bspbrush_t *brushes, int32_t *c_nodes, int32_t *c_nonvis) {
     node_t *newnode;
     side_t *bestside;
     int32_t i;
     bspbrush_t *children[2];
 
-    if (numthreads == 1)
-        c_nodes++;
+    (*c_nodes)++;
 
     // find the best plane to use as a splitter
-    bestside = SelectSplitSide(brushes, node);
+    bestside = SelectSplitSide(brushes, node, c_nonvis);
     if (!bestside) {
         // leaf node
         node->side     = NULL;
@@ -1057,7 +1052,7 @@ node_t *BuildTree_r(node_t *node, bspbrush_t *brushes) {
 
     // recursively process children
     for (i = 0; i < 2; i++) {
-        node->children[i] = BuildTree_r(node->children[i], children[i]);
+        node->children[i] = BuildTree_r(node->children[i], children[i], c_nodes, c_nonvis);
     }
 
     return node;
@@ -1084,6 +1079,9 @@ tree_t *BrushBSP(bspbrush_t *brushlist, vec3_t mins, vec3_t maxs) {
     qprintf("--- BrushBSP ---\n");
 
     tree          = AllocTree();
+
+    int32_t c_nodes;
+    int32_t c_nonvis;
 
     c_faces       = 0;
     c_nonvisfaces = 0;
@@ -1127,7 +1125,7 @@ tree_t *BrushBSP(bspbrush_t *brushlist, vec3_t mins, vec3_t maxs) {
 
     tree->headnode = node;
 
-    node           = BuildTree_r(node, brushlist);
+    node           = BuildTree_r(node, brushlist, &c_nodes, &c_nonvis);
     qprintf("%5i visible nodes\n", c_nodes / 2 - c_nonvis);
     qprintf("%5i nonvis nodes\n", c_nonvis);
     qprintf("%5i leafs\n", (c_nodes + 1) / 2);

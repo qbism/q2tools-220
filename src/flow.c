@@ -18,6 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 ===========================================================================
 */
 #include "vis.h"
+#include "threads.h"
 
 /*
 
@@ -379,11 +380,16 @@ void RecursiveLeafFlow(int32_t leafnum, threaddata_t *thread, pstack_t *prevstac
         }
 
         // if the portal can't see anything we haven't allready seen, skip it
-        if (p->status == stat_done) {
-            test = (uint32_t *)p->portalvis;
-        } else {
-            test = (uint32_t *)p->portalflood;
+        ThreadLock();
+        {
+            vstatus_t pstatus = p->status;
+            if (pstatus == stat_done) {
+                test = (uint32_t *)p->portalvis;
+            } else {
+                test = (uint32_t *)p->portalflood;
+            }
         }
+        ThreadUnlock();
 
         more = 0;
         for (j = 0; j < portallongs; j++) {
@@ -494,10 +500,12 @@ void PortalFlow(int32_t portalnum) {
     portal_t *p;
     int32_t c_might, c_can;
 
-    p         = sorted_portals[portalnum];
+    p = sorted_portals[portalnum];
+    ThreadLock();
     p->status = stat_working;
+    ThreadUnlock();
 
-    c_might   = CountBits(p->portalflood, numportals * 2);
+    c_might = CountBits(p->portalflood, numportals * 2);
 
     memset(&data, 0, sizeof(data));
     data.base                    = p;
@@ -509,9 +517,11 @@ void PortalFlow(int32_t portalnum) {
         ((uint32_t *)data.pstack_head.mightsee)[i] = ((uint32_t *)p->portalflood)[i];
     RecursiveLeafFlow(p->leaf, &data, &data.pstack_head);
 
+    ThreadLock();
     p->status = stat_done;
+    ThreadUnlock();
 
-    c_can     = CountBits(p->portalvis, numportals * 2);
+    c_can = CountBits(p->portalvis, numportals * 2);
 
     qprintf("portal:%4i  mightsee:%4i  cansee:%4i (%i chains)\n",
             (int32_t)(p - portals), c_might, c_can, data.c_chains);

@@ -795,21 +795,22 @@ void RadWorld(void) {
     RunThreadsOnIndividual(numfaces, true, BuildFacelights);
 
     if (numbounce > 0) {
+        int32_t saved_numthreads = numthreads;
+
         // build transfer lists
         if (!memory) {
             RunThreadsOnIndividual(num_patches, true, MakeTransfers);
             qprintf("transfer lists: %5.1f megs\n", (float)total_transfer * sizeof(transfer_t) / (1024 * 1024));
         }
-        numthreads = 1;
 
-        // spread light around
+        numthreads = 1;
         BounceLight();
+        numthreads = saved_numthreads;
 
         FreeTransfers();
 
         CheckPatches();
-    } else
-        numthreads = 1;
+    }
 
     if (memory) {
         printf("Non-memory conservation would require %4.1f\n",
@@ -890,6 +891,7 @@ void RAD_ProcessArgument(const char *arg) {
     end = I_FloatTime();
     printf("%5.0f seconds elapsed\n", end - start);
     printf("%i bytes light data used of %i max.\n", lightdatasize, maxdata);
+    uncacheprintf();
 
     PrintBSPFileSizes();
     printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END rad >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n\n\n");
