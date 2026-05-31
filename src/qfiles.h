@@ -363,13 +363,13 @@ typedef struct
 #define LUMP_POP         16
 #define LUMP_AREAS       17
 #define LUMP_AREAPORTALS 18
-#define HEADER_LUMPS     19
+#define Q2_HEADER_LUMPS  19
 
 typedef struct
 {
     int32_t ident;
     int32_t version;
-    lump_t lumps[HEADER_LUMPS];
+    lump_t lumps[Q2_HEADER_LUMPS + 1];
 } dheader_t;
 
 typedef struct

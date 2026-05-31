@@ -34,6 +34,37 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define ON_EPSILON 0.1 // qb: was 0.1
 #endif
 
+typedef struct {
+    uint32_t point[3];
+    uint32_t children[8];
+} lightgrid_node_t;
+
+typedef struct {
+    uint8_t rgb[3];
+} lightgrid_sample_t;
+
+typedef struct {
+    uint32_t mins[3];
+    uint32_t size[3];
+    uint32_t numsamples;
+    uint32_t firstsample;
+} lightgrid_leaf_t;
+
+typedef struct {
+    vec3_t scale;
+    vec3_t mins;
+    uint32_t size[3];
+    uint32_t numstyles;
+    uint32_t numnodes;
+    uint32_t numleafs;
+    uint32_t numsamples;
+    uint32_t rootnode;
+    lightgrid_node_t *nodes;
+    lightgrid_leaf_t *leafs;
+    lightgrid_sample_t *samples;
+} lightgrid_t;
+
+#define MAX_MAP_LIGHTGRID_QBSP 0x4000000 // 64MB limit for grid data
 extern int32_t nummodels;
 extern dmodel_t * dmodels;//[MAX_MAP_MODELS_QBSP];
 
@@ -42,7 +73,10 @@ extern uint8_t * dvisdata;//[MAX_MAP_VISIBILITY_QBSP];
 extern dvis_t *dvis;
 
 extern int32_t lightdatasize;
-extern uint8_t * dlightdata;//[MAX_MAP_LIGHTING_QBSP];
+extern uint8_t * lightdata;//[MAX_MAP_LIGHTING_QBSP];
+
+extern int32_t lightgridsize;
+extern uint8_t * lightgrid;
 
 extern int32_t entdatasize;
 extern char * dentdata;//[MAX_MAP_ENTSTRING_QBSP];

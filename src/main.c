@@ -77,6 +77,9 @@ static char *help_string =
     "    -extra: Use extra samples to smooth lighting.\n"
     "    -blend #: Blending factor between adjacent faces. \n"
     "         Range: 0.0 to 1.0   Default: 1.0\n"
+    "    -gridsize X Y Z: Set lightgrid spacing.\n"
+    "         Default: 64 64 128\n"
+    "    -lgdebug: Export sampled lightgrid points to a .pts file for debugging.\n"
     "    -dirt #: Dirtmapping (ambient occlusion) factor between adjacent faces. \n"
     "         Range: 0.0 to 1.0   Default: 0.0\n"
     "    -maxdata #: 2097152 is default max. Not needed for QBSP format.\n"
@@ -151,6 +154,9 @@ extern float saturation;
 extern bool nopvs;
 extern float blend_amount;
 extern float dirt_amount;
+
+float lg_step[3] = {64, 64, 64};
+bool lg_debug = false;
 
 // data
 extern bool g_compress_pak;
@@ -373,6 +379,15 @@ int32_t main(int32_t argc, char *argv[]) {
         } else if (!strcmp(argv[i], "-scale")) {
             lightscale = atof(argv[i + 1]);
             i++;
+        } else if (!strcmp(argv[i], "-gridsize")) {
+            lg_step[0] = atof(argv[i + 1]);
+            lg_step[1] = atof(argv[i + 2]);
+            lg_step[2] = atof(argv[i + 3]);
+            printf("gridsize: %g %g %g\n", lg_step[0], lg_step[1], lg_step[2]);
+            i += 3;
+        } else if (!strcmp(argv[i], "-lgdebug")) {
+            lg_debug = true;
+            printf("lightgrid debugging enabled\n");
         } else if (!strcmp(argv[i], "-sunradscale")) {
             sunradscale = atof(argv[i + 1]);
             if (sunradscale < 0) {
@@ -475,6 +490,7 @@ int32_t main(int32_t argc, char *argv[]) {
                "    -ambient #            -bounce #           -blend #\n"
                "    -dice                 -direct #           -entity #\n"
                "    -extra                -help               -maxdata #\n"
+               "    -gridsize X Y Z       -lgdebug\n"
                "    -maxlight #           -noedgefix          -nudge #\n"
                "    -saturate #           -scale #            -smooth #\n"
                "    -subdiv               -sunradscale #      -threads #\n"

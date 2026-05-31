@@ -40,7 +40,10 @@ uint8_t *dvisdata; //[MAX_MAP_VISIBILITY_QBSP];
 dvis_t *dvis;   // = (dvis_t *)dvisdata;
 
 int32_t lightdatasize;
-uint8_t *dlightdata; //[MAX_MAP_LIGHTING_QBSP];
+uint8_t *lightdata; //[MAX_MAP_LIGHTING_QBSP];
+
+int32_t lightgridsize;
+uint8_t *lightgrid;
 
 int32_t entdatasize;
 char *dentdata; //[MAX_MAP_ENTSTRING_QBSP];
@@ -103,7 +106,8 @@ void InitBSPFile(void) {
         dmodels       = (dmodel_t *)malloc(sizeof(*dmodels) * MAX_MAP_MODELS_QBSP);
         dvisdata      = (uint8_t *)malloc(sizeof(*dvisdata) * MAX_MAP_VISIBILITY_QBSP);
         dvis          = (dvis_t *)dvisdata;
-        dlightdata    = (uint8_t *)malloc(sizeof(*dlightdata) * MAX_MAP_LIGHTING_QBSP);
+        lightdata    = (uint8_t *)malloc(sizeof(*lightdata) * MAX_MAP_LIGHTING_QBSP);
+        lightgrid    = (uint8_t *)malloc(MAX_MAP_LIGHTGRID_QBSP);
         dentdata      = (char *)malloc(sizeof(*dentdata) * MAX_MAP_ENTSTRING_QBSP);
         dleafs        = (dleaf_t *)malloc(sizeof(*dleafs) * MAX_MAP_LEAFS);
         dleafsX       = (dleaf_tx *)malloc(sizeof(*dleafsX) * MAX_MAP_LEAFS_QBSP);
@@ -238,6 +242,61 @@ void SwapBSPFile(bool todisk) {
             dplanes[i].normal[j] = LittleFloat(dplanes[i].normal[j]);
         dplanes[i].dist = LittleFloat(dplanes[i].dist);
         dplanes[i].type = LittleLong(dplanes[i].type);
+    }
+
+    // lightgrid header (if present)
+    if (lightgridsize > 0) {
+        uint8_t *ptr = lightgrid;
+        uint32_t num_nodes, num_leafs;
+        int i, j;
+
+        // 1. Header (45 bytes): scale[3], size[3], mins[3], numstyles, rootnode, numnodes
+        for (i = 0; i < 3; i++) { *(float *)ptr = LittleFloat(*(float *)ptr); ptr += 4; }
+        for (i = 0; i < 3; i++) { *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4; }
+        for (i = 0; i < 3; i++) { *(float *)ptr = LittleFloat(*(float *)ptr); ptr += 4; }
+        
+        // numstyles is a byte, no swap
+        ptr += 1;
+
+        // rootnode
+        *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
+
+        // numnodes
+        num_nodes = todisk ? *(uint32_t *)ptr : LittleLong(*(uint32_t *)ptr);
+        *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
+
+        // 2. Nodes Array
+        for (i = 0; i < (int)num_nodes; i++) {
+            // point[3]
+            for (j = 0; j < 3; j++) { *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4; }
+            // children[8]
+            for (j = 0; j < 8; j++) { *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4; }
+        }
+
+        // 3. numleafs (follows nodes array)
+        num_leafs = todisk ? *(uint32_t *)ptr : LittleLong(*(uint32_t *)ptr);
+        *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
+
+        // 4. Leafs and their internal samples
+        for (i = 0; i < (int)num_leafs; i++) {
+            // mins[3]
+            for (j = 0; j < 3; j++) { *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4; }
+            // size[3]
+            uint32_t l_size[3];
+            for (j = 0; j < 3; j++) {
+                l_size[j] = todisk ? *(uint32_t *)ptr : LittleLong(*(uint32_t *)ptr);
+                *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
+            }
+
+            uint32_t num_samples = l_size[0] * l_size[1] * l_size[2];
+            for (j = 0; j < (int)num_samples; j++) {
+                uint8_t count = *ptr; ptr += 1; // styles count for this sample
+                if (count == 255) continue;
+                
+                // samples are 3-byte RGB colors, no swap needed
+                ptr += count * 3;
+            }
+        }
     }
 
     //
@@ -496,7 +555,10 @@ void LoadBSPFile(char *filename) {
     numareaportals = CopyLump(LUMP_AREAPORTALS, dareaportals, sizeof(dareaportal_t));
 
     visdatasize    = CopyLump(LUMP_VISIBILITY, dvisdata, 1);
-    lightdatasize  = CopyLump(LUMP_LIGHTING, dlightdata, 1);
+    lightdatasize  = CopyLump(LUMP_LIGHTING, lightdata, 1);
+    lightgridsize  = 0;
+    if (header->lumps[Q2_HEADER_LUMPS].filelen > 0)
+        lightgridsize  = CopyLump(Q2_HEADER_LUMPS, lightgrid, 1);
     entdatasize    = CopyLump(LUMP_ENTITIES, dentdata, 1);
 
     CopyLump(LUMP_POP, dpop, 1);
@@ -634,7 +696,8 @@ void WriteBSPFile(char *filename) {
     AddLump(LUMP_AREAS, dareas, numareas * sizeof(darea_t));
     AddLump(LUMP_AREAPORTALS, dareaportals, numareaportals * sizeof(dareaportal_t));
 
-    AddLump(LUMP_LIGHTING, dlightdata, lightdatasize);
+    AddLump(LUMP_LIGHTING, lightdata, lightdatasize);
+    AddLump(Q2_HEADER_LUMPS, lightgrid, lightgridsize);
     AddLump(LUMP_VISIBILITY, dvisdata, visdatasize);
     AddLump(LUMP_ENTITIES, dentdata, entdatasize);
     AddLump(LUMP_POP, dpop, sizeof(dpop));

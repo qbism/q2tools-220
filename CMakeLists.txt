@@ -36,6 +36,7 @@ add_library(libq2tool STATIC
 
     src/rad.c
     src/lightmap.c
+    src/lightgrid.c
     src/patches.c
     src/trace.c
 

@@ -849,7 +849,7 @@ void RAD_ProcessArgument(const char *arg) {
     sprintf(name, "%s%s", inbase, source);
     printf("reading %s\n", name);
     LoadBSPFile(name);
-    dlightdata_ptr = dlightdata;
+    lightdata_ptr = lightdata;
     if (use_qbsp) {
         maxdata = MAX_MAP_LIGHTING_QBSP;
     }
@@ -875,6 +875,7 @@ void RAD_ProcessArgument(const char *arg) {
     printf("bounce      : %d\n", numbounce);
     printf("radmin      : %f\n", patch_cutoff);
     printf("subdiv      : %f\n", subdiv);
+    printf("grid spacing: %g %g %g\n", lg_step[0], lg_step[1], lg_step[2]);
     printf("smooth angle: %f\n", smoothing_value);
     printf("nudge       : %f\n", sample_nudge);
     printf("threads     : %d\n", numthreads);

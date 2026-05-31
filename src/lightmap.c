@@ -22,8 +22,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "assert.h"
 #include "qrad.h"
 
-#define MAX_LSTYLES    256
-
 #define SINGLEMAP      (64 * 64 * 4)
 #define QBSP_SINGLEMAP (256 * 256 * 4) // qb: higher res lightmaps
 #define AO_SAMPLES 64
@@ -70,7 +68,7 @@ int32_t planelinks[2][MAX_MAP_PLANES_QBSP];
 int32_t maxdata = DEFAULT_MAP_LIGHTING;
 vec3_t face_texnormals[MAX_MAP_FACES_QBSP];
 float sunradscale = 0.5;
-uint8_t *dlightdata_ptr;
+uint8_t *lightdata_ptr;
 float dirt_amount = 0.0f;
 
 // qb: quemap- face extents
@@ -1103,11 +1101,11 @@ typedef struct facelight_s
 
 directlight_t *directlights[MAX_MAP_LEAFS_QBSP];
 facelight_t facelight[MAX_MAP_FACES_QBSP];
-int32_t numdlights;
+int32_t numlights;
 
 /*
 ==================
-BlendLightmaps
+Blendlightmaps
 
 Blend sample colors across shared edges to smooth lighting between
 adjoining faces and reduce hard seams.
@@ -1117,10 +1115,10 @@ void BlendLightmaps(void) {
     if (blend_amount <= 0.0f)
         return; // disabled
 
-    if (!dlightdata_ptr)
+    if (!lightdata_ptr)
         return;
     /* Build edgeshare: map each edge index to up to two adjacent faces so
-       BlendLightmaps can iterate face-adjacent pairs without relying on
+       Blendlightmaps can iterate face-adjacent pairs without relying on
        external state. */
     memset(edgeshare, 0, sizeof(edgeshare));
     if (use_qbsp) {
@@ -1175,13 +1173,13 @@ void BlendLightmaps(void) {
         if (use_qbsp) {
             facenum1 = (int32_t)(es->facesX[0] - dfacesX);
             facenum2 = (int32_t)(es->facesX[1] - dfacesX);
-            base1     = &dlightdata_ptr[es->facesX[0]->lightofs];
-            base2     = &dlightdata_ptr[es->facesX[1]->lightofs];
+            base1     = &lightdata_ptr[es->facesX[0]->lightofs];
+            base2     = &lightdata_ptr[es->facesX[1]->lightofs];
         } else {
             facenum1 = (int32_t)(es->faces[0] - dfaces);
             facenum2 = (int32_t)(es->faces[1] - dfaces);
-            base1     = &dlightdata_ptr[es->faces[0]->lightofs];
-            base2     = &dlightdata_ptr[es->faces[1]->lightofs];
+            base1     = &lightdata_ptr[es->faces[0]->lightofs];
+            base2     = &lightdata_ptr[es->faces[1]->lightofs];
         }
 
         if (facenum1 < 0 || facenum1 >= numfaces || facenum2 < 0 || facenum2 >= numfaces)
@@ -1269,6 +1267,8 @@ void BlendLightmaps(void) {
         }
     }
     printf("Blended %d edges\n", blendcount);
+
+    LightGrid_Process();
 }
 
 /*
@@ -1378,7 +1378,7 @@ void CreateDirectLights(void) {
             continue;
         }
 
-        numdlights++;
+        numlights++;
         dl = malloc(sizeof(directlight_t));
         memset(dl, 0, sizeof(*dl));
 
@@ -1489,7 +1489,7 @@ void CreateDirectLights(void) {
         if ((!sun || !p->sky) && p->totallight[0] < DIRECT_LIGHT && p->totallight[1] < DIRECT_LIGHT && p->totallight[2] < DIRECT_LIGHT)
             continue;
 
-        numdlights++;
+        numlights++;
         dl = malloc(sizeof(directlight_t));
         memset(dl, 0, sizeof(*dl));
 
@@ -1524,7 +1524,7 @@ void CreateDirectLights(void) {
         VectorClear(p->totallight); // all sent now
     }
 
-    printf("%i direct lights\n", numdlights);
+    printf("%i direct lights\n", numlights);
 }
 
 static inline int32_t lowestCommonNode(int32_t nodeNum1, int32_t nodeNum2)
@@ -1820,7 +1820,7 @@ void AddSampleToPatch(vec3_t pos, vec3_t color, int32_t facenum) {
 
     if (numbounce == 0)
         return;
-    if (color[0] + color[1] + color[2] < 1.0) // qb: was 3
+    if (color[0] + color[1] + color[2] < 3.0) // qb: was 3... tried 1... back to 3 
         return;
 
     for (patch = face_patches[facenum]; patch; patch = patch->next) {
@@ -2364,7 +2364,7 @@ void FinalLightFace(int32_t facenum) {
         // sample the triangulation
         //
 
-        dest = &dlightdata_ptr[f->lightofs];
+        dest = &lightdata_ptr[f->lightofs];
 
         if (fl->numstyles > MAXLIGHTMAPS) {
             fl->numstyles = MAXLIGHTMAPS;
@@ -2491,7 +2491,7 @@ void FinalLightFace(int32_t facenum) {
         // sample the triangulation
         //
 
-        dest = &dlightdata_ptr[f->lightofs];
+        dest = &lightdata_ptr[f->lightofs];
 
         if (fl->numstyles > MAXLIGHTMAPS) {
             fl->numstyles = MAXLIGHTMAPS;
@@ -2656,7 +2656,7 @@ void FinalLightFaceSH(int32_t facenum) {
         // sample the triangulation
         //
 
-        dest = &dlightdata_ptr[f->lightofs];
+        dest = &lightdata_ptr[f->lightofs];
 
         if (fl->numstyles > MAXLIGHTMAPS) {
             fl->numstyles = MAXLIGHTMAPS;
@@ -2783,7 +2783,7 @@ void FinalLightFaceSH(int32_t facenum) {
         // sample the triangulation
         //
 
-        dest = &dlightdata_ptr[f->lightofs];
+        dest = &lightdata_ptr[f->lightofs];
 
         if (fl->numstyles > MAXLIGHTMAPS) {
             fl->numstyles = MAXLIGHTMAPS;
