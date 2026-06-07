@@ -45,6 +45,9 @@ uint8_t *lightdata; //[MAX_MAP_LIGHTING_QBSP];
 int32_t lightgridsize;
 uint8_t *lightgrid;
 
+int32_t bspnormalssize;
+uint8_t *bspnormals;
+
 int32_t entdatasize;
 char *dentdata; //[MAX_MAP_ENTSTRING_QBSP];
 
@@ -108,6 +111,7 @@ void InitBSPFile(void) {
         dvis          = (dvis_t *)dvisdata;
         lightdata    = (uint8_t *)malloc(sizeof(*lightdata) * MAX_MAP_LIGHTING_QBSP);
         lightgrid    = (uint8_t *)malloc(MAX_MAP_LIGHTGRID_QBSP);
+        bspnormals   = (uint8_t *)malloc(MAX_MAP_LIGHTGRID_QBSP);
         dentdata      = (char *)malloc(sizeof(*dentdata) * MAX_MAP_ENTSTRING_QBSP);
         dleafs        = (dleaf_t *)malloc(sizeof(*dleafs) * MAX_MAP_LEAFS);
         dleafsX       = (dleaf_tx *)malloc(sizeof(*dleafsX) * MAX_MAP_LEAFS_QBSP);
@@ -296,6 +300,52 @@ void SwapBSPFile(bool todisk) {
                 // samples are 3-byte RGB colors, no swap needed
                 ptr += count * 3;
             }
+        }
+    }
+
+    // bspnormals (if present)
+    if (bspnormalssize > 0) {
+        uint8_t *ptr = bspnormals;
+        uint32_t num_unique;
+        int i, j;
+
+        num_unique = todisk ? *(uint32_t *)ptr : LittleLong(*(uint32_t *)ptr);
+        *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
+
+        // Unique normal vectors
+        for (i = 0; i < (int)num_unique; i++) {
+            for (j = 0; j < 3; j++) { *(float *)ptr = LittleFloat(*(float *)ptr); ptr += 4; }
+        }
+
+        // Indices (3 uint32 per entry, as expected by engine)
+        int num_indices = (bspnormalssize - (ptr - bspnormals)) / 12;
+        for (i = 0; i < num_indices; i++) {
+            *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
+            *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
+            *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
+        }
+    }
+
+    // bspnormals (if present)
+    if (bspnormalssize > 0) {
+        uint8_t *ptr = bspnormals;
+        uint32_t num_unique;
+        int i, j;
+
+        num_unique = todisk ? *(uint32_t *)ptr : LittleLong(*(uint32_t *)ptr);
+        *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
+
+        // Unique normal vectors
+        for (i = 0; i < (int)num_unique; i++) {
+            for (j = 0; j < 3; j++) { *(float *)ptr = LittleFloat(*(float *)ptr); ptr += 4; }
+        }
+
+        // Indices (3 uint32 per entry, as expected by engine loader)
+        int num_indices = (bspnormalssize - (ptr - bspnormals)) / 12;
+        for (i = 0; i < num_indices; i++) {
+            *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
+            *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
+            *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
         }
     }
 
@@ -557,8 +607,11 @@ void LoadBSPFile(char *filename) {
     visdatasize    = CopyLump(LUMP_VISIBILITY, dvisdata, 1);
     lightdatasize  = CopyLump(LUMP_LIGHTING, lightdata, 1);
     lightgridsize  = 0;
-    if (header->lumps[Q2_HEADER_LUMPS].filelen > 0)
-        lightgridsize  = CopyLump(Q2_HEADER_LUMPS, lightgrid, 1);
+    if (header->lumps[LUMP_LIGHTGRID].filelen > 0)
+        lightgridsize  = CopyLump(LUMP_LIGHTGRID, lightgrid, 1);
+    bspnormalssize = 0;
+    if (header->lumps[LUMP_NORMALS].filelen > 0)
+        bspnormalssize = CopyLump(LUMP_NORMALS, bspnormals, 1);
     entdatasize    = CopyLump(LUMP_ENTITIES, dentdata, 1);
 
     CopyLump(LUMP_POP, dpop, 1);
@@ -697,7 +750,8 @@ void WriteBSPFile(char *filename) {
     AddLump(LUMP_AREAPORTALS, dareaportals, numareaportals * sizeof(dareaportal_t));
 
     AddLump(LUMP_LIGHTING, lightdata, lightdatasize);
-    AddLump(Q2_HEADER_LUMPS, lightgrid, lightgridsize);
+    AddLump(LUMP_LIGHTGRID, lightgrid, lightgridsize);
+    AddLump(LUMP_NORMALS, bspnormals, bspnormalssize);
     AddLump(LUMP_VISIBILITY, dvisdata, visdatasize);
     AddLump(LUMP_ENTITIES, dentdata, entdatasize);
     AddLump(LUMP_POP, dpop, sizeof(dpop));

@@ -1266,9 +1266,76 @@ void BlendLightmaps(void) {
             }
         }
     }
-    printf("Blended %d edges\n", blendcount);
+    if (blend_amount > 0.0f) {
+        printf("Blended %d edges\n", blendcount);
+    }
+}
 
-    LightGrid_Process();
+/*
+==================
+LightNormals_Process
+
+Collects spatially averaged normals into the NORMALS lump for BSPX support.
+Bakes the pooled normals and a per-vertex index list.
+==================
+*/
+void LightNormals_Process(void) {
+    if (smoothing_threshold <= 0.0f) 
+        return;
+
+    printf("--- LightNormals_Process ---\n");
+
+    size_t total_edges = 0;
+    for (int i = 0; i < numfaces; i++) {
+        total_edges += use_qbsp ? dfacesX[i].numedges : dfaces[i].numedges;
+    }
+
+    vec3_t *pool = malloc(sizeof(vec3_t) * total_edges);
+    uint32_t *indices = malloc(sizeof(uint32_t) * total_edges);
+    uint32_t num_unique = 0;
+    uint32_t current_edge = 0;
+
+    for (int i = 0; i < numfaces; i++) {
+        int numedges = use_qbsp ? dfacesX[i].numedges : dfaces[i].numedges;
+        vec3_t *v_norms = face_vertex_normals[i];
+        
+        for (int j = 0; j < numedges; j++) {
+            vec3_t n;
+            if (v_norms) VectorCopy(v_norms[j], n);
+            else VectorCopy(getPlaneFromFaceNumber(i)->normal, n);
+            
+            int found = -1;
+            for (uint32_t k = 0; k < num_unique; k++) {
+                if (VectorCompare(pool[k], n)) {
+                    found = k; break;
+                }
+            }
+            if (found == -1) {
+                VectorCopy(n, pool[num_unique]);
+                found = num_unique++;
+            }
+            indices[current_edge++] = (uint32_t)found;
+        }
+    }
+
+    bspnormalssize = 4 + (num_unique * 12) + (total_edges * 12);
+    if (bspnormalssize > MAX_MAP_LIGHTGRID_QBSP) {
+        Error("LightNormals_Process: Normals lump exceeds size limit.");
+    }
+
+    uint8_t *ptr = bspnormals;
+    memcpy(ptr, &num_unique, 4); ptr += 4;
+    memcpy(ptr, pool, num_unique * 12); ptr += num_unique * 12;
+    
+    for (size_t i = 0; i < total_edges; i++) {
+        uint32_t entry[3] = { indices[i], 0, 0 };
+        memcpy(ptr, entry, 12);
+        ptr += 12;
+    }
+
+    free(pool);
+    free(indices);
+    printf("%i unique normals for %zu edges\n", num_unique, total_edges);
 }
 
 /*

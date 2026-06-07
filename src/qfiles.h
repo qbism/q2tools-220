@@ -363,7 +363,9 @@ typedef struct
 #define LUMP_POP         16
 #define LUMP_AREAS       17
 #define LUMP_AREAPORTALS 18
-#define Q2_HEADER_LUMPS  19
+#define LUMP_LIGHTGRID   19
+#define LUMP_NORMALS     20
+#define Q2_HEADER_LUMPS  20
 
 typedef struct
 {

@@ -330,11 +330,6 @@ static void LightGrid_Blend(void) {
 void LightGrid_Process(void) {
     printf("--- LightGrid_Process ---\n");
 
-    if (!use_qbsp) {
-        printf("LightGrid_Process: Lightgrids are only supported for QBSP format maps, skipping.\n");
-        return;
-    }
-
     if (nummodels <= 0) {
         printf("LightGrid_Process: No models found, skipping.\n");
         return;

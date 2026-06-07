@@ -885,6 +885,10 @@ void RAD_ProcessArgument(const char *arg) {
     // postprocess: smooth final lightmaps to reduce hard seams
     BlendLightmaps();
 
+    if (use_qbsp) {
+        LightGrid_Process();
+        LightNormals_Process();
+    }
     sprintf(name, "%s%s", outbase, source);
     printf("writing %s\n", name);
     WriteBSPFile(name);
