@@ -81,6 +81,9 @@ extern uint8_t * lightgrid;
 extern int32_t bspnormalssize;
 extern uint8_t * bspnormals;
 
+extern int32_t decoupledlmsize;
+extern uint8_t * decoupledlm;
+
 extern int32_t entdatasize;
 extern char * dentdata;//[MAX_MAP_ENTSTRING_QBSP];
 

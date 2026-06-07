@@ -365,7 +365,8 @@ typedef struct
 #define LUMP_AREAPORTALS 18
 #define LUMP_LIGHTGRID   19
 #define LUMP_NORMALS     20
-#define Q2_HEADER_LUMPS  20
+#define LUMP_DECOUPLED_LM 21
+#define Q2_HEADER_LUMPS  21
 
 typedef struct
 {

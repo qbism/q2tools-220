@@ -70,6 +70,8 @@ vec3_t face_texnormals[MAX_MAP_FACES_QBSP];
 float sunradscale = 0.5;
 uint8_t *lightdata_ptr;
 float dirt_amount = 0.0f;
+static int32_t face_lm_mins[MAX_MAP_FACES_QBSP][2];
+static int32_t face_lm_size[MAX_MAP_FACES_QBSP][2];
 
 // qb: quemap- face extents
 typedef struct face_extents_s {
@@ -2177,6 +2179,10 @@ void BuildFacelights(int32_t facenum) {
 
             CalcFaceVectors(&liteinfo[i]);
             CalcFaceExtents(&liteinfo[i]);
+            face_lm_mins[facenum][0] = liteinfo[i].texmins[0];
+            face_lm_mins[facenum][1] = liteinfo[i].texmins[1];
+            face_lm_size[facenum][0] = liteinfo[i].texsize[0];
+            face_lm_size[facenum][1] = liteinfo[i].texsize[1];
             CalcPoints(&liteinfo[i], sampleofs[i][0], sampleofs[i][1]);
         }
     } else {
@@ -2342,6 +2348,57 @@ cleanup:
         liteinfo = thread_liteinfo; /* restore global pointer */
     }
     return;
+}
+
+
+/*
+==================
+DecoupledLM_Process
+
+Bakes the lightmap dimensions and coordinate projection parameters 
+into the DECOUPLED_LM lump.
+==================
+*/
+void DecoupledLM_Process(void) {
+    printf("--- DecoupledLM_Process ---\n");
+
+    uint8_t *out = decoupledlm;
+
+    for (int i = 0; i < numfaces; i++) {
+        int texinfo_idx;
+        uint32_t light_ofs;
+
+        if (use_qbsp) {
+            texinfo_idx = dfacesX[i].texinfo;
+            light_ofs = dfacesX[i].lightofs;
+        } else {
+            texinfo_idx = dfaces[i].texinfo;
+            light_ofs = dfaces[i].lightofs;
+        }
+
+        texinfo_t *tex = &texinfo[texinfo_idx];
+        
+        uint16_t w = (uint16_t)(face_lm_size[i][0] + 1);
+        uint16_t h = (uint16_t)(face_lm_size[i][1] + 1);
+
+        memcpy(out, &w, 2); out += 2;
+        memcpy(out, &h, 2); out += 2;
+        memcpy(out, &light_ofs, 4); out += 4;
+
+        for (int j = 0; j < 2; j++) {
+            vec3_t axis;
+            // axis = projection vector / LMSTEP
+            VectorScale(tex->vecs[j], 1.0f / 16.0f, axis);
+            memcpy(out, axis, 12); out += 12;
+
+            // offset = (translation / LMSTEP) - texmins
+            float offset = (tex->vecs[j][3] / 16.0f) - (float)face_lm_mins[i][j];
+            memcpy(out, &offset, 4); out += 4;
+        }
+    }
+
+    decoupledlmsize = out - decoupledlm;
+    printf("Baked decoupled data for %d faces (%d bytes)\n", numfaces, decoupledlmsize);
 }
 
 /*

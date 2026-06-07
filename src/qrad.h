@@ -224,5 +224,6 @@ typedef struct {
 
 void LightGrid_Process(void);
 void LightNormals_Process(void);
+void DecoupledLM_Process(void);
 void CalcLightgridAtPoint(vec3_t point, lightgrid_samples_t *out);
 void FixPointAndCalcLightgrid(vec3_t point, const vec3_t normal, lightgrid_samples_t *out);

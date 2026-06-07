@@ -888,6 +888,7 @@ void RAD_ProcessArgument(const char *arg) {
     if (use_qbsp) {
         LightGrid_Process();
         LightNormals_Process();
+        DecoupledLM_Process();
     }
     sprintf(name, "%s%s", outbase, source);
     printf("writing %s\n", name);

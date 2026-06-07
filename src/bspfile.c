@@ -48,6 +48,9 @@ uint8_t *lightgrid;
 int32_t bspnormalssize;
 uint8_t *bspnormals;
 
+int32_t decoupledlmsize;
+uint8_t *decoupledlm;
+
 int32_t entdatasize;
 char *dentdata; //[MAX_MAP_ENTSTRING_QBSP];
 
@@ -112,6 +115,7 @@ void InitBSPFile(void) {
         lightdata    = (uint8_t *)malloc(sizeof(*lightdata) * MAX_MAP_LIGHTING_QBSP);
         lightgrid    = (uint8_t *)malloc(MAX_MAP_LIGHTGRID_QBSP);
         bspnormals   = (uint8_t *)malloc(MAX_MAP_LIGHTGRID_QBSP);
+        decoupledlm  = (uint8_t *)malloc(MAX_MAP_FACES_QBSP * 40);
         dentdata      = (char *)malloc(sizeof(*dentdata) * MAX_MAP_ENTSTRING_QBSP);
         dleafs        = (dleaf_t *)malloc(sizeof(*dleafs) * MAX_MAP_LEAFS);
         dleafsX       = (dleaf_tx *)malloc(sizeof(*dleafsX) * MAX_MAP_LEAFS_QBSP);
@@ -346,6 +350,28 @@ void SwapBSPFile(bool todisk) {
             *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
             *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
             *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
+        }
+    }
+
+    // decoupledlm (if present)
+    if (decoupledlmsize > 0) {
+        uint8_t *ptr = decoupledlm;
+        for (i = 0; i < numfaces; i++) {
+            // lm_width, lm_height
+            *(uint16_t *)ptr = LittleShort(*(uint16_t *)ptr); ptr += 2;
+            *(uint16_t *)ptr = LittleShort(*(uint16_t *)ptr); ptr += 2;
+            // offset
+            *(uint32_t *)ptr = LittleLong(*(uint32_t *)ptr); ptr += 4;
+            
+            for (j = 0; j < 2; j++) {
+                // axis[3]
+                for (int k = 0; k < 3; k++) {
+                    *(float *)ptr = LittleFloat(*(float *)ptr);
+                    ptr += 4;
+                }
+                // offset
+                *(float *)ptr = LittleFloat(*(float *)ptr); ptr += 4;
+            }
         }
     }
 
@@ -612,6 +638,9 @@ void LoadBSPFile(char *filename) {
     bspnormalssize = 0;
     if (header->lumps[LUMP_NORMALS].filelen > 0)
         bspnormalssize = CopyLump(LUMP_NORMALS, bspnormals, 1);
+    decoupledlmsize = 0;
+    if (header->lumps[LUMP_DECOUPLED_LM].filelen > 0)
+        decoupledlmsize = CopyLump(LUMP_DECOUPLED_LM, decoupledlm, 1);
     entdatasize    = CopyLump(LUMP_ENTITIES, dentdata, 1);
 
     CopyLump(LUMP_POP, dpop, 1);
@@ -752,6 +781,7 @@ void WriteBSPFile(char *filename) {
     AddLump(LUMP_LIGHTING, lightdata, lightdatasize);
     AddLump(LUMP_LIGHTGRID, lightgrid, lightgridsize);
     AddLump(LUMP_NORMALS, bspnormals, bspnormalssize);
+    AddLump(LUMP_DECOUPLED_LM, decoupledlm, decoupledlmsize);
     AddLump(LUMP_VISIBILITY, dvisdata, visdatasize);
     AddLump(LUMP_ENTITIES, dentdata, entdatasize);
     AddLump(LUMP_POP, dpop, sizeof(dpop));
