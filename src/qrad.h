@@ -53,6 +53,7 @@ typedef struct directlight_s {
     dleaf_t *leaf;
     dleaf_tx *leafX;
     int32_t nodenum;
+    float radius; // qb: for stochastic soft shadows
 } directlight_t;
 
 // the sum of all tranfer->transfer values for a given patch
@@ -69,9 +70,6 @@ typedef struct
 #define MAX_LSTYLES    256
 
 #define LMSTEP                  16
-
-#define DEFAULT_SMOOTHING_VALUE 44.0
-#define DEFAULT_NUDGE_VALUE     0.05
 
 typedef struct patch_s {
     winding_t *winding;
@@ -104,12 +102,23 @@ typedef struct patch_s {
     int32_t samples; // for averaging direct light
 } patch_t;
 
+#define MAX_STYLES 32
+typedef struct facelight_s
+{
+    int32_t numsamples;
+    float *origins;
+    int32_t numstyles;
+    int32_t stylenums[MAX_STYLES];
+    float *samples[MAX_STYLES];
+} facelight_t;
+
 extern patch_t *face_patches[MAX_MAP_FACES_QBSP];
 extern entity_t *face_entity[MAX_MAP_FACES_QBSP];
 extern vec3_t face_offset[MAX_MAP_FACES_QBSP]; // for rotating bmodels
 extern patch_t patches[MAX_PATCHES_QBSP];
+extern facelight_t facelight[MAX_MAP_FACES_QBSP];
 extern unsigned num_patches;
-
+extern int32_t face_process_order[MAX_MAP_FACES_QBSP];
 extern int32_t leafparents[MAX_MAP_LEAFS_QBSP];
 extern int32_t nodeparents[MAX_MAP_NODES_QBSP];
 
@@ -128,8 +137,6 @@ bool CheckVisBit(unsigned p1, unsigned p2);
 
 extern float ambient, maxlight;
 
-void LinkPlaneFaces(void);
-
 extern float grayscale;
 extern float saturation;
 extern bool extrasamples;
@@ -147,7 +154,6 @@ void BuildLightmaps(void);
 void BuildFacelights(int32_t facenum);
 
 void FinalLightFace(int32_t facenum);
-void BlendLightmaps(void);
 bool PvsForOrigin(vec3_t org, uint8_t *pvs);
 
 int32_t PointInNodenum(vec3_t point);
@@ -161,7 +167,7 @@ dleaf_t *RadPointInLeaf(vec3_t point);
 dleaf_tx *RadPointInLeafX(vec3_t point);
 void GatherSampleLight(vec3_t pos, vec3_t normal,
                        float **styletable, int32_t offset, int32_t mapsize, float lightscale2,
-                       bool *sun_main_once, bool *sun_ambient_once, uint8_t *pvs, int32_t nodenum,
+                       bool *sun_main_once, bool *sun_ambient_once, int32_t sample_idx, uint8_t *pvs, int32_t nodenum,
                        bool have_pvs);
 
 extern dplane_t backplanes[MAX_MAP_PLANES_QBSP];
@@ -183,6 +189,9 @@ extern vec3_t sun_color;
 extern float smoothing_threshold;
 extern float smoothing_value;
 extern float sample_nudge;
+extern float blend_angle_threshold; // Angle in degrees
+extern float blend_angle_threshold_dot; // Cosine of the angle
+extern float sun_diffuse; // qb: sun divergence angle
 
 extern int32_t refine_amt, refine_setting;
 extern int32_t PointInLeafnum(vec3_t point);
@@ -190,6 +199,8 @@ extern void MakeTnodes(dmodel_t *bm);
 extern void MakePatches(void);
 extern void SubdividePatches(void);
 extern void BuildSpatialNormals(void);
+void BuildGeometricAdjacency(void);
+void FreeGeometricAdjacency(void);
 extern void CalcTextureReflectivity_Heretic2(void);
 extern void CalcTextureReflectivity(void);
 extern uint8_t *lightdata_ptr;

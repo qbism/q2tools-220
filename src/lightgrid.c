@@ -71,7 +71,7 @@ void CalcLightgridAtPoint(vec3_t point, lightgrid_samples_t *out) {
 
         /* Sample light coming from this axial direction. */
         GatherSampleLight(point, axial_dirs[i], styletable, 0, mapsize, 1.0f,
-                          &sun_main_once, &sun_ambient_once, pvs, nodenum, true);
+                          &sun_main_once, &sun_ambient_once, 0, pvs, nodenum, true);
 
         /* Fold results into the compact `lightgrid_samples_t` structure. */
         for (int s = 0; s < MAX_LSTYLES; s++) {

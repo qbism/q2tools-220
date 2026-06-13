@@ -77,6 +77,10 @@ static char *help_string =
     "    -extra: Use extra samples to smooth lighting.\n"
     "    -blend #: Blending factor between adjacent faces. \n"
     "         Range: 0.0 to 1.0   Default: 1.0\n"
+    "    -sundiffuse #: Sun light diffuse angle (degrees) for soft shadows.\n"
+    "         Range: 0.0 to 90.0   Default: 0.0\n"
+    "    -blendangle #: Maximum angle (in degrees) between face normals for blending.\n"
+    "         Range: 0.0 to 180.0   Default: 61.0\n"
     "    -gridsize X Y Z: Set lightgrid spacing.\n"
     "         Default: 64 64 128\n"
     "    -lgdebug: Export sampled lightgrid points to a .pts file for debugging.\n"
@@ -91,6 +95,7 @@ static char *help_string =
     "    -saturate #: Saturation factor of light bounced off surfaces.\n"
     "    -scale #: Light intensity multiplier.\n"
     "    -smooth #: Threshold angle (# and 180deg - #) for phong smoothing.\n"
+    "         Range: 0.0 to 180.0   Default: 61.0\n"
     "    -subdiv #: Maximum patch size.  Default: 64\n"
     "    -sunradscale #: Sky light intensity scale when sun is active.\n"
     "    -threads #:  Number of CPU cores to use.\n"
@@ -148,6 +153,8 @@ extern float smoothing_value;
 extern float sample_nudge;
 extern float ambient;
 extern bool save_trace;
+extern float sun_diffuse;
+extern float blend_angle_threshold;
 extern float maxlight;
 extern bool dicepatches;
 extern float saturation;
@@ -421,9 +428,19 @@ int32_t main(int32_t argc, char *argv[]) {
             smoothing_value = BOUND(0, atof(argv[i + 1]), 90);
             i++;
         } else if (!strcmp(argv[i], "-blend")) {
-            blend_amount = BOUND(0.0, atof(argv[i + 1]), 1.0);
+            blend_amount = BOUND(0.0, atof(argv[i + 1]), 2.0);
             printf("blend factor= %f\n", blend_amount);
             i++;
+        } else if (!strcmp(argv[i], "-sundiffuse")) {
+            sun_diffuse = BOUND(0.0f, atof(argv[i + 1]), 90.0f);
+            printf("sun diffuse angle = %f degrees\n", sun_diffuse);
+            i++;
+
+        } else if (!strcmp(argv[i], "-blendangle")) {
+            blend_angle_threshold = BOUND(0.0f, atof(argv[i + 1]), 180.0f);
+            printf("blend angle threshold = %f degrees\n", blend_angle_threshold);
+            i++;
+
         } else if (!strcmp(argv[i], "-dirt")) {
             dirt_amount = atoi(argv[i + 1]);
             BOUND(0, dirt_amount, 1);
@@ -494,7 +511,7 @@ int32_t main(int32_t argc, char *argv[]) {
                "    -maxlight #           -noedgefix          -nudge #\n"
                "    -saturate #           -scale #            -smooth #\n"
                "    -subdiv               -sunradscale #      -threads #\n"
-               "    -dirt #\n\n"
+               "    -dirt #               -sundiffuse #       -blendangle #\n\n"
                "-data\n"
                "    -archive [path]         -release [path]       -only [model]\n"
                "    -3ds                    -lwo                  -compress\n\n"

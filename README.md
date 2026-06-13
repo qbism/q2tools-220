@@ -62,6 +62,10 @@ RAD pass:
     -extra: Use extra samples to smooth lighting.
     -blend #: Blending factor between adjacent faces.
          Range: 0.0 to 1.0   Default: 1.0
+    -sundiffuse #: Sun light diffuse angle (degrees) for soft shadows.
+         Range: 0.0 to 90.0   Default: 30.0
+    -blendangle #: Maximum angle (in degrees) between face normals for blending.
+         Range: 0.0 to 180.0   Default: 61.0
     -dirt #: Dirtmapping (ambient occlusion) factor between adjacent faces.
          Range: 0.0 to 1.0   Default: 0.0
     -maxdata #: 2097152 is default max. Not needed for QBSP format.
@@ -73,6 +77,8 @@ RAD pass:
     -saturate #: Saturation factor of light bounced off surfaces.
     -scale #: Light intensity multiplier.
     -smooth #: Threshold angle (# and 180deg - #) for phong smoothing.
+        Range: 0.0 to 90.0   Default: 61.0
+
     -subdiv #: Maximum patch size.  Default: 64
     -sunradscale #: Sky light intensity scale when sun is active.
     -threads #:  Number of CPU cores to use.  

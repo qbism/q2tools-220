@@ -56,11 +56,15 @@ float blend_amount = 1.0f; //qb: looks great, 100% on by default
 float subdiv          = 64;
 bool dumppatches;
 
-void BuildFaceExtents(void); // qb: from quemap
+void BuildFaceExtents(void);
+extern int32_t face_process_order[MAX_MAP_FACES_QBSP];
 int32_t TestLine(vec3_t start, vec3_t stop);
 float smoothing_threshold; // qb: phong from VHLT
-float smoothing_value = DEFAULT_SMOOTHING_VALUE;
-float sample_nudge    = DEFAULT_NUDGE_VALUE; // qb: adjustable nudge for multisample
+float smoothing_value = 61.0f;
+float sample_nudge    = 0.05f; // qb: adjustable nudge for multisample
+float blend_angle_threshold = 61.0f; // Default degrees
+float blend_angle_threshold_dot;
+float sun_diffuse = 30.0f; //degrees of sun divergence
 
 /*
  * 2010-09 Notes
@@ -792,6 +796,7 @@ void RadWorld(void) {
     BuildSpatialNormals(); // qb: here for phong
 
     // build initial facelights
+    printf("--- Build Facelights ---\n");
     RunThreadsOnIndividual(numfaces, true, BuildFacelights);
 
     if (numbounce > 0) {
@@ -803,7 +808,7 @@ void RadWorld(void) {
             qprintf("transfer lists: %5.1f megs\n", (float)total_transfer * sizeof(transfer_t) / (1024 * 1024));
         }
 
-        numthreads = 1;
+        numthreads = 1; // qb: BounceLight is not multithreaded
         BounceLight();
         numthreads = saved_numthreads;
 
@@ -818,10 +823,30 @@ void RadWorld(void) {
         printf("    megabytes more memory then currently used\n");
     }
 
-    // blend bounced light into direct light and save
-    LinkPlaneFaces();
-
     lightdatasize = 0;
+    for (int32_t i = 0; i < numfaces; i++) {
+        face_process_order[i] = i;
+        int32_t fnum = face_process_order[i];
+        facelight_t *fl = &facelight[fnum];
+        
+        bool is_lit = false;
+        if (use_qbsp) is_lit = !(texinfo[dfacesX[fnum].texinfo].flags & (SURF_WARP | SURF_SKY));
+        else is_lit = !(texinfo[dfaces[fnum].texinfo].flags & (SURF_WARP | SURF_SKY));
+
+        if (is_lit) {
+            if (use_qbsp) dfacesX[fnum].lightofs = lightdatasize;
+            else dfaces[fnum].lightofs = lightdatasize;
+            lightdatasize += fl->numstyles * (fl->numsamples * 3);
+        } else {
+            if (use_qbsp) dfacesX[fnum].lightofs = -1;
+            else dfaces[fnum].lightofs = -1;
+        }
+    }
+
+    if (lightdatasize > maxdata) {
+        Error("lightdatasize %i > maxdata %i", lightdatasize, maxdata);
+    }
+
     RunThreadsOnIndividual(numfaces, true, FinalLightFace);
 }
 
@@ -839,6 +864,7 @@ void RAD_ProcessArgument(const char *arg) {
     smoothing_threshold = cos(smoothing_value * (Q_PI / 180.0));
     start = I_FloatTime();
 
+    blend_angle_threshold_dot = cos(blend_angle_threshold * (Q_PI / 180.0));
     strcpy(source, ExpandArg(arg));
 
     StripExtension(source);
@@ -877,13 +903,14 @@ void RAD_ProcessArgument(const char *arg) {
     printf("subdiv      : %f\n", subdiv);
     printf("grid spacing: %g %g %g\n", lg_step[0], lg_step[1], lg_step[2]);
     printf("smooth angle: %f\n", smoothing_value);
+    printf("blend angle : %f\n", blend_angle_threshold);
+    printf("sun diffuse : %f\n", sun_diffuse);
     printf("nudge       : %f\n", sample_nudge);
     printf("threads     : %d\n", numthreads);
 
     RadWorld();
 
-    // postprocess: smooth final lightmaps to reduce hard seams
-    BlendLightmaps();
+    FreeGeometricAdjacency();
 
     if (use_qbsp) {
         LightGrid_Process();
