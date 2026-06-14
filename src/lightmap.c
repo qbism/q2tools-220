@@ -583,6 +583,63 @@ static void ApplyFaceBlend(uint8_t *src_data, float *accum_data, float *weight_d
     }
 }
 
+/*
+==================
+FinalizeFaceBlending
+
+Uses the geometric adjacency data to smooth lightmap seams between faces.
+This pass runs after direct and indirect light have been finalized into the lightdata buffer.
+==================
+*/
+void FinalizeFaceBlending(void) {
+    if (!face_neighbor_list || blend_amount <= 0.001f)
+        return;
+
+    printf("--- Finalizing Face Blending (%1.2f) ---\n", blend_amount);
+
+    // Allocate floating point buffers to avoid rounding errors during multi-pass accumulation
+    float *accum_data = calloc(lightdatasize, sizeof(float));
+    float *weight_data = calloc(lightdatasize / 3, sizeof(float));
+
+    // Pass 1: Accumulate light contributions from neighbors
+    for (int i = 0; i < numfaces; i++) {
+        for (adj_node_t *adj = face_neighbor_list[i]; adj; adj = adj->next) {
+            // Use i < facenum to ensure every shared edge is processed exactly once
+            if (i < adj->facenum) {
+                ApplyFaceBlend(lightdata, accum_data, weight_data, i, adj->facenum, blend_amount);
+            }
+        }
+    }
+
+    // Pass 2: Apply the weighted average back to the byte-packed lightdata buffer
+    for (int i = 0; i < numfaces; i++) {
+        int lightofs = use_qbsp ? dfacesX[i].lightofs : dfaces[i].lightofs;
+        if (lightofs == -1) continue;
+
+        facelight_t *fl = &facelight[i];
+        for (int st = 0; st < fl->numstyles; st++) {
+            for (int j = 0; j < fl->numsamples; j++) {
+                int lux_idx = (lightofs / 3) + (st * fl->numsamples) + j;
+                int byte_idx = lux_idx * 3;
+
+                // If this luxel was near a neighbor, blend it
+                if (weight_data[lux_idx] > 0.0f) {
+                    for (int c = 0; c < 3; c++) {
+                        // New Luxel = (Original + Sum of Weighted Neighbors) / (1.0 + Total Weight)
+                        float val = (float)lightdata[byte_idx + c] + accum_data[byte_idx + c];
+                        val /= (1.0f + weight_data[lux_idx]);
+                        
+                        lightdata[byte_idx + c] = (uint8_t)BOUND(0, val + 0.5f, 255);
+                    }
+                }
+            }
+        }
+    }
+
+    free(accum_data);
+    free(weight_data);
+}
+
 
 /*
 Replaces PairEdges. Builds a spatial hash of all winding vertices 

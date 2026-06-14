@@ -787,6 +787,7 @@ void RadWorld(void) {
     // turn each face into a single patch
     MakePatches();
 
+    BuildGeometricAdjacency();
     // subdivide patches to a maximum dimension
     SubdividePatches();
 
@@ -848,6 +849,8 @@ void RadWorld(void) {
     }
 
     RunThreadsOnIndividual(numfaces, true, FinalLightFace);
+
+    FinalizeFaceBlending();
 }
 
 /*

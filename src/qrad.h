@@ -200,6 +200,7 @@ extern void MakePatches(void);
 extern void SubdividePatches(void);
 extern void BuildSpatialNormals(void);
 void BuildGeometricAdjacency(void);
+void FinalizeFaceBlending(void);
 void FreeGeometricAdjacency(void);
 extern void CalcTextureReflectivity_Heretic2(void);
 extern void CalcTextureReflectivity(void);

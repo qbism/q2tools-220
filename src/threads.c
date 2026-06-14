@@ -123,7 +123,8 @@ void ThreadSetDefault(void) {
     {
         numthreads = max_threads;
     }
-    printf("Using %i processor threads\n", numthreads);
+    if (numthreads > 1)
+        printf("Using %i processor threads\n", numthreads);
 }
 
 #ifdef _WIN32
